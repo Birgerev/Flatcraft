@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Player : HumanEntity
 {
+    public override float maxHealth { get; } = 20;
+    public float maxHunger = 20;
+    public float hunger;
+
     [Header("Movement Properties")]
     public float walkSpeed;
     public float sprintSpeed;
@@ -23,6 +27,8 @@ public class Player : HumanEntity
         base.Start();
 
         localInstance = this;
+
+        hunger = maxHunger;
     }
 
     public override void Update()

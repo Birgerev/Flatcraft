@@ -29,6 +29,11 @@ public class World
         return world;
     }
 
+    public static bool worldExists(string name)
+    {
+        return File.Exists(new World(name, 0).getPath() + "\\seed.dat");
+    }
+
     public static List<World> loadWorlds()
     {
         List<World> worlds = new List<World>();

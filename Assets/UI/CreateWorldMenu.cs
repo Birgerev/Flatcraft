@@ -8,6 +8,8 @@ public class CreateWorldMenu : MonoBehaviour
 {
     public InputField nameField;
     public InputField seedField;
+    public GameObject nameTakenError;
+    public Button CreateButton;
 
     public World world;
 
@@ -23,6 +25,11 @@ public class CreateWorldMenu : MonoBehaviour
     {
         world.name = nameField.text;
         world.seed = int.Parse(seedField.text);
+
+        bool worldExists = World.worldExists(world.name);
+
+        nameTakenError.SetActive(worldExists);
+        CreateButton.interactable = !worldExists;
     }
 
     public void Create()
