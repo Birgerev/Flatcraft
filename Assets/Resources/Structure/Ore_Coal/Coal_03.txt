@@ -1,0 +1,4 @@
+Coal_Ore*0,0*
+Coal_Ore*0,1*
+Coal_Ore*1,1*
+Coal_Ore*1,2*

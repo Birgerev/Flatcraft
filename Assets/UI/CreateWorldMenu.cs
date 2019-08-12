@@ -1,0 +1,46 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class CreateWorldMenu : MonoBehaviour
+{
+    public InputField nameField;
+    public InputField seedField;
+
+    public World world;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        world = new World();
+        GenerateSeedByName();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        world.name = nameField.text;
+        world.seed = int.Parse(seedField.text);
+    }
+
+    public void Create()
+    {
+        world.Create();
+        WorldManager.world = world;
+        SceneManager.LoadScene("Loading");
+    }
+
+    public void Cancel()
+    {
+        SceneManager.LoadScene("SingleplayerMenu");
+    }
+
+    public void GenerateSeedByName()
+    {
+        System.Random rnd = new System.Random(nameField.text.GetHashCode());
+
+        seedField.text = "" + rnd.Next(int.MinValue, int.MaxValue);
+    }
+}
