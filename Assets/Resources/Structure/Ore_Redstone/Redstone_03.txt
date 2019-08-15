@@ -1,0 +1,4 @@
+Redstone_Ore*0,0*
+Redstone_Ore*0,1*
+Redstone_Ore*1,1*
+Redstone_Ore*1,2*

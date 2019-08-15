@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public virtual string texture { get; } = "";
+    public virtual string default_texture { get; } = "";
+    public string texture;
     public virtual bool playerCollide { get; } = true;
     public virtual bool requiresGround { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
@@ -20,6 +21,8 @@ public class Block : MonoBehaviour
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
+
+        texture = default_texture;
 
         Render();
     }
@@ -174,9 +177,8 @@ public enum Material
     Red_Flower,
     Coal_Ore,
     Iron_Ore,
-    Lapiz_Ore,
+    Lapis_Ore,
     Gold_Ore,
     Redstone_Ore,
-    Diamond_Ore,
-    Emerald_Ore
+    Diamond_Ore
 }

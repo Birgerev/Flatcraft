@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bedrock : Block
 {
-    public override string texture { get; } = "block_bedrock";
+    public override string default_texture { get; } = "block_bedrock";
     public override float breakTime { get; } = 100000000;
 
     public override void Tick()

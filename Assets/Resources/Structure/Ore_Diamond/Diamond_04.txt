@@ -1,0 +1,4 @@
+Diamond_Ore*0,0*
+Diamond_Ore*1,0*
+Diamond_Ore*1,1*
+Diamond_Ore*2,1*

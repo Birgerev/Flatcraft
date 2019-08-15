@@ -36,8 +36,24 @@ public class Chunk : MonoBehaviour
     public static int caveOctaves = 4;
     public static float caveHollowValue = 2.2f;
 
-    public static int ore_coal_height = 120;
-    public static double ore_coal_chance = 0.005f;
+    [Header("Ore Generation Settings")]
+    public static int ore_coal_height = 128;
+    public static double ore_coal_chance = 0.008f;
+
+    public static int ore_iron_height = 64;
+    public static double ore_iron_chance = 0.005f;
+
+    public static int ore_gold_height = 32;
+    public static double ore_gold_chance = 0.0015f;
+
+    public static int ore_lapis_height = 32;
+    public static double ore_lapis_chance = 0.0015f;
+
+    public static int ore_redstone_height = 16;
+    public static double ore_redstone_chance = 0.0015f;
+
+    public static int ore_diamond_height = 16;
+    public static double ore_diamond_chance = 0.001f;
 
 
     public Dictionary<Vector2Int, string> blockChanges = new Dictionary<Vector2Int, string>();

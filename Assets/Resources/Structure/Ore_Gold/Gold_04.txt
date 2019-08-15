@@ -1,0 +1,4 @@
+Gold_Ore*0,0*
+Gold_Ore*1,0*
+Gold_Ore*1,1*
+Gold_Ore*2,1*

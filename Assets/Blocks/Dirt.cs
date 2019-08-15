@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Dirt : Block
 {
-    public override string texture { get; } = "block_dirt";
+    public override string default_texture { get; } = "block_dirt";
     public override float breakTime { get; } = 0.75f;
 
     public override void Tick()

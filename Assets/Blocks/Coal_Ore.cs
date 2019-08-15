@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Coal_Ore : Block
 {
-    public override string texture { get; } = "block_coal_ore";
+    public override string default_texture { get; } = "block_coal_ore";
     public override float breakTime { get; } = 6;
 
     public override void Tick()

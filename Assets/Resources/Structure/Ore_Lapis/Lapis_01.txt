@@ -1,0 +1,3 @@
+Lapis_Ore*0,0*
+Lapis_Ore*0,1*
+Lapis_Ore*1,1*

@@ -1,0 +1,4 @@
+Iron_Ore*0,0*
+Iron_Ore*1,0*
+Iron_Ore*1,1*
+Iron_Ore*2,1*

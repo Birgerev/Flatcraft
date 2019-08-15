@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Structure_Block : Block
 {
-    public override string texture { get; } = "block_structure";
+    public override string default_texture { get; } = "block_structure";
     public override float breakTime { get; } = 10000000;
 
     public override void Tick()
