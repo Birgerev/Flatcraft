@@ -115,7 +115,7 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = getTexture();
     }
 
-    public Sprite getTexture()
+    public virtual Sprite getTexture()
     {
         return Resources.Load<Sprite>("Sprites/" + texture);
     }
@@ -180,5 +180,7 @@ public enum Material
     Lapis_Ore,
     Gold_Ore,
     Redstone_Ore,
-    Diamond_Ore
+    Diamond_Ore,
+    Water,
+    Lava
 }

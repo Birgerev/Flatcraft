@@ -69,7 +69,7 @@ public class Player : HumanEntity
 
         crosshair.transform.position = mousePosition;
 
-        if (block == null)
+        if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
         {
             if (Input.GetMouseButtonDown(1))
             {

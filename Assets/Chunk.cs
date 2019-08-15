@@ -14,7 +14,6 @@ public class Chunk : MonoBehaviour
     public static int RenderDistance = 3;
     public static int SpawnChunkDistance = 0;
     public static int MinimumUnloadTime = 10;
-    public static int SeaLevel = 62;
     public static int TickRate = 1;
 
     public GameObject blockPrefab;
@@ -54,6 +53,9 @@ public class Chunk : MonoBehaviour
 
     public static int ore_diamond_height = 16;
     public static double ore_diamond_chance = 0.001f;
+
+    public static int lava_height = 10;
+    public static int sea_level = 62;
 
 
     public Dictionary<Vector2Int, string> blockChanges = new Dictionary<Vector2Int, string>();
@@ -451,10 +453,10 @@ public class Chunk : MonoBehaviour
             noise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f;
         double density = 1;
 
-        if(worldPos.y > SeaLevel)
+        if(worldPos.y > sea_level)
         {
             float heightWheight = 0.1f;
-            density = noiseValue - (heightWheight * ((float)worldPos.y - (SeaLevel-40)))+1.5;
+            density = noiseValue - (heightWheight * ((float)worldPos.y - (sea_level-40)))+1.5;
         }
 
         if (density > 0.1f)
@@ -469,7 +471,12 @@ public class Chunk : MonoBehaviour
             double caveValue =
                 (caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f) / 4f;
             if (caveValue > caveHollowValue)
+            {
                 mat = Material.Air;
+
+                if (worldPos.y <= lava_height)
+                    mat = Material.Lava;
+            }
         }
         
                     //-Bedrock Generation-//

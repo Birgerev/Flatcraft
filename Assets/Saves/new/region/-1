@@ -1,0 +1,14 @@
+-2,80*Lava*source_block=-1.0,liquid_level=3
+-5,81*Lava*source_block=-1.0,liquid_level=3
+-8,82*Lava*source_block=-1.0,liquid_level=3
+-10,82*Lava*source_block=1.0,liquid_level=3
+-1,80*Lava*source_block=-1.0,liquid_level=2
+-3,80*Lava*source_block=0.1
+-3,81*Lava*source_block=-1.0,liquid_level=1
+-4,81*Lava*source_block=-1.0,liquid_level=2
+-6,81*Lava*source_block=0.1
+-6,82*Lava*source_block=-1.0,liquid_level=1
+-7,82*Lava*source_block=-1.0,liquid_level=2
+-12,82*Lava*source_block=1.0,liquid_level=1
+-11,82*Lava*source_block=1.0,liquid_level=2
+-9,82*Lava*
