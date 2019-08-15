@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public virtual string default_texture { get; } = "";
     public string texture;
     public virtual bool playerCollide { get; } = true;
     public virtual bool requiresGround { get; } = false;
@@ -22,7 +21,8 @@ public class Block : MonoBehaviour
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
 
-        texture = default_texture;
+        texture = (string)this.GetType().
+            GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
         Render();
     }
@@ -182,5 +182,7 @@ public enum Material
     Redstone_Ore,
     Diamond_Ore,
     Water,
-    Lava
+    Lava,
+    Sand,
+    Gravel
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Gold_Ore : Block
 {
-    public override string default_texture { get; } = "block_gold_ore";
+    public static string default_texture = "block_gold_ore";
     public override float breakTime { get; } = 6;
 
     public override void Tick()

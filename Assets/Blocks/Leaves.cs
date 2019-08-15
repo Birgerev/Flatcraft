@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Leaves : Block
 {
-    public override string default_texture { get; } = "block_leaves";
+    public static string default_texture = "block_leaves";
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
 

@@ -37,8 +37,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -355, y: -490}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -409.91, y: -490.01}
+  m_SizeDelta: {x: 124.26, y: 124.65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3714916177682619085
 CanvasRenderer:
@@ -92,6 +92,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amountText: {fileID: 6234334135946873767}
   texture: {fileID: 6229510293092303285}
+  normal: {fileID: 21300000, guid: a26ecb5390901fd4ebfd18e16b7e8fe2, type: 3}
+  selected: {fileID: 21300000, guid: b0ed574d052391e4db3dc810b5b05ef9, type: 3}
 --- !u!1 &7604997307901348363
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,10 +176,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3586578572744609912}
     m_Modifications:
-    - target: {fileID: 2489508395992813724, guid: 2545b076c3b573644831305fd15cd44f,
+    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
-      propertyPath: m_Name
-      value: Text
+      propertyPath: m_FontData.m_FontSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
+        type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
+        type: 3}
+      propertyPath: m_Text
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -284,20 +296,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
+    - target: {fileID: 2489508395992813724, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
-      propertyPath: m_FontData.m_FontSize
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
-        type: 3}
-      propertyPath: m_FontData.m_MinSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
-        type: 3}
-      propertyPath: m_Text
-      value: 64
+      propertyPath: m_Name
+      value: Text
       objectReference: {fileID: 0}
     - target: {fileID: 7373821652108103458, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}

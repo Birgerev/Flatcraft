@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tall_Grass : Block
 {
-    public override string default_texture { get; } = "block_tall_grass";
+    public static string default_texture = "block_tall_grass";
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
     public override bool requiresGround { get; } = true;

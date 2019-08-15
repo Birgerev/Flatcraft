@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Redstone_Ore : Block
 {
-    public override string default_texture { get; } = "block_redstone_ore";
+    public static string default_texture = "block_redstone_ore";
     public override float breakTime { get; } = 6;
 
     public override void Tick()

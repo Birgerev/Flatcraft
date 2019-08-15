@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Stone : Block
 {
-    public override string default_texture { get; } = "block_stone";
+    public static string default_texture = "block_stone";
     public override float breakTime { get; } = 6;
 
     public override void FirstTick()

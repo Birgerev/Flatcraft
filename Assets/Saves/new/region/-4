@@ -1,1 +1,5 @@
--49,15*Lava*source_block=1.0,liquid_level=3
+-49,11*Lava*source_block=0.1
+-49,12*Lava*source_block=0.1
+-49,13*Lava*source_block=0.1
+-49,14*Lava*source_block=0.1
+-49,15*Air*

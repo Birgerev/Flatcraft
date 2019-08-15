@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Grass : Block
 {
-    public override string default_texture { get; } = "block_grass";
+    public static string default_texture = "block_grass";
     public override float breakTime { get; } = 0.75f;
 
     public override void FirstTick()

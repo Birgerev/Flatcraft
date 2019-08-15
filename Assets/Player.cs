@@ -99,6 +99,15 @@ new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().
         if (Input.GetKeyDown(KeyCode.Q))
             Drop();
 
+        float scroll = Input.mouseScrollDelta.y;
+        if (scroll != 0)
+        {
+            inventory.selectedSlot += ((int)scroll);
+            inventory.selectedSlot %= 9;
+            if (inventory.selectedSlot < 0)
+                inventory.selectedSlot = 9 + inventory.selectedSlot;
+        }
+
     }
 
     public void Drop()

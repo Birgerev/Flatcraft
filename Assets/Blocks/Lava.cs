@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Lava : Liquid
 {
-    public override string default_texture { get; } = "block_lava";
+    public static string default_texture = "block_lava";
     public override int max_liquid_level { get; } = 4;
 }

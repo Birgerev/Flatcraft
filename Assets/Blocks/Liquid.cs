@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Liquid : Block
 {
-    public override string default_texture { get; } = "";
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
 

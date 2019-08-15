@@ -40,7 +40,9 @@ public class ItemStack
         if (type == null)
             return null;
 
-        return (Sprite)type.GetMethod("getTexture").Invoke(System.Activator.CreateInstance(type), new object[0]);
+        string texture = (string)type.GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
+
+        return (Sprite)Resources.Load<Sprite>("Sprites/" + texture);
     }
 
     public void Drop(Vector2Int position)

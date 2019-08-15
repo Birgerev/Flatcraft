@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Water : Liquid
 {
-    public override string default_texture { get; } = "block_water";
+    public static string default_texture = "block_water";
     public override int max_liquid_level { get; } = 8;
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public bool isOnGround;
+    public float age;
 
     public virtual void Start()
     {
@@ -14,6 +15,7 @@ public class Entity : MonoBehaviour
     public virtual void Update()
     {
         isOnGround = (getVelocity().y < 0.05f && getVelocity().y > -0.05f);
+        age += Time.deltaTime;
     }
 
     public virtual void setVelocity(Vector2 velocity)
