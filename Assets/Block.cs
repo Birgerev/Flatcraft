@@ -184,5 +184,6 @@ public enum Material
     Water,
     Lava,
     Sand,
-    Gravel
+    Gravel,
+    Planks
 }

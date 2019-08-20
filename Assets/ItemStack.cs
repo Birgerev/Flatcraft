@@ -52,4 +52,9 @@ public class ItemStack
         obj.transform.position = new Vector3(position.x, position.y, 0);
         obj.GetComponent<DroppedItem>().item = this;
     }
+
+    public ItemStack Clone()
+    {
+        return (ItemStack)this.MemberwiseClone();
+    }
 }

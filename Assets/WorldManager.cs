@@ -13,24 +13,28 @@ public class WorldManager : MonoBehaviour
     public string loadingState = "";
     public float loadingProgress = 0;
 
+    public Chunk mainChunk;
+
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
-
         StartCoroutine(LoadWorld());
     }
 
 
     IEnumerator LoadWorld()
     {
+
+        Chunk.chunks.Clear();
+
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
         float steps = 6;
 
         loadingState = "Generating Spawn Chunks";
         loadingProgress = 1f / steps;
         //Load Chunk [0]
-        Chunk mainChunk = Chunk.LoadChunk(0);
+        mainChunk = Chunk.LoadChunk(0);
 
         while (!mainChunk.isLoaded)
         {

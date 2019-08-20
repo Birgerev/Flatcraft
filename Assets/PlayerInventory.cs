@@ -9,7 +9,7 @@ public class PlayerInventory : Inventory
 
     public PlayerInventory()
     {
-        initialize(36, "Player Inventory");
+        initialize(45, "Player Inventory");
     }
 
     public ItemStack getSelectedItem()
@@ -27,5 +27,39 @@ public class PlayerInventory : Inventory
         }
 
         return hotbar;
+    }
+
+    public ItemStack[] getArmor()
+    {
+        ItemStack[] armor = new ItemStack[4];
+
+        for (int i = 36; i <= 39; i++)
+        {
+            armor[i] = getItem(i);
+        }
+
+        return armor;
+    }
+
+    public ItemStack[] getCraftingTable()
+    {
+        ItemStack[] table = new ItemStack[4];
+
+        for (int i = 40; i <= 43; i++)
+        {
+            table[i-40] = getItem(i);
+        }
+
+        return table;
+    }
+
+    public int getCraftingResultSlot()
+    {
+        return 44;
+    }
+
+    public override void ToggleOpen()
+    {
+        PlayerInventoryMenu.active = !PlayerInventoryMenu.active;
     }
 }

@@ -29,6 +29,18 @@ public class DroppedItem : Entity
 
     private void OnTriggerEnter2D(Collider2D col)
     {
+        if (col.GetComponent<DroppedItem>() != null)
+        {
+            if (col.GetComponent<DroppedItem>().item.material == item.material)
+            {
+                if (transform.position.x > col.transform.position.x)
+                {
+                    item.amount += col.GetComponent<DroppedItem>().item.amount;
+                    Destroy(col.gameObject);
+                    return;
+                }
+            }
+        }
         if (col.GetComponent<Player>() != null)
         {
             if (col.GetComponent<Player>().inventory.AddItem(item))

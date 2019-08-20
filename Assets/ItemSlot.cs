@@ -8,6 +8,8 @@ public class ItemSlot : MonoBehaviour
     public Text amountText;
     public Image texture;
 
+    public ItemStack item;
+
     // Start is called before the first frame update
     public virtual void Start()
     {
@@ -17,18 +19,21 @@ public class ItemSlot : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
-        ItemStack i = getItemStack();
-
-        if (i.amount == 0)
+        if (item.amount == 0)
+        {
             amountText.text = "";
+            item.material = Material.Air;
+        }
         else
-            amountText.text = i.amount.ToString();
+        {
+            amountText.text = item.amount.ToString();
+        }
 
-        texture.sprite = i.getSprite();
+        texture.sprite = item.getSprite();
     }
-    
-    public virtual ItemStack getItemStack()
+
+    public virtual void Click()
     {
-        return new ItemStack(Material.Stone, 2);
+        GetComponentInParent<InventoryMenu>().OnClickSlot(transform.GetSiblingIndex(), (Input.GetMouseButtonUp(0)) ? 0 : 1);
     }
 }

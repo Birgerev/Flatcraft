@@ -9,6 +9,7 @@ public class Inventory
     public ItemStack[] items;
     public string name;
 
+
     public Inventory()
     {
         initialize(9, "Inventory");
@@ -24,7 +25,7 @@ public class Inventory
         initialize(size, name);
     }
 
-    public void initialize(int size, string name)
+    public virtual void initialize(int size, string name)
     {
         this.size = size;
         Clear();
@@ -124,5 +125,10 @@ public class Inventory
                 return true;
         }
         return false;
+    }
+
+    public virtual void ToggleOpen()
+    {
+
     }
 }

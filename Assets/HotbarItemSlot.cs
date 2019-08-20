@@ -18,12 +18,10 @@ public class HotbarItemSlot : ItemSlot
     public override void Update()
     {
         base.Update();
+
+        item = Player.localInstance.inventory.getHotbar()[transform.GetSiblingIndex()];
+
         GetComponent<Image>().sprite = 
 (Player.localInstance.inventory.selectedSlot == transform.GetSiblingIndex()) ? selected : normal;
-    }
-
-    public override ItemStack getItemStack()
-    {
-        return Player.localInstance.inventory.getHotbar()[transform.GetSiblingIndex()];
     }
 }

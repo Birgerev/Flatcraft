@@ -29,6 +29,7 @@ public class Player : HumanEntity
         localInstance = this;
 
         hunger = maxHunger;
+        inventory = new PlayerInventory();
     }
 
     public override void Update()
@@ -40,8 +41,11 @@ public class Player : HumanEntity
 
         if (getVelocity().magnitude > 0)
             currentChunk = Chunk.GetChunk((int)Mathf.Floor(transform.position.x / Chunk.Width));
-        
-        GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);            
+
+        if (WorldManager.instance.loadingProgress != 1)
+            GetComponent<Rigidbody2D>().simulated = false;
+        else
+            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);            
     }
 
     private void performInput()
@@ -63,36 +67,39 @@ public class Player : HumanEntity
             setVelocity(getVelocity() + new Vector2(0, jumpVelocity));
 
         //Crosshair
-        Vector3Int mousePosition = Vector3Int.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        mousePosition.z = 0;
-        Block block = Chunk.getBlock((Vector2Int)mousePosition);
-
-        crosshair.transform.position = mousePosition;
-
-        if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
+        if (WorldManager.instance.loadingProgress == 1)
         {
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (inventory.getSelectedItem().material != Material.Air &&
-                    (inventory.getSelectedItem().amount > 0))
-                {
+            Vector3Int mousePosition = Vector3Int.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            mousePosition.z = 0;
+            Block block = Chunk.getBlock((Vector2Int)mousePosition);
 
-                    Chunk.setBlock((Vector2Int)mousePosition, inventory.getSelectedItem().material);
-                    inventory.setItem(inventory.selectedSlot, 
-new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount-1));
+            crosshair.transform.position = mousePosition;
+
+            if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
+            {
+                if (Input.GetMouseButtonDown(1))
+                {
+                    if (inventory.getSelectedItem().material != Material.Air &&
+                        (inventory.getSelectedItem().amount > 0))
+                    {
+
+                        Chunk.setBlock((Vector2Int)mousePosition, inventory.getSelectedItem().material);
+                        inventory.setItem(inventory.selectedSlot,
+    new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount - 1));
+                    }
                 }
             }
-        }
-        else
-        {
-            if (Input.GetMouseButtonDown(1))
+            else
             {
-                block.Interact();
-            }
-            if (Input.GetMouseButton(0))
-            {
-                block.Hit(Time.deltaTime);
+                if (Input.GetMouseButtonDown(1))
+                {
+                    block.Interact();
+                }
+                if (Input.GetMouseButton(0))
+                {
+                    block.Hit(Time.deltaTime);
 
+                }
             }
         }
 
@@ -102,12 +109,14 @@ new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().
         float scroll = Input.mouseScrollDelta.y;
         if (scroll != 0)
         {
-            inventory.selectedSlot += ((int)scroll);
+            inventory.selectedSlot -= ((int)scroll);
             inventory.selectedSlot %= 9;
             if (inventory.selectedSlot < 0)
                 inventory.selectedSlot = 9 + inventory.selectedSlot;
         }
 
+        if (Input.GetKeyDown(KeyCode.E))
+            inventory.ToggleOpen();
     }
 
     public void Drop()

@@ -16,7 +16,7 @@ public class Grass : Block
             System.Random r = new System.Random(Chunk.seedByPosition(getPosition()));
 
             //Generate Structures
-            if (r.Next(0, 100) <= 5)
+            if (r.Next(0, 100) <= 8)
             {
                 Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree,save=false", false);
             }

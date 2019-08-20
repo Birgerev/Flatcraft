@@ -198,6 +198,8 @@ public class Chunk : MonoBehaviour
     IEnumerator GenerateChunk()
     {
         noise = new LibNoise.Generator.Perlin(1f, 1f, 1f, 2, WorldManager.world.seed, QualityMode.Low);
+        patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
+        lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
 
         amountOfChunksLoading++;
@@ -442,6 +444,8 @@ public class Chunk : MonoBehaviour
     
     LibNoise.Generator.Perlin noise;
     LibNoise.Generator.Perlin caveNoise;
+    LibNoise.Generator.Perlin patchNoise;
+    LibNoise.Generator.Perlin lakeNoise;
     public Material getTheoreticalTerrainBlock(Vector2Int worldPos)
     {
         System.Random r = new System.Random(seedByPosition(worldPos));
@@ -453,10 +457,10 @@ public class Chunk : MonoBehaviour
             noise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f;
         double density = 1;
 
-        if(worldPos.y > sea_level)
+        if(worldPos.y > sea_level-10)
         {
-            float heightWheight = 0.1f;
-            density = noiseValue - (heightWheight * ((float)worldPos.y - (sea_level-40)))+1.5;
+            float heightWheight = 0.08f;
+            density = noiseValue - (heightWheight * ((float)worldPos.y - (sea_level-43)));
         }
 
         if (density > 0.1f)
@@ -466,8 +470,25 @@ public class Chunk : MonoBehaviour
             if (density > 0.5f)
             {
                 mat = Material.Stone;
+                
+                if(Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20)) > 7.5f)
+                {
+                    mat = Material.Dirt;
+                }
+                if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20 + 100, (float)worldPos.y / 20, 200)) > 7.5f)
+                {
+                    mat = Material.Gravel;
+                }
             }
+        }
 
+        if (mat == Material.Air && worldPos.y <= sea_level)
+        {
+            mat = Material.Water;
+        }
+
+        if(density > 0.1f)
+        {
             double caveValue =
                 (caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f) / 4f;
             if (caveValue > caveHollowValue)
@@ -478,8 +499,8 @@ public class Chunk : MonoBehaviour
                     mat = Material.Lava;
             }
         }
-        
-                    //-Bedrock Generation-//
+
+        //-Bedrock Generation-//
         if (worldPos.y <= 4)
         {
             //Fill layer 0 and then progressively less chance of bedrock further up
@@ -494,7 +515,7 @@ public class Chunk : MonoBehaviour
 
     public static int seedByPosition(Vector2Int pos)
     {
-        return WorldManager.world.seed + 
-            (int)((float)pos.x / (float)pos.y * 1000);
+        return new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y)
+            .GetHashCode()).Next(int.MinValue, int.MaxValue);
     }
 }
