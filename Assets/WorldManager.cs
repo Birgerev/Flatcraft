@@ -9,6 +9,7 @@ public class WorldManager : MonoBehaviour
     public static WorldManager instance;
 
     public GameObject chunkPrefab;
+    public GameObject player;
 
     public string loadingState = "";
     public float loadingProgress = 0;
@@ -57,6 +58,8 @@ public class WorldManager : MonoBehaviour
         loadingState = "Loading Player";
         loadingProgress = 4f / steps;
 
+        Spawn();
+
         yield return new WaitForSeconds(1f);
 
         loadingState = "Done!";
@@ -65,12 +68,12 @@ public class WorldManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         loadingProgress = 6f / steps;
-
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Spawn()
     {
-        
+        GameObject obj = Instantiate(player);
+
+        obj.GetComponent<Player>().Spawn();
     }
 }

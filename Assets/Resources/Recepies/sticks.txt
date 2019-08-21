@@ -1,0 +1,3 @@
+Stick*4*
+Planks*0,0*
+Planks*0,1*

@@ -18,7 +18,14 @@ public class UIHeart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float health = Mathf.Round(Player.localInstance.health * 2) / 2;
+        float health;
+
+
+        if (Player.localInstance == null)
+            health = 0;
+        else
+            health = Mathf.Round(Player.localInstance.health * 2) / 2;
+
         float heartIndex = transform.GetSiblingIndex();
 
         GetComponent<Image>().sprite = full;

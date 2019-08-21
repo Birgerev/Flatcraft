@@ -75,30 +75,66 @@ public class Player : HumanEntity
 
             crosshair.transform.position = mousePosition;
 
-            if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
-            {
-                if (Input.GetMouseButtonDown(1))
-                {
-                    if (inventory.getSelectedItem().material != Material.Air &&
-                        (inventory.getSelectedItem().amount > 0))
-                    {
 
-                        Chunk.setBlock((Vector2Int)mousePosition, inventory.getSelectedItem().material);
-                        inventory.setItem(inventory.selectedSlot,
-    new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount - 1));
+            if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
+            {
+                if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
+                {
+                    if (Input.GetMouseButtonDown(1))
+                    {
+                        if (inventory.getSelectedItem().material != Material.Air &&
+                            (inventory.getSelectedItem().amount > 0))
+                        {
+
+                            Chunk.setBlock((Vector2Int)mousePosition, inventory.getSelectedItem().material);
+                            inventory.setItem(inventory.selectedSlot,
+        new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount - 1));
+                        }
+                    }
+                }
+                else
+                {
+                    Item sampleItem = (Item)System.Activator.CreateInstance(typeof(Item));
+
+                    if (Input.GetMouseButtonDown(1))
+                    {
+                        sampleItem.Interact((Vector2Int)mousePosition, 1, true);
+                    }
+                    else if (Input.GetMouseButton(1))
+                    {
+                        sampleItem.Interact((Vector2Int)mousePosition, 1, false);
+                    }
+
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        sampleItem.Interact((Vector2Int)mousePosition, 0, true);
+                    }
+                    else if (Input.GetMouseButton(0))
+                    {
+                        sampleItem.Interact((Vector2Int)mousePosition, 0, false);
                     }
                 }
             }
-            else
+            else if(System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
             {
+                Item item = (Item)System.Activator.CreateInstance(System.Type.GetType(inventory.getSelectedItem().material.ToString()));
+
                 if (Input.GetMouseButtonDown(1))
                 {
-                    block.Interact();
+                    item.Interact((Vector2Int)mousePosition, 1, true);
                 }
-                if (Input.GetMouseButton(0))
+                else if (Input.GetMouseButton(1))
                 {
-                    block.Hit(Time.deltaTime);
+                    item.Interact((Vector2Int)mousePosition, 1, false);
+                }
 
+                if (Input.GetMouseButtonDown(0))
+                {
+                    item.Interact((Vector2Int)mousePosition, 0, true);
+                }
+                else if (Input.GetMouseButton(0))
+                {
+                    item.Interact((Vector2Int)mousePosition, 0, false);
                 }
             }
         }
@@ -123,5 +159,25 @@ public class Player : HumanEntity
     {
         inventory.getSelectedItem().Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
         inventory.setItem(inventory.selectedSlot, new ItemStack());
+    }
+
+    public void Spawn()
+    {
+        for (int i = Chunk.Height; i <= 0; i --)
+        {
+            if(Chunk.getBlock(Vector2Int.FloorToInt((Vector2)transform.position)) != null)
+            {
+                transform.position = new Vector3(transform.position.x, i+2);
+
+                break;
+            }
+        }
+    }
+
+    public override void Die()
+    {
+        DeathMenu.active = true;
+
+        base.Die();
     }
 }

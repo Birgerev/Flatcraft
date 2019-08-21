@@ -8,6 +8,12 @@ public class Block : MonoBehaviour
     public virtual bool playerCollide { get; } = true;
     public virtual bool requiresGround { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
+
+    public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
+    public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
+
+
+
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
     public float blockHealth = 0;
@@ -51,11 +57,32 @@ public class Block : MonoBehaviour
 
     public virtual void Hit(float time)
     {
+        Hit(time, Tool_Type.None, Tool_Level.None);
+    }
+
+    public virtual void Hit(float time, Tool_Type tool_type, Tool_Level tool_level)
+    {
+        bool properToolStats = false;
+
+        print(tool_type + " == "+ propperToolType +" | "+tool_level +" == "+ propperToolLevel);
+        if(tool_type == propperToolType && tool_level >= propperToolLevel)
+        {
+            time *= 1 + ((float)tool_level * 2f);
+        }
+        if (tool_level == Tool_Level.None ||
+            (tool_type == propperToolType && tool_level >= propperToolLevel))
+        {
+            properToolStats = true;
+        }
+
         blockHealth -= time;
 
         if (blockHealth <= 0)
         {
-            Break();
+            if(properToolStats)
+                Break();
+            else
+                Break(false);
         }
 
         RenderBlockDamage();
@@ -63,7 +90,13 @@ public class Block : MonoBehaviour
 
     public virtual void Break()
     {
-        Drop();
+        Break(true);
+    }
+
+    public virtual void Break(bool drop)
+    {
+        if(drop)
+            Drop();
 
         Chunk.setBlock(getPosition(), Material.Air);
     }
@@ -161,29 +194,4 @@ public class Block : MonoBehaviour
 
         return result;
     }
-}
-
-public enum Material
-{
-    Air,
-    Grass,
-    Dirt,
-    Stone,
-    Bedrock,
-    Oak_Log,
-    Leaves,
-    Structure_Block,
-    Tall_Grass,
-    Red_Flower,
-    Coal_Ore,
-    Iron_Ore,
-    Lapis_Ore,
-    Gold_Ore,
-    Redstone_Ore,
-    Diamond_Ore,
-    Water,
-    Lava,
-    Sand,
-    Gravel,
-    Planks
 }

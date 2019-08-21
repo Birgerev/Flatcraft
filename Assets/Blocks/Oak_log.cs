@@ -8,6 +8,8 @@ public class Oak_Log : Block
 
     public static string default_texture = "block_oak_log";
     public override float breakTime { get; } = 3f;
+    
+    public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
 
     public override void Tick()
     {

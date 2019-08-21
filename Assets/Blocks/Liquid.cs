@@ -81,7 +81,7 @@ public class Liquid : Block
         }
     }
 
-    public override void Hit(float time)
+    public override void Hit(float time, Tool_Type tool_type, Tool_Level tool_level)
     {
 
     }

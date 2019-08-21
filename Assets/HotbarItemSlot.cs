@@ -17,6 +17,9 @@ public class HotbarItemSlot : ItemSlot
     // Update is called once per frame
     public override void Update()
     {
+        if (Player.localInstance == null)
+            return;
+
         base.Update();
 
         item = Player.localInstance.inventory.getHotbar()[transform.GetSiblingIndex()];

@@ -178,7 +178,14 @@ public class Chunk : MonoBehaviour
     {
         cPos ++;
 
-        Vector2 playerPosition = Player.localInstance.transform.position;
+        Vector2 playerPosition;
+
+
+        if (Player.localInstance == null)
+            playerPosition = Vector2.zero;
+        else
+            playerPosition = Player.localInstance.transform.position;
+
         int chunkXPosition = cPos * (int)Width;
         float distanceFromPlayer = Mathf.Abs((cPos * Width) - playerPosition.x);
 
@@ -344,6 +351,10 @@ public class Chunk : MonoBehaviour
 
     public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save)
     {
+        System.Type type = System.Type.GetType(mat.ToString());
+        if (!type.IsSubclassOf(typeof(Block)))
+            return null;
+
         if (!isLoaded && age > 0)
         {
             StartCoroutine(ScheduleSetBlock(1, worldPos, mat, data, save));
@@ -376,7 +387,6 @@ public class Chunk : MonoBehaviour
             GameObject block = null;
 
             block = Instantiate(blockPrefab);
-            System.Type type = System.Type.GetType(mat.ToString());
 
             //Attach it to the object
             block.AddComponent(type);

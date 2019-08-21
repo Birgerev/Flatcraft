@@ -15,11 +15,18 @@ public class InventoryMenu : MonoBehaviour
         
     void Update()
     {
-        playerInventory = Player.localInstance.inventory;
+        if (Player.localInstance != null)
+            playerInventory = Player.localInstance.inventory;
+
+
+        if (playerInventory == null)
+            return;
 
         GetComponent<CanvasGroup>().alpha = (active) ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = (active);
         GetComponent<CanvasGroup>().blocksRaycasts = (active);
+
+        playerInventory = Player.localInstance.inventory;
 
         FillSlots();
     }
@@ -28,8 +35,6 @@ public class InventoryMenu : MonoBehaviour
     {
         if (active)
         {
-            playerInventory = Player.localInstance.inventory;
-
             for (int i = 0; i < totalSlotAmount; i++)
             {
                 getSlot(i).item = playerInventory.getItem(i);

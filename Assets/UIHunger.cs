@@ -18,6 +18,9 @@ public class UIHunger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Player.localInstance == null)
+            return;
+
         float hunger = Mathf.Round(Player.localInstance.hunger*2)/2;
         float hungerIndex = transform.GetSiblingIndex();
 

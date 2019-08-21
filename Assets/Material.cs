@@ -1,0 +1,27 @@
+﻿public enum Material
+{
+    Air,
+    Grass,
+    Dirt,
+    Stone,
+    Bedrock,
+    Oak_Log,
+    Leaves,
+    Structure_Block,
+    Tall_Grass,
+    Red_Flower,
+    Coal_Ore,
+    Iron_Ore,
+    Lapis_Ore,
+    Gold_Ore,
+    Redstone_Ore,
+    Diamond_Ore,
+    Water,
+    Lava,
+    Sand,
+    Gravel,
+    Planks,
+    Stick,
+    Wooden_Pickaxe,
+    Crafting_Table
+}

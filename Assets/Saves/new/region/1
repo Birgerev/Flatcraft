@@ -1,3 +1,10 @@
+20,63*Air*
+21,67*Air*
+21,69*Air*
+20,68*Air*
+16,57*Water*source_block=-1.0,liquid_level=7
+16,65*Gravel*
+16,70*Air*
 22,78*Air*
 16,64*Water*source_block=-1.0,liquid_level=5
 16,33*Gravel*
@@ -29,7 +36,6 @@
 26,80*Air*
 26,81*Air*
 26,79*Air*
-16,70*Gravel*
 30,83*Air*
 24,78*Air*
 23,77*Air*
@@ -49,4 +55,3 @@
 22,76*Air*
 21,77*Air*
 21,76*Air*
-16,65*Air*
