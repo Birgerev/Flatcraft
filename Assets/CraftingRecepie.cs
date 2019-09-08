@@ -102,7 +102,6 @@ public class CraftingRecepie
                 lowest_y = shapeItem.Key.y;
             }
         }
-        Debug.Log(lowest_x+" - y: "+lowest_y);
 
         Vector2Int[] keys = shape.Keys.ToArray<Vector2Int>();
         Dictionary<Vector2Int, Material> shapeCopy = new Dictionary <Vector2Int, Material> (shape);

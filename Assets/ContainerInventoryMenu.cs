@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class ContainerInventoryMenu : InventoryMenu
 {
+    public Text inventoryTitle;
+
     public Inventory inventory;
 
+
+    public override void SetTitle()
+    {
+        base.SetTitle();
+        inventoryTitle.text = inventory.name;
+    }
 
     public override ItemStack getItem(int index)
     {

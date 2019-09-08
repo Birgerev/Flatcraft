@@ -1,9 +1,13 @@
-6,73*Red_Flower*
+0,75*Air*
+11,75*Air*
+9,74*Air*
+11,76*Air*
+8,73*Air*
+6,73*Air*
 6,72*Dirt*
 1,73*Grass*
 0,73*Grass*
 0,74*Grass*
-0,75*Air*
 3,73*Oak_Log*
 12,79*Air*
 13,75*Air*
@@ -11,7 +15,6 @@
 0,80*Air*
 13,76*Air*
 13,74*Air*
-11,75*Air*
 1,75*Air*
 0,76*Air*
 1,74*Air*
@@ -21,7 +24,6 @@
 4,73*Air*
 5,73*Air*
 15,74*Air*
-9,74*Air*
 7,72*Air*
 5,74*Air*
 8,74*Air*

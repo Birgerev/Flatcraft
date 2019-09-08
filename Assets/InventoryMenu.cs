@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class InventoryMenu : MonoBehaviour
@@ -7,6 +8,7 @@ public class InventoryMenu : MonoBehaviour
     public static PlayerInventory playerInventory;
 
     public Transform slotList;
+    public Text playerInventoryTitle;
     public PointerSlot pointerSlot;
 
     public bool active = false;
@@ -29,7 +31,14 @@ public class InventoryMenu : MonoBehaviour
 
         playerInventory = Player.localInstance.inventory;
 
+        SetTitle();
+
         FillSlots();
+    }
+
+    public virtual void SetTitle()
+    {
+        playerInventoryTitle.text = playerInventory.name;
     }
 
     public virtual void FillSlots()

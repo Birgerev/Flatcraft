@@ -8,7 +8,7 @@ public class DroppedItem : Entity
 
     public SpriteRenderer sprite;
 
-
+    public bool canPickup = true;
     private float cosIndex;
 
     // Start is called before the first frame update
@@ -29,16 +29,25 @@ public class DroppedItem : Entity
 
     private void OnTriggerEnter2D(Collider2D col)
     {
+        if (!canPickup)
+            return;
+
         if (col.GetComponent<DroppedItem>() != null)
         {
             if (col.GetComponent<DroppedItem>().item.material == item.material)
             {
-                if (transform.position.x > col.transform.position.x)
-                {
-                    item.amount += col.GetComponent<DroppedItem>().item.amount;
-                    Destroy(col.gameObject);
+                if (transform.position.x < col.transform.position.x)
                     return;
-                }
+                if (transform.position.x == col.transform.position.x)
+                    if (transform.position.y < col.transform.position.y)
+                        return;
+                if (!col.GetComponent<DroppedItem>().canPickup)
+                    return;
+
+                item.amount += col.GetComponent<DroppedItem>().item.amount;
+                col.GetComponent<DroppedItem>().canPickup = false;
+                Destroy(col.gameObject);
+                return;
             }
         }
         if (col.GetComponent<Player>() != null)

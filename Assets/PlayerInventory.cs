@@ -10,7 +10,7 @@ public class PlayerInventory : Inventory
 
     public PlayerInventory()
     {
-        initialize(45, "Player Inventory");
+        initialize(45, "Inventory");
     }
 
     public ItemStack getSelectedItem()

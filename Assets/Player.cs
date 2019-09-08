@@ -56,8 +56,9 @@ public class Player : HumanEntity
 
             if (Input.GetKey(KeyCode.A))
                 targetXVelocity -= walkSpeed;
-            if (Input.GetKey(KeyCode.D))
+            else if (Input.GetKey(KeyCode.D))
                 targetXVelocity += walkSpeed;
+            else targetXVelocity = 0;
 
             //targetXVelocity *= Time.deltaTime;
             setVelocity(new Vector2(targetXVelocity, getVelocity().y));
@@ -157,8 +158,15 @@ public class Player : HumanEntity
 
     public void Drop()
     {
-        inventory.getSelectedItem().Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
-        inventory.setItem(inventory.selectedSlot, new ItemStack());
+        ItemStack item = inventory.getSelectedItem().Clone();
+
+        if (item.amount <= 0)
+            return;
+
+        item.amount = 1;
+        inventory.getSelectedItem().amount --;
+
+        item.Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
     }
 
     public void Spawn()

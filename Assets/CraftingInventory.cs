@@ -6,7 +6,7 @@ public class CraftingInventory : Inventory
 {
     public CraftingInventory()
     {
-        initialize(10, "Crafting Table");
+        initialize(10, "Crafting");
     }
     
     public ItemStack[] getCraftingTable()

@@ -18,7 +18,6 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     
     public void CheckCraftingRecepies()
     {
-        print("check crafting");
         curRecepie = CraftingRecepie.FindRecepieByItems(((CraftingInventory)inventory).getCraftingTable());
 
         if (curRecepie == null)
