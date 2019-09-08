@@ -46,7 +46,7 @@ public class CraftingRecepie
         }
         else if (items.Length == 9)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 9; i++)
             {
                 Vector2Int curPos = Vector2Int.zero;
                 switch (i) {
@@ -72,10 +72,11 @@ public class CraftingRecepie
                         curPos = new Vector2Int(0, 0);
                         break;
                     case 7:
-                        curPos = new Vector2Int(0, 1);
+                        curPos = new Vector2Int(1, 0);
+                        curPos = new Vector2Int(1, 0);
                         break;
                     case 8:
-                        curPos = new Vector2Int(0, 2);
+                        curPos = new Vector2Int(2, 0);
                         break;
                 }
 
@@ -101,15 +102,17 @@ public class CraftingRecepie
                 lowest_y = shapeItem.Key.y;
             }
         }
+        Debug.Log(lowest_x+" - y: "+lowest_y);
 
         Vector2Int[] keys = shape.Keys.ToArray<Vector2Int>();
+        Dictionary<Vector2Int, Material> shapeCopy = new Dictionary <Vector2Int, Material> (shape);
+        shape.Clear();
 
         //Move To Lowest Slots
         foreach (Vector2Int key in keys)
         {
-            Material mat = shape[key];
+            Material mat = shapeCopy[key];
 
-            shape.Remove(key);
             shape.Add(key - new Vector2Int(lowest_x, lowest_y), mat);
         }
 

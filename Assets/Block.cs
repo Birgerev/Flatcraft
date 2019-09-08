@@ -64,7 +64,6 @@ public class Block : MonoBehaviour
     {
         bool properToolStats = false;
 
-        print(tool_type + " == "+ propperToolType +" | "+tool_level +" == "+ propperToolLevel);
         if(tool_type == propperToolType && tool_level >= propperToolLevel)
         {
             time *= 1 + ((float)tool_level * 2f);

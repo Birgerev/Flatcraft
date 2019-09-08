@@ -44,7 +44,10 @@ public class Inventory
 
     public ItemStack getItem(int slot)
     {
-        return items[slot];
+        if (slot < size)
+            return items[slot];
+        else
+            return null;
     }
 
     public void Clear()

@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class InventoryMenu : MonoBehaviour
 {
-    public PlayerInventory playerInventory;
+    public static PlayerInventory playerInventory;
 
     public Transform slotList;
     public PointerSlot pointerSlot;
 
-    public static bool active = false;
+    public bool active = false;
 
-    public virtual int totalSlotAmount { get; set; } = 45;
-        
-    void Update()
+
+    public virtual void Update()
     {
         if (Player.localInstance != null)
             playerInventory = Player.localInstance.inventory;
-
-
+        
         if (playerInventory == null)
             return;
+
+        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)))
+            active = false;
 
         GetComponent<CanvasGroup>().alpha = (active) ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = (active);
@@ -35,16 +36,22 @@ public class InventoryMenu : MonoBehaviour
     {
         if (active)
         {
-            for (int i = 0; i < totalSlotAmount; i++)
+            for (int i = 0; i < playerInventory.size; i++)
             {
-                getSlot(i).item = playerInventory.getItem(i);
+                getSlotObject(i).item = getItem(i);
             }
         }
     }
 
-    public ItemSlot getSlot(int index)
+    public virtual ItemSlot getSlotObject(int index)
     {
         return slotList.GetChild(index).GetComponent<ItemSlot>();
+    }
+
+
+    public virtual ItemStack getItem(int index)
+    {
+        return playerInventory.getItem(index);
     }
 
     public virtual void OnClickSlot(int slotIndex, int clickType)
@@ -61,8 +68,8 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void OnLeftClickSlot(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
 
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
             && pointerItem.amount > 0)      //Left Click to leave one item
@@ -82,9 +89,9 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void OnRightClickSlot(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
-
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
+        
         //Right click to swap
         if (pointerItem.material == Material.Air || pointerItem.material != slotItem.material)
         {
@@ -101,21 +108,18 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void SlotAction_LeaveOne(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
 
         slotItem.material = pointerItem.material;
         slotItem.amount++;
         pointerItem.amount--;
-
-        playerInventory.setItem(slotIndex, slotItem);
-        pointerSlot.item = pointerItem;
     }
 
     public virtual void SlotAction_Halve(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
 
         pointerItem.material = slotItem.material;
 
@@ -124,30 +128,33 @@ public class InventoryMenu : MonoBehaviour
 
         pointerItem.amount = pointerAmount;
         slotItem.amount = slotAmount;
-
-        playerInventory.setItem(slotIndex, slotItem);
-        pointerSlot.item = pointerItem;
     }
 
     public virtual void SlotAction_Swap(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
 
-        playerInventory.setItem(slotIndex, pointerItem);
-        pointerSlot.item = slotItem;
+        ItemStack slotItemClone = slotItem.Clone();
+        ItemStack pointerItemClone = pointerItem.Clone();
+
+
+
+        slotItem.material = pointerItemClone.material;
+        slotItem.amount = pointerItemClone.amount;
+        slotItem.data = pointerItemClone.data;
+
+        pointerItem.material = slotItemClone.material;
+        pointerItem.amount = slotItemClone.amount;
+        pointerItem.data = slotItemClone.data;
     }
 
     public virtual void SlotAction_MergeSlot(int slotIndex)
     {
-        ItemStack slotItem = playerInventory.getItem(slotIndex).Clone();
-        ItemStack pointerItem = pointerSlot.item.Clone();
+        ItemStack slotItem = getItem(slotIndex);
+        ItemStack pointerItem = pointerSlot.item;
 
         slotItem.amount += pointerItem.amount;
         pointerItem.amount = 0;
-
-        playerInventory.setItem(slotIndex, slotItem);
-        pointerSlot.item = pointerItem;
-
     }
 }

@@ -8,7 +8,7 @@ public class CraftingInventory : Inventory
     {
         initialize(10, "Crafting Table");
     }
-
+    
     public ItemStack[] getCraftingTable()
     {
         ItemStack[] table = new ItemStack[9];
@@ -28,6 +28,8 @@ public class CraftingInventory : Inventory
 
     public override void ToggleOpen()
     {
-        CraftingInventoryMenu.active = !CraftingInventoryMenu.active;
+        CraftingInventoryMenu inventory = InventoryMenuManager.instance.craftingInventoryMenu;
+        inventory.active = !inventory.active;
+        inventory.inventory = this;
     }
 }

@@ -9173,10 +9173,9 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 515523490}
-  - {fileID: 1366870325}
-  - {fileID: 1307236253}
   - {fileID: 1091150014}
   - {fileID: 1129229675}
+  - {fileID: 2093095985}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10273,7 +10272,7 @@ RectTransform:
   - {fileID: 2126241196}
   - {fileID: 1436358114}
   m_Father: {fileID: 935343594}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -10522,7 +10521,7 @@ RectTransform:
   - {fileID: 1577685676}
   - {fileID: 166024812}
   m_Father: {fileID: 935343594}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -11852,12 +11851,12 @@ RectTransform:
   - {fileID: 1997135661}
   - {fileID: 382099043}
   - {fileID: 723382802}
-  m_Father: {fileID: 935343594}
-  m_RootOrder: 2
+  m_Father: {fileID: 2093095985}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00012207031, y: 0}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1307236254
@@ -11872,148 +11871,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d861db56fbb3d4b47b984a5a3a9654a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInventory:
-    size: 45
-    items:
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    name: Player Inventory
-    selectedSlot: 0
   slotList: {fileID: 382099043}
   pointerSlot: {fileID: 723382803}
+  active: 0
   inventory:
     size: 9
     items:
@@ -12216,7 +12076,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366870324}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -12224,12 +12084,12 @@ RectTransform:
   - {fileID: 2111283772}
   - {fileID: 1972571422}
   - {fileID: 5159885464506284235}
-  m_Father: {fileID: 935343594}
-  m_RootOrder: 1
+  m_Father: {fileID: 2093095985}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1366870326
@@ -12244,148 +12104,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db78713fb59738144a86d46d6cd65f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInventory:
-    size: 45
-    items:
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    - material: 0
-      amount: 0
-      data: 
-    name: Player Inventory
-    selectedSlot: 0
   slotList: {fileID: 1972571422}
   pointerSlot: {fileID: 5159885464506284236}
+  active: 0
 --- !u!225 &1366870327
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -15380,7 +15101,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000030517578
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -18369,6 +18090,59 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2089885618}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2093095984
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2093095985}
+  - component: {fileID: 2093095986}
+  m_Layer: 5
+  m_Name: inventory_menus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2093095985
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093095984}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1366870325}
+  - {fileID: 1307236253}
+  m_Father: {fileID: 935343594}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2093095986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093095984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8a7bfcfde793944b4e0d62d659f3b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInventoryMenu: {fileID: 1366870326}
+  containerInventoryMenu: {fileID: 0}
+  craftingInventoryMenu: {fileID: 1307236254}
 --- !u!1001 &2106033704
 PrefabInstance:
   m_ObjectHideFlags: 0

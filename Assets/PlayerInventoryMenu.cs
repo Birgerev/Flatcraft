@@ -6,8 +6,6 @@ public class PlayerInventoryMenu : InventoryMenu
 {
     private CraftingRecepie curRecepie;
 
-    public override int totalSlotAmount { get; set; } = 45;
-
     public override void FillSlots()
     {
         if (active)

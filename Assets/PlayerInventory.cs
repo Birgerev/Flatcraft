@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerInventory : Inventory
 {
     public int selectedSlot = 0;
+    public int baseInventorySize = 36;
 
     public PlayerInventory()
     {
@@ -60,6 +61,9 @@ public class PlayerInventory : Inventory
 
     public override void ToggleOpen()
     {
-        PlayerInventoryMenu.active = !PlayerInventoryMenu.active;
+        PlayerInventoryMenu inventory = InventoryMenuManager.instance.playerInventoryMenu;
+        inventory.active = !inventory.active;
+
+        InventoryMenu.playerInventory = this;
     }
 }

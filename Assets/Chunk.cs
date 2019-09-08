@@ -11,7 +11,7 @@ public class Chunk : MonoBehaviour
 
     public static float AutosaveDuration = 1;
     public static int Width = 16, Height = 255;
-    public static int RenderDistance = 3;
+    public static int RenderDistance = 1;
     public static int SpawnChunkDistance = 0;
     public static int MinimumUnloadTime = 10;
     public static int TickRate = 1;
