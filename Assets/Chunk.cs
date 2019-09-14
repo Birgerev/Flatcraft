@@ -11,7 +11,7 @@ public class Chunk : MonoBehaviour
 
     public static float AutosaveDuration = 1;
     public static int Width = 16, Height = 255;
-    public static int RenderDistance = 1;
+    public static int RenderDistance = 3;
     public static int SpawnChunkDistance = 0;
     public static int MinimumUnloadTime = 10;
     public static int TickRate = 1;
@@ -521,6 +521,18 @@ public class Chunk : MonoBehaviour
         }
 
         return mat;
+    }
+
+    public Block getTopmostBlock(int x)
+    {
+        for(int y = Height; y > 0; y--)
+        {
+            if(getLocalBlock(new Vector2Int(x, y)) != null)
+            {
+                return getLocalBlock(new Vector2Int(x, y));
+            }
+        }
+        return null;
     }
 
     public static int seedByPosition(Vector2Int pos)
