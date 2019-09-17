@@ -5,6 +5,8 @@
 -13,49*Gravel*
 -1,68*Lava*source_block=1.0,liquid_level=3
 -1,70*Lava*source_block=1.0,liquid_level=3
+-13,63*Air*
+-13,64*Air*
 -13,69*Oak_Log*
 -13,71*Oak_Log*
 -13,70*Oak_Log*
@@ -74,8 +76,6 @@
 -11,77*Lava*source_block=0.1
 -7,77*Lava*source_block=0.1
 -9,77*Lava*source_block=0.1
--13,63*Gravel*
--13,64*Gravel*
 -10,78*Lava*source_block=0.1
 -8,78*Lava*source_block=0.1
 -12,78*Lava*source_block=0.1
