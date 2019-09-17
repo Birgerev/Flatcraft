@@ -1,18 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class Player : HumanEntity
 {
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float hunger;
-
-    [Header("Movement Properties")]
-    public float walkSpeed;
-    public float sprintSpeed;
-    public float sneakSpeed;
-    public float jumpVelocity;
 
     [Space]
     public Chunk currentChunk;
@@ -28,45 +23,78 @@ public class Player : HumanEntity
 
         localInstance = this;
 
+        health = health;
         hunger = maxHunger;
         inventory = new PlayerInventory();
+
+        Load();
     }
 
     public override void Update()
     {
         base.Update();
-
-        performInput();
-
-
+        
         if (getVelocity().magnitude > 0)
             currentChunk = Chunk.GetChunk((int)Mathf.Floor(transform.position.x / Chunk.Width));
 
         if (WorldManager.instance.loadingProgress != 1)
             GetComponent<Rigidbody2D>().simulated = false;
-        else
-            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);            
+        else if (currentChunk != null)
+            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);
+        else GetComponent<Rigidbody2D>().simulated = true;
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        performInput();
     }
 
     private void performInput()
     {
-        if (getVelocity().x < walkSpeed && getVelocity().x > -walkSpeed)
+        if (Input.GetKeyDown(KeyCode.E))
+            inventory.ToggleOpen();
+
+        //Movement
+        if (Input.GetKey(KeyCode.A))
         {
-            float targetXVelocity = 0;
-
-            if (Input.GetKey(KeyCode.A))
-                targetXVelocity -= walkSpeed;
-            else if (Input.GetKey(KeyCode.D))
-                targetXVelocity += walkSpeed;
-            else targetXVelocity = 0;
-
-            //targetXVelocity *= Time.deltaTime;
-            setVelocity(new Vector2(targetXVelocity, getVelocity().y));
+            Walk(-1);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            Walk(1);
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            Jump();
         }
 
-        if (Input.GetKey(KeyCode.W) && isOnGround)
-            setVelocity(getVelocity() + new Vector2(0, jumpVelocity));
+        //Crosshair
+        Crosshair();
+        
+        //Inventory Managment
+        if (Input.GetKeyDown(KeyCode.Q))
+            Drop();
 
+        float scroll = Input.mouseScrollDelta.y;
+        if (scroll != 0)
+        {
+            inventory.selectedSlot -= ((int)scroll);
+            inventory.selectedSlot %= 9;
+            if (inventory.selectedSlot < 0)
+                inventory.selectedSlot = 9 + inventory.selectedSlot;
+        }
+        KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5
+                                , KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9};
+        foreach(KeyCode keyCode in numpadCodes)
+        {
+            if (Input.GetKeyDown(keyCode))
+                inventory.selectedSlot = System.Array.IndexOf<KeyCode>(numpadCodes, keyCode);
+        }
+    }
+
+    private void Crosshair() { 
         //Crosshair
         if (WorldManager.instance.loadingProgress == 1)
         {
@@ -139,21 +167,6 @@ public class Player : HumanEntity
                 }
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-            Drop();
-
-        float scroll = Input.mouseScrollDelta.y;
-        if (scroll != 0)
-        {
-            inventory.selectedSlot -= ((int)scroll);
-            inventory.selectedSlot %= 9;
-            if (inventory.selectedSlot < 0)
-                inventory.selectedSlot = 9 + inventory.selectedSlot;
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-            inventory.ToggleOpen();
     }
 
     public void Drop()
@@ -167,6 +180,28 @@ public class Player : HumanEntity
         inventory.getSelectedItem().amount --;
 
         item.Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
+    }
+
+    public void DropAll()
+    {
+        int i = 0;
+        foreach(ItemStack item in inventory.items)
+        {
+            if(item.material != Material.Air && item.amount > 0)
+            {
+                System.Random random = new System.Random((transform.position + "" + i).GetHashCode());
+                Vector2 maxVelocity = new Vector2(2, 2);
+                Vector2Int dropPosition = Vector2Int.FloorToInt((Vector2)transform.position + new Vector2(0, 2));
+
+                item.Drop(dropPosition, 
+                    new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
+                    (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
+
+                inventory.items[i] = new ItemStack();
+
+                i++;
+            }
+        }
     }
 
     public void Spawn()
@@ -185,7 +220,65 @@ public class Player : HumanEntity
     public override void Die()
     {
         DeathMenu.active = true;
+        DropAll();
+        health = 20;
+        hunger = 20;
+        Spawn();
+        Save();
 
         base.Die();
+    }
+
+    public override void Save()
+    {
+        string path = WorldManager.world.getPath() + "\\players\\player.dat";
+
+        if (!File.Exists(path))
+        {
+            File.Create(path);
+            return;
+        }
+
+        List<string> lines = new List<string>();
+
+        lines.Add("position="+transform.position.x+","+ transform.position.y);
+        lines.Add("health=" + health);
+        lines.Add("hunger=" + hunger);
+        lines.Add("inventory=" + JsonUtility.ToJson(inventory));
+        
+        File.WriteAllLines(path, lines);
+    }
+
+    public override void Load()
+    {
+        string path = WorldManager.world.getPath() + "\\players\\player.dat";
+
+        if (!File.Exists(path))
+            return;
+
+        Dictionary<string, string> lines = dataFromString(File.ReadAllLines(path));
+
+        if (lines.Count <= 1)
+            return;
+        
+        transform.position = new Vector3(float.Parse(lines["position"].Split(',')[0]),
+            float.Parse(lines["position"].Split(',')[1]));
+        health = float.Parse(lines["health"]);
+        hunger = float.Parse(lines["hunger"]);
+        inventory = (PlayerInventory)JsonUtility.FromJson(lines["inventory"], typeof(PlayerInventory));
+
+    }
+
+    private Dictionary<string, string> dataFromString(string[] lines)
+    {
+        Dictionary<string, string> resultData = new Dictionary<string, string>();
+
+        foreach (string line in lines)
+        {
+            if (line.Contains("="))
+                resultData.Add(line.Split('=')[0], line.Split('=')[1]);
+        }
+
+        return resultData;
     }
 }

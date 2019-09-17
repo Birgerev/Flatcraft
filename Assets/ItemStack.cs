@@ -47,10 +47,16 @@ public class ItemStack
 
     public void Drop(Vector2Int position)
     {
+        Drop(position, new Vector2(0, 0));
+    }
+
+    public void Drop(Vector2Int position, Vector2 velocity)
+    {
         GameObject obj = MonoBehaviour.Instantiate((GameObject)Resources.Load("Objects/DroppedItem"));
 
         obj.transform.position = new Vector3(position.x, position.y, 0);
         obj.GetComponent<DroppedItem>().item = this;
+        obj.GetComponent<Rigidbody2D>().velocity = velocity;
     }
 
     public ItemStack Clone()

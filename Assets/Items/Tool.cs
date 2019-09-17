@@ -10,7 +10,6 @@ public class Tool : Item
     public override void InteractLeft(Vector2Int position, bool firstFrameDown)
     {
         Block block = Chunk.getBlock(position);
-        Debug.Log("special interact "+tool_type+tool_level);
 
         if (block != null)
         {

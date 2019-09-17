@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Entity : MonoBehaviour
 {
     public bool isOnGround;
     public float age;
+    public bool isInLiquid = false;
 
+    public string saveData;
+    
     public virtual void Start()
     {
 
@@ -14,7 +18,6 @@ public class Entity : MonoBehaviour
 
     public virtual void Update()
     {
-        isOnGround = (getVelocity().y < 0.05f && getVelocity().y > -0.05f);
         age += Time.deltaTime;
     }
 
@@ -26,5 +29,32 @@ public class Entity : MonoBehaviour
     public virtual Vector2 getVelocity()
     {
         return GetComponent<Rigidbody2D>().velocity;
+    }
+
+    public virtual void Save()
+    {
+
+    }
+
+    public virtual SpriteRenderer getRenderer()
+    {
+        return GetComponent<SpriteRenderer>();
+    }
+
+    public virtual void Load()
+    {
+
+    }
+
+    void OnCollisionStay2D(Collision2D col)
+    {
+        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f)
+            isOnGround = true;
+    }
+
+    void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.transform.position.y + 1f < transform.position.y)
+            isOnGround = false;
     }
 }

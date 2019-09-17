@@ -132,6 +132,6 @@ public class Inventory
 
     public virtual void ToggleOpen()
     {
-
+        Debug.Log("opening default inv");
     }
 }

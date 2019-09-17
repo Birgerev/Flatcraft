@@ -14,4 +14,9 @@ public class Coal_Ore : Block
     {
         base.Tick();
     }
+
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack(Material.Coal, 1);
+    }
 }

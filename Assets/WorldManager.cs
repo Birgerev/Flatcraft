@@ -8,6 +8,9 @@ public class WorldManager : MonoBehaviour
     public static World world;
     public static WorldManager instance;
 
+    public Dictionary<int, Chunk> chunks = new Dictionary<int, Chunk>();
+    public int amountOfChunksLoading = 0;
+
     public GameObject chunkPrefab;
     public GameObject player;
 
@@ -26,14 +29,21 @@ public class WorldManager : MonoBehaviour
 
     IEnumerator LoadWorld()
     {
-
-        Chunk.chunks.Clear();
+        Time.timeScale = 1;
+        chunks.Clear();
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
         float steps = 6;
 
-        loadingState = "Generating Spawn Chunks";
+        loadingState = "Loading Player";
         loadingProgress = 1f / steps;
+
+        Spawn();
+
+        yield return new WaitForSeconds(1f);
+
+        loadingState = "Generating Spawn Chunks";
+        loadingProgress = 2f / steps;
         //Load Chunk [0]
         mainChunk = Chunk.LoadChunk(0);
 
@@ -43,22 +53,15 @@ public class WorldManager : MonoBehaviour
         }
         
         loadingState = "Generating Chunks";
-        loadingProgress = 2f / steps;
+        loadingProgress = 3f / steps;
 
-        while (Chunk.amountOfChunksLoading > 0)
+        while (amountOfChunksLoading > 0)
         {
             yield return new WaitForSeconds(0.5f);
         }
 
         loadingState = "Ticking Chunks";
-        loadingProgress = 3f / steps;
-
-        yield return new WaitForSeconds(1f);
-
-        loadingState = "Loading Player";
         loadingProgress = 4f / steps;
-
-        Spawn();
 
         yield return new WaitForSeconds(1f);
 

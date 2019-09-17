@@ -1,0 +1,13 @@
+48,56*Water*source_block=-1.0,liquid_level=7
+48,57*Water*source_block=0.1
+49,57*Water*source_block=0.1
+57,60*Water*source_block=-1.0,liquid_level=6
+48,58*Water*source_block=0.1
+49,58*Water*source_block=0.1
+50,58*Water*source_block=0.1
+56,60*Water*source_block=-1.0,liquid_level=7
+56,61*Water*source_block=0.1
+58,60*Water*source_block=-1.0,liquid_level=5
+59,60*Water*source_block=-1.0,liquid_level=4
+60,60*Water*source_block=-1.0,liquid_level=3
+48,6*Lava*source_block=-1.0,liquid_level=3

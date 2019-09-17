@@ -9,9 +9,9 @@ public class Grass : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
 
-    public override void FirstTick()
+    public override void GeneratingTick()
     {
-        base.FirstTick();
+        base.GeneratingTick();
 
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, 1)) == null)
         {
@@ -20,7 +20,7 @@ public class Grass : Block
             //Generate Structures
             if (r.Next(0, 100) <= 8)
             {
-                Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree,save=false", false);
+                Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
             }
 
             //Vegetation

@@ -4,6 +4,7 @@
     Grass,
     Dirt,
     Stone,
+    Cobblestone,
     Bedrock,
     Oak_Log,
     Leaves,
@@ -23,5 +24,11 @@
     Planks,
     Stick,
     Wooden_Pickaxe,
-    Crafting_Table
+    Crafting_Table,
+    Furnace,
+    Coal,
+    Iron_Ingot,
+    Gold_Ingot,
+    Redstone_Dust,
+    Diamond,
 }

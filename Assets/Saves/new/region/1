@@ -1,3 +1,16 @@
+30,8*Coal_Ore*
+20,10*Coal_Ore*
+18,11*Iron_Ore*
+27,17*Coal_Ore*
+21,24*Iron_Ore*
+27,25*Coal_Ore*
+17,27*Stone*
+22,54*Stone*
+29,55*Coal_Ore*
+19,56*Coal_Ore*
+21,62*Iron_Ore*
+29,71*Oak_Log*
+26,72*Oak_Log*
 16,57*Water*source_block=-1.0,liquid_level=7
 29,73*Air*
 29,72*Air*
@@ -22,7 +35,6 @@
 17,63*Gravel*
 16,63*Gravel*
 26,73*Air*
-26,72*Air*
 20,63*Air*
 21,67*Air*
 21,69*Air*

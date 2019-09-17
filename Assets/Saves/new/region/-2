@@ -1,3 +1,19 @@
+-28,4*Coal_Ore*
+-24,12*Redstone_Ore*
+-27,15*Lapis_Ore*
+-18,16*Iron_Ore*
+-26,20*Coal_Ore*
+-28,21*Coal_Ore*
+-27,25*Lapis_Ore*
+-21,29*Coal_Ore*
+-24,34*Coal_Ore*
+-23,34*Iron_Ore*
+-19,34*Coal_Ore*
+-19,39*Stone*
+-30,40*Coal_Ore*
+-32,49*Iron_Ore*
+-29,71*Oak_Log*
+-27,73*Oak_Log*
 -29,41*Gravel*
 -29,42*Gravel*
 -29,43*Gravel*
@@ -40,7 +56,6 @@
 -29,35*Gravel*
 -29,36*Gravel*
 -31,39*Gravel*
--30,40*Gravel*
 -29,37*Gravel*
 -31,40*Gravel*
 -29,38*Gravel*
@@ -120,7 +135,6 @@
 -31,48*Air*
 -30,48*Air*
 -29,48*Air*
--32,49*Air*
 -31,49*Air*
 -30,49*Air*
 -17,76*Air*

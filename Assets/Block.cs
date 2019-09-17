@@ -6,7 +6,9 @@ public class Block : MonoBehaviour
 {
     public string texture;
     public virtual bool playerCollide { get; } = true;
+    public virtual bool trigger { get; } = false;
     public virtual bool requiresGround { get; } = false;
+    public virtual bool autosave { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
 
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
@@ -21,27 +23,31 @@ public class Block : MonoBehaviour
     public int randomTickNumber = 0;
 
     private bool firstTick = true;
-
+    private float time_of_last_hit = 0;
+    private float time_of_last_autosave = 0;
     private void Start()
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
-
+        
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
+        FirstTick();
         Render();
     }
+
     public virtual void FirstTick()
+    {
+    }
+
+    public virtual void GeneratingTick()
     {
         firstTick = false;
     }
 
     public virtual void Tick()
     {
-        if (firstTick)
-            FirstTick();
-
         if (requiresGround)
         {
             if(Chunk.getBlock(getPosition() - new Vector2Int(0, 1)) == null)
@@ -50,9 +56,28 @@ public class Block : MonoBehaviour
             }
         }
 
+        if(Time.time - time_of_last_hit > 0.5f)
+        {
+            ResetBlockDamage();
+        }
+
         randomTickNumber = new System.Random().Next(0, 1000);
 
         GetComponent<Collider2D>().enabled = (playerCollide);
+        GetComponent<Collider2D>().isTrigger = (trigger);
+
+        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave)
+        {
+            Autosave();
+            return;
+        }
+    }
+
+    public virtual void Autosave()
+    {
+        time_of_last_autosave = Time.time;
+
+        Chunk.setBlock(getPosition(), GetMateral(), stringFromData(data), true);
     }
 
     public virtual void Hit(float time)
@@ -62,6 +87,8 @@ public class Block : MonoBehaviour
 
     public virtual void Hit(float time, Tool_Type tool_type, Tool_Level tool_level)
     {
+        time_of_last_hit = Time.time;
+
         bool properToolStats = false;
 
         if(tool_type == propperToolType && tool_level >= propperToolLevel)
@@ -114,6 +141,12 @@ public class Block : MonoBehaviour
     {
     }
 
+    public void ResetBlockDamage()
+    {
+        blockHealth = breakTime;
+        RenderBlockDamage();
+    }
+
     public virtual void RenderBlockDamage()
     {
         Transform damageIndicator = transform.Find("BreakIndicator");
@@ -122,7 +155,7 @@ public class Block : MonoBehaviour
         {
             if(damageIndicator != null)
             {
-                Destroy(damageIndicator);
+                Destroy(damageIndicator.gameObject);
             }
         }
         else
@@ -166,7 +199,7 @@ public class Block : MonoBehaviour
     {
         Dictionary<string, string> resultData = new Dictionary<string, string>();
 
-        foreach (string dataPiece in dataString.Split(','))
+        foreach (string dataPiece in dataString.Split('|'))
         {
             if(dataPiece.Contains("="))
                 resultData.Add(dataPiece.Split('=')[0], dataPiece.Split('=')[1]);
@@ -185,7 +218,7 @@ public class Block : MonoBehaviour
             foreach (string value in data.Values)
             {
                 if (!first)
-                    result += ",";
+                    result += "|";
                 result += key + "=" + value; 
                 first = false;
             }

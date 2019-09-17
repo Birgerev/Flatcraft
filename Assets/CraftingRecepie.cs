@@ -152,7 +152,7 @@ public class CraftingRecepie
 
     public static CraftingRecepie[] allRecepies()
     {
-        TextAsset[] files = Resources.LoadAll<TextAsset>("Recepies");
+        TextAsset[] files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
         List<CraftingRecepie> recepies = new List<CraftingRecepie>();
 
         foreach(TextAsset file in files)

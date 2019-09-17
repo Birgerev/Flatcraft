@@ -6,14 +6,10 @@ public class Liquid : Block
 {
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
+    public override bool trigger { get; } = true;
 
     public string debugData;
-
-    public override void FirstTick()
-    {
-        base.FirstTick();
-    }
-
+    
     public override void Tick()
     {
         base.Tick();
@@ -92,5 +88,21 @@ public class Liquid : Block
             return Resources.LoadAll<Sprite>("Sprites/" + texture)[max_liquid_level-1];
 
         return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(data["liquid_level"]) - 1];
+    }
+
+    public virtual void OnTriggerStay2D(Collider2D col)
+    {
+        if(col.GetComponent<Entity>() != null)
+        {
+            col.GetComponent<Entity>().isInLiquid = true;
+        }
+    }
+
+    public virtual void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.GetComponent<Entity>() != null)
+        {
+            col.GetComponent<Entity>().isInLiquid = false;
+        }
     }
 }

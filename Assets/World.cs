@@ -55,6 +55,7 @@ public class World
     {
         Directory.CreateDirectory(getPath());
         Directory.CreateDirectory(getPath()+"\\region");
+        Directory.CreateDirectory(getPath() + "\\players");
         File.Create(getPath() + "\\level.dat");
         File.Create(getPath() + "\\seed.dat").Dispose();
         File.WriteAllText(getPath() + "\\seed.dat", "" + seed);

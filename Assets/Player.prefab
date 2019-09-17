@@ -45,6 +45,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -121,7 +122,7 @@ GameObject:
   - component: {fileID: 1149122272203067693}
   - component: {fileID: 1149122272203067694}
   m_Layer: 0
-  m_Name: Render
+  m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,6 +156,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -240,12 +242,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isOnGround: 0
   age: 0
+  isInLiquid: 0
+  saveData: 
   maxHunger: 20
   hunger: 0
   walkSpeed: 4.3
   sprintSpeed: 5.6
   sneakSpeed: 1.3
   jumpVelocity: 5
+  swimVelocity: 5
   currentChunk: {fileID: 0}
   crosshair: {fileID: 1149122271182722694}
   inventory:
@@ -361,6 +366,7 @@ MonoBehaviour:
       data: 
     name: Player Inventory
     selectedSlot: 0
+    baseInventorySize: 36
 --- !u!61 &1149122272397806803
 BoxCollider2D:
   m_ObjectHideFlags: 0

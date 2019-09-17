@@ -18,9 +18,10 @@ public class Structure_Block : Block
             TextAsset structure = structures[new System.Random(Chunk.seedByPosition(getPosition())).Next(0, structures.Length)];
             bool save = (data["save"] == "false") ? false : true;
 
-            bool currentBlockHasBeenReplaced = false;
+            Material replaceMaterial = Material.Air;
+            string replaceData = "";
 
-            foreach(string blockText in structure.text.Split(new char[] { '\n', '\r'}))
+            foreach (string blockText in structure.text.Split(new char[] { '\n', '\r'}))
             {
                 if (blockText.Length < 4)
                     continue;
@@ -31,17 +32,18 @@ public class Structure_Block : Block
                 string data = blockText.Split('*')[2];
 
                 if (pos == Vector2Int.zero)
-                    currentBlockHasBeenReplaced = true;
+                {
+                    replaceMaterial = mat;
+                    replaceData = data;
+                    continue;
+                }
 
                 pos += getPosition();
 
                 Chunk.setBlock(pos, mat, save);
             }
-
-            if (currentBlockHasBeenReplaced)
-                Destroy(gameObject);
-            else
-                Chunk.setBlock(getPosition(), Material.Air, false);
+            
+            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, true);
         }
     }
 }
