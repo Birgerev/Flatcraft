@@ -1,4 +1,5 @@
 -9,37*Furnace*inventory={"size":3,"items":[{"material":0,"amount":0,"data":""},{"material":0,"amount":0,"data":""},{"material":0,"amount":0,"data":""}],"name":"Furnace","highestFuel":0.0,"fuelLeft":0.0,"smeltingProgress":0}
+-8,79*Oak_Log*
 -2,11*Coal_Ore*
 -1,12*Stone*
 -2,13*Iron_Ore*
@@ -13,7 +14,6 @@
 -9,52*Water*source_block=0.1
 -8,53*Water*source_block=0.1
 -7,53*Water*source_block=0.1
--8,79*Oak_Log*
 -11,53*Water*source_block=-1.0,liquid_level=7
 -10,53*Water*source_block=0.1
 -9,53*Water*source_block=0.1

@@ -25,7 +25,7 @@ public class BlockLight : MonoBehaviour
         if (GetComponent<Light2D>() == null)
             gameObject.AddComponent<Light2D>();
         GetComponent<Light2D>().lightType = Light2D.LightType.Point;
-        GetComponent<Light2D>().pointLightInnerRadius = glowingLevel / 3;
+        GetComponent<Light2D>().pointLightInnerRadius = glowingLevel / 10;
         GetComponent<Light2D>().pointLightOuterRadius = glowingLevel + flickerValue;
         GetComponent<Light2D>().color = color;
 

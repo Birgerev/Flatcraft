@@ -30,7 +30,7 @@ public class Sunlight : MonoBehaviour
 
     public void UpdateLight()
     {
-        SortedDictionary<int, Chunk> sortedChunks = new SortedDictionary<int, Chunk>(Chunk.chunks);
+        SortedDictionary<int, Chunk> sortedChunks = new SortedDictionary<int, Chunk>(WorldManager.instance.chunks);
         List<Vector3> lightPoints = new List<Vector3>();
 
         int minX = int.MaxValue;
@@ -40,6 +40,9 @@ public class Sunlight : MonoBehaviour
         {
             for(int i = chunk.Value.ChunkPosition*Chunk.Width; i < (chunk.Value.ChunkPosition * Chunk.Width) + Chunk.Width; i += lightFidelity)
             {
+                if (chunk.Value.getTopmostBlock(i) == null)
+                    continue;
+
                 lightPoints.Add(new Vector3(i, chunk.Value.getTopmostBlock(i).getPosition().y));
 
                 if (i > maxX)
