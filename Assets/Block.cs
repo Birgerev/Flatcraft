@@ -13,8 +13,10 @@ public class Block : MonoBehaviour
 
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
-
-
+    
+    public virtual int glowingLevel { get; } = 0;
+    public virtual float flickerLevel { get; } = 0;
+    public virtual Color glowingColor { get; } = new Color(1, 0.75f, 0.4f);
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
@@ -56,9 +58,28 @@ public class Block : MonoBehaviour
             }
         }
 
-        if(Time.time - time_of_last_hit > 0.5f)
+        if (Time.time - time_of_last_hit > 0.5f)
         {
             ResetBlockDamage();
+        }
+        if(glowingLevel != 0)
+        {
+            GameObject light;
+            if (transform.Find("_light"))
+            {
+                light = transform.Find("_light").gameObject;
+            }
+            else
+            {
+                light = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
+                light.transform.SetParent(transform);
+                light.transform.localPosition = Vector3.zero;
+                light.transform.name = "_light";
+            }
+            
+            light.GetComponent<BlockLight>().glowingLevel = glowingLevel;
+            light.GetComponent<BlockLight>().color = glowingColor;
+            light.GetComponent<BlockLight>().flickerLevel = flickerLevel;
         }
 
         randomTickNumber = new System.Random().Next(0, 1000);

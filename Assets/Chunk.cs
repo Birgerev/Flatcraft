@@ -553,11 +553,23 @@ public class Chunk : MonoBehaviour
         int chunkXPosition = this.GetMinXWorldPosition();
         foreach (Entity e in GameObject.FindObjectsOfType<Entity>())
         {
-            if(e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
+            if (e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
                 entities.Add(e);
         }
 
         return entities.ToArray();
+    }
+
+    public Block getTopmostBlock(int x)
+    {
+        for(int y = Height; y > 0; y--)
+        {
+            if(getLocalBlock(new Vector2Int(x, y)) != null)
+            {
+                return getLocalBlock(new Vector2Int(x, y));
+            }
+        }
+        return null;
     }
 
     public static int seedByPosition(Vector2Int pos)
