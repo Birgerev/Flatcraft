@@ -21,7 +21,7 @@ public class LivingEntity : Entity
 
     private float last_jump_time;
 
-    private float lastGroundedYlevel;
+    private float highestYlevelsinceground;
 
     public override void Start()
     {
@@ -91,13 +91,15 @@ public class LivingEntity : Entity
     {
         if (isOnGround && !isInLiquid)
         {
-            float damage = (lastGroundedYlevel - transform.position.y) - 3;
+            float damage = (highestYlevelsinceground - transform.position.y) - 3;
             if (damage >= 1)
                 TakeFallDamage(damage);
         }
 
         if (isOnGround || isInLiquid)
-            lastGroundedYlevel = transform.position.y;
+            highestYlevelsinceground = 0;
+        else if (transform.position.y > highestYlevelsinceground)
+            highestYlevelsinceground = transform.position.y;
     }
 
     public virtual void TakeFallDamage(float damage)

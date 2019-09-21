@@ -38,7 +38,7 @@ public class World
     {
         List<World> worlds = new List<World>();
 
-        foreach (string worldName in Directory.GetDirectories(Application.dataPath + "\\Saves\\"))
+        foreach (string worldName in Directory.GetDirectories(GetSavesPath()))
         {
             worlds.Add(loadWorld(worldName.Split('\\')[worldName.Split('\\').Length-1]));
         }
@@ -61,9 +61,18 @@ public class World
         File.WriteAllText(getPath() + "\\seed.dat", "" + seed);
     }
 
+    public static string GetSavesPath()
+    {
+        string savesPath = Application.dataPath + "\\..\\Saves\\";
+
+        if (!Directory.Exists(savesPath))
+            Directory.CreateDirectory(savesPath);
+        return savesPath;
+    }
     public string getPath()
     {
-        return Application.dataPath + "\\Saves\\" + name;
+
+        return GetSavesPath() + name;
     }
 
     public float getDiskSize()

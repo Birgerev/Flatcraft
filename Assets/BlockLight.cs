@@ -7,16 +7,16 @@ public class BlockLight : MonoBehaviour
 {
     public int glowingLevel = 0;
     public float flickerLevel = 0;
-    public int flickersInASecond = 2;
+    private int flickersInASecond = 2;
     public Color color;
 
     private float flickerValue = 0;
-    private float last_flicker_time;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Update();
+        StartCoroutine(Flicker());
     }
 
     // Update is called once per frame
@@ -30,16 +30,14 @@ public class BlockLight : MonoBehaviour
         transform.GetChild(0).GetComponent<Light2D>().pointLightInnerRadius = (glowingLevel / 10) + flickerValue;
         transform.GetChild(0).GetComponent<Light2D>().pointLightOuterRadius = glowingLevel;
         transform.GetChild(0).GetComponent<Light2D>().color = color;
-
-        if (Time.time > last_flicker_time + (1 / flickersInASecond))
-        {
-            Flicker();
-            last_flicker_time = Time.time;
-        }
     }
 
-    public void Flicker()
+    IEnumerator Flicker()
     {
-        flickerValue = (flickerValue == 0) ? flickerLevel : 0;
+        while (true)
+        {
+            flickerValue = (flickerValue == 0) ? flickerLevel : 0;
+            yield return new WaitForSecondsRealtime(1 / flickersInASecond);
+        }
     }
 }

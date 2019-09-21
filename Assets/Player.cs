@@ -69,21 +69,21 @@ public class Player : HumanEntity
         {
             Jump();
         }
-
-        //Crosshair
-        Crosshair();
         
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
             Drop();
 
         float scroll = Input.mouseScrollDelta.y;
-        if (scroll != 0)
+        //Check once every 5 frames
+        if (Mathf.Abs(scroll) > 0 && Time.frameCount % 3 == 0)
         {
-            inventory.selectedSlot -= ((int)scroll);
-            inventory.selectedSlot %= 9;
+            inventory.selectedSlot += (scroll > 0) ? -1 : 1;
+
+            if (inventory.selectedSlot > 8)
+                inventory.selectedSlot = 0;
             if (inventory.selectedSlot < 0)
-                inventory.selectedSlot = 9 + inventory.selectedSlot;
+                inventory.selectedSlot = 8;
         }
         KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5
                                 , KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9};
@@ -92,6 +92,9 @@ public class Player : HumanEntity
             if (Input.GetKeyDown(keyCode))
                 inventory.selectedSlot = System.Array.IndexOf<KeyCode>(numpadCodes, keyCode);
         }
+
+        //Crosshair
+        Crosshair();
     }
 
     private void Crosshair() { 

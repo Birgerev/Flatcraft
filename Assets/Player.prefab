@@ -440,41 +440,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
@@ -496,12 +461,12 @@ PrefabInstance:
     - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
       propertyPath: m_PointLightOuterRadius
-      value: 9
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
       propertyPath: m_PointLightInnerRadius
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
@@ -516,32 +481,37 @@ PrefabInstance:
     - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
       propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LightOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_PointLightInnerRadius
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
       propertyPath: m_PointLightOuterRadius
-      value: 9
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
-      propertyPath: m_PointLightInnerRadius
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1320084374908943586, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 1
+      propertyPath: m_LightOrder
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c07467e0f14f90d4b9cf7a82700bbe37, type: 3}
