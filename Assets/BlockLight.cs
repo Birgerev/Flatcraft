@@ -16,18 +16,20 @@ public class BlockLight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Update();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GetComponent<Light2D>() == null)
-            gameObject.AddComponent<Light2D>();
         GetComponent<Light2D>().lightType = Light2D.LightType.Point;
         GetComponent<Light2D>().pointLightInnerRadius = (glowingLevel / 10) + flickerValue;
         GetComponent<Light2D>().pointLightOuterRadius = glowingLevel;
         GetComponent<Light2D>().color = color;
+        transform.GetChild(0).GetComponent<Light2D>().lightType = Light2D.LightType.Point;
+        transform.GetChild(0).GetComponent<Light2D>().pointLightInnerRadius = (glowingLevel / 10) + flickerValue;
+        transform.GetChild(0).GetComponent<Light2D>().pointLightOuterRadius = glowingLevel;
+        transform.GetChild(0).GetComponent<Light2D>().color = color;
 
         if (Time.time > last_flicker_time + (1 / flickersInASecond))
         {

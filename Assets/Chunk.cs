@@ -232,7 +232,7 @@ public class Chunk : MonoBehaviour
             }
             if (blocksGenerated > 0)
             {
-                yield return new WaitForSecondsRealtime(0.005f);
+                yield return new WaitForSecondsRealtime(0.001f);
             }
         }
 

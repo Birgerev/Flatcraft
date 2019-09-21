@@ -6,6 +6,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class Sunlight : MonoBehaviour
 {
     public int lightFidelity;
+    public Color sunlightColor = Color.white;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,13 @@ public class Sunlight : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(5);
-            UpdateLight();
+            try
+            {
+                UpdateLight();
+            }catch(System.Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
     }
 
@@ -54,8 +61,28 @@ public class Sunlight : MonoBehaviour
 
         lightPoints.Add(new Vector3(maxX, Chunk.Height));
         lightPoints.Add(new Vector3(minX, Chunk.Height));
-        
-        Light2D light = GetComponent<Light2D>();
-        light.m_ShapePath = lightPoints.ToArray();
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).gameObject.name == "old")
+                Destroy(transform.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.name = "old";
+        }
+
+        foreach (Vector3 pos in lightPoints)
+        {
+            GameObject lightObj = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
+            lightObj.transform.SetParent(transform);
+            lightObj.transform.localPosition = pos;
+            lightObj.transform.name = "_light";
+
+            BlockLight light = lightObj.GetComponent<BlockLight>();
+            light.color = sunlightColor;
+            light.glowingLevel = 14;
+        }
     }
 }
