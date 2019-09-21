@@ -1,0 +1,3 @@
+Torch*4*
+Stick*0,0*
+Coal*0,1*

@@ -7,7 +7,7 @@ public class BlockLight : MonoBehaviour
 {
     public int glowingLevel = 0;
     public float flickerLevel = 0;
-    public int flickersInASecond = 5;
+    public int flickersInASecond = 2;
     public Color color;
 
     private float flickerValue = 0;
@@ -25,8 +25,8 @@ public class BlockLight : MonoBehaviour
         if (GetComponent<Light2D>() == null)
             gameObject.AddComponent<Light2D>();
         GetComponent<Light2D>().lightType = Light2D.LightType.Point;
-        GetComponent<Light2D>().pointLightInnerRadius = glowingLevel / 10;
-        GetComponent<Light2D>().pointLightOuterRadius = glowingLevel + flickerValue;
+        GetComponent<Light2D>().pointLightInnerRadius = (glowingLevel / 10) + flickerValue;
+        GetComponent<Light2D>().pointLightOuterRadius = glowingLevel;
         GetComponent<Light2D>().color = color;
 
         if (Time.time > last_flicker_time + (1 / flickersInASecond))
@@ -38,16 +38,6 @@ public class BlockLight : MonoBehaviour
 
     public void Flicker()
     {
-        float r = ((float)new System.Random((transform.position + "" + Time.time).GetHashCode()).NextDouble()-0.5f) * 2;
-        r *= (flickerValue/5);
-
-        if(flickerValue + Mathf.Abs(r) > flickerLevel)
-        {
-            flickerValue -= Mathf.Abs(r);
-        }
-        else
-        {
-            flickerValue += Mathf.Abs(r);
-        }
+        flickerValue = (flickerValue == 0) ? flickerLevel : 0;
     }
 }

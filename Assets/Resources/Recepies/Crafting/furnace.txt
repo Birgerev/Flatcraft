@@ -1,0 +1,9 @@
+Furnace*1*
+Cobblestone*0,0*
+Cobblestone*1,0*
+Cobblestone*2,0*
+Cobblestone*0,1*
+Cobblestone*2,1*
+Cobblestone*0,2*
+Cobblestone*1,2*
+Cobblestone*2,2*

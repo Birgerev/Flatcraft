@@ -9,6 +9,16 @@ public class Stone : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Pickaxe;
     public override Tool_Level propperToolLevel { get; } = Tool_Level.Wooden;
+    
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack(Material.Cobblestone, 1);
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+    }
 
     public override void GeneratingTick()
     {
@@ -47,10 +57,5 @@ public class Stone : Block
             Chunk.setBlock(getPosition(), Material.Structure_Block, "structure=Ore_Coal|save=false", false);
             return;
         }
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
     }
 }

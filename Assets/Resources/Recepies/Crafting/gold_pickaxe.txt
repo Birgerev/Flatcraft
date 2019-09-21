@@ -1,0 +1,6 @@
+Gold_Pickaxe*1*
+Stick*1,0*
+Stick*1,1*
+Gold_Ingot*0,2*
+Gold_Ingot*1,2*
+Gold_Ingot*2,2*

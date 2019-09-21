@@ -24,6 +24,10 @@
     Planks,
     Stick,
     Wooden_Pickaxe,
+    Stone_Pickaxe,
+    Iron_Pickaxe,
+    Gold_Pickaxe,
+    Diamond_Pickaxe,
     Crafting_Table,
     Furnace,
     Coal,
@@ -31,4 +35,5 @@
     Gold_Ingot,
     Redstone_Dust,
     Diamond,
+    Torch
 }
