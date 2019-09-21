@@ -82,7 +82,7 @@ public class Sunlight : MonoBehaviour
 
             BlockLight light = lightObj.GetComponent<BlockLight>();
             light.color = sunlightColor;
-            light.glowingLevel = 14;
+            light.glowingLevel = 17;
         }
     }
 }
