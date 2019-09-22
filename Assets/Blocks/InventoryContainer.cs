@@ -22,12 +22,17 @@ public class InventoryContainer : Block
 
     public override void Tick()
     {
+        data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
+
         base.Tick();
     }
 
     public override void Autosave()
     {
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
+
+        if (inventory.open)
+            return;
 
         base.Autosave();
     }
@@ -38,10 +43,4 @@ public class InventoryContainer : Block
 
         inventory.Open();
     }
-
-    private static T CastAs<T>(object obj) where T : class, new()
-    {
-        return obj as T;
-    }
-
 }

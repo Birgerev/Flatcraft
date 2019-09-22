@@ -15,8 +15,11 @@ public class Furnace : InventoryContainer
 
     public override void Tick()
     {
-        base.Tick();
-
+        if (inventory == null)
+        {
+            base.Tick();
+            return;
+        }
         CheckFuels();
         SmeltTick();
     }
@@ -47,8 +50,8 @@ public class Furnace : InventoryContainer
         if (getInventory().fuelLeft <= 0)
             getInventory().highestFuel = 0;
 
-        if (curRecepie != null &&
-(getInventory().getItem(getInventory().getResultSlot()).material == curRecepie.result.material ||
+        if (curRecepie != null && getInventory().getItem(getInventory().getIngredientSlot()).amount > 0 &&
+                (getInventory().getItem(getInventory().getResultSlot()).material == curRecepie.result.material ||
 getInventory().getItem(getInventory().getResultSlot()).material == Material.Air))
         {
             //Add progress to smeltbar
@@ -88,15 +91,10 @@ getInventory().getItem(getInventory().getResultSlot()).material == Material.Air)
 
     public SmeltingRecepie GetRecepie()
     {
+        if (getInventory().getItem(getInventory().getIngredientSlot()).amount <= 0)
+            return null;
         //Get recepie based on contents of ingredient slot
         return SmeltingRecepie.FindRecepieByIngredient(getInventory().getItem(getInventory().getIngredientSlot()).material);
-    }
-
-    public override void Autosave()
-    {
-        //Temporary solution for not autosaving furnace while in inventory
-        if (!FurnaceInventory.open)
-            base.Autosave();
     }
 
     private FurnaceInventory getInventory()

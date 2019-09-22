@@ -5,8 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class FurnaceInventory : Inventory
 {
-    public static bool open { get { return InventoryMenuManager.instance.furnaceInventoryMenu.active; } }
-
     public float highestFuel = 0;
     public float fuelLeft = 0;
     public int smeltingProgress = 0;
