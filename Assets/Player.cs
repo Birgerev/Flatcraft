@@ -16,6 +16,8 @@ public class Player : HumanEntity
 
     public static Player localInstance;
 
+    private float lastFrameScroll;
+
     public override void Start()
     {
         base.Start();
@@ -32,6 +34,19 @@ public class Player : HumanEntity
     public override void Update()
     {
         base.Update();
+        
+        float scroll = Input.mouseScrollDelta.y;
+        //Check once every 5 frames
+        if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
+        {
+            inventory.selectedSlot += (scroll > 0) ? -1 : 1;
+
+            if (inventory.selectedSlot > 8)
+                inventory.selectedSlot = 0;
+            if (inventory.selectedSlot < 0)
+                inventory.selectedSlot = 8;
+        }
+        lastFrameScroll = scroll;
     }
 
     public override void FixedUpdate()
@@ -64,17 +79,6 @@ public class Player : HumanEntity
         if (Input.GetKeyDown(KeyCode.Q))
             Drop();
 
-        float scroll = Input.mouseScrollDelta.y;
-        //Check once every 5 frames
-        if (Mathf.Abs(scroll) > 0 && Time.frameCount % 3 == 0)
-        {
-            inventory.selectedSlot += (scroll > 0) ? -1 : 1;
-
-            if (inventory.selectedSlot > 8)
-                inventory.selectedSlot = 0;
-            if (inventory.selectedSlot < 0)
-                inventory.selectedSlot = 8;
-        }
         KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5
                                 , KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9};
         foreach(KeyCode keyCode in numpadCodes)

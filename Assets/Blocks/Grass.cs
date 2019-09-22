@@ -9,6 +9,11 @@ public class Grass : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
 
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack(Material.Dirt, 1);
+    }
+
     public override void GeneratingTick()
     {
         base.GeneratingTick();

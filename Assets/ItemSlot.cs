@@ -26,6 +26,11 @@ public class ItemSlot : MonoBehaviour
             amountText.text = "";
             item.material = Material.Air;
         }
+        else if (item.amount == 1)
+        {
+
+            amountText.text = "";
+        }
         else
         {
             amountText.text = item.amount.ToString();
