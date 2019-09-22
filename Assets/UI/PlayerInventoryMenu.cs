@@ -17,11 +17,6 @@ public class PlayerInventoryMenu : InventoryMenu
         base.FillSlots();
     }
 
-    public override void CheckClose()
-    {
-
-    }
-
     public override void OnClickSlot(int slotIndex, int clickType)
     {
         if (slotIndex == playerInventory.getCraftingResultSlot())

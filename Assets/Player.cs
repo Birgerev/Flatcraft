@@ -43,8 +43,8 @@ public class Player : HumanEntity
 
     private void performInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-            inventory.ToggleOpen();
+        if (Input.GetKeyDown(KeyCode.E) && !inventory.open)
+            inventory.Open();
 
         //Movement
         if (Input.GetKey(KeyCode.A))

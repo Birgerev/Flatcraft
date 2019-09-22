@@ -26,10 +26,10 @@ public class CraftingInventory : Inventory
         return 9;
     }
 
-    public override void ToggleOpen()
+    public override void UpdateMenuStatus()
     {
         CraftingInventoryMenu inventory = InventoryMenuManager.instance.craftingInventoryMenu;
-        inventory.active = !inventory.active;
+        inventory.active = open;
         inventory.inventory = this;
     }
 }

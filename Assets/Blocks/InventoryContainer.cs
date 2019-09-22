@@ -36,7 +36,7 @@ public class InventoryContainer : Block
     {
         base.Interact();
 
-        inventory.ToggleOpen();
+        inventory.Open();
     }
 
     private static T CastAs<T>(object obj) where T : class, new()

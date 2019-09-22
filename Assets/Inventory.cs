@@ -9,6 +9,7 @@ public class Inventory
     public ItemStack[] items;
     public string name;
 
+    public bool open;
 
     public Inventory()
     {
@@ -130,8 +131,20 @@ public class Inventory
         return false;
     }
 
-    public virtual void ToggleOpen()
+    public virtual void Open()
     {
-        Debug.Log("opening default inv");
+        open = true;
+        UpdateMenuStatus();
+    }
+
+    public virtual void Close()
+    {
+        open = false;
+        UpdateMenuStatus();
+    }
+
+    public virtual void UpdateMenuStatus()
+    {
+
     }
 }

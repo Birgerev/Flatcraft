@@ -15,6 +15,7 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual bool wholePlayerInventory { get; } = false;
 
+    private int inventoryAge;
 
     public virtual void Update()
     {
@@ -23,6 +24,10 @@ public class InventoryMenu : MonoBehaviour
         
         if (playerInventory == null)
             return;
+
+        if (active)
+            inventoryAge++;
+        else inventoryAge = 0;
 
         CheckClose();
 
@@ -39,8 +44,13 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void CheckClose()
     {
-        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)))
-            active = false;
+        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 2)
+            Close();
+    }
+
+    public virtual void Close()
+    {
+        playerInventory.Close();
     }
 
     public virtual void SetTitle()

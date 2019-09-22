@@ -17,6 +17,6 @@ public class Crafting_Table : Block
 
     public override void Interact()
     {
-        new CraftingInventory().ToggleOpen();
+        new CraftingInventory().Open();
     }
 }

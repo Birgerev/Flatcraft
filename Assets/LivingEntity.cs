@@ -41,8 +41,6 @@ public class LivingEntity : Entity
     public override void Update()
     {
         base.Update();
-
-        checkSuffocation();
     }
 
     public virtual void ProcessMovement()
@@ -109,24 +107,12 @@ public class LivingEntity : Entity
             highestYlevelsinceground = transform.position.y;
     }
 
-    private void checkSuffocation()
-    {
-        if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
-        {
-            if (Chunk.getBlock(Vector2Int.FloorToInt(((Vector2)transform.position))))
-            {
-                if(Chunk.getBlock(Vector2Int.FloorToInt(((Vector2)transform.position))).playerCollide)
-                    TakeSuffocationDamage(1);
-            }
-        }
-    }
-
     public virtual void TakeFallDamage(float damage)
     {
         Damage(damage);
     }
 
-    public virtual void TakeSuffocationDamage(float damage)
+    public override void TakeSuffocationDamage(float damage)
     {
         Damage(damage);
     }

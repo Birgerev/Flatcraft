@@ -22,6 +22,7 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
         CheckChunk();
+        checkSuffocation();
     }
 
     public virtual void CheckChunk()
@@ -35,6 +36,24 @@ public class Entity : MonoBehaviour
         else if (currentChunk != null)
             GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);
         else GetComponent<Rigidbody2D>().simulated = false;
+    }
+
+    private void checkSuffocation()
+    {
+        if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
+        {
+            if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))))
+            {
+                if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).playerCollide)
+                    TakeSuffocationDamage(1);
+            }
+        }
+    }
+
+    public virtual void TakeSuffocationDamage(float damage)
+    {
+        //Destroy entity immediately since it has no health
+        Destroy(gameObject);
     }
 
     public virtual void setVelocity(Vector2 velocity)

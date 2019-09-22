@@ -28,6 +28,12 @@ public class ContainerInventoryMenu : InventoryMenu
         return new ItemStack();
     }
 
+    public override void Close()
+    {
+        base.Close();
+        inventory.Close();
+    }
+
     public override void FillSlots()
     {
         base.FillSlots();

@@ -31,10 +31,10 @@ public class FurnaceInventory : Inventory
         return 2;
     }
 
-    public override void ToggleOpen()
+    public override void UpdateMenuStatus()
     {
         FurnaceInventoryMenu inventory = InventoryMenuManager.instance.furnaceInventoryMenu;
-        inventory.active = !inventory.active;
+        inventory.active = open;
         inventory.inventory = this;
     }
 }
