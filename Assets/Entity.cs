@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Entity : MonoBehaviour
 {
+    public Chunk currentChunk;
+
     public bool isOnGround;
     public float age;
     public bool isInLiquid = false;
@@ -19,6 +21,20 @@ public class Entity : MonoBehaviour
     public virtual void Update()
     {
         age += Time.deltaTime;
+        CheckChunk();
+    }
+
+    public virtual void CheckChunk()
+    {
+        //Get current chunk
+        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition((int)transform.position.x), false);
+
+        //Freeze if no chunk is found
+        if (WorldManager.instance.loadingProgress != 1)
+            GetComponent<Rigidbody2D>().simulated = false;
+        else if (currentChunk != null)
+            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);
+        else GetComponent<Rigidbody2D>().simulated = false;
     }
 
     public virtual void setVelocity(Vector2 velocity)

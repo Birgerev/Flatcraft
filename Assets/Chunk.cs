@@ -89,32 +89,37 @@ public class Chunk : MonoBehaviour
     
     public static Chunk GetChunk(int cPos)
     {
+        return GetChunk(cPos, true);
+    }
+
+    public static Chunk GetChunk(int cPos, bool loadIfNotFound)
+    {
         Chunk chunk = null;
-        
-        if(WorldManager.instance.chunks.ContainsKey(cPos))
+
+        if (WorldManager.instance.chunks.ContainsKey(cPos))
             chunk = WorldManager.instance.chunks[cPos];
-        if(chunk == null)
+        if (chunk == null)
         {
-            if(cPos != 0)
+            if (cPos != 0 && loadIfNotFound)
                 chunk = LoadChunk(cPos);
         }
 
         return chunk;
     }
-    
-    public static Chunk GetChunkFromWorldPosition(int worldPos)
+
+    public static int GetChunkPosFromWorldPosition(int worldPos)
     {
-        Chunk chunk = null;
+        int chunkPos = 0;
         if (worldPos >= 0)
         {
-            chunk = GetChunk(Mathf.FloorToInt(worldPos / (Width)));
+            chunkPos = Mathf.FloorToInt(worldPos / (Width));
         }
         else
         {
-            chunk = GetChunk(Mathf.CeilToInt((worldPos+1) / Width) - 1);
+            chunkPos = Mathf.CeilToInt((worldPos+1) / Width) - 1;
         }
 
-        return chunk;
+        return chunkPos;
     }
 
     public int GetMinXWorldPosition()
@@ -356,7 +361,7 @@ public class Chunk : MonoBehaviour
 
     public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save)
     {
-        Chunk chunk = GetChunkFromWorldPosition((int)worldPos.x);
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
 
         return chunk.setLocalBlock(worldPos, mat, data, save);
     }
@@ -434,7 +439,7 @@ public class Chunk : MonoBehaviour
 
     public static Block getBlock(Vector2Int worldPos)
     {
-        Chunk chunk = GetChunkFromWorldPosition((int)worldPos.x);
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
         Block block = chunk.getLocalBlock(worldPos);
 
         return block;

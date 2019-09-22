@@ -10,7 +10,6 @@ public class Player : HumanEntity
     public float hunger;
 
     [Space]
-    public Chunk currentChunk;
     public GameObject crosshair;
 
     public PlayerInventory inventory = new PlayerInventory();
@@ -33,15 +32,6 @@ public class Player : HumanEntity
     public override void Update()
     {
         base.Update();
-        
-        if (getVelocity().magnitude > 0)
-            currentChunk = Chunk.GetChunk((int)Mathf.Floor(transform.position.x / Chunk.Width));
-
-        if (WorldManager.instance.loadingProgress != 1)
-            GetComponent<Rigidbody2D>().simulated = false;
-        else if (currentChunk != null)
-            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);
-        else GetComponent<Rigidbody2D>().simulated = true;
     }
 
     public override void FixedUpdate()
