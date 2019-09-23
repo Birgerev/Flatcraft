@@ -17,7 +17,6 @@ public class InventoryContainer : Block
             inventory = (Inventory)JsonUtility.FromJson(data["inventory"], inventoryType);
         }
         else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
-
     }
 
     public override void Tick()
@@ -31,9 +30,11 @@ public class InventoryContainer : Block
     {
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
 
-        if (inventory.open)
+        if (inventory == null || inventory.open)
+        {
             return;
-
+        }
+        
         base.Autosave();
     }
 

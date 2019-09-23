@@ -35,5 +35,6 @@
     Gold_Ingot,
     Redstone_Dust,
     Diamond,
-    Torch
+    Torch,
+    Chest
 }
