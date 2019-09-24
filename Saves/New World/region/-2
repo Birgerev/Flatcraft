@@ -1,7 +1,4 @@
--20,66*Sand*
--30,62*Water*source_block=-1.0,liquid_level=7
--29,62*Water*source_block=-1.0,liquid_level=7
--28,62*Water*source_block=-1.0,liquid_level=7
+-28,79*Dirt*
 -29,14*Stone*
 -27,22*Stone*
 -25,25*Coal_Ore*
@@ -11,11 +8,5 @@
 -28,53*Coal_Ore*
 -24,55*Coal_Ore*
 -17,58*Coal_Ore*
--20,67*Air*
--31,62*Water*source_block=-1.0,liquid_level=7
--17,67*Air*
--17,68*Air*
--32,62*Water*source_block=1.0,liquid_level=7
--25,63*Crafting_Table*
--18,66*Air*
--18,67*Air*
+-18,71*Stone*
+-17,79*Oak_Log*

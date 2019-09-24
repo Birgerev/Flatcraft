@@ -1,4 +1,3 @@
--33,62*Water*source_block=1.0,liquid_level=7
 -47,6*Coal_Ore*
 -39,6*Coal_Ore*
 -35,9*Redstone_Ore*
@@ -13,3 +12,8 @@
 -47,44*Stone*
 -38,48*Iron_Ore*
 -37,48*Iron_Ore*
+-48,66*Coal_Ore*
+-43,66*Coal_Ore*
+-35,68*Coal_Ore*
+-38,70*Coal_Ore*
+-37,81*Oak_Log*

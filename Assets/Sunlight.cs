@@ -24,7 +24,7 @@ public class Sunlight : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(2);
             try
             {
                 UpdateLight();

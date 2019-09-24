@@ -14,30 +14,6 @@ public class Grass : Block
         return new ItemStack(Material.Dirt, 1);
     }
 
-    public override void GeneratingTick()
-    {
-        base.GeneratingTick();
-
-        if (Chunk.getBlock(getPosition() + new Vector2Int(0, 1)) == null)
-        {
-            System.Random r = new System.Random(Chunk.seedByPosition(getPosition()));
-
-            //Generate Structures
-            if (r.Next(0, 100) <= 8)
-            {
-                Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
-            }
-
-            //Vegetation
-            if (r.Next(0, 100) <= 25)
-            {
-                Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
-
-                Chunk.setBlock(getPosition() + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], false);
-            }
-        }
-    }
-
     public override void Tick()
     {
         base.Tick();

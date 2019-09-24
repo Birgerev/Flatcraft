@@ -18,25 +18,28 @@ public class ItemSlot : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
-        if (item == null)
-            item = new ItemStack();
-        
-        if (item.amount == 0)
+        if (Time.frameCount % 10 == 0)
         {
-            amountText.text = "";
-            item.material = Material.Air;
-        }
-        else if (item.amount == 1)
-        {
+            if (item == null)
+                item = new ItemStack();
 
-            amountText.text = "";
-        }
-        else
-        {
-            amountText.text = item.amount.ToString();
-        }
+            if (item.amount == 0)
+            {
+                amountText.text = "";
+                item.material = Material.Air;
+            }
+            else if (item.amount == 1)
+            {
 
-        texture.sprite = item.getSprite();
+                amountText.text = "";
+            }
+            else
+            {
+                amountText.text = item.amount.ToString();
+            }
+
+            texture.sprite = item.getSprite();
+        }
     }
 
     public virtual void Click()

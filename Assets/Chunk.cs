@@ -8,7 +8,7 @@ public class Chunk : MonoBehaviour
 {
     public static float AutosaveDuration = 5;
     public static int Width = 16, Height = 255;
-    public static int RenderDistance = 3;
+    public static int RenderDistance = 4;
     public static int SpawnChunkDistance = 0;
     public static int MinimumUnloadTime = 5;
     public static int TickRate = 1;
@@ -49,7 +49,7 @@ public class Chunk : MonoBehaviour
     public static double ore_redstone_chance = 0.0015f;
 
     public static int ore_diamond_height = 16;
-    public static double ore_diamond_chance = 0.001f;
+    public static double ore_diamond_chance = 0.0015f;
 
     public static int lava_height = 10;
     public static int sea_level = 62;
@@ -160,7 +160,7 @@ public class Chunk : MonoBehaviour
 
             //Tick Blocks
             //Update neighbor chunks
-            if (isTickedChunk)
+            if (isTickedChunk || age < 5)
             {
                 Block[] blocks = transform.GetComponentsInChildren<Block>();
                 float timePerBlock = (1 / TickRate) / blocks.Length;
@@ -191,6 +191,9 @@ public class Chunk : MonoBehaviour
 
     public bool inRenderDistance(int cPos, int range)
     {
+        if (cPos == 0)
+            return true;
+
         cPos++;
 
         Vector2 playerPosition;
@@ -234,18 +237,41 @@ public class Chunk : MonoBehaviour
                 if (loadedBlock != null)
                     blocksGenerated++;
             }
-            if (blocksGenerated > 0)
+            if (blocksGenerated > 0 && y % 7 == 0)
             {
                 yield return new WaitForSecondsRealtime(0.001f);
+            }
+
+            float timeNotInRenderdistance = 0;
+            while (!inRenderDistance() && timeNotInRenderdistance < 10) { 
+
+                yield return new WaitForSecondsRealtime(0.1f);
+                timeNotInRenderdistance += 0.1f;
+                WorldManager.instance.amountOfChunksLoading--;
+            }
+            if(timeNotInRenderdistance >= 10)
+            {
+                Destroy(gameObject);
+                yield break;
+            }
+        }
+
+        for (int y = 0; y <= Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                GenerateStructures(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
             }
         }
 
         //Tick world a few times so stuctures are generated before we load world changes
         StartCoroutine(Tick());
+
         while (age < 3)
         {
             yield return new WaitForSecondsRealtime(0.5f);
         }
+
 
         //Load block changes
         string path = WorldManager.world.getPath() + "\\region\\" + ChunkPosition;
@@ -263,6 +289,77 @@ public class Chunk : MonoBehaviour
         
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
+    }
+
+    private void GenerateStructures(Vector2Int pos)
+    {
+        Block block = getBlock(pos);
+        if (block == null)
+            return;
+
+        Material mat = block.GetMateral();
+        Biome biome = getMostProminantBiome(pos.x);
+        System.Random r = new System.Random(Chunk.seedByPosition(pos));
+
+        if (biome.name == "forest")
+        {
+            if(mat == Material.Grass && getBlock((pos + new Vector2Int(0, 1))) == null)
+            {
+                //Trees
+                if (r.Next(0, 100) <= 10)
+                {
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
+                }
+
+                //Vegetation
+                if (r.Next(0, 100) <= 25)
+                {
+                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
+
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], false);
+                }
+            }
+        }
+        else if (biome.name == "desert")
+        {
+            if (mat == Material.Sand && getBlock((pos + new Vector2Int(0, 1))) == null)
+            {
+                //Cactie
+                if (r.Next(0, 100) <= 8)
+                {
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false);
+                }
+            }
+        }
+
+        //Generate Ores
+        if (mat == Material.Stone)
+        {
+            if (r.NextDouble() < Chunk.ore_diamond_chance && pos.y <= Chunk.ore_diamond_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false);
+            }
+            else if (r.NextDouble() < Chunk.ore_redstone_chance && pos.y <= Chunk.ore_redstone_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false);
+            }
+            else if (r.NextDouble() < Chunk.ore_lapis_chance && pos.y <= Chunk.ore_lapis_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false);
+            }
+            else if (r.NextDouble() < Chunk.ore_gold_chance && pos.y <= Chunk.ore_gold_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false);
+            }
+            else if (r.NextDouble() < Chunk.ore_iron_chance && pos.y <= Chunk.ore_iron_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false);
+            }
+            else if (r.NextDouble() < Chunk.ore_coal_chance && pos.y <= Chunk.ore_coal_height)
+            {
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false);
+            }
+        }
     }
 
     IEnumerator SaveLoop()

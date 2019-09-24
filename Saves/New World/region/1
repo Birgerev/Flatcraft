@@ -1,5 +1,10 @@
-24,14*Air*
+16,4*Lava*source_block=-1.0,liquid_level=3
+16,79*Dirt*
 24,15*Air*
+21,82*Air*
+24,14*Air*
+24,13*Air*
+23,14*Air*
 16,17*Coal_Ore*
 16,21*Iron_Ore*
 24,21*Coal_Ore*
@@ -12,5 +17,6 @@
 19,46*Coal_Ore*
 21,49*Coal_Ore*
 19,61*Iron_Ore*
-24,13*Air*
-23,14*Air*
+20,80*Air*
+20,81*Air*
+21,81*Air*
