@@ -219,7 +219,6 @@ public class Chunk : MonoBehaviour
 
     IEnumerator GenerateChunk()
     {
-        noise = new LibNoise.Generator.Perlin(1f, 1f, 1f, 2, WorldManager.world.seed, QualityMode.Low);
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
@@ -480,7 +479,6 @@ public class Chunk : MonoBehaviour
         return block;
     }
     
-    LibNoise.Generator.Perlin noise;
     LibNoise.Generator.Perlin caveNoise;
     LibNoise.Generator.Perlin patchNoise;
     LibNoise.Generator.Perlin lakeNoise;
@@ -488,44 +486,51 @@ public class Chunk : MonoBehaviour
     {
         System.Random r = new System.Random(seedByPosition(worldPos));
         Material mat = Material.Air;
+        List<Biome> biomes = getBiomes(worldPos.x);
+        Biome biome = biomes[0];
 
+        //-Terrain Generation-//
+        float noiseValue = biome.blendNoiseValues(biomes[1], worldPos);
 
-                    //-Terrain Generation-//
-        double noiseValue = 
-            noise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f;
-        double density = 1;
-
-        if(worldPos.y > sea_level-10)
+        //-Ground-//
+        if (noiseValue > 0.1f)
         {
-            float heightWheight = 0.08f;
-            density = noiseValue - (heightWheight * ((float)worldPos.y - (sea_level-43)));
-        }
+            if (biome.name == "desert")
+            {
+                mat = Material.Sand;
+            }
+            else if (biome.name == "forest")
+            {
+                mat = Material.Grass;
+            }
 
-        if (density > 0.1f)
-        {
-            mat = Material.Grass;
-
-            if (density > 0.5f)
+            if (noiseValue > 0.5f)
             {
                 mat = Material.Stone;
-                
-                if(Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20)) > 7.5f)
-                {
-                    mat = Material.Dirt;
-                }
-                if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20 + 100, (float)worldPos.y / 20, 200)) > 7.5f)
-                {
-                    mat = Material.Gravel;
-                }
             }
         }
 
+        //-Dirt & Gravel Patches-//
+        if (mat == Material.Stone)
+        {
+            if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20)) > 7.5f)
+            {
+                mat = Material.Dirt;
+            }
+            if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20 + 100, (float)worldPos.y / 20, 200)) > 7.5f)
+            {
+                mat = Material.Gravel;
+            }
+        }
+
+        //-Sea-//
         if (mat == Material.Air && worldPos.y <= sea_level)
         {
             mat = Material.Water;
         }
 
-        if(density > 0.1f)
+        //-Caves-//
+        if(noiseValue > 0.1f)
         {
             double caveValue =
                 (caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f) / 4f;
@@ -533,6 +538,7 @@ public class Chunk : MonoBehaviour
             {
                 mat = Material.Air;
 
+        //-Lava Lakes-//
                 if (worldPos.y <= lava_height)
                     mat = Material.Lava;
             }
@@ -581,5 +587,19 @@ public class Chunk : MonoBehaviour
     {
         return new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y)
             .GetHashCode()).Next(int.MinValue, int.MaxValue);
+    }
+
+    public Biome getMostProminantBiome(int pos)
+    {
+        return getBiomes(pos)[0];
+    }
+
+    public List<Biome> getBiomes(int pos)
+    {
+        List<Biome> biomes = WorldManager.instance.biomes;
+
+        biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
+
+        return biomes;
     }
 }

@@ -34,7 +34,9 @@ public class Player : HumanEntity
     public override void Update()
     {
         base.Update();
-        
+
+        currentChunk.getTheoreticalTerrainBlock(Vector2Int.RoundToInt((Vector2)transform.position));
+
         float scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
