@@ -8,6 +8,8 @@ public class WorldManager : MonoBehaviour
     public static World world;
     public static WorldManager instance;
 
+    public List<Biome> biomes = new List<Biome>();
+
     public Dictionary<int, Chunk> chunks = new Dictionary<int, Chunk>();
     public int amountOfChunksLoading = 0;
 
@@ -26,6 +28,13 @@ public class WorldManager : MonoBehaviour
         StartCoroutine(LoadWorld());
     }
 
+    private void Update()
+    {
+        foreach(Biome biome in biomes)
+        {
+            biome.GenerateCurves();
+        }
+    }
 
     IEnumerator LoadWorld()
     {
