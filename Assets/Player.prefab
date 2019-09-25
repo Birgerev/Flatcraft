@@ -182,7 +182,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 5a6439fa0139b0f4fbd396f0c7bd181b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8207547, g: 0.2516465, b: 0.6885035, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -241,13 +241,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60af62e39a9c0249bed273088c3fda7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentChunk: {fileID: 0}
   isOnGround: 0
   age: 0
   isInLiquid: 0
   saveData: 
   maxHunger: 20
   hunger: 0
-  currentChunk: {fileID: 0}
   crosshair: {fileID: 1149122271182722694}
   inventory:
     size: 36
@@ -361,6 +361,7 @@ MonoBehaviour:
       amount: 0
       data: 
     name: Player Inventory
+    open: 0
     selectedSlot: 0
     baseInventorySize: 36
 --- !u!61 &1149122272397806803

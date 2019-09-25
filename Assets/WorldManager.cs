@@ -69,15 +69,19 @@ public class WorldManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
-        loadingState = "Ticking Chunks";
+        loadingState = "Waiting For Sunlight";
         loadingProgress = 4f / steps;
 
-        yield return new WaitForSeconds(1f);
+        Sunlight.instance.BeginGenerating();
+        while (!Sunlight.instance.loaded)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
 
         loadingState = "Done!";
         loadingProgress = 5f / steps;
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.2f);
 
         loadingProgress = 6f / steps;
     }

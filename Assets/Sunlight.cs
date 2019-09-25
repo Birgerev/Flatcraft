@@ -5,84 +5,94 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class Sunlight : MonoBehaviour
 {
-    public int lightFidelity;
+    private int lightFidelity = 4;
+    private float updateTime = 0.5f;
     public Color sunlightColor = Color.white;
+    public bool loaded = false;
+
+    public static Sunlight instance;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(Loop());
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void BeginGenerating()
     {
-        
+        StartCoroutine(UpdateLight());
     }
 
-    IEnumerator Loop()
+    IEnumerator UpdateLight()
     {
         while (true)
         {
-            yield return new WaitForSeconds(2);
-            try
+            SortedDictionary<int, Chunk> sortedChunks = new SortedDictionary<int, Chunk>(WorldManager.instance.chunks);
+            List<Vector3> lightPoints = new List<Vector3>();
+
+            if (sortedChunks.Count == 0)
             {
-                UpdateLight();
-            }catch(System.Exception e)
-            {
-                Debug.LogError(e);
+                yield return new WaitForSeconds(updateTime);
+                continue;
             }
-        }
-    }
 
-    public void UpdateLight()
-    {
-        SortedDictionary<int, Chunk> sortedChunks = new SortedDictionary<int, Chunk>(WorldManager.instance.chunks);
-        List<Vector3> lightPoints = new List<Vector3>();
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
 
-        int minX = int.MaxValue;
-        int maxX = int.MinValue;
-
-        foreach (KeyValuePair<int, Chunk> chunk in sortedChunks)
-        {
-            for(int i = chunk.Value.ChunkPosition*Chunk.Width; i < (chunk.Value.ChunkPosition * Chunk.Width) + Chunk.Width; i += lightFidelity)
+            int blockCount = sortedChunks.Count * (Chunk.Width/lightFidelity);
+            
+            print(sortedChunks.Count + "  " + updateTime + "/" + blockCount + "/3 = " + ((updateTime / blockCount) / 3));
+            foreach (KeyValuePair<int, Chunk> chunk in sortedChunks)
             {
-                if (chunk.Value.getTopmostBlock(i) == null)
-                    continue;
+                for (int i = chunk.Value.ChunkPosition * Chunk.Width; i < (chunk.Value.ChunkPosition * Chunk.Width) + Chunk.Width; i += lightFidelity)
+                {
+                    if (chunk.Value.getTopmostBlock(i) == null)
+                        continue;
 
-                lightPoints.Add(new Vector3(i, chunk.Value.getTopmostBlock(i).getPosition().y));
+                    lightPoints.Add(new Vector3(i, chunk.Value.getTopmostBlock(i).getPosition().y));
 
-                if (i > maxX)
-                    maxX = i;
-                if (i < minX)
-                    minX = i;
+                    if (i > maxX)
+                        maxX = i;
+                    if (i < minX)
+                        minX = i;
+
+                    yield return new WaitForSeconds((updateTime/ blockCount) / 3);
+                }
             }
-        }
 
-        lightPoints.Add(new Vector3(maxX, Chunk.Height));
-        lightPoints.Add(new Vector3(minX, Chunk.Height));
+            lightPoints.Add(new Vector3(maxX, Chunk.Height));
+            lightPoints.Add(new Vector3(minX, Chunk.Height));
 
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            if (transform.GetChild(i).gameObject.name == "old")
-                Destroy(transform.GetChild(i).gameObject);
-        }
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (transform.GetChild(i).gameObject.name == "old")
+                {
+                    Destroy(transform.GetChild(i).gameObject);
+                    yield return new WaitForSeconds((updateTime / blockCount) / 3);
+                }
+            }
 
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.name = "old";
-        }
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.name = "old";
+            }
 
-        foreach (Vector3 pos in lightPoints)
-        {
-            GameObject lightObj = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
-            lightObj.transform.SetParent(transform);
-            lightObj.transform.localPosition = pos;
-            lightObj.transform.name = "_light";
+            foreach (Vector3 pos in lightPoints)
+            {
+                GameObject lightObj = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
+                lightObj.transform.SetParent(transform);
+                lightObj.transform.localPosition = pos;
+                lightObj.transform.name = "_light";
 
-            BlockLight light = lightObj.GetComponent<BlockLight>();
-            light.color = sunlightColor;
-            light.glowingLevel = 17;
+                BlockLight light = lightObj.GetComponent<BlockLight>();
+                light.color = sunlightColor;
+                light.glowingLevel = 17;
+
+                yield return new WaitForSeconds((updateTime / blockCount) / 3);
+            }
+
+            if (!loaded)
+                loaded = true;
         }
     }
 }

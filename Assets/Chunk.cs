@@ -19,6 +19,7 @@ public class Chunk : MonoBehaviour
     public bool isSpawnChunk = false;
     public bool isTickedChunk = false;
     public bool isLoaded = false;
+    public bool isLoading = false;
     public int age = 0;
 
     public Chunk rightChunk;
@@ -79,7 +80,7 @@ public class Chunk : MonoBehaviour
 
     private void OnDestroy()
     {
-        if(isLoaded)
+        if (WorldManager.instance.chunks.ContainsKey(ChunkPosition) && (isLoaded || isLoading))
             WorldManager.instance.chunks.Remove(ChunkPosition);
     }
 
@@ -225,7 +226,9 @@ public class Chunk : MonoBehaviour
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
-        
+
+        isLoading = true;
+
         WorldManager.instance.amountOfChunksLoading++;
         for (int y = 0; y <= Height; y++)
         {
@@ -286,7 +289,8 @@ public class Chunk : MonoBehaviour
                 setLocalBlock(pos, mat, data, false);
             }
         }
-        
+
+        isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
     }
