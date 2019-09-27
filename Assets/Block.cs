@@ -84,7 +84,7 @@ public class Block : MonoBehaviour
 
         randomTickNumber = new System.Random().Next(0, 1000);
 
-        GetComponent<Collider2D>().enabled = (playerCollide);
+        GetComponent<Collider2D>().enabled = (playerCollide || trigger);
         GetComponent<Collider2D>().isTrigger = (trigger);
 
         if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave)

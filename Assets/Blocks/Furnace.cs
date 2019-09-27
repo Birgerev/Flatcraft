@@ -22,6 +22,8 @@ public class Furnace : InventoryContainer
         }
         CheckFuels();
         SmeltTick();
+
+        base.Tick();
     }
 
     public void CheckFuels()

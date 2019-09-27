@@ -13,6 +13,8 @@ public class CreateWorldMenu : MonoBehaviour
 
     public World world;
 
+    private bool switchingMenus = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,9 @@ public class CreateWorldMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (switchingMenus)
+            return;
+
         world.name = nameField.text;
         world.seed = int.Parse(seedField.text);
 
@@ -34,6 +39,7 @@ public class CreateWorldMenu : MonoBehaviour
 
     public void Create()
     {
+        switchingMenus = true;
         world.Create();
         WorldManager.world = world;
         SceneManager.LoadScene("Loading");
