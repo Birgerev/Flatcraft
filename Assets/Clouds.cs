@@ -24,6 +24,8 @@ public class Clouds : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (Player.localInstance == null)
+            return;
         Vector2 playerPos = Player.localInstance.transform.position;
 
         if (Time.time > nextSpawnTime)

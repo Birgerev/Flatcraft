@@ -36,5 +36,6 @@
     Redstone_Dust,
     Diamond,
     Torch,
+    Chest,
     Cactus
 }

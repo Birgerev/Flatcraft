@@ -13,7 +13,7 @@ public class Inventory
 
     public Inventory()
     {
-        initialize(9, "Inventory");
+        initialize(27, "Inventory");
     }
 
     public Inventory(int size)
@@ -145,6 +145,8 @@ public class Inventory
 
     public virtual void UpdateMenuStatus()
     {
-
+        ContainerInventoryMenu inventory = InventoryMenuManager.instance.containerInventoryMenu;
+        inventory.active = open;
+        inventory.inventory = this;
     }
 }
