@@ -8,6 +8,7 @@ public class World
 {
     public string name;
     public int seed;
+    public float time;
 
     public World(string name, int seed)
     {
