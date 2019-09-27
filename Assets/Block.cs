@@ -36,6 +36,7 @@ public class Block : MonoBehaviour
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
         FirstTick();
+        Tick();
         Render();
     }
 
@@ -170,9 +171,10 @@ public class Block : MonoBehaviour
 
     public virtual void RenderBlockDamage()
     {
+
         Transform damageIndicator = transform.Find("BreakIndicator");
 
-        if(blockHealth == breakTime)
+        if (blockHealth == breakTime)
         {
             if(damageIndicator != null)
             {

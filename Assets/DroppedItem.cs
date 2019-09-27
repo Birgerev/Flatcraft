@@ -25,6 +25,9 @@ public class DroppedItem : Entity
         //Bobbing
         sprite.transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) *0.1f);
         cosIndex += 2f * Time.deltaTime;
+
+        if (isOnGround)
+            GetComponent<Rigidbody2D>().velocity *= 0.95f;
     }
 
     private void OnTriggerEnter2D(Collider2D col)

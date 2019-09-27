@@ -21,7 +21,7 @@ public class WorldManager : MonoBehaviour
 
     public Chunk mainChunk;
 
-    public static float dayLength = 15;//60 * 20;
+    public static float dayLength = 60 * 20;
 
     // Start is called before the first frame update
     void Start()

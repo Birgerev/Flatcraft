@@ -44,7 +44,7 @@ public class Entity : MonoBehaviour
         {
             if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))))
             {
-                if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).playerCollide)
+                if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).playerCollide && !Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).trigger)
                     TakeSuffocationDamage(1);
             }
         }

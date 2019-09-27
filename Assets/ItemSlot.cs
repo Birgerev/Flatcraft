@@ -45,5 +45,6 @@ public class ItemSlot : MonoBehaviour
     public virtual void Click()
     {
         GetComponentInParent<InventoryMenu>().OnClickSlot(transform.GetSiblingIndex(), (Input.GetMouseButtonUp(0)) ? 0 : 1);
+        Update();
     }
 }

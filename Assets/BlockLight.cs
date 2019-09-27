@@ -8,15 +8,14 @@ public class BlockLight : MonoBehaviour
     public int glowingLevel = 0;
     public float flickerLevel = 0;
     public float intensity = 1;
-    private int flickersInASecond = 2;
+    private float flickersInASecond = 4;
     public Color color;
 
     private float flickerValue = 0;
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
-        Update();
         StartCoroutine(Flicker());
     }
 
@@ -40,7 +39,7 @@ public class BlockLight : MonoBehaviour
         while (true)
         {
             flickerValue = (flickerValue == 0) ? flickerLevel : 0;
-            yield return new WaitForSecondsRealtime(1 / flickersInASecond);
+            yield return new WaitForSecondsRealtime(1f / (float)flickersInASecond);
         }
     }
 }

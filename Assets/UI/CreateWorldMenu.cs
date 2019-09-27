@@ -12,7 +12,7 @@ public class CreateWorldMenu : MonoBehaviour
     public Button CreateButton;
 
     public World world;
-
+    
     private bool switchingMenus = false;
 
     // Start is called before the first frame update
@@ -27,6 +27,9 @@ public class CreateWorldMenu : MonoBehaviour
     {
         if (switchingMenus)
             return;
+
+        //Filter non allowed characters
+        nameField.text = System.Text.RegularExpressions.Regex.Replace(nameField.text, "[^\\w\\._]", "");
 
         world.name = nameField.text;
         world.seed = int.Parse(seedField.text);

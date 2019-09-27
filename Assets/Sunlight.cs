@@ -28,13 +28,11 @@ public class Sunlight : MonoBehaviour
     {
         while (true)
         {
-            print("light loop");
             SortedDictionary<int, Chunk> sortedChunks = new SortedDictionary<int, Chunk>(WorldManager.instance.chunks);
             List<Vector3> lightPoints = new List<Vector3>();
 
             if (sortedChunks.Count == 0)
             {
-                print("bad");
                 yield return new WaitForSeconds(updateTime);
                 continue;
             }
@@ -44,7 +42,6 @@ public class Sunlight : MonoBehaviour
 
             int blockCount = sortedChunks.Count * (Chunk.Width/lightFidelity);
             
-            print("light loop normal");
             foreach (KeyValuePair<int, Chunk> chunk in sortedChunks)
             {
                 for (int i = chunk.Value.ChunkPosition * Chunk.Width; i < (chunk.Value.ChunkPosition * Chunk.Width) + Chunk.Width; i += lightFidelity)
@@ -64,7 +61,6 @@ public class Sunlight : MonoBehaviour
                     yield return new WaitForSeconds((updateTime/ blockCount) / 3);
                 }
             }
-            print("light loop 2");
 
             lightPoints.Add(new Vector3(maxX, Chunk.Height));
             lightPoints.Add(new Vector3(minX, Chunk.Height));
@@ -82,8 +78,7 @@ public class Sunlight : MonoBehaviour
             {
                 transform.GetChild(i).gameObject.name = "old";
             }
-
-            print("light loop 3");
+            
             foreach (Vector3 pos in lightPoints)
             {
                 GameObject lightObj = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
@@ -98,7 +93,6 @@ public class Sunlight : MonoBehaviour
 
                 yield return new WaitForSeconds((updateTime / blockCount) / 3);
             }
-            print("light loop");
 
             if (!loaded)
                 loaded = true;

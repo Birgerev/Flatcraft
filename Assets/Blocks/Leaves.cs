@@ -8,6 +8,11 @@ public class Leaves : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
 
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack();
+    }
+
     public override void Tick()
     {
         base.Tick();
