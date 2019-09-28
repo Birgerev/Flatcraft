@@ -5,6 +5,9 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     public string texture;
+    public virtual string[] alternative_textures { get; } = { };
+    public virtual float change_texture_time { get; } = 0;
+
     public virtual bool playerCollide { get; } = true;
     public virtual bool trigger { get; } = false;
     public virtual bool requiresGround { get; } = false;
@@ -216,7 +219,20 @@ public class Block : MonoBehaviour
 
     public virtual Sprite getTexture()
     {
-        return Resources.Load<Sprite>("Sprites/" + texture);
+        if (change_texture_time > 0 && alternative_textures.Length > 0)
+        {
+            float totalTimePerTextureLoop = change_texture_time * alternative_textures.Length;
+            int textureIndex = (int)((Time.time % totalTimePerTextureLoop) / change_texture_time);
+
+            return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
+        }
+        else if(alternative_textures.Length > 0)
+        {
+            int textureIndex = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, alternative_textures.Length);
+
+            return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
+        }
+        else return Resources.Load<Sprite>("Sprites/" + texture);
     }
 
     public Material GetMateral()

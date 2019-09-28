@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Lapis_Ore : Block
 {
-    public static string default_texture = "block_lapis_ore";
+    public static string default_texture = "block_lapis_ore_0";
+    public override string[] alternative_textures { get; } = { "block_lapis_ore_0", "block_lapis_ore_1" };
+
     public override float breakTime { get; } = 6;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Pickaxe;
