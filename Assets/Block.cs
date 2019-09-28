@@ -69,7 +69,7 @@ public class Block : MonoBehaviour
 
         UpdateLight();
 
-        randomTickNumber = new System.Random().Next(0, 1000);
+        randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
         UpdateColliders();
 

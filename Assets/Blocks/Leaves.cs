@@ -16,5 +16,34 @@ public class Leaves : Block
     public override void Tick()
     {
         base.Tick();
+
+        if (randomTickNumber < 25 / Chunk.TickRate)
+            TryDecay();
+    }
+
+    public void TryDecay()
+    {
+        int range = 4;
+        bool foundSupport = false;
+
+        for (int x = -range; x < range; x++)
+        {
+            for (int y = -range; y < range; y++)
+            {
+                if (Chunk.getBlock(new Vector2Int(getPosition().x + x, getPosition().y + y)) != null)
+                {
+                    if (Chunk.getBlock(new Vector2Int(getPosition().x + x, getPosition().y + y)).GetMateral() == Material.Oak_Log)
+                    {
+                        foundSupport = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!foundSupport)
+        {
+            Break();
+        }
     }
 }
