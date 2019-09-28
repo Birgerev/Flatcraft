@@ -70,7 +70,7 @@ public class Player : HumanEntity
         {
             Walk(1);
         }
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
         {
             Jump();
         }

@@ -57,23 +57,23 @@ public class Furnace : InventoryContainer
                 (getInventory().getItem(getInventory().getResultSlot()).material == curRecepie.result.material ||
 getInventory().getItem(getInventory().getResultSlot()).material == Material.Air))
         {
+            //subtract fuel
+            if (getInventory().fuelLeft > 0)
+                getInventory().fuelLeft--;
+            else return;
+
             //Add progress to smeltbar
             getInventory().smeltingProgress += 1 / Chunk.TickRate;
 
             //If smelting is done, give result
             if (getInventory().smeltingProgress >= SmeltingRecepie.smeltTime)
                 FillSmeltingResult();
-
-            //subtract fuel
-            if (getInventory().fuelLeft > 0)
-                getInventory().fuelLeft--;
         }
         else
         {
             //Continiue to deplete fuel if we've already begun smelting but ingredient item was removed
-            if (getInventory().fuelLeft < getInventory().highestFuel)
-                if (getInventory().fuelLeft > 0)
-                    getInventory().fuelLeft--;
+            if (getInventory().fuelLeft > 0)
+                getInventory().fuelLeft--;
 
             //Reset smelting progress if item is removed
             getInventory().smeltingProgress = 0;

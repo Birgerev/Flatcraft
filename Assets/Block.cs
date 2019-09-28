@@ -36,12 +36,12 @@ public class Block : MonoBehaviour
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
         FirstTick();
-        Tick();
         Render();
     }
 
     public virtual void FirstTick()
     {
+        UpdateColliders();
     }
 
     public virtual void GeneratingTick()
@@ -63,7 +63,23 @@ public class Block : MonoBehaviour
         {
             ResetBlockDamage();
         }
-        if(glowingLevel != 0)
+
+        UpdateLight();
+
+        randomTickNumber = new System.Random().Next(0, 1000);
+
+        UpdateColliders();
+
+        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave)
+        {
+            Autosave();
+            return;
+        }
+    }
+    
+    public void UpdateLight()
+    {
+        if (glowingLevel != 0)
         {
             GameObject light;
             if (transform.Find("_light"))
@@ -77,22 +93,17 @@ public class Block : MonoBehaviour
                 light.transform.localPosition = Vector3.zero;
                 light.transform.name = "_light";
             }
-            
+
             light.GetComponent<BlockLight>().glowingLevel = glowingLevel;
             light.GetComponent<BlockLight>().color = glowingColor;
             light.GetComponent<BlockLight>().flickerLevel = flickerLevel;
         }
+    }
 
-        randomTickNumber = new System.Random().Next(0, 1000);
-
+    public void UpdateColliders()
+    {
         GetComponent<Collider2D>().enabled = (playerCollide || trigger);
         GetComponent<Collider2D>().isTrigger = (trigger);
-
-        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave)
-        {
-            Autosave();
-            return;
-        }
     }
 
     public virtual void Autosave()

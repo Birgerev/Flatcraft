@@ -22,27 +22,36 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
         CheckChunk();
+        checkVoidDamage();
         checkSuffocation();
     }
 
-    public virtual void CheckChunk()
+    public virtual bool CheckChunk()
     {
+        bool result = false;
+
         //Get current chunk
         currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition((int)transform.position.x), false);
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
-            GetComponent<Rigidbody2D>().simulated = false;
+            result = false;
         else if (currentChunk != null)
-            GetComponent<Rigidbody2D>().simulated = (currentChunk.isLoaded);
-        else GetComponent<Rigidbody2D>().simulated = false;
+            result = (currentChunk.isLoaded);
+        else result = false;
+
+        GetComponent<Rigidbody2D>().simulated = result;
+        return result;
     }
 
     private void checkSuffocation()
     {
+        if (!CheckChunk())
+            return;
+
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
         {
-            if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))))
+            if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position)))!= null)
             {
                 if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).playerCollide && !Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).trigger)
                     TakeSuffocationDamage(1);
@@ -50,9 +59,29 @@ public class Entity : MonoBehaviour
         }
     }
 
+    private void checkVoidDamage()
+    {
+        if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
+        {
+            if (transform.position.y < 0)
+            {
+                TakeVoidDamage(1);
+            }
+        }
+    }
+    
+    public virtual void TakeVoidDamage(float damage)
+    {
+        Damage(damage);
+    }
+
     public virtual void TakeSuffocationDamage(float damage)
     {
-        //Destroy entity immediately since it has no health
+        Damage(damage);
+    }
+
+    public virtual void Damage(float damage)
+    {
         Destroy(gameObject);
     }
 

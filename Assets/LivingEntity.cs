@@ -106,18 +106,13 @@ public class LivingEntity : Entity
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }
-
+    
     public virtual void TakeFallDamage(float damage)
     {
         Damage(damage);
     }
 
-    public override void TakeSuffocationDamage(float damage)
-    {
-        Damage(damage);
-    }
-
-    public virtual void Damage(float damage)
+    public override void Damage(float damage)
     {
         health -= damage;
 

@@ -21,20 +21,15 @@ public class WorldButton : MonoBehaviour
         descriptionText.text = "Survival Mode (Version: ?, " + fileSizeRounded + "KB)";
     }
 
-    private void Update()
-    {
-        lastClickTime += Time.deltaTime;
-    }
-
     public void Click()
     {
         GetComponentInParent<SingleplayerMenu>().selectedWorld = transform.GetSiblingIndex();
 
-        if(lastClickTime < 0.5f)
+        if(Time.time - lastClickTime < 0.3f)
         {
             GetComponentInParent<SingleplayerMenu>().Play();
         }
 
-        lastClickTime = 0;
+        lastClickTime = Time.time;
     }
 }

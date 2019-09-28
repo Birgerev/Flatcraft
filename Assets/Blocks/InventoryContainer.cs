@@ -10,13 +10,13 @@ public class InventoryContainer : Block
 
     public override void FirstTick()
     {
-        base.FirstTick();
-        
         if (data.ContainsKey("inventory") && data["inventory"] != "")
         {
             inventory = (Inventory)JsonUtility.FromJson(data["inventory"], inventoryType);
         }
         else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
+
+        base.FirstTick();
     }
 
     public override void Tick()
