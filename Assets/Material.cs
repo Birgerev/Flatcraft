@@ -37,5 +37,6 @@
     Diamond,
     Torch,
     Chest,
-    Cactus
+    Cactus,
+    Fire
 }
