@@ -32,10 +32,6 @@ public class WorldManager : MonoBehaviour
 
     private void Update()
     {
-        foreach(Biome biome in biomes)
-        {
-            biome.GenerateCurves();
-        }
         world.time += Time.deltaTime;
     }
 
