@@ -121,6 +121,102 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &228640623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 228640625}
+  - component: {fileID: 228640624}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &228640624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228640623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a32bebd3afb1a94b8dc814814745476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomes:
+  - landscapeLacunarity: 1
+    landscapePercistance: 1
+    landscapeOctaves: 2
+    landscapeSize: 0.05
+    landscapeHeightWeight: 0.4
+    landscapeHeightOverSeaLevel: 0
+    biomeLacunarity: 0.01
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 4.24
+    biomeDiminishLowWeight: -4.14
+    biomeDiminishAbove: 4.97
+    biomeDiminishHighWeight: 0.6
+    biomeAmplitude: 20.71
+    name: forest
+  - landscapeLacunarity: 1
+    landscapePercistance: 1
+    landscapeOctaves: 2
+    landscapeSize: 0.05
+    landscapeHeightWeight: 0.4
+    landscapeHeightOverSeaLevel: 0
+    biomeLacunarity: 0.01
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 4.24
+    biomeDiminishLowWeight: -4.14
+    biomeDiminishAbove: 4.97
+    biomeDiminishHighWeight: 0.6
+    biomeAmplitude: 20.71
+    name: desert
+  - landscapeLacunarity: 1
+    landscapePercistance: 0.7
+    landscapeOctaves: 2
+    landscapeSize: 0.05
+    landscapeHeightWeight: 0.2
+    landscapeHeightOverSeaLevel: 20
+    biomeLacunarity: 0.06
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 5.59
+    biomeDiminishLowWeight: -6.21
+    biomeDiminishAbove: 5.42
+    biomeDiminishHighWeight: 0.66
+    biomeAmplitude: 16.16
+    name: lake
+  amountOfChunksLoading: 0
+  chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
+    type: 3}
+  player: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61, type: 3}
+  loadingState: 
+  loadingProgress: 0
+  mainChunk: {fileID: 0}
+--- !u!4 &228640625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228640623}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.174314, y: 8.029414, z: -61.62591}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &646141086
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,96 +748,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1799888554
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1799888556}
-  - component: {fileID: 1799888555}
-  m_Layer: 0
-  m_Name: Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1799888555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1799888554}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a32bebd3afb1a94b8dc814814745476, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  biomes:
-  - landscapeLacunarity: 1
-    landscapePercistance: 1
-    landscapeOctaves: 2
-    landscapeSize: 0.05
-    landscapeHeightWeight: 0.08
-    landscapeHeightOverSeaLevel: 43
-    biomeLacunarity: 0.25
-    biomePercistance: 1.92
-    biomeOctaves: 4
-    biomeDiminishBelow: 6.31
-    biomeDiminishWeight: 0.82
-    biomeAmplitude: 6
-    name: forest
-  - landscapeLacunarity: 1
-    landscapePercistance: 1
-    landscapeOctaves: 2
-    landscapeSize: 0.05
-    landscapeHeightWeight: 0.16
-    landscapeHeightOverSeaLevel: 50
-    biomeLacunarity: 0.25
-    biomePercistance: 1.92
-    biomeOctaves: 4
-    biomeDiminishBelow: 6.31
-    biomeDiminishWeight: 0.82
-    biomeAmplitude: 5.82
-    name: desert
-  - landscapeLacunarity: 0
-    landscapePercistance: 0
-    landscapeOctaves: 0
-    landscapeSize: 0
-    landscapeHeightWeight: 100
-    landscapeHeightOverSeaLevel: 0
-    biomeLacunarity: 0.57
-    biomePercistance: 6.28
-    biomeOctaves: 6
-    biomeDiminishBelow: 4000
-    biomeDiminishWeight: 0.2
-    biomeAmplitude: 0.013
-    name: lake
-  amountOfChunksLoading: 0
-  chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
-    type: 3}
-  player: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61, type: 3}
-  loadingState: 
-  loadingProgress: 0
-  mainChunk: {fileID: 0}
---- !u!4 &1799888556
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1799888554}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.174314, y: 8.029414, z: -61.62591}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2098192872
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,12 +785,14 @@ MonoBehaviour:
     landscapeSize: 0.05
     landscapeHeightWeight: 0.08
     landscapeHeightOverSeaLevel: 43
-    biomeLacunarity: 0.25
-    biomePercistance: 1.92
-    biomeOctaves: 4
-    biomeDiminishBelow: 6.31
-    biomeDiminishWeight: 0.82
-    biomeAmplitude: 6
+    biomeLacunarity: 0.06
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 5.59
+    biomeDiminishLowWeight: -6.61
+    biomeDiminishAbove: 5.42
+    biomeDiminishHighWeight: 0.66
+    biomeAmplitude: 16.16
     name: 
   previewSize: 500
   previewUpdateFrequency: 0.2

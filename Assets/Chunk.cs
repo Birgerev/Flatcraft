@@ -596,7 +596,7 @@ public class Chunk : MonoBehaviour
         //-Ground-//
         if (noiseValue > 0.1f)
         {
-            if (biome.name == "desert")
+            if (biome.name == "desert" || biome.name == "lake")
             {
                 mat = Material.Sand;
             }
@@ -604,15 +604,17 @@ public class Chunk : MonoBehaviour
             {
                 mat = Material.Grass;
             }
-            else if (biome.name == "lake")
-            {
-                mat = Material.Water;
-            }
 
             if (noiseValue > 0.5f)
             {
                 mat = Material.Stone;
             }
+        }
+
+        //-Lakes-//
+        if (mat == Material.Air && worldPos.y <= sea_level && biome.name == "lake")
+        {
+            mat = Material.Water;
         }
 
         //-Dirt & Gravel Patches-//
@@ -629,10 +631,10 @@ public class Chunk : MonoBehaviour
         }
 
         //-Sea-//
-        /*if (mat == Material.Air && worldPos.y <= sea_level)
+        if (mat == Material.Air && worldPos.y <= sea_level)
         {
             mat = Material.Water;
-        }*/
+        }
 
         //-Caves-//
         if(noiseValue > 0.1f)
