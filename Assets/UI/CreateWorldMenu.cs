@@ -8,7 +8,7 @@ public class CreateWorldMenu : MonoBehaviour
 {
     public InputField nameField;
     public InputField seedField;
-    public GameObject nameTakenError;
+    public Text errorText;
     public Button CreateButton;
 
     public World world;
@@ -35,9 +35,16 @@ public class CreateWorldMenu : MonoBehaviour
         world.seed = int.Parse(seedField.text);
 
         bool worldExists = World.worldExists(world.name);
+        bool nameEmpty = (nameField.text == "");
+        bool error = (worldExists || nameEmpty);
 
-        nameTakenError.SetActive(worldExists);
-        CreateButton.interactable = !worldExists;
+        if (worldExists)
+            errorText.text = "World name is already taken!";
+        if (nameEmpty)
+            errorText.text = "No world name!";
+
+        errorText.gameObject.SetActive(error);
+        CreateButton.interactable = !error;
     }
 
     public void Create()

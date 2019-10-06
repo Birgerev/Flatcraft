@@ -38,5 +38,6 @@
     Torch,
     Chest,
     Cactus,
-    Fire
+    Fire,
+    Logged_Leaves
 }

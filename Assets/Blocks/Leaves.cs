@@ -17,7 +17,7 @@ public class Leaves : Block
     {
         base.Tick();
 
-        if (randomTickNumber < 25 / Chunk.TickRate)
+        if (randomTickNumber < 100 / Chunk.TickRate)
             TryDecay();
     }
 
