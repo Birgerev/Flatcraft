@@ -188,27 +188,12 @@ public class Block : MonoBehaviour
 
         Transform damageIndicator = transform.Find("BreakIndicator");
 
-        if (blockHealth == breakTime)
+        if (blockHealth != breakTime)
         {
-            if(damageIndicator != null)
-            {
-                Destroy(damageIndicator.gameObject);
-            }
-        }
-        else
-        {
-            if (damageIndicator == null)
-            {
-                damageIndicator = new GameObject("BreakIndicator").transform;
-                damageIndicator.transform.SetParent(transform);
-                damageIndicator.transform.localPosition = Vector3.zero;
-                damageIndicator.gameObject.AddComponent<SpriteRenderer>();
-            }
             Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
             int spriteIndex = (int)((blockHealth/breakTime) / (1f / ((float)sprites.Length)));
 
-
-            damageIndicator.GetComponent<SpriteRenderer>().sprite = sprites[spriteIndex];
+            BreakIndicator.instance.UpdateState(spriteIndex, getPosition());
         }
     }
 
