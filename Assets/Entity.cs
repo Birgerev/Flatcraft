@@ -7,6 +7,8 @@ public class Entity : MonoBehaviour
 {
     public Chunk currentChunk;
 
+    public virtual bool chunk_loading { get; } = false;
+
     public bool isOnGround;
     public float age;
     public bool isInLiquid = false;
@@ -31,7 +33,7 @@ public class Entity : MonoBehaviour
         bool result = false;
 
         //Get current chunk
-        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition((int)transform.position.x), false);
+        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition((int)transform.position.x), chunk_loading);
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)

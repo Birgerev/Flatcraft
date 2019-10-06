@@ -5,6 +5,8 @@ using System.IO;
 
 public class Player : HumanEntity
 {
+    public override bool chunk_loading { get; } = true;
+
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float hunger;
