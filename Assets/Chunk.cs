@@ -604,6 +604,10 @@ public class Chunk : MonoBehaviour
             {
                 mat = Material.Grass;
             }
+            else if (biome.name == "lake")
+            {
+                mat = Material.Water;
+            }
 
             if (noiseValue > 0.5f)
             {
@@ -625,10 +629,10 @@ public class Chunk : MonoBehaviour
         }
 
         //-Sea-//
-        if (mat == Material.Air && worldPos.y <= sea_level)
+        /*if (mat == Material.Air && worldPos.y <= sea_level)
         {
             mat = Material.Water;
-        }
+        }*/
 
         //-Caves-//
         if(noiseValue > 0.1f)
@@ -690,14 +694,18 @@ public class Chunk : MonoBehaviour
             .GetHashCode()).Next(int.MinValue, int.MaxValue);
     }
 
-    public Biome getMostProminantBiome(int pos)
+    public static Biome getMostProminantBiome(int pos)
     {
         return getBiomes(pos)[0];
     }
 
-    public List<Biome> getBiomes(int pos)
+    public static List<Biome> getBiomes(int pos)
     {
-        List<Biome> biomes = WorldManager.instance.biomes;
+        List<Biome> biomes = new List<Biome>();
+        WorldManager.instance.biomes.ForEach((item) =>
+        {
+            biomes.Add(item);
+        });
 
         biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
 
