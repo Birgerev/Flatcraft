@@ -52,7 +52,7 @@ public class ItemStack
 
     public void Drop(Vector2Int position, Vector2 velocity)
     {
-        GameObject obj = MonoBehaviour.Instantiate((GameObject)Resources.Load("Objects/DroppedItem"));
+        GameObject obj = Entity.Spawn("DroppedItem").gameObject;
 
         obj.transform.position = new Vector3(position.x, position.y, 0);
         obj.GetComponent<DroppedItem>().item = this;

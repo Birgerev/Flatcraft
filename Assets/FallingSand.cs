@@ -29,15 +29,4 @@ public class FallingSand : Entity
             Destroy(gameObject);
         }
     }
-
-
-    public static FallingSand Create(Vector2 pos, Material mat)
-    {
-        GameObject obj = MonoBehaviour.Instantiate((GameObject)Resources.Load("Objects/FallingSand"));
-
-        obj.transform.position = new Vector3(pos.x, pos.y, 0);
-        obj.GetComponent<FallingSand>().material = mat;
-
-        return obj.GetComponent<FallingSand>();
-    }
 }

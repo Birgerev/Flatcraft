@@ -15,7 +15,10 @@ public class Gravel : Block
 
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
         {
-            FallingSand.Create(getPosition(), GetMateral());
+            FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
+            fs.transform.position = (Vector2)getPosition();
+            fs.material = GetMateral();
+
             Chunk.setBlock(getPosition(), Material.Air, true);
         }
     }

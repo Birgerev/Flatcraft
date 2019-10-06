@@ -17,12 +17,15 @@ public class Entity : MonoBehaviour
     
     public virtual void Start()
     {
-
+        gameObject.name = "Entity ["+this.GetType().Name+"]";
     }
 
     public virtual void Update()
     {
         age += Time.deltaTime;
+
+        
+
         CheckChunk();
         checkVoidDamage();
         checkSuffocation();
@@ -122,5 +125,18 @@ public class Entity : MonoBehaviour
     {
         if (col.transform.position.y + 1f < transform.position.y)
             isOnGround = false;
+    }
+
+    public static Entity Spawn(string id)
+    {
+        if(Resources.Load("Entities/" + id) == null)
+        {
+            Debug.LogError("No Entity with the id '"+id+"' was found");
+            return null;
+        }
+
+        GameObject obj = Instantiate((GameObject)Resources.Load("Entities/"+id));
+
+        return obj.GetComponent<Entity>();
     }
 }
