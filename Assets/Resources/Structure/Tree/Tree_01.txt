@@ -1,7 +1,7 @@
 Oak_Log*0,0*
 Oak_Log*0,1*
-Leaves*0,2*
-Leaves*0,3*
+Logged_Leaves*0,2*
+Logged_Leaves*0,3*
 Leaves*0,4*
 Leaves*0,5*
 Leaves*1,2*
