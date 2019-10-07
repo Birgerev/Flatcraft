@@ -14,12 +14,14 @@ public class DroppedItem : Entity
     // Start is called before the first frame update
     public override void Start()
     {
+        base.Start();
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     // Update is called once per frame
     public override void Update()
     {
+        base.Update();
         sprite.sprite = item.getSprite();
 
         //Bobbing
