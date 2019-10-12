@@ -1,20 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System.IO;
 
 [System.Serializable]
 public class Entity : MonoBehaviour
 {
-    public Chunk currentChunk;
-
+    //Entity properties
     public virtual bool chunk_loading { get; } = false;
 
+    //Entity data tags
+    [EntityDataTag(false)]
+    public float age = 0;
+
+    //Entity State
+    public Chunk currentChunk;
     public bool isOnGround;
-    public float age;
     public bool isInLiquid = false;
 
-    public string saveData;
-    
+
+    public Dictionary<string, string> data = new Dictionary<string, string>();
+
     public virtual void Start()
     {
         gameObject.name = "Entity ["+this.GetType().Name+"]";
@@ -100,10 +107,37 @@ public class Entity : MonoBehaviour
         return GetComponent<Rigidbody2D>().velocity;
     }
 
+    public virtual List<string> GetSaveStrings()
+    {
+        List<string> result = new List<string>();
+
+        result.Add("position=" + JsonUtility.ToJson(transform.position));
+
+        IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+
+        foreach (System.Reflection.FieldInfo field in fields)
+        {
+            bool json = ((EntityDataTag)System.Attribute.GetCustomAttributes(field)[0]).json;
+
+            if (json)
+                result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
+            else
+                result.Add(field.Name + "=" + field.GetValue(this).ToString());
+        }
+
+        return result;
+    }
+
+    public virtual string SavePath()
+    {
+        return WorldManager.world.getPath() + "\\TODO\\";
+    }
+
     public virtual void Save()
     {
 
     }
+
 
     public virtual SpriteRenderer getRenderer()
     {
@@ -112,6 +146,31 @@ public class Entity : MonoBehaviour
 
     public virtual void Load()
     {
+        if (!File.Exists(SavePath()))
+            return;
+
+        Dictionary<string, string> lines = dataFromStrings(File.ReadAllLines(SavePath()));
+
+        if (lines.Count <= 1)
+            return;
+
+        transform.position = JsonUtility.FromJson<Vector3>(lines["position"]);
+
+
+        IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+
+        foreach (System.Reflection.FieldInfo field in fields)
+        {
+            bool json = ((EntityDataTag)System.Attribute.GetCustomAttributes(field)[0]).json;
+            System.Type type = field.FieldType;
+
+            if(json)
+                field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
+            else if(type == typeof(string))
+                field.SetValue(this, lines[field.Name]);
+            else
+                field.SetValue(this, System.Convert.ChangeType(lines[field.Name], type));
+        }
 
     }
 
@@ -138,5 +197,29 @@ public class Entity : MonoBehaviour
         GameObject obj = Instantiate((GameObject)Resources.Load("Entities/"+id));
 
         return obj.GetComponent<Entity>();
+    }
+
+    public static Dictionary<string, string> dataFromStrings(string[] dataStrings)
+    {
+        Dictionary<string, string> resultData = new Dictionary<string, string>();
+
+        foreach (string line in dataStrings)
+        {
+            if (line.Contains("="))
+                resultData.Add(line.Split('=')[0], line.Split('=')[1]);
+        }
+
+        return resultData;
+    }
+}
+
+[System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
+public class EntityDataTag : System.Attribute
+{
+    public bool json;
+
+    public EntityDataTag(bool Json)
+    {
+        json = Json;
     }
 }

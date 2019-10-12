@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class FallingSand : Entity
 {
+    //Entity Properties
+
+    //Entity Data Tags
+    [EntityDataTag(true)]
     public Material material = Material.Sand;
+
+    //Entity State
 
     public override void Start()
     {

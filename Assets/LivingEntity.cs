@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class LivingEntity : Entity
 {
+    //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
-
-    public virtual float health { get; set; }
     public virtual float maxHealth { get; } = 20;
     
     [Header("Movement Properties")]
@@ -19,8 +18,13 @@ public class LivingEntity : Entity
     private float airDrag = 0.98f;
     private float liquidDrag = 0.5f;
 
-    private float last_jump_time;
+    //Entity Data Tags
+    [EntityDataTag(false)]
+    public float health;
+    
 
+    //Entity State
+    private float last_jump_time;
     private float highestYlevelsinceground;
 
     public override void Start()

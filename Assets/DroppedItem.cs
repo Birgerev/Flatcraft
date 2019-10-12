@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class DroppedItem : Entity
 {
-    public ItemStack item;
+    //Entity Properties
 
-    public SpriteRenderer sprite;
-
+    //Entity Data Tags
+    [EntityDataTag(true)]
+    public ItemStack item = new ItemStack();
+    [EntityDataTag(false)]
     public bool canPickup = true;
+
+
+    //Entity State
+    public SpriteRenderer sprite;
     private float cosIndex;
 
     // Start is called before the first frame update

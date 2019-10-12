@@ -5,19 +5,22 @@ using System.IO;
 
 public class Player : HumanEntity
 {
+    //Entity Properties
     public override bool chunk_loading { get; } = true;
-
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
+
+
+    //Entity Data Tags
+    [EntityDataTag(false)]
     public float hunger;
-
-    [Space]
-    public GameObject crosshair;
-
+    [EntityDataTag(true)]
     public PlayerInventory inventory = new PlayerInventory();
 
+    //Entity State
+    [Space]
     public static Player localInstance;
-
+    public GameObject crosshair;
     private float lastFrameScroll;
 
     public override void Start()
@@ -240,32 +243,18 @@ public class Player : HumanEntity
 
         List<string> lines = new List<string>();
 
-        lines.Add("position="+transform.position.x+","+ transform.position.y);
+        /*lines.Add("position="+transform.position.x+","+ transform.position.y);
         lines.Add("health=" + health);
         lines.Add("hunger=" + hunger);
-        lines.Add("inventory=" + JsonUtility.ToJson(inventory));
-        
+        lines.Add("inventory=" + JsonUtility.ToJson(inventory));*/
+        lines = GetSaveStrings();
+
         File.WriteAllLines(path, lines);
     }
 
-    public override void Load()
+    public override string SavePath()
     {
-        string path = WorldManager.world.getPath() + "\\players\\player.dat";
-
-        if (!File.Exists(path))
-            return;
-
-        Dictionary<string, string> lines = dataFromString(File.ReadAllLines(path));
-
-        if (lines.Count <= 1)
-            return;
-        
-        transform.position = new Vector3(float.Parse(lines["position"].Split(',')[0]),
-            float.Parse(lines["position"].Split(',')[1]));
-        health = float.Parse(lines["health"]);
-        hunger = float.Parse(lines["hunger"]);
-        inventory = (PlayerInventory)JsonUtility.FromJson(lines["inventory"], typeof(PlayerInventory));
-
+        return WorldManager.world.getPath() + "\\players\\player.dat";
     }
 
     private Dictionary<string, string> dataFromString(string[] lines)
