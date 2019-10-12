@@ -16,6 +16,8 @@ public class Player : HumanEntity
     public float hunger;
     [EntityDataTag(true)]
     public PlayerInventory inventory = new PlayerInventory();
+    [EntityDataTag(true)]
+    public Vector2 spawnPosition = new Vector2(0, 80);
 
     //Entity State
     [Space]
@@ -29,11 +31,13 @@ public class Player : HumanEntity
 
         localInstance = this;
 
-        health = health;
+        health = maxHealth;
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
         Load();
+
+        transform.position = ValidSpawn(spawnPosition);
     }
 
     public override void Update()
@@ -206,17 +210,16 @@ public class Player : HumanEntity
         }
     }
 
-    public void Spawn()
+    public Vector2 ValidSpawn(Vector2 pos)
     {
         for (int i = Chunk.Height; i <= 0; i --)
         {
-            if(Chunk.getBlock(Vector2Int.FloorToInt((Vector2)transform.position)) != null)
+            if(Chunk.getBlock(new Vector2Int((int)pos.x, i)) != null)
             {
-                transform.position = new Vector3(transform.position.x, i+2);
-
-                break;
+                return new Vector2(pos.x, i+2);
             }
         }
+        return pos;
     }
 
     public override void Die()
@@ -225,7 +228,6 @@ public class Player : HumanEntity
         DropAll();
         health = 20;
         hunger = 20;
-        Spawn();
         Save();
 
         base.Die();
@@ -243,10 +245,6 @@ public class Player : HumanEntity
 
         List<string> lines = new List<string>();
 
-        /*lines.Add("position="+transform.position.x+","+ transform.position.y);
-        lines.Add("health=" + health);
-        lines.Add("hunger=" + hunger);
-        lines.Add("inventory=" + JsonUtility.ToJson(inventory));*/
         lines = GetSaveStrings();
 
         File.WriteAllLines(path, lines);

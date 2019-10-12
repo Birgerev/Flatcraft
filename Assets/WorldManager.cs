@@ -88,7 +88,5 @@ public class WorldManager : MonoBehaviour
     public void Spawn()
     {
         GameObject obj = Instantiate(player);
-
-        obj.GetComponent<Player>().Spawn();
     }
 }
