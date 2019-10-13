@@ -56,13 +56,14 @@ public class Player : HumanEntity
                 inventory.selectedSlot = 8;
         }
         lastFrameScroll = scroll;
+
+
+        performInput();
     }
 
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-
-        performInput();
     }
 
     private void performInput()

@@ -64,9 +64,11 @@ public class Entity : MonoBehaviour
 
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
         {
-            if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position)))!= null)
+            Block block = Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position)));
+
+            if (block != null)
             {
-                if (Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).playerCollide && !Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position))).trigger)
+                if (block.playerCollide && !block.trigger && !(block is Liquid))
                     TakeSuffocationDamage(1);
             }
         }
