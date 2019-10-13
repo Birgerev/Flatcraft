@@ -16,7 +16,7 @@ public class FallingSand : Entity
     {
         base.Start();
 
-        GetComponent<SpriteRenderer>().sprite = new ItemStack(material).getSprite();
+        getRenderer().sprite = new ItemStack(material).getSprite();
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 

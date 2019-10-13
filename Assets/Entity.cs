@@ -18,6 +18,7 @@ public class Entity : MonoBehaviour
     public Chunk currentChunk;
     public bool isOnGround;
     public bool isInLiquid = false;
+    public bool flipRenderX = false;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -31,7 +32,7 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
 
-        
+        getRenderer().flipX = flipRenderX;
 
         CheckChunk();
         checkVoidDamage();
@@ -92,9 +93,53 @@ public class Entity : MonoBehaviour
         Damage(damage);
     }
 
+    public virtual List<ItemStack> GetDrops()
+    {
+        List<ItemStack> result = new List<ItemStack>();
+
+        return result;
+    }
+
+    public virtual void DropAllDrops()
+    {
+        int i = 0;
+        foreach (ItemStack item in GetDrops())
+        {
+            if (item.material != Material.Air && item.amount > 0)
+            {
+                System.Random random = new System.Random((transform.position + "" + i).GetHashCode());
+                Vector2 maxVelocity = new Vector2(2, 2);
+                Vector2Int dropPosition = Vector2Int.FloorToInt((Vector2)transform.position + new Vector2(0, 2));
+
+                item.Drop(dropPosition,
+                    new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
+                    (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
+
+                i++;
+            }
+        }
+    }
+
+    public virtual void Die()
+    {
+        DropAllDrops();
+
+        Destroy(gameObject);
+    }
+
     public virtual void Damage(float damage)
     {
-        Destroy(gameObject);
+        Die();
+    }
+
+    public virtual void Hit(float damage)
+    {
+        TakeHitDamage(damage);
+    }
+
+    public virtual void TakeHitDamage(float damage)
+    {
+        Damage(damage);
     }
 
     public virtual void setVelocity(Vector2 velocity)
@@ -137,11 +182,10 @@ public class Entity : MonoBehaviour
     {
 
     }
-
-
+    
     public virtual SpriteRenderer getRenderer()
     {
-        return GetComponent<SpriteRenderer>();
+        return transform.Find("_renderer").GetComponent<SpriteRenderer>();
     }
 
     public virtual void Load()

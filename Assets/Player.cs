@@ -24,6 +24,7 @@ public class Player : HumanEntity
     public static Player localInstance;
     public GameObject crosshair;
     private float lastFrameScroll;
+    private float lastHitTime;
 
     public override void Start()
     {
@@ -31,13 +32,12 @@ public class Player : HumanEntity
 
         localInstance = this;
 
-        health = maxHealth;
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
-        Load();
-
         transform.position = ValidSpawn(spawnPosition);
+
+        Load();
     }
 
     public override void Update()
@@ -86,7 +86,7 @@ public class Player : HumanEntity
         
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
-            Drop();
+            DropSelected();
 
         KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5
                                 , KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9};
@@ -172,10 +172,34 @@ public class Player : HumanEntity
                     item.Interact((Vector2Int)mousePosition, 0, false);
                 }
             }
+
+            //Hit Entities
+            if (Input.GetMouseButtonDown(0) && Time.time > lastHitTime + 0.5f)
+            {
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+                if (hit.collider != null && hit.transform.GetComponent<Entity>() != null)
+                {
+                    hit.transform.GetComponent<Entity>().Hit(1);
+                    print("hit");
+                    lastHitTime = Time.time;
+                }
+            }
         }
     }
 
-    public void Drop()
+    public override List<ItemStack> GetDrops()
+    {
+        List<ItemStack> result = new List<ItemStack>();
+
+        result.AddRange(inventory.items);
+
+        return result;
+    }
+
+    public void DropSelected()
     {
         ItemStack item = inventory.getSelectedItem().Clone();
 
@@ -188,26 +212,11 @@ public class Player : HumanEntity
         item.Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
     }
 
-    public void DropAll()
+    public override void DropAllDrops()
     {
-        int i = 0;
-        foreach(ItemStack item in inventory.items)
-        {
-            if(item.material != Material.Air && item.amount > 0)
-            {
-                System.Random random = new System.Random((transform.position + "" + i).GetHashCode());
-                Vector2 maxVelocity = new Vector2(2, 2);
-                Vector2Int dropPosition = Vector2Int.FloorToInt((Vector2)transform.position + new Vector2(0, 2));
+        base.DropAllDrops();
 
-                item.Drop(dropPosition, 
-                    new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
-                    (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
-
-                inventory.items[i] = new ItemStack();
-
-                i++;
-            }
-        }
+        inventory.Clear();
     }
 
     public Vector2 ValidSpawn(Vector2 pos)
@@ -225,12 +234,16 @@ public class Player : HumanEntity
     public override void Die()
     {
         DeathMenu.active = true;
-        DropAll();
         health = 20;
         hunger = 20;
         Save();
 
         base.Die();
+    }
+
+    public override void Hit(float damage)
+    {
+
     }
 
     public override void Save()

@@ -26,11 +26,13 @@ public class LivingEntity : Entity
     //Entity State
     private float last_jump_time;
     private float highestYlevelsinceground;
+    public EntityController controller;
 
     public override void Start()
     {
         base.Start();
 
+        controller = GetController();
         health = maxHealth;
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -45,6 +47,20 @@ public class LivingEntity : Entity
     public override void Update()
     {
         base.Update();
+
+        controller.Tick();
+        CalculateFlip();
+        UpdateAnimatorValues();
+    }
+
+    public virtual void UpdateAnimatorValues()
+    {
+        Animator anim = GetComponent<Animator>();
+
+        if (anim == null)
+            return;
+
+        anim.SetFloat("velocity", getVelocity().x);
     }
 
     public virtual void ProcessMovement()
@@ -61,8 +77,7 @@ public class LivingEntity : Entity
         if (!isInLiquid && isOnGround)
             setVelocity(getVelocity() * groundFriction);
     }
-
-
+    
     public virtual void Walk(int direction)
     {
         if (getVelocity().x < walkSpeed && getVelocity().x > -walkSpeed)
@@ -76,6 +91,19 @@ public class LivingEntity : Entity
             else targetXVelocity = 0;
             
             setVelocity(new Vector2(targetXVelocity, getVelocity().y));
+        }
+    }
+
+    public virtual EntityController GetController()
+    {
+        return new EntityController(this);
+    }
+
+    public virtual void CalculateFlip()
+    {
+        if (getVelocity().x != 0)
+        {
+            flipRenderX = (getVelocity().x < 0);
         }
     }
 
@@ -126,11 +154,6 @@ public class LivingEntity : Entity
         StartCoroutine(TurnRedByDamage());
     }
 
-    public override SpriteRenderer getRenderer()
-    {
-        return transform.Find("_renderer").GetComponent<SpriteRenderer>();
-    }
-
     IEnumerator TurnRedByDamage()
     {
         Color baseColor = getRenderer().color;
@@ -138,10 +161,5 @@ public class LivingEntity : Entity
         getRenderer().color = damageColor;
         yield return new WaitForSeconds(0.15f);
         getRenderer().color = baseColor;
-    }
-
-    public virtual void Die()
-    {
-        Destroy(gameObject);
     }
 }

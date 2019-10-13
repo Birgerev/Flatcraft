@@ -14,7 +14,6 @@ public class DroppedItem : Entity
 
 
     //Entity State
-    public SpriteRenderer sprite;
     private float cosIndex;
 
     // Start is called before the first frame update
@@ -28,10 +27,10 @@ public class DroppedItem : Entity
     public override void Update()
     {
         base.Update();
-        sprite.sprite = item.getSprite();
+        getRenderer().sprite = item.getSprite();
 
         //Bobbing
-        sprite.transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) *0.1f);
+        getRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) *0.1f);
         cosIndex += 2f * Time.deltaTime;
 
         if (isOnGround)

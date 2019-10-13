@@ -6,7 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public class Biome
 {
-
     [Space]
     [Header("Landscape")]
     public float landscapeLacunarity = 1f;
@@ -30,6 +29,7 @@ public class Biome
 
     [Space]
     public string name = "";
+    public List<string> biomeSpecificEntitySpawns;
 
     public LibNoise.Generator.Perlin getLandscapeNoise()
     {

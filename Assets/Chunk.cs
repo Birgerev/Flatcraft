@@ -56,6 +56,12 @@ public class Chunk : MonoBehaviour
     public static int sea_level = 62;
 
 
+    public static float mobSpawningChance = 0.01f;
+    public static float mobSpawningAmountCap = 2;
+    public static List<string> mobSpawns = new List<string> { "Chicken" };
+
+
+
     public Dictionary<Vector2Int, string> blockChanges = new Dictionary<Vector2Int, string>();
 
     private void Start()
@@ -173,10 +179,29 @@ public class Chunk : MonoBehaviour
 
                     block.Tick();
                 }
+
+                TrySpawnMobs();
             }
 
             age++;
             yield return new WaitForSeconds(1 / TickRate);
+        }
+    }
+
+    public void TrySpawnMobs()
+    {
+        System.Random r = new System.Random();
+
+        if(r.NextDouble() < mobSpawningChance / TickRate &&GetEntities().Length < mobSpawningAmountCap)
+        {
+            int x = r.Next(0, Width) + ChunkPosition*Width;
+            int y = getTopmostBlock(x).getPosition().y;
+            List<string> entities = mobSpawns;
+            entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
+            string entityId = entities[r.Next(0, entities.Count)];
+
+            Entity entity = Entity.Spawn(entityId);
+            entity.transform.position = new Vector3(x, y);
         }
     }
 
