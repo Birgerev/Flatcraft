@@ -16,6 +16,12 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(WorldManager.instance.loadingProgress != 1)
+        {
+            active = false;
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             active = !active;
