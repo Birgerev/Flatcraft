@@ -24,7 +24,7 @@ public class UIHeart : MonoBehaviour
         if (Player.localInstance == null)
             health = 0;
         else
-            health = Mathf.Round(Player.localInstance.health * 2) / 2;
+            health = Mathf.Round((Player.localInstance.health + 0.70f) * 2) / 2;
 
         float heartIndex = transform.GetSiblingIndex();
 

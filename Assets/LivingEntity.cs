@@ -154,6 +154,34 @@ public class LivingEntity : Entity
         StartCoroutine(TurnRedByDamage());
     }
 
+    public override void Die()
+    {
+        DeathSmoke();
+
+        base.Die();
+    }
+
+    public virtual void DeathSmoke()
+    {
+        System.Random rand = new System.Random();
+        for (int x = 0; x < 4; x++)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                if (rand.NextDouble() < 0.2f)
+                {
+                    Particle part = (Particle)Entity.Spawn("Particle");
+
+                    part.transform.position = (transform.position - new Vector3(0.5f, 0.5f)) + new Vector3(0.25f * x, 0.25f * y);
+                    part.color = Color.white;
+                    part.doGravity = false;
+                    part.velocity = new Vector2(0, 0.3f + (float)rand.NextDouble() * 0.5f);
+                    part.maxAge = 0.5f + (float)rand.NextDouble();
+                }
+            }
+        }
+    }
+
     IEnumerator TurnRedByDamage()
     {
         Color baseColor = getRenderer().color;

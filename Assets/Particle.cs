@@ -17,6 +17,7 @@ public class Particle : Entity
     {
         base.Start();
 
+        GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
         Destroy(gameObject, maxAge);
@@ -24,10 +25,8 @@ public class Particle : Entity
 
     public override void Update()
     {
+
         base.Update();
-
-        GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
-
     }
 
     private void OnCollisionEnter2D(Collision2D col)

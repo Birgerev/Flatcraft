@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chicken : LivingEntity
+public class Chicken : PassiveEntity
 {
     //Entity Properties
     public override float maxHealth { get; } = 4;

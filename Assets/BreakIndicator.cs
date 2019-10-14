@@ -16,9 +16,14 @@ public class BreakIndicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Time.time > lastTimeChanged + 0.5f)
+        if (Time.time > lastTimeChanged + 0.5f) {
+            Hide();
+            return;
+        }
+        if(Chunk.getBlock(Vector2Int.RoundToInt(transform.position)) == null)
         {
             Hide();
+            return;
         }
     }
 
