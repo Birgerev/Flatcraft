@@ -184,7 +184,6 @@ public class Player : HumanEntity
                 if (hit.collider != null && hit.transform.GetComponent<Entity>() != null)
                 {
                     hit.transform.GetComponent<Entity>().Hit(1);
-                    print("hit");
                     lastHitTime = Time.time;
                 }
             }

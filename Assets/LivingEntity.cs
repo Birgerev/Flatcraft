@@ -156,30 +156,9 @@ public class LivingEntity : Entity
 
     public override void Die()
     {
-        DeathSmoke();
+        Particle.Spawn_SmallSmoke(transform.position, Color.white);
 
         base.Die();
-    }
-
-    public virtual void DeathSmoke()
-    {
-        System.Random rand = new System.Random();
-        for (int x = 0; x < 4; x++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                if (rand.NextDouble() < 0.2f)
-                {
-                    Particle part = (Particle)Entity.Spawn("Particle");
-
-                    part.transform.position = (transform.position - new Vector3(0.5f, 0.5f)) + new Vector3(0.25f * x, 0.25f * y);
-                    part.color = Color.white;
-                    part.doGravity = false;
-                    part.velocity = new Vector2(0, 0.3f + (float)rand.NextDouble() * 0.5f);
-                    part.maxAge = 0.5f + (float)rand.NextDouble();
-                }
-            }
-        }
     }
 
     IEnumerator TurnRedByDamage()

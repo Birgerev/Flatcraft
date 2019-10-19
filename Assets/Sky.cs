@@ -35,7 +35,6 @@ public class Sky : MonoBehaviour
         Sun.transform.rotation = Quaternion.identity;
         Moon.transform.rotation = Quaternion.identity;
 
-        print(timeOfDay);
         lightLevels();
 
         GetComponent<Animator>().SetFloat("time", timeOfDay);
