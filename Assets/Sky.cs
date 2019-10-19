@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Sky : MonoBehaviour
 {
-    public Color dayColor;
-    public Color nightColor;
-    public Color transitionColor;
+    public static float sunlightIntensity;
+
+    public GameObject playerLockedY;
+    public GameObject skySpinner;
+    public GameObject Sun;
+    public GameObject Moon;
 
     private float timeOfDay;
 
@@ -21,74 +24,27 @@ public class Sky : MonoBehaviour
     {
         timeOfDay = (WorldManager.world.time % WorldManager.dayLength) / WorldManager.dayLength;
 
-        moveSky();
-        skyColor();
-        lightLevels();
-    }
+        Vector3 cameraPosition = CameraController.instance.transform.position;
 
-    void moveSky()
-    {
-        if (Player.localInstance == null)
-            return;
-        transform.position = new Vector3(Player.localInstance.transform.position.x, transform.position.y);
+        playerLockedY.transform.position = new Vector3(transform.position.x, cameraPosition.y);
+
+        skySpinner.transform.rotation = Quaternion.Euler(0, 0, -timeOfDay * 360);
+
+        transform.position = new Vector3(cameraPosition.x, transform.position.y);
+
+        Sun.transform.rotation = Quaternion.identity;
+        Moon.transform.rotation = Quaternion.identity;
+
+        print(timeOfDay);
+        lightLevels();
+
+        GetComponent<Animator>().SetFloat("time", timeOfDay);
     }
 
     void lightLevels()
     {
-        float intensity = (timeOfDay < 0.5f) ? 1 : 0.1f;
+        float intensity = (timeOfDay > 0.55f && timeOfDay < 0.95f) ? 0.1f : 1;
 
-        Sunlight.instance.intensity = intensity;
-    }
-
-    void skyColor()
-    {
-        Color color = Color.white;
-
-        if (timeOfDay < 1)
-        {
-            float stateValue = (timeOfDay - 0.95f) / 0.05f;
-            Color colorA;
-            Color colorB;
-            if (stateValue < 0.5f)
-            {
-                colorA = nightColor;
-                colorB = transitionColor;
-            }
-            else
-            {
-                colorA = transitionColor;
-                colorB = dayColor;
-            }
-            
-            color = Color.Lerp(colorA, colorB, stateValue);
-        }
-        if (timeOfDay < 0.95f)
-        {
-            color = nightColor;
-        }
-        if (timeOfDay <= 0.55f)
-        {
-            float stateValue = (timeOfDay - 0.50f)/0.05f;
-            Color colorA;
-            Color colorB;
-            if (stateValue < 0.5f)
-            {
-                colorA = dayColor;
-                colorB = transitionColor;
-            }
-            else
-            {
-                colorA = transitionColor;
-                colorB = nightColor;
-            }
-            
-            color = Color.Lerp(colorA, colorB, stateValue);
-        }
-        if (timeOfDay < 0.50f)
-        {
-            color = dayColor;
-        }
-
-        GetComponent<SpriteRenderer>().color = color;
+        sunlightIntensity = intensity;
     }
 }

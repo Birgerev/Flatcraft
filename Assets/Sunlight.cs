@@ -9,7 +9,6 @@ public class Sunlight : MonoBehaviour
     private float updateTime = 2f;
     public Color sunlightColor = Color.white;
     public bool loaded = false;
-    public float intensity = 1;
 
     public static Sunlight instance;
 
@@ -89,7 +88,7 @@ public class Sunlight : MonoBehaviour
                 BlockLight light = lightObj.GetComponent<BlockLight>();
                 light.color = sunlightColor;
                 light.glowingLevel = 17;
-                light.intensity = intensity;
+                light.sunlight = true;
 
                 yield return new WaitForSeconds((updateTime / blockCount) / 3);
             }
