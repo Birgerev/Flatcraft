@@ -9,13 +9,14 @@ public class LivingEntity : Entity
     public virtual float maxHealth { get; } = 20;
     
     [Header("Movement Properties")]
+    private float acceleration = 4f;
     private float walkSpeed = 4.3f;
     private float sprintSpeed = 5.6f;
     private float sneakSpeed = 1.3f;
-    private float jumpVelocity = 10f;
+    private float jumpVelocity = 6f;
     private float swimVelocity = 6f;
-    private float groundFriction = 0.7f;
-    private float airDrag = 0.98f;
+    private float groundFriction = 0.92f;
+    private float airDrag = 0.92f;
     private float liquidDrag = 0.5f;
 
     //Entity Data Tags
@@ -90,7 +91,7 @@ public class LivingEntity : Entity
                 targetXVelocity += walkSpeed;
             else targetXVelocity = 0;
             
-            GetComponent<Rigidbody2D>().AddForce( new Vector2(targetXVelocity, getVelocity().y));
+            GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.deltaTime), 0);
         }
     }
 
@@ -172,7 +173,7 @@ public class LivingEntity : Entity
     {
         direction.Normalize();
 
-        GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x*150, 250), ForceMode2D.Force);
+        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x*3f, 4f);
     }
 
     IEnumerator TurnRedByDamage()
