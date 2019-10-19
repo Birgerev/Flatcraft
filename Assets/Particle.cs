@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Particle : Entity
 {
-    public Color color { get { return GetComponent<SpriteRenderer>().color; } set { GetComponent<SpriteRenderer>().color = value; } }
+    public Color color { get { return getRenderer().color; } set { getRenderer().color = value; } }
     public Vector2 velocity { get { return GetComponent<Rigidbody2D>().velocity; } set { GetComponent<Rigidbody2D>().velocity = value; } }
     public int maxBounces = 3;
     public float maxAge = 5;

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1149122271182722695}
   - component: {fileID: 1149122271182722688}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1149122271957633176}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraFocusPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1149122272203067693}
   - component: {fileID: 1149122272203067694}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 1149122272397806829}
   - component: {fileID: 1149122272397806803}
   - component: {fileID: 1149122272397806802}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,14 +241,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60af62e39a9c0249bed273088c3fda7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  age: 0
   currentChunk: {fileID: 0}
   isOnGround: 0
-  age: 0
   isInLiquid: 0
-  saveData: 
+  flipRenderX: 0
+  health: 0
   maxHunger: 20
   hunger: 0
-  crosshair: {fileID: 1149122271182722694}
   inventory:
     size: 36
     items:
@@ -364,6 +364,8 @@ MonoBehaviour:
     open: 0
     selectedSlot: 0
     baseInventorySize: 36
+  spawnPosition: {x: 0, y: 80}
+  crosshair: {fileID: 1149122271182722694}
 --- !u!61 &1149122272397806803
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -434,11 +436,6 @@ PrefabInstance:
       propertyPath: glowingLevel
       value: 9
       objectReference: {fileID: 0}
-    - target: {fileID: 5347285956703558260, guid: c07467e0f14f90d4b9cf7a82700bbe37,
-        type: 3}
-      propertyPath: m_Name
-      value: Light
-      objectReference: {fileID: 0}
     - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}
       propertyPath: m_RootOrder
@@ -458,6 +455,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347285956703558260, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Name
+      value: Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347285956703558260, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032280855612726984, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2448289533655964796, guid: c07467e0f14f90d4b9cf7a82700bbe37,
         type: 3}

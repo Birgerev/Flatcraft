@@ -90,7 +90,7 @@ public class LivingEntity : Entity
                 targetXVelocity += walkSpeed;
             else targetXVelocity = 0;
             
-            setVelocity(new Vector2(targetXVelocity, getVelocity().y));
+            GetComponent<Rigidbody2D>().AddForce( new Vector2(targetXVelocity, getVelocity().y));
         }
     }
 
@@ -138,7 +138,14 @@ public class LivingEntity : Entity
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }
-    
+
+    public override void Hit(float damage)
+    {
+        base.Hit(damage);
+
+        Knockback(transform.position - Player.localInstance.transform.position);
+    }
+
     public virtual void TakeFallDamage(float damage)
     {
         Damage(damage);
@@ -159,6 +166,13 @@ public class LivingEntity : Entity
         Particle.Spawn_SmallSmoke(transform.position, Color.white);
 
         base.Die();
+    }
+
+    public virtual void Knockback(Vector2 direction)
+    {
+        direction.Normalize();
+
+        GetComponent<Rigidbody2D>().AddForce(new Vector2(direction.x*150, 250), ForceMode2D.Force);
     }
 
     IEnumerator TurnRedByDamage()
