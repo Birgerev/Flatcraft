@@ -12,7 +12,7 @@ public class Chicken : PassiveEntity
         List<ItemStack> result = new List<ItemStack>();
         System.Random r = new System.Random(Chunk.seedByPosition(Vector2Int.CeilToInt(transform.position)));
 
-        result.Add(new ItemStack(Material.Gravel, r.Next(0, 3 + 1)));
+        result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
 
         return result;
     }

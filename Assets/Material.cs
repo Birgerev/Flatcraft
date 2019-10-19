@@ -39,5 +39,7 @@
     Chest,
     Cactus,
     Fire,
-    Logged_Leaves
+    Logged_Leaves,
+    Raw_Chicken,
+    Cooked_Chicken
 }
