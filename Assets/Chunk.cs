@@ -302,7 +302,7 @@ public class Chunk : MonoBehaviour
 
 
         //Load block changes
-        string path = WorldManager.world.getPath() + "\\region\\" + ChunkPosition;
+        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition + "\\blocks";
         if (File.Exists(path))
         {
             foreach (string line in File.ReadAllLines(path))
@@ -405,11 +405,14 @@ public class Chunk : MonoBehaviour
         //Save Blocks
         if (blockChanges.Count > 0)
         {
-            string path = WorldManager.world.getPath() + "\\region\\" + ChunkPosition;
-            if (!File.Exists(path))
-                File.Create(path).Close();
+            string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                File.Create(path + "\\blocks").Close();
+            }
 
-            foreach (string line in File.ReadAllLines(path))
+            foreach (string line in File.ReadAllLines(path + "\\blocks"))
             {
                 Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
                 string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
@@ -419,9 +422,9 @@ public class Chunk : MonoBehaviour
             }
 
             //Empty lines before writing
-            File.WriteAllText(path, "");
+            File.WriteAllText(path + "\\blocks", "");
 
-            TextWriter c = new StreamWriter(path);
+            TextWriter c = new StreamWriter(path + "\\blocks");
 
             foreach (KeyValuePair<Vector2Int, string> line in blockChanges)
             {
