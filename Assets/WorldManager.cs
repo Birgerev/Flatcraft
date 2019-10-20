@@ -35,6 +35,15 @@ public class WorldManager : MonoBehaviour
         world.time += Time.deltaTime;
     }
 
+    IEnumerator SaveLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Chunk.AutosaveDuration);
+            world.SaveData();
+        }
+    }
+
     IEnumerator LoadWorld()
     {
         Time.timeScale = 1;
@@ -83,6 +92,8 @@ public class WorldManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         loadingProgress = 6f / steps;
+
+        StartCoroutine(SaveLoop());
     }
 
     public void Spawn()

@@ -24,15 +24,22 @@ public class World
     public static World loadWorld(string name)
     {
         World world = new World(name, 0);
-        world.seed = int.Parse(File.ReadAllLines(world.getPath()+"\\seed.dat")[0]);
-
+        Dictionary<string, string> worldData = new Dictionary<string, string>();
+        string[] data = File.ReadAllLines(world.getPath() + "\\level.dat");
+        foreach(string dataLine in data)
+        {
+            worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
+        }
+        
+        world.seed = int.Parse(worldData["seed"]);
+        world.time = float.Parse(worldData["time"]);
 
         return world;
     }
 
     public static bool worldExists(string name)
     {
-        return File.Exists(new World(name, 0).getPath() + "\\seed.dat");
+        return File.Exists(new World(name, 0).getPath() + "\\level.dat");
     }
 
     public static List<World> loadWorlds()
@@ -52,15 +59,26 @@ public class World
         Directory.Delete(getPath(), true);
     }
 
-    public void Create()
+    public void SaveData()
     {
-        Directory.CreateDirectory(getPath());
-        Directory.CreateDirectory(getPath()+"\\region");
-        Directory.CreateDirectory(getPath() + "\\region\\Overworld");
-        Directory.CreateDirectory(getPath() + "\\players");
-        File.Create(getPath() + "\\level.dat");
-        File.Create(getPath() + "\\seed.dat").Dispose();
-        File.WriteAllText(getPath() + "\\seed.dat", "" + seed);
+        if(!Directory.Exists(getPath()))
+            Directory.CreateDirectory(getPath());
+        if (!Directory.Exists(getPath() + "\\region"))
+            Directory.CreateDirectory(getPath()+"\\region");
+        if (!Directory.Exists(getPath() + "\\region\\Overworld"))
+            Directory.CreateDirectory(getPath() + "\\region\\Overworld");
+        if (!Directory.Exists(getPath() + "\\players"))
+            Directory.CreateDirectory(getPath() + "\\players");
+
+        if(!File.Exists(getPath() + "\\level.dat"))
+            File.Create(getPath() + "\\level.dat").Close();
+
+        List<string> data = new List<string>();
+
+        data.Add("seed=" + seed);
+        data.Add("time=" + time);
+
+        File.WriteAllLines(getPath() + "\\level.dat", data);
     }
 
     public static string GetSavesPath()

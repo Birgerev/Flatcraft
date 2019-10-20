@@ -50,7 +50,7 @@ public class CreateWorldMenu : MonoBehaviour
     public void Create()
     {
         switchingMenus = true;
-        world.Create();
+        world.SaveData();
         WorldManager.world = world;
         SceneManager.LoadScene("Loading");
     }
