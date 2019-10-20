@@ -1,0 +1,4 @@
+Wooden_Shovel*1*
+Stick*0,0*
+Stick*0,1*
+Planks*0,2*

@@ -1,0 +1,4 @@
+Iron_Shovel*1*
+Stick*0,0*
+Stick*0,1*
+Iron_Ingot*0,2*

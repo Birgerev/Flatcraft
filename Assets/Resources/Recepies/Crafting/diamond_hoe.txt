@@ -1,0 +1,5 @@
+Diamond_Hoe*1*
+Stick*1,0*
+Stick*1,1*
+Diamond*0,2*
+Diamond*1,2*

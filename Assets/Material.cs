@@ -23,11 +23,37 @@
     Gravel,
     Planks,
     Stick,
+
     Wooden_Pickaxe,
+    Wooden_Axe,
+    Wooden_Shovel,
+    Wooden_Sword,
+    Wooden_Hoe,
+
     Stone_Pickaxe,
+    Stone_Axe,
+    Stone_Shovel,
+    Stone_Sword,
+    Stone_Hoe,
+
     Iron_Pickaxe,
-    Gold_Pickaxe,
+    Iron_Axe,
+    Iron_Shovel,
+    Iron_Sword,
+    Iron_Hoe,
+
+    Golden_Pickaxe,
+    Golden_Axe,
+    Golden_Shovel,
+    Golden_Sword,
+    Golden_Hoe,
+
     Diamond_Pickaxe,
+    Diamond_Axe,
+    Diamond_Shovel,
+    Diamond_Sword,
+    Diamond_Hoe,
+
     Crafting_Table,
     Furnace,
     Coal,

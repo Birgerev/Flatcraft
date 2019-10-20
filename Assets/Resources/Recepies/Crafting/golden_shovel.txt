@@ -1,0 +1,4 @@
+Golden_Shovel*1*
+Stick*0,0*
+Stick*0,1*
+Gold_Ingot*0,2*

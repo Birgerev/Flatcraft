@@ -1,0 +1,5 @@
+Stone_Hoe*1*
+Stick*1,0*
+Stick*1,1*
+Cobblestone*0,2*
+Cobblestone*1,2*

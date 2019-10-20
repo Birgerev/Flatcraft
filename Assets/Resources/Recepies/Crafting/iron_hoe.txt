@@ -1,0 +1,5 @@
+Iron_Hoe*1*
+Stick*1,0*
+Stick*1,1*
+Iron_Ingot*0,2*
+Iron_Ingot*1,2*

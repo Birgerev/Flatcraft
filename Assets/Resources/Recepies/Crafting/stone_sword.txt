@@ -1,0 +1,4 @@
+Stone_Sword*1*
+Stick*0,0*
+Cobblestone*0,1*
+Cobblestone*0,2*

@@ -1,0 +1,4 @@
+Diamond_Shovel*1*
+Stick*0,0*
+Stick*0,1*
+Diamond*0,2*

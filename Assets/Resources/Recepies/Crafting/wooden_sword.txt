@@ -1,0 +1,4 @@
+Wooden_Sword*1*
+Stick*0,0*
+Planks*0,1*
+Planks*0,2*
