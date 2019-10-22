@@ -217,7 +217,7 @@ public class Player : HumanEntity
         inventory.Clear();
     }
 
-    public Vector2 ValidSpawn(Vector2 pos)
+    public static Vector2 ValidSpawn(Vector2 pos)
     {
         for (int i = Chunk.Height; i <= 0; i --)
         {
