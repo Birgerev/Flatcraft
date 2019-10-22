@@ -195,7 +195,7 @@ public class Chunk : MonoBehaviour
         if(r.NextDouble() < mobSpawningChance / TickRate &&GetEntities().Length < mobSpawningAmountCap)
         {
             int x = r.Next(0, Width) + ChunkPosition*Width;
-            int y = getTopmostBlock(x).getPosition().y;
+            int y = getTopmostBlock(x).getPosition().y + 1;
             List<string> entities = mobSpawns;
             entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
             string entityId = entities[r.Next(0, entities.Count)];
