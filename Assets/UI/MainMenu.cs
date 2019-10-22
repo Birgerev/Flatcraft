@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public static string discordURL = "https://discord.gg/EbmpduX";
+
     public void Singleplayer()
     {
         SceneManager.LoadScene("SingleplayerMenu");
@@ -19,6 +21,11 @@ public class MainMenu : MonoBehaviour
     public void Options()
     {
         SceneManager.LoadScene("Options");
+    }
+
+    public void Discord()
+    {
+        Application.OpenURL(discordURL);
     }
 
     public void Quit()

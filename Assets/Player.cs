@@ -246,23 +246,6 @@ public class Player : HumanEntity
 
     }
 
-    public override void Save()
-    {
-        string path = WorldManager.world.getPath() + "\\players\\player.dat";
-
-        if (!File.Exists(path))
-        {
-            File.Create(path);
-            return;
-        }
-
-        List<string> lines = new List<string>();
-
-        lines = GetSaveStrings();
-
-        File.WriteAllLines(path, lines);
-    }
-
     public override string SavePath()
     {
         return WorldManager.world.getPath() + "\\players\\player.dat";

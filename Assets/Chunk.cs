@@ -409,6 +409,7 @@ public class Chunk : MonoBehaviour
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
+                Directory.CreateDirectory(path+"\\entities");
                 File.Create(path + "\\blocks").Close();
             }
 

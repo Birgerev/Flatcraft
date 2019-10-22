@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
     public float age = 0;
 
     //Entity State
+    public int id = 0;
     public Chunk currentChunk;
     public bool isOnGround;
     public bool isInLiquid = false;
@@ -126,6 +127,8 @@ public class Entity : MonoBehaviour
     {
         DropAllDrops();
 
+        DeleteOldSavePath();
+
         Destroy(gameObject);
     }
 
@@ -177,14 +180,51 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\TODO\\";
+        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(transform.position.x)))+"\\entities\\"+id+"."+GetType().Name;
     }
 
     public virtual void Save()
     {
+        DeleteOldSavePath();
 
+        string path = SavePath();
+
+        if (!File.Exists(path))
+        {
+            File.Create(path).Close();
+        }
+
+        List<string> lines = new List<string>();
+
+        lines = GetSaveStrings();
+
+        File.WriteAllLines(path, lines);
     }
-    
+
+    public virtual void DeleteOldSavePath()
+    {
+        string[] dimensions = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\");
+
+        foreach (string dimension in dimensions)
+        {
+            string[] chunks = Directory.GetDirectories(dimension);
+            
+            foreach (string chunk in chunks)
+            {
+                string[] entities = Directory.GetFiles(chunk + "\\entities\\");
+
+                foreach (string entity in entities)
+                {
+                    if (entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0].Equals(id))
+                    {
+                        File.Delete(entity);
+                        print(entity);
+                    }
+                }
+            }
+        }
+    }
+
     public virtual SpriteRenderer getRenderer()
     {
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
@@ -217,7 +257,6 @@ public class Entity : MonoBehaviour
             else
                 field.SetValue(this, System.Convert.ChangeType(lines[field.Name], type));
         }
-
     }
 
     void OnCollisionStay2D(Collision2D col)
@@ -232,17 +271,25 @@ public class Entity : MonoBehaviour
             isOnGround = false;
     }
 
-    public static Entity Spawn(string id)
+    public static int CreateId()
     {
-        if(Resources.Load("Entities/" + id) == null)
+        return Random.Range(1, 99999);
+    }
+
+    public static Entity Spawn(string type)
+    {
+        if(Resources.Load("Entities/" + type) == null)
         {
-            Debug.LogError("No Entity with the id '"+id+"' was found");
+            Debug.LogError("No Entity with the type '" + type + "' was found");
             return null;
         }
 
-        GameObject obj = Instantiate((GameObject)Resources.Load("Entities/"+id));
+        GameObject obj = Instantiate((GameObject)Resources.Load("Entities/"+ type));
+        Entity result = obj.GetComponent<Entity>();
 
-        return obj.GetComponent<Entity>();
+        result.id = CreateId();
+
+        return result;
     }
 
     public static Dictionary<string, string> dataFromStrings(string[] dataStrings)
