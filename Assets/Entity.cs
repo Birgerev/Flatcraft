@@ -129,7 +129,7 @@ public class Entity : MonoBehaviour
 
         DeleteOldSavePath();
 
-        Destroy(gameObject);
+        Destroy(gameObject, 0.1f);
     }
 
     public virtual void Damage(float damage)

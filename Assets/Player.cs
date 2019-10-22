@@ -35,8 +35,6 @@ public class Player : HumanEntity
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
-        transform.position = ValidSpawn(spawnPosition);
-
         Load();
     }
 
@@ -223,7 +221,7 @@ public class Player : HumanEntity
     {
         for (int i = Chunk.Height; i <= 0; i --)
         {
-            if(Chunk.getBlock(new Vector2Int((int)pos.x, i)) != null)
+            if(Chunk.getBlock(new Vector2Int((int)pos.x, i)) != null && Chunk.getBlock(new Vector2Int((int)pos.x, i)).playerCollide)
             {
                 return new Vector2(pos.x, i+2);
             }
@@ -236,9 +234,10 @@ public class Player : HumanEntity
         DeathMenu.active = true;
         health = 20;
         hunger = 20;
-        Save();
 
         base.Die();
+        transform.position = ValidSpawn(spawnPosition);
+        Save();
     }
 
     public override void Hit(float damage)
