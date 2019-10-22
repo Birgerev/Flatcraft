@@ -9,6 +9,8 @@ public class Inventory
     public ItemStack[] items;
     public string name;
 
+    public Vector2Int holder;
+
     public bool open;
 
     public Inventory()
@@ -131,8 +133,21 @@ public class Inventory
         return false;
     }
 
-    public virtual void Open()
+    public void DropAll(Vector2Int dropPosition)
     {
+        foreach (ItemStack item in items)
+        {
+            dropPosition = dropPosition + new Vector2Int(0, 1);
+
+            item.Drop(dropPosition, true);
+        }
+
+        items = new ItemStack[size];
+    }
+
+    public virtual void Open(Vector2Int holder)
+    {
+        this.holder = holder;
         open = true;
         UpdateMenuStatus();
     }

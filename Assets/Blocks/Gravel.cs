@@ -17,7 +17,7 @@ public class Gravel : Block
         {
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
             fs.transform.position = (Vector2)getPosition();
-            fs.material = GetMateral();
+            fs.material = GetMaterial();
 
             Chunk.setBlock(getPosition(), Material.Air, true);
         }

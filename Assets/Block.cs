@@ -34,7 +34,7 @@ public class Block : MonoBehaviour
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
-        
+
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
@@ -62,7 +62,7 @@ public class Block : MonoBehaviour
             }
         }
 
-        if (Time.time - time_of_last_hit > 0.5f)
+        if (Time.time - time_of_last_hit > 1.5f)
         {
             ResetBlockDamage();
         }
@@ -73,7 +73,7 @@ public class Block : MonoBehaviour
 
         UpdateColliders();
 
-        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave)
+        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime)
         {
             Autosave();
             return;
@@ -113,7 +113,7 @@ public class Block : MonoBehaviour
     {
         time_of_last_autosave = Time.time;
 
-        Chunk.setBlock(getPosition(), GetMateral(), stringFromData(data), true);
+        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true);
     }
 
     public virtual void Hit(float time)
@@ -129,7 +129,7 @@ public class Block : MonoBehaviour
 
         if(tool_type == propperToolType && tool_level >= propperToolLevel)
         {
-            time *= 1 + ((float)tool_level * 2f);
+            time *= 2 + ((float)tool_level * 2f);
         }
         if (propperToolLevel == Tool_Level.None ||
             (tool_type == propperToolType && tool_level >= propperToolLevel))
@@ -138,10 +138,10 @@ public class Block : MonoBehaviour
         }
 
         blockHealth -= time;
-
+        
         if (blockHealth <= 0)
         {
-            if(properToolStats)
+            if (properToolStats)
                 Break();
             else
                 Break(false);
@@ -170,7 +170,7 @@ public class Block : MonoBehaviour
 
     public virtual ItemStack GetDrop()
     {
-        return new ItemStack(GetMateral(), 1);
+        return new ItemStack(GetMaterial(), 1);
     }
 
     public virtual void Interact()
@@ -220,7 +220,7 @@ public class Block : MonoBehaviour
         else return Resources.Load<Sprite>("Sprites/" + texture);
     }
 
-    public Material GetMateral()
+    public Material GetMaterial()
     {
         return (Material)System.Enum.Parse(typeof(Material), this.GetType().Name);
     }

@@ -67,7 +67,7 @@ public class Player : HumanEntity
     private void performInput()
     {
         if (Input.GetKeyDown(KeyCode.E) && !inventory.open)
-            inventory.Open();
+            inventory.Open(Vector2Int.RoundToInt(transform.position));
 
         //Movement
         if (Input.GetKey(KeyCode.A))
@@ -112,7 +112,7 @@ public class Player : HumanEntity
 
             if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
             {
-                if (block == null || (block.GetMateral() == Material.Water || block.GetMateral() == Material.Lava))
+                if (block == null || (block.GetMaterial() == Material.Water || block.GetMaterial() == Material.Lava))
                 {
                     if (Input.GetMouseButtonDown(1))
                     {

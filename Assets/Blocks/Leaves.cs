@@ -32,7 +32,7 @@ public class Leaves : Block
             {
                 if (Chunk.getBlock(new Vector2Int(getPosition().x + x, getPosition().y + y)) != null)
                 {
-                    if (Chunk.getBlock(new Vector2Int(getPosition().x + x, getPosition().y + y)).GetMateral() == Material.Oak_Log)
+                    if (Chunk.getBlock(new Vector2Int(getPosition().x + x, getPosition().y + y)).GetMaterial() == Material.Oak_Log)
                     {
                         foundSupport = true;
                         break;

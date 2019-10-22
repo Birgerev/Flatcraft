@@ -61,7 +61,7 @@ public class LivingEntity : Entity
         if (anim == null)
             return;
 
-        anim.SetFloat("velocity", getVelocity().x);
+        anim.SetFloat("velocity-x", getVelocity().x);
     }
 
     public virtual void ProcessMovement()

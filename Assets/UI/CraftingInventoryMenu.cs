@@ -4,31 +4,6 @@ using UnityEngine;
 
 public class CraftingInventoryMenu : ContainerInventoryMenu
 {
-    private CraftingRecepie curRecepie;
-
-    public override void FillSlots()
-    {
-        if (active)
-        {
-            CheckCraftingRecepies();
-        }
-
-        base.FillSlots();
-    }
-    
-    public void CheckCraftingRecepies()
-    {
-        curRecepie = CraftingRecepie.FindRecepieByItems(((CraftingInventory)inventory).getCraftingTable());
-
-        if (curRecepie == null)
-        {
-            ((CraftingInventory)inventory).setItem(((CraftingInventory)inventory).getCraftingResultSlot(), new ItemStack());
-            return;
-        }
-
-        ((CraftingInventory)inventory).setItem(((CraftingInventory)inventory).getCraftingResultSlot(), curRecepie.result);
-    }
-
     public override void OnClickSlot(int slotIndex, int clickType)
     {
         if (slotIndex == playerInventory.baseInventorySize + ((CraftingInventory)inventory).getCraftingResultSlot())
@@ -60,8 +35,5 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             if (craftingItem.amount > 0)
                 craftingItem.amount--;
         }
-
-        CheckCraftingRecepies();
     }
-
 }

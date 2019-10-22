@@ -43,7 +43,7 @@ public class Liquid : Block
             Chunk.setBlock(getPosition(), Material.Air, true);
             return;
         }
-        if(sourceBlock.GetMateral() != GetMateral() || 
+        if(sourceBlock.GetMaterial() != GetMaterial() || 
             int.Parse(sourceBlock.data["liquid_level"]) <= 1 || 
             int.Parse(data["liquid_level"]) < 1 ||
             int.Parse(sourceBlock.data["liquid_level"]) < int.Parse(data["liquid_level"]))
@@ -54,11 +54,11 @@ public class Liquid : Block
 
     public void Flow()
     {
-        if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) != null && Chunk.getBlock(getPosition() + new Vector2Int(0, -1)).GetMateral() == GetMateral())
+        if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) != null && Chunk.getBlock(getPosition() + new Vector2Int(0, -1)).GetMaterial() == GetMaterial())
             return;
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
         {
-            Chunk.setBlock(getPosition() + new Vector2Int(0, -1), GetMateral(), "source_block=0.1", true);
+            Chunk.setBlock(getPosition() + new Vector2Int(0, -1), GetMaterial(), "source_block=0.1", true);
             return;
         }
 
@@ -68,11 +68,11 @@ public class Liquid : Block
         {
             if (Chunk.getBlock(getPosition() + new Vector2Int(-1, 0)) == null)
             {
-                Chunk.setBlock(getPosition() + new Vector2Int(-1, 0), GetMateral(), "source_block=1.0,liquid_level="+(liquidLevel-1), true);
+                Chunk.setBlock(getPosition() + new Vector2Int(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true);
             }
             if (Chunk.getBlock(getPosition() + new Vector2Int(1, 0)) == null)
             {
-                Chunk.setBlock(getPosition() + new Vector2Int(1, 0), GetMateral(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true);
+                Chunk.setBlock(getPosition() + new Vector2Int(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true);
             }
         }
     }

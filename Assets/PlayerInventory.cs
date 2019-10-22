@@ -46,13 +46,19 @@ public class PlayerInventory : Inventory
     {
         ItemStack[] table = new ItemStack[4];
 
-        for (int i = 40; i <= 43; i++)
+        for (int i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot()+4; i++)
         {
             table[i-40] = getItem(i);
         }
 
         return table;
     }
+
+    public int getFirstCraftingTableSlot()
+    {
+        return 40;
+    }
+
 
     public int getCraftingResultSlot()
     {
@@ -65,5 +71,19 @@ public class PlayerInventory : Inventory
         inventory.active = open;
 
         InventoryMenu.playerInventory = this;
+    }
+
+    public override void Close()
+    {
+        int i = 0;
+        foreach (ItemStack index in getCraftingTable())
+        {
+            index.Drop(holder, true);
+
+            items[getFirstCraftingTableSlot() + i] = new ItemStack();
+            i++;
+        }
+
+        base.Close();
     }
 }

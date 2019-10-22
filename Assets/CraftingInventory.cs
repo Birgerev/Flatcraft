@@ -32,4 +32,14 @@ public class CraftingInventory : Inventory
         inventory.active = open;
         inventory.inventory = this;
     }
+
+    public override void Close()
+    {
+        //Don't drop results slot
+        items[getCraftingResultSlot()] = new ItemStack();
+
+        DropAll(holder);
+
+        base.Close();
+    }
 }

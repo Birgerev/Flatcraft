@@ -326,7 +326,7 @@ public class Chunk : MonoBehaviour
         if (block == null)
             return;
 
-        Material mat = block.GetMateral();
+        Material mat = block.GetMaterial();
         Biome biome = getMostProminantBiome(pos.x);
         System.Random r = new System.Random(Chunk.seedByPosition(pos));
 
@@ -338,6 +338,12 @@ public class Chunk : MonoBehaviour
                 if (r.Next(0, 100) <= 10)
                 {
                     Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
+                }
+
+                //Large Trees
+                if (r.Next(0, 100) <= 1)
+                {
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false);
                 }
 
                 //Vegetation

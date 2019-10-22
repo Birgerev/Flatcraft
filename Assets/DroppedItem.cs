@@ -37,9 +37,9 @@ public class DroppedItem : Entity
             GetComponent<Rigidbody2D>().velocity *= 0.95f;
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
-        if (!canPickup)
+        if (!canPickup && age < 2)
             return;
 
         if (col.GetComponent<DroppedItem>() != null)

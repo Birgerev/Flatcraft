@@ -80,7 +80,7 @@ public class CraftingRecepie
                         break;
                 }
 
-                if (items[i].material != Material.Air)
+                if (items[i] != null && items[i].material != Material.Air)
                 {
                     shape.Add(curPos, items[i].material);
                 }

@@ -47,11 +47,28 @@ public class ItemStack
 
     public void Drop(Vector2Int position)
     {
-        Drop(position, new Vector2(0, 0));
+        Drop(position, false);
+    }
+
+    public void Drop(Vector2Int position, bool randomVelocity)
+    {
+        Vector2 velocity = Vector2.zero;
+        if (randomVelocity)
+        {
+            System.Random random = new System.Random((this).GetHashCode() + position.GetHashCode());
+            Vector2 maxVelocity = new Vector2(1, 2);
+            velocity = new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
+            (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x);
+        }
+
+        Drop(position, velocity);
     }
 
     public void Drop(Vector2Int position, Vector2 velocity)
     {
+        if (material == Material.Air || amount <= 0)
+            return;
+
         GameObject obj = Entity.Spawn("DroppedItem").gameObject;
 
         obj.transform.position = new Vector3(position.x, position.y, 0);

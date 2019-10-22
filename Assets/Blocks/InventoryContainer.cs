@@ -26,6 +26,13 @@ public class InventoryContainer : Block
         base.Tick();
     }
 
+    public override void Break(bool drop)
+    {
+        inventory.DropAll(getPosition());
+
+        base.Break(drop);
+    }
+
     public override void Autosave()
     {
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
@@ -42,6 +49,6 @@ public class InventoryContainer : Block
     {
         base.Interact();
 
-        inventory.Open();
+        inventory.Open(getPosition());
     }
 }
