@@ -43,7 +43,7 @@ public class Structure_Block : Block
                 Chunk.setBlock(pos, mat, save);
             }
             
-            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, true);
+            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save);
         }
     }
 }

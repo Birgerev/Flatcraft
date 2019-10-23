@@ -341,8 +341,6 @@ public class Chunk : MonoBehaviour
             entity.id = entityId;
             //Make sure the newly created entity is in the chunk, to make loading work correctly
             entity.transform.position = transform.position + new Vector3(1, 1);
-
-            print(entityPath + " = "+entityType + ", "+entityId);
         }
     }
 
