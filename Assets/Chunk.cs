@@ -198,9 +198,9 @@ public class Chunk : MonoBehaviour
             int y = getTopmostBlock(x).getPosition().y + 1;
             List<string> entities = mobSpawns;
             entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
-            string entityId = entities[r.Next(0, entities.Count)];
+            string entityType = entities[r.Next(0, entities.Count)];
 
-            Entity entity = Entity.Spawn(entityId);
+            Entity entity = Entity.Spawn(entityType);
             entity.transform.position = new Vector3(x, y);
         }
     }
@@ -292,6 +292,9 @@ public class Chunk : MonoBehaviour
             }
         }
 
+
+        LoadAllEntities();
+
         //Tick world a few times so stuctures are generated before we load world changes
         StartCoroutine(Tick());
 
@@ -318,6 +321,29 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
+    }
+
+
+    private void LoadAllEntities()
+    {
+        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition + "\\entities";
+
+        if (!Directory.Exists(path))
+            return;
+
+        foreach (string entityPath in Directory.GetFiles(path))
+        {
+            string entityFile = entityPath.Split('\\')[entityPath.Split('\\').Length - 1];
+            string entityType = entityFile.Split('.')[1];
+            int entityId = int.Parse(entityFile.Split('.')[0]);
+
+            Entity entity = Entity.Spawn(entityType);
+            entity.id = entityId;
+            //Make sure the newly created entity is in the chunk, to make loading work correctly
+            entity.transform.position = transform.position + new Vector3(1, 1);
+
+            print(entityPath + " = "+entityType + ", "+entityId);
+        }
     }
 
     private void GenerateStructures(Vector2Int pos)
@@ -408,6 +434,9 @@ public class Chunk : MonoBehaviour
 
     public void Save()
     {
+        if (age <= 5)
+            return;
+
         //Save Blocks
         if (blockChanges.Count > 0)
         {

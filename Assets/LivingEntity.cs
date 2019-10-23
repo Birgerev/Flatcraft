@@ -31,10 +31,11 @@ public class LivingEntity : Entity
 
     public override void Start()
     {
+        health = maxHealth;
+
         base.Start();
 
         controller = GetController();
-        health = maxHealth;
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }

@@ -16,6 +16,9 @@ public class FallingSand : Entity
     {
         base.Start();
 
+        if (material == Material.Air)
+            Die();
+
         getRenderer().sprite = new ItemStack(material).getSprite();
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
@@ -24,7 +27,7 @@ public class FallingSand : Entity
     {
         base.Update();
 
-        if (isOnGround && age > 0.2f)
+        if (isOnGround && age > 1f)
         {
             if(Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
                 Chunk.setBlock(Vector2Int.RoundToInt((Vector2)transform.position), material);
@@ -32,7 +35,8 @@ public class FallingSand : Entity
             {
                 new ItemStack(material, 1).Drop(Vector2Int.RoundToInt((Vector2)transform.position));
             }
-            Destroy(gameObject);
+
+            Die();
         }
     }
 }

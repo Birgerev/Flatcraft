@@ -27,6 +27,8 @@ public class Entity : MonoBehaviour
     public virtual void Start()
     {
         gameObject.name = "Entity ["+this.GetType().Name+"]";
+
+        Load();
     }
 
     public virtual void Update()
@@ -215,10 +217,9 @@ public class Entity : MonoBehaviour
 
                 foreach (string entity in entities)
                 {
-                    if (entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0].Equals(id))
+                    if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
                     {
                         File.Delete(entity);
-                        print(entity);
                     }
                 }
             }

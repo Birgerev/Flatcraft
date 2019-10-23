@@ -20,6 +20,10 @@ public class DroppedItem : Entity
     public override void Start()
     {
         base.Start();
+
+        if (item.material == Material.Air || item.amount <= 0)
+            Die();
+
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
@@ -39,24 +43,21 @@ public class DroppedItem : Entity
 
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (!canPickup && age < 2)
+        if (!canPickup || age < 2)
             return;
 
         if (col.GetComponent<DroppedItem>() != null)
         {
             if (col.GetComponent<DroppedItem>().item.material == item.material)
             {
-                if (transform.position.x < col.transform.position.x)
+                if (age < col.GetComponent<DroppedItem>().age)
                     return;
-                if (transform.position.x == col.transform.position.x)
-                    if (transform.position.y < col.transform.position.y)
-                        return;
                 if (!col.GetComponent<DroppedItem>().canPickup)
                     return;
 
                 item.amount += col.GetComponent<DroppedItem>().item.amount;
                 col.GetComponent<DroppedItem>().canPickup = false;
-                Destroy(col.gameObject);
+                col.GetComponent<DroppedItem>().Die();
                 return;
             }
         }
@@ -64,7 +65,8 @@ public class DroppedItem : Entity
         {
             if (col.GetComponent<Player>().inventory.AddItem(item))
             {
-                Destroy(gameObject);
+                canPickup = false;
+                Die();
             }
         }
     }

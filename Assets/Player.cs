@@ -28,14 +28,12 @@ public class Player : HumanEntity
 
     public override void Start()
     {
-        base.Start();
-
         localInstance = this;
 
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
-        Load();
+        base.Start();
     }
 
     public override void Update()
