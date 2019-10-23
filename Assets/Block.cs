@@ -13,6 +13,8 @@ public class Block : MonoBehaviour
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
+    public virtual bool rotate_x { get; } = true;
+    public virtual bool rotate_y { get; } = true;
 
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
@@ -45,6 +47,11 @@ public class Block : MonoBehaviour
     public virtual void FirstTick()
     {
         UpdateColliders();
+
+        if (rotate_x || rotate_y)
+        {
+            Rotate();
+        }
     }
 
     public virtual void GeneratingTick()
@@ -72,6 +79,9 @@ public class Block : MonoBehaviour
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
         UpdateColliders();
+
+        RenderRotate();
+
 
         if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime)
         {
@@ -108,6 +118,40 @@ public class Block : MonoBehaviour
         GetComponent<Collider2D>().enabled = (playerCollide || trigger);
         GetComponent<Collider2D>().isTrigger = (trigger);
     }
+
+    public void Rotate()
+    {
+        bool rotated_x = false;
+        bool rotated_y = false;
+
+        if (rotate_y)
+        {
+            rotated_y = (Player.localInstance.transform.position.y < getPosition().y);
+        }
+        if (rotate_x)
+        {
+            rotated_x = (Player.localInstance.transform.position.x < getPosition().x);
+        }
+
+        data["rotated_x"] = rotated_x ? "true" : "false";
+        data["rotated_y"] = rotated_y ? "true" : "false";
+    }
+
+    public void RenderRotate()
+    {
+        bool rotated_x = false;
+        bool rotated_y = false;
+
+        if (data.ContainsKey("rotated_x"))
+            rotated_x = (data["rotated_x"] == "true");
+        if (data.ContainsKey("rotated_y"))
+            rotated_y = (data["rotated_y"] == "true");
+
+        GetComponent<SpriteRenderer>().flipX = rotated_x;
+        GetComponent<SpriteRenderer>().flipY = rotated_y;
+    }
+
+
 
     public virtual void Autosave()
     {

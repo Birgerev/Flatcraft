@@ -67,5 +67,7 @@
     Fire,
     Logged_Leaves,
     Raw_Chicken,
-    Cooked_Chicken
+    Cooked_Chicken,
+
+    Plank_Stairs
 }

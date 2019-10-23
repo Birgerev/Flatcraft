@@ -6,6 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class Biome
 {
+    public static int averageBlocks = 10;
+
     [Space]
     [Header("Landscape")]
     public float landscapeLacunarity = 1f;
@@ -83,10 +85,24 @@ public class Biome
         return value;
     }
 
+    public float getAverageBiomeValueAt(int x)
+    {
+        float value = 0;
+
+        for(int i = -Mathf.FloorToInt((float)(averageBlocks) / 2f); i < averageBlocks - (Mathf.CeilToInt((float)(averageBlocks) / 2f)); i++)
+        {
+            value += getBiomeValueAt(i + x);
+        }
+
+        value /= averageBlocks;
+
+        return value;
+    }
+
     public float blendNoiseValues(Biome secondBiome, Vector2Int pos)
     {
-        float biomeNoiseA = getBiomeValueAt(pos.x);
-        float biomeNoiseB = secondBiome.getBiomeValueAt(pos.x);
+        float biomeNoiseA = getAverageBiomeValueAt(pos.x);
+        float biomeNoiseB = secondBiome.getAverageBiomeValueAt(pos.x);
 
         float weightA = biomeNoiseA / (biomeNoiseA + biomeNoiseB);
         float weightB = 1 - weightA;
