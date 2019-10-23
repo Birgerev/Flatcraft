@@ -67,6 +67,9 @@ public class Player : HumanEntity
         if (Input.GetKeyDown(KeyCode.E) && !inventory.open)
             inventory.Open(Vector2Int.RoundToInt(transform.position));
 
+        if (Inventory.anyOpen)
+            return;
+
         //Movement
         if (Input.GetKey(KeyCode.A))
         {

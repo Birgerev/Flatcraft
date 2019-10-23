@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Inventory
 {
+    public static bool anyOpen;
+
     public int size;
     public ItemStack[] items;
     public string name;
@@ -149,12 +151,14 @@ public class Inventory
     {
         this.holder = holder;
         open = true;
+        anyOpen = true;
         UpdateMenuStatus();
     }
 
     public virtual void Close()
     {
         open = false;
+        anyOpen = false;
         UpdateMenuStatus();
     }
 
