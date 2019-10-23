@@ -11,40 +11,47 @@ public class ItemSlot : MonoBehaviour
     public ItemStack item;
 
     // Start is called before the first frame update
-    public virtual void Start()
+    private void Start()
     {
     }
 
-    // Update is called once per frame
-    public virtual void Update()
+    // Start is called before the first frame update
+    private void Update()
     {
         if (Time.frameCount % 10 == 0)
         {
-            if (item == null)
-                item = new ItemStack();
-
-            if (item.amount == 0)
-            {
-                amountText.text = "";
-                item.material = Material.Air;
-            }
-            else if (item.amount == 1)
-            {
-
-                amountText.text = "";
-            }
-            else
-            {
-                amountText.text = item.amount.ToString();
-            }
-
-            texture.sprite = item.getSprite();
+            UpdateSlot();
         }
+    }
+
+
+    // Update is called once per frame
+    public virtual void UpdateSlot()
+    {
+        if (item == null)
+            item = new ItemStack();
+
+        if (item.amount == 0)
+        {
+            amountText.text = "";
+            item.material = Material.Air;
+        }
+        else if (item.amount == 1)
+        {
+
+            amountText.text = "";
+        }
+        else
+        {
+            amountText.text = item.amount.ToString();
+        }
+
+        texture.sprite = item.getSprite();
     }
 
     public virtual void Click()
     {
         GetComponentInParent<InventoryMenu>().OnClickSlot(transform.GetSiblingIndex(), (Input.GetMouseButtonUp(0)) ? 0 : 1);
-        Update();
+        UpdateSlot();
     }
 }

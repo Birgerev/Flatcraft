@@ -5,17 +5,15 @@ using UnityEngine;
 
 public class PointerSlot : ItemSlot
 {
-    public override void Start()
+    private void Start()
     {
-        base.Start();
-
         item = new ItemStack();
     }
 
     // Update is called once per frame
-    public override void Update()
+    public override void UpdateSlot()
     {
-        base.Update();
+        base.UpdateSlot();
 
         transform.position = Input.mousePosition;
     }

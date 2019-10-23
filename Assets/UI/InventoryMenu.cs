@@ -94,6 +94,8 @@ public class InventoryMenu : MonoBehaviour
         {
             OnLeftClickSlot(slotIndex);
         }
+
+        pointerSlot.UpdateSlot();
     }
 
     public virtual void OnLeftClickSlot(int slotIndex)

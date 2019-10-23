@@ -7,20 +7,14 @@ public class HotbarItemSlot : ItemSlot
 {
     public Sprite normal;
     public Sprite selected;
-
-    // Start is called before the first frame update
-    public override void Start()
-    {
-        base.Start();
-    }
-
+    
     // Update is called once per frame
-    public override void Update()
+    public override void UpdateSlot()
     {
         if (Player.localInstance == null)
             return;
 
-        base.Update();
+        base.UpdateSlot();
 
         item = Player.localInstance.inventory.getHotbar()[transform.GetSiblingIndex()];
 
