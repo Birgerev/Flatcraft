@@ -69,5 +69,7 @@
     Raw_Chicken,
     Cooked_Chicken,
 
-    Plank_Stairs
+    Plank_Stairs,
+
+    Wool_Block
 }

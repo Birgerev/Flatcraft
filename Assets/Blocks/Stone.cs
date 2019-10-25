@@ -14,9 +14,4 @@ public class Stone : Block
     {
         return new ItemStack(Material.Cobblestone, 1);
     }
-
-    public override void Tick()
-    {
-        base.Tick();
-    }
 }
