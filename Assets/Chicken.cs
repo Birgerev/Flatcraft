@@ -23,7 +23,7 @@ public class Chicken : PassiveEntity
         
         
         if (!isOnGround && getVelocity().y < -1)
-            setVelocity(new Vector2(getVelocity().x -1));
+            setVelocity(new Vector2(getVelocity().x, -1));
     }
 
     public override void TakeFallDamage(float damage)
