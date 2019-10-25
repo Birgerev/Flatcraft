@@ -17,6 +17,19 @@ public class Chicken : PassiveEntity
         return result;
     }
 
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        
+        
+        if (!isOnGround && getVelocity().y < -1)
+            setVelocity(new Vector2(getVelocity().x -1));
+    }
+
+    public override void TakeFallDamage(float damage)
+    {
+    }
+
     public override EntityController GetController()
     {
         return new AnimalController(this);
