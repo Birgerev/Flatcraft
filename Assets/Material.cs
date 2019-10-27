@@ -71,5 +71,9 @@
 
     Plank_Stairs,
 
+    Wooden_Trapdoor,
+    Wooden_Door_Top,
+    Wooden_Door_Bottom,
+
     Wool_Block
 }

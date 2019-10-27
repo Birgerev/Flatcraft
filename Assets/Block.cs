@@ -13,8 +13,8 @@ public class Block : MonoBehaviour
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
-    public virtual bool rotate_x { get; } = true;
-    public virtual bool rotate_y { get; } = true;
+    public virtual bool rotate_x { get; } = false;
+    public virtual bool rotate_y { get; } = false;
 
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
@@ -113,7 +113,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    public void UpdateColliders()
+    public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = (playerCollide || trigger);
         GetComponent<Collider2D>().isTrigger = (trigger);
