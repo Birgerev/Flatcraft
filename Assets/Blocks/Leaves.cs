@@ -13,12 +13,12 @@ public class Leaves : Block
         return new ItemStack();
     }
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
-        base.Tick();
-
         if (randomTickNumber < 100 / Chunk.TickRate)
             TryDecay();
+
+        base.Tick(spread);
     }
 
     public void TryDecay()

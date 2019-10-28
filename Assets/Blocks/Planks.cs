@@ -8,9 +8,4 @@ public class Planks : Block
     public override float breakTime { get; } = 3f;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
-
-    public override void Tick()
-    {
-        base.Tick();
-    }
 }

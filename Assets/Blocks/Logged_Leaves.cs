@@ -15,9 +15,4 @@ public class Logged_Leaves : Block
     {
         return new ItemStack(Material.Oak_Log, 1);
     }
-
-    public override void Tick()
-    {
-        base.Tick();
-    }
 }

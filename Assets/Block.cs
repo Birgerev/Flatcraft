@@ -59,19 +59,19 @@ public class Block : MonoBehaviour
         firstTick = false;
     }
 
-    public virtual void Tick()
+    public virtual void Tick(bool spread)
     {
+        if (Time.time - time_of_last_hit > 1.5f)
+        {
+            ResetBlockDamage();
+        }
+
         if (requiresGround)
         {
             if(Chunk.getBlock(getPosition() - new Vector2Int(0, 1)) == null)
             {
                 Break();
             }
-        }
-
-        if (Time.time - time_of_last_hit > 1.5f)
-        {
-            ResetBlockDamage();
         }
 
         UpdateLight();
@@ -82,11 +82,24 @@ public class Block : MonoBehaviour
 
         RenderRotate();
 
+        if (spread)
+            SpreadTick();
+    }
 
-        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime)
-        {
-            Autosave();
-            return;
+    public void SpreadTick()
+    {
+        List<Block> blocks = new List<Block>();
+
+        blocks.Add(Chunk.getBlock(new Vector2Int(0, 1)));
+        blocks.Add(Chunk.getBlock(new Vector2Int(0, -1)));
+        blocks.Add(Chunk.getBlock(new Vector2Int(-1, 1)));
+        blocks.Add(Chunk.getBlock(new Vector2Int(1, 0)));
+
+        foreach (Block block in blocks) {
+            if (block != null)
+            {
+                block.Tick(false);
+            }
         }
     }
     
@@ -182,7 +195,12 @@ public class Block : MonoBehaviour
         }
 
         blockHealth -= time;
-        
+
+
+        RenderBlockDamage();
+
+        Tick(true);
+
         if (blockHealth <= 0)
         {
             if (properToolStats)
@@ -190,8 +208,6 @@ public class Block : MonoBehaviour
             else
                 Break(false);
         }
-
-        RenderBlockDamage();
     }
 
     public virtual void Break()
@@ -219,6 +235,7 @@ public class Block : MonoBehaviour
 
     public virtual void Interact()
     {
+        Tick(true);
     }
 
     public void ResetBlockDamage()
@@ -229,7 +246,6 @@ public class Block : MonoBehaviour
 
     public virtual void RenderBlockDamage()
     {
-
         Transform damageIndicator = transform.Find("BreakIndicator");
 
         if (blockHealth != breakTime)
