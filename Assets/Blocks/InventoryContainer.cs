@@ -4,23 +4,21 @@ using UnityEngine;
 
 public class InventoryContainer : Block
 {
-    public Inventory inventory;
+    public Inventory inventory = null;
     public override bool autosave { get; } = true;
     public virtual System.Type inventoryType { get; } = typeof(Inventory);
-
-    public override void FirstTick()
-    {
-        if (data.ContainsKey("inventory") && data["inventory"] != "")
-        {
-            inventory = (Inventory)JsonUtility.FromJson(data["inventory"], inventoryType);
-        }
-        else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
-
-        base.FirstTick();
-    }
-
+    
     public override void Tick(bool spread)
     {
+        if(inventory == null)
+        {
+            if (data.ContainsKey("inventory") && data["inventory"] != "")
+            {
+                inventory = (Inventory)JsonUtility.FromJson(data["inventory"], inventoryType);
+            }
+            else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
+        }
+
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
 
         base.Tick(spread);

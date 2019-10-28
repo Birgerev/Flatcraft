@@ -28,10 +28,8 @@ public class Block : MonoBehaviour
     public float blockHealth = 0;
 
     public int randomTickNumber = 0;
-
-    private bool firstTick = true;
+    
     private float time_of_last_hit = 0;
-    private float time_of_last_autosave = 0;
     private void Start()
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
@@ -40,7 +38,6 @@ public class Block : MonoBehaviour
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
-        FirstTick();
         Render();
     }
 
@@ -56,7 +53,6 @@ public class Block : MonoBehaviour
 
     public virtual void GeneratingTick()
     {
-        firstTick = false;
     }
 
     public virtual void Tick(bool spread)
@@ -169,9 +165,7 @@ public class Block : MonoBehaviour
 
     public virtual void Autosave()
     {
-        time_of_last_autosave = Time.time;
-
-        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true);
+        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true, false);
     }
 
     public virtual void Hit(float time)

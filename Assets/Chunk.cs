@@ -178,9 +178,10 @@ public class Chunk : MonoBehaviour
             if (block.autosave == false)
                 continue;
 
+            block.Tick(false);
             block.Autosave();
-            yield return new WaitForSecondsRealtime(timePerBlock);
         }
+        yield return new WaitForSecondsRealtime(0);
 
     }
 
@@ -451,16 +452,13 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             yield return new WaitForSecondsRealtime(AutosaveDuration);
-            Save();
             StartCoroutine(AutosaveAllBlocks());
+            Save();
         }
     }
 
     public void Save()
     {
-        if (age <= 5)
-            return;
-
         //Save Blocks
         if (blockChanges.Count > 0)
         {
@@ -488,6 +486,7 @@ public class Chunk : MonoBehaviour
 
             foreach (KeyValuePair<Vector2Int, string> line in blockChanges)
             {
+
                 c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
             }
 
@@ -625,7 +624,9 @@ public class Chunk : MonoBehaviour
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
 
+            block.GetComponent<Block>().FirstTick();
             block.GetComponent<Block>().Tick(spreadTick);
+            
 
             return block.GetComponent<Block>();
         }
