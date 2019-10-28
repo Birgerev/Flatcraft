@@ -105,6 +105,7 @@ public class Block : MonoBehaviour
     
     public void UpdateLight()
     {
+        /*
         if (glowingLevel != 0)
         {
             GameObject light;
@@ -123,7 +124,7 @@ public class Block : MonoBehaviour
             light.GetComponent<BlockLight>().glowingLevel = glowingLevel;
             light.GetComponent<BlockLight>().color = glowingColor;
             light.GetComponent<BlockLight>().flickerLevel = flickerLevel;
-        }
+        }*/
     }
 
     public virtual void UpdateColliders()

@@ -80,9 +80,11 @@ public class WorldManager : MonoBehaviour
         loadingState = "Waiting For Sunlight";
         loadingProgress = 4f / steps;
 
-        Sunlight.instance.BeginGenerating();
-        while (!Sunlight.instance.loaded)
+        //Sunlight.instance.BeginGenerating();
+        while (false)
         {
+            Debug.Log("Notice! loading screen doesn't wait for light");
+
             yield return new WaitForSeconds(0.2f);
         }
 

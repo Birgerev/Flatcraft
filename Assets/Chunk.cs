@@ -156,12 +156,11 @@ public class Chunk : MonoBehaviour
 
             if (age == 0)
                 block.GeneratingTick();
-
-            print("tick all tick");
+            
             block.Tick(false);
+            yield return new WaitForSecondsRealtime(timePerBlock);
         }
 
-        yield return new WaitForSecondsRealtime(0f);
     }
 
 
@@ -295,9 +294,9 @@ public class Chunk : MonoBehaviour
                 if (loadedBlock != null)
                     blocksGenerated++;
             }
-            if (blocksGenerated > 0 && y % 7 == 0)
+            if (blocksGenerated > 0 && y % 1 == 5)
             {
-                yield return new WaitForSecondsRealtime(0.001f);
+                yield return new WaitForSecondsRealtime(0.05f);
             }
 
             float timeNotInRenderdistance = 0;
@@ -326,10 +325,8 @@ public class Chunk : MonoBehaviour
         LoadAllEntities();
 
         StartCoroutine(TickAllBlocks());
-        for (int i = 0; i < 1; i++)
-        {
-        }
         StartCoroutine(Tick());
+        yield return new WaitForSecondsRealtime(1f);
 
 
         //Load block changes
