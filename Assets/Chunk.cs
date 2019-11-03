@@ -58,7 +58,7 @@ public class Chunk : MonoBehaviour
 
     public static float mobSpawningChance = 0.01f;
     public static float mobSpawningAmountCap = 2;
-    public static List<string> mobSpawns = new List<string> { "Chicken" };
+    public static List<string> mobSpawns = new List<string> { "Chicken", "Sheep" };
 
 
 
