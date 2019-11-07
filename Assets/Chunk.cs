@@ -337,8 +337,7 @@ public class Chunk : MonoBehaviour
 
 
         LoadAllEntities();
-
-        StartCoroutine(TickAllBlocks());
+        
         StartCoroutine(Tick());
         yield return new WaitForSecondsRealtime(1f);
 
@@ -357,10 +356,10 @@ public class Chunk : MonoBehaviour
             }
         }
 
-        StartCoroutine(TickAllBlocks());
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
+        StartCoroutine(TickAllBlocks());
     }
 
 

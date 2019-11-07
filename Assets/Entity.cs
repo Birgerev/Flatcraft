@@ -20,6 +20,7 @@ public class Entity : MonoBehaviour
     public bool isOnGround;
     public bool isInLiquid = false;
     public bool flipRenderX = false;
+    public bool dead = false;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -130,6 +131,8 @@ public class Entity : MonoBehaviour
         DropAllDrops();
 
         DeleteOldSavePath();
+
+        dead = true;
 
         Destroy(gameObject, 0.1f);
     }
@@ -279,6 +282,7 @@ public class Entity : MonoBehaviour
 
     public static Entity Spawn(string type)
     {
+        print("spawning " + type);
         if(Resources.Load("Entities/" + type) == null)
         {
             Debug.LogError("No Entity with the type '" + type + "' was found");
