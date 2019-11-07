@@ -12,6 +12,7 @@ public class Block : MonoBehaviour
     public virtual bool trigger { get; } = false;
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
+    public virtual bool autoTick { get; } = false;
     public virtual float breakTime { get; } = 0.75f;
     public virtual bool rotate_x { get; } = false;
     public virtual bool rotate_y { get; } = false;
@@ -49,6 +50,9 @@ public class Block : MonoBehaviour
         {
             Rotate();
         }
+
+        if (autoTick)
+            StartCoroutine(autoTickLoop());
     }
 
     public virtual void GeneratingTick()
@@ -77,9 +81,18 @@ public class Block : MonoBehaviour
         UpdateColliders();
 
         RenderRotate();
-
+        
         if (spread)
             SpreadTick(getPosition());
+    }
+
+    IEnumerator autoTickLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1 / Chunk.TickRate);
+            Tick(false);
+        }
     }
 
     public static void SpreadTick(Vector2Int pos)

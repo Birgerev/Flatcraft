@@ -7,6 +7,7 @@ public class Liquid : Block
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
     public override bool trigger { get; } = true;
+    public override bool autoTick { get; } = true;
 
     public string debugData;
 
