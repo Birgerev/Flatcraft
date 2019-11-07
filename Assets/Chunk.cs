@@ -535,10 +535,6 @@ public class Chunk : MonoBehaviour
         
         if (worldPos.y < 0 || worldPos.y > Height)
             local = false;
-
-        if (new System.Random(seedByPosition(worldPos)).Next(0, 64) == 1)
-            local = false;
-
         /*
         if (worldPos.y % 10 == 1)
             print(worldPos.x + "/16 == " + GetChunkPosFromWorldPosition(worldPos.x) + " =? " + ChunkPosition + ", loocal="+local);
@@ -673,7 +669,7 @@ public class Chunk : MonoBehaviour
     {
         if (!isBlockLocal(worldPos))
         {
-            Debug.LogWarning("Tried setting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
+            Debug.LogWarning("Tried getting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
             return null;
         }
 
