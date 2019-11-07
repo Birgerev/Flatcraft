@@ -616,7 +616,10 @@ public class Chunk : MonoBehaviour
             blockChanges.Add(worldPos, mat.ToString() + "*" + data);
         }
 
-        if (mat != Material.Air)
+        if (mat == Material.Air)
+        {
+            Block.SpreadTick(worldPos);
+        }else
         {
             //Place new block
             GameObject block = null;

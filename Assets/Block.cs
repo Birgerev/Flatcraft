@@ -79,17 +79,17 @@ public class Block : MonoBehaviour
         RenderRotate();
 
         if (spread)
-            SpreadTick();
+            SpreadTick(getPosition());
     }
 
-    public void SpreadTick()
+    public static void SpreadTick(Vector2Int pos)
     {
         List<Block> blocks = new List<Block>();
 
-        blocks.Add(Chunk.getBlock(getPosition() + new Vector2Int(0, 1)));
-        blocks.Add(Chunk.getBlock(getPosition() + new Vector2Int(0, -1)));
-        blocks.Add(Chunk.getBlock(getPosition() + new Vector2Int(-1, 1)));
-        blocks.Add(Chunk.getBlock(getPosition() + new Vector2Int(1, 0)));
+        blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, 1)));
+        blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, -1)));
+        blocks.Add(Chunk.getBlock(pos + new Vector2Int(-1, 1)));
+        blocks.Add(Chunk.getBlock(pos + new Vector2Int(1, 0)));
 
         foreach (Block block in blocks) {
             if (block != null)
