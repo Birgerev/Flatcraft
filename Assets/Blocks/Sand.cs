@@ -15,7 +15,6 @@ public class Sand : Block
 
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
         {
-            print("block empty at: "+ (getPosition() + new Vector2Int(0, -1)));
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
             fs.transform.position = (Vector2)getPosition();
             fs.material = GetMaterial();

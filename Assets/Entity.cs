@@ -282,7 +282,6 @@ public class Entity : MonoBehaviour
 
     public static Entity Spawn(string type)
     {
-        print("spawning " + type);
         if(Resources.Load("Entities/" + type) == null)
         {
             Debug.LogError("No Entity with the type '" + type + "' was found");
