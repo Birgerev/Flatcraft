@@ -28,8 +28,8 @@ public class FallingSand : Entity
         if (isOnGround && age > 1f && !dead)
         {
             //Rounding Errors!
-            print("falloing sand, rounding "+transform.position+" to " + Vector2Int.RoundToInt((Vector2)transform.position) + " at time "+Time.frameCount);
-            if(Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
+            print("falloing sand, rounding " + transform.position + " to " + Vector2Int.RoundToInt((Vector2)transform.position) + " at time " + Time.frameCount);
+            if (Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
                 Chunk.setBlock(Vector2Int.RoundToInt((Vector2)transform.position), material);
             else
             {
@@ -41,5 +41,10 @@ public class FallingSand : Entity
         }
 
         base.Update();
+    }
+
+    public override void Hit(float damage)
+    {
+        //Disabling Hit
     }
 }
