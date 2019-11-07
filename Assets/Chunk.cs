@@ -80,6 +80,17 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + ChunkPosition + "]";
         transform.position = new Vector3(ChunkPosition * Width, 0, 0);
 
+        /*
+        for (int i = GetMinXWorldPosition() -1; i < GetMinXWorldPosition() + 17; i++)
+        {
+            print("isBlockLocal("+i+", 5): "+isBlockLocal(new Vector2Int(i, 5)));
+        }*/
+
+        /*for (int i = GetMinXWorldPosition() - 1; i < GetMinXWorldPosition() + 17; i++)
+        {
+            print(ChunkPosition + " GetChunkPosFromWorldPosition(" + i + "): " + GetChunkPosFromWorldPosition((int)i));
+        }*/
+
         StartCoroutine(GenerateChunk());
         StartCoroutine(SaveLoop());
     }
@@ -119,11 +130,11 @@ public class Chunk : MonoBehaviour
         int chunkPos = 0;
         if (worldPos >= 0)
         {
-            chunkPos = Mathf.FloorToInt(worldPos / (Width));
+            chunkPos = Mathf.FloorToInt((float)worldPos / (float)Width);
         }
         else
         {
-            chunkPos = Mathf.CeilToInt((worldPos+1) / Width) - 1;
+            chunkPos = Mathf.CeilToInt( ( (float)worldPos + 1f) / (float)Width) - 1;
         }
 
         return chunkPos;
@@ -136,6 +147,9 @@ public class Chunk : MonoBehaviour
 
     public static Chunk LoadChunk(int cPos)
     {
+        if (cPos != 0 && GetChunk(0, false).age < 4)
+            return null;
+
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
 
         newChunk.GetComponent<Chunk>().ChunkPosition = cPos;
@@ -162,7 +176,6 @@ public class Chunk : MonoBehaviour
         }
 
     }
-
 
     IEnumerator AutosaveAllBlocks()
     {
@@ -344,6 +357,7 @@ public class Chunk : MonoBehaviour
             }
         }
 
+        StartCoroutine(TickAllBlocks());
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
@@ -516,23 +530,21 @@ public class Chunk : MonoBehaviour
 
     public bool isBlockLocal(Vector2Int worldPos)
     {
-        bool local = true;
-
-        if (worldPos.x < transform.position.x)
-            local = false;
-
-        if (worldPos.x > (transform.position.x + (Width - 1)))
-        {
-            if (worldPos.x < 0)
-            {
-                if(worldPos.x > (transform.position.x + (Width + 1)))
-                    local = false;
-            }
-            else local = false;
-        }
+        //(ChunkPosition == GetChunkPosFromWorldPosition(worldPos.x));
+        bool local = (GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition);
+        
         if (worldPos.y < 0 || worldPos.y > Height)
             local = false;
 
+        if (new System.Random(seedByPosition(worldPos)).Next(0, 64) == 1)
+            local = false;
+
+        /*
+        if (worldPos.y % 10 == 1)
+            print(worldPos.x + "/16 == " + GetChunkPosFromWorldPosition(worldPos.x) + " =? " + ChunkPosition + ", loocal="+local);
+        if ((GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition) != local)
+            Debug.LogError(worldPos.x + "/16 == " + GetChunkPosFromWorldPosition(worldPos.x) + " =? " + ChunkPosition + ", loocal=" + local);
+           */
         return local;
     }
 
@@ -554,6 +566,9 @@ public class Chunk : MonoBehaviour
     public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
         Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+
+        if (chunk == null)
+            return null;
 
         return chunk.setLocalBlock(worldPos, mat, data, save, spreadTick);
     }
@@ -619,8 +634,11 @@ public class Chunk : MonoBehaviour
             block.transform.parent = transform;
             block.transform.position = (Vector2)worldPos;
 
+            //Add the block to block list
             if(!blocks.ContainsKey(worldPos))
                 blocks.Add(worldPos, block.GetComponent<Block>());
+            else
+                blocks[worldPos] = block.GetComponent<Block>();
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
 
@@ -642,6 +660,10 @@ public class Chunk : MonoBehaviour
     public static Block getBlock(Vector2Int worldPos)
     {
         Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+
+        if (chunk == null)
+            return null;
+
         Block block = chunk.getLocalBlock(worldPos);
 
         return block;

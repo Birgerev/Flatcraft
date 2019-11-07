@@ -9,6 +9,8 @@ public class Liquid : Block
     public override bool trigger { get; } = true;
 
     public string debugData;
+
+    private int age;
     
     public override void Tick(bool spread)
     {
@@ -18,8 +20,11 @@ public class Liquid : Block
 
         debugData = stringFromData(data);
 
-        Flow();
+        if(age > 1)
+            Flow();
         CheckSource();
+
+        age++;
 
         base.Tick(spread);
     }

@@ -45,10 +45,10 @@ public class Structure_Block : Block
 
                 pos += getPosition();
 
-                Chunk.setBlock(pos, mat, save);
+                Chunk.setBlock(pos, mat, data, save, false);
             }
             
-            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save);
+            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save, false);
 
             base.Tick(spread);
         }
