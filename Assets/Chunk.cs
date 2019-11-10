@@ -162,7 +162,7 @@ public class Chunk : MonoBehaviour
         //Tick Blocks
         Block[] blocks = transform.GetComponentsInChildren<Block>();
 
-        float timePerBlock = (1 / TickRate) / blocks.Length;
+        int tickedBlocks = 0;
         foreach (Block block in blocks)
         {
             if (block == null || block.transform == null)
@@ -170,11 +170,11 @@ public class Chunk : MonoBehaviour
 
             if (age == 0)
                 block.GeneratingTick();
-            
-            block.Tick(false);
-            yield return new WaitForSecondsRealtime(timePerBlock);
-        }
 
+            tickedBlocks++;
+            block.Tick(false);
+        }
+        yield return new WaitForSecondsRealtime(0f);
     }
 
     IEnumerator AutosaveAllBlocks()
@@ -337,8 +337,10 @@ public class Chunk : MonoBehaviour
 
 
         LoadAllEntities();
-        
+
         StartCoroutine(Tick());
+        yield return new WaitForSecondsRealtime(1f);
+        StartCoroutine(TickAllBlocks());
         yield return new WaitForSecondsRealtime(1f);
 
 
@@ -359,7 +361,6 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
-        StartCoroutine(TickAllBlocks());
     }
 
 

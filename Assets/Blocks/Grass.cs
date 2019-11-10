@@ -27,7 +27,10 @@ public class Grass : Block
                 Chunk.setBlock(getPosition(), Material.Dirt, false);
                 tickresult = " block turned";
             }
-            else tickresult = ("block above doesn't collide");
+            else
+            {
+                tickresult = ("block above doesn't collide");
+            }
         }
         else tickresult = ("no block above");
 
