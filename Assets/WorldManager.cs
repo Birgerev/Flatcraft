@@ -72,7 +72,7 @@ public class WorldManager : MonoBehaviour
         loadingState = "Generating Chunks";
         loadingProgress = 3f / steps;
 
-        while (amountOfChunksLoading > 0)
+        while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {
             yield return new WaitForSeconds(0.5f);
         }
