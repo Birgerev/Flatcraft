@@ -13,11 +13,11 @@ public class LivingEntity : Entity
     private float walkSpeed = 4.3f;
     private float sprintSpeed = 5.6f;
     private float sneakSpeed = 1.3f;
+    private float swimUpSpeed = 2f;
     private float jumpVelocity = 6f;
-    private float swimVelocity = 6f;
     private float groundFriction = 0.92f;
     private float airDrag = 0.92f;
-    private float liquidDrag = 0.5f;
+    private float liquidDrag = 0.75f;
 
     //Entity Data Tags
     [EntityDataTag(false)]
@@ -120,9 +120,9 @@ public class LivingEntity : Entity
             setVelocity(getVelocity() + new Vector2(0, jumpVelocity));
             last_jump_time = Time.time;
         }
-        if (isInLiquid && getVelocity().y < swimVelocity)
+        if (isInLiquid && getVelocity().y < swimUpSpeed)
         {
-            setVelocity(getVelocity() + new Vector2(0, swimVelocity*0.1f));
+            setVelocity(getVelocity() + new Vector2(0, swimUpSpeed));
         }
     }
 

@@ -36,6 +36,9 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
 
+        if (isInLiquid)
+            isOnGround = false;
+
         getRenderer().flipX = flipRenderX;
 
         CheckChunk();
@@ -265,7 +268,7 @@ public class Entity : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D col)
     {
-        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f)
+        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 
