@@ -147,7 +147,7 @@ public class Chunk : MonoBehaviour
 
     public static Chunk LoadChunk(int cPos)
     {
-        if (cPos != 0 && GetChunk(0, false).age < 4)
+        if (cPos != 0 && (GetChunk(0, false) == null || GetChunk(0, false).age < 4))
             return null;
 
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
