@@ -20,6 +20,7 @@ public class Entity : MonoBehaviour
     public bool isOnGround;
     public bool isInLiquid = false;
     public bool flipRenderX = false;
+    public bool dead = false;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -34,6 +35,9 @@ public class Entity : MonoBehaviour
     public virtual void Update()
     {
         age += Time.deltaTime;
+
+        if (isInLiquid)
+            isOnGround = false;
 
         getRenderer().flipX = flipRenderX;
 
@@ -130,6 +134,8 @@ public class Entity : MonoBehaviour
         DropAllDrops();
 
         DeleteOldSavePath();
+
+        dead = true;
 
         Destroy(gameObject, 0.1f);
     }
@@ -262,7 +268,7 @@ public class Entity : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D col)
     {
-        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f)
+        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 

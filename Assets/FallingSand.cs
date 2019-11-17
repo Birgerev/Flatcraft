@@ -25,11 +25,10 @@ public class FallingSand : Entity
 
     public override void Update()
     {
-        base.Update();
-
-        if (isOnGround && age > 1f)
+        if (isOnGround && age > 1f && !dead)
         {
-            if(Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
+            //Rounding Errors!
+            if (Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
                 Chunk.setBlock(Vector2Int.RoundToInt((Vector2)transform.position), material);
             else
             {
@@ -37,6 +36,14 @@ public class FallingSand : Entity
             }
 
             Die();
+            return;
         }
+
+        base.Update();
+    }
+
+    public override void Hit(float damage)
+    {
+        //Disabling Hit
     }
 }
