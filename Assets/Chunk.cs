@@ -308,7 +308,7 @@ public class Chunk : MonoBehaviour
                 if (loadedBlock != null)
                     blocksGenerated++;
             }
-            if (blocksGenerated > 0 && y % 4 == 0)
+            if (blocksGenerated > 0 && y % 2 == 0)
             {
                 yield return new WaitForSecondsRealtime(0.05f);
             }

@@ -22,7 +22,7 @@ public class Grass : Block
             //Turn to dirt if covered
             if (Chunk.getBlock(getPosition() + new Vector2Int(0, 1)).playerCollide)
             {
-                Chunk.setBlock(getPosition(), Material.Dirt, false);
+                Chunk.setBlock(getPosition(), Material.Dirt, "", false, false);
             }
         }
 
