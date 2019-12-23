@@ -2,34 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chicken : PassiveEntity
+public class Sheep : PassiveEntity
 {
     //Entity Properties
-    public override float maxHealth { get; } = 4;
-    
+    public override float maxHealth { get; } = 8;
+
     public override List<ItemStack> GetDrops()
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new List<ItemStack>();
         System.Random r = new System.Random(Chunk.seedByPosition(Vector2Int.CeilToInt(transform.position)));
 
-        result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
+        result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 3 + 1)));
 
         return result;
-    }
-
-    public override void FixedUpdate()
-    {
-        base.FixedUpdate();
-        
-        //Slow Falling
-        if (!isOnGround && getVelocity().y < -1)
-            setVelocity(new Vector2(getVelocity().x, -1));
-    }
-
-    //Disable Fall Damage
-    public override void TakeFallDamage(float damage)
-    {
     }
 
     public override EntityController GetController()

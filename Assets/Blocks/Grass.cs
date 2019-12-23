@@ -9,21 +9,28 @@ public class Grass : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
 
+    public string tickresult;
+
     public override ItemStack GetDrop()
     {
         return new ItemStack(Material.Dirt, 1);
     }
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
-        base.Tick();
-
         //If not covered by a block
-        if(Chunk.getBlock(getPosition() + new Vector2Int(0, 1)) != null)
+        if (Chunk.getBlock(getPosition() + new Vector2Int(0, 1)) != null)
         {
             //Turn to dirt if covered
-            if(Chunk.getBlock(getPosition() + new Vector2Int(0, 1)).playerCollide)
+            if (Chunk.getBlock(getPosition() + new Vector2Int(0, 1)).playerCollide)
+            {
                 Chunk.setBlock(getPosition(), Material.Dirt, false);
+                tickresult = " block turned";
+            }
+            else tickresult = ("block above doesn't collide");
         }
+        else tickresult = ("no block above");
+
+        base.Tick(spread);
     }
 }

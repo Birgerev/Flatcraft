@@ -10,9 +10,4 @@ public class Red_Flower : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
     public override bool requiresGround { get; } = true;
-
-    public override void Tick()
-    {
-        base.Tick();
-    }
 }

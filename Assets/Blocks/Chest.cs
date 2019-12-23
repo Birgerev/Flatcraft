@@ -12,16 +12,16 @@ public class Chest : InventoryContainer
 
     public override System.Type inventoryType { get; } = typeof(Inventory);
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
         if (inventory == null)
         {
-            base.Tick();
+            base.Tick(spread);
             return;
         }
 
         inventory.name = "Chest";
-        base.Tick();
+        base.Tick(spread);
     }
 
     private Inventory getInventory()

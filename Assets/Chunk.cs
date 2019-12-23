@@ -6,7 +6,7 @@ using System.IO;
 
 public class Chunk : MonoBehaviour
 {
-    public static float AutosaveDuration = 5;
+    public static float AutosaveDuration = 15;
     public static int Width = 16, Height = 255;
     public static int RenderDistance = 4;
     public static int SpawnChunkDistance = 0;
@@ -58,7 +58,7 @@ public class Chunk : MonoBehaviour
 
     public static float mobSpawningChance = 0.01f;
     public static float mobSpawningAmountCap = 2;
-    public static List<string> mobSpawns = new List<string> { "Chicken" };
+    public static List<string> mobSpawns = new List<string> { "Chicken", "Sheep" };
 
 
 
@@ -143,6 +143,48 @@ public class Chunk : MonoBehaviour
         return newChunk.GetComponent<Chunk>();
     }
 
+    IEnumerator TickAllBlocks()
+    {
+        //Tick Blocks
+        Block[] blocks = transform.GetComponentsInChildren<Block>();
+
+        float timePerBlock = (1 / TickRate) / blocks.Length;
+        foreach (Block block in blocks)
+        {
+            if (block == null || block.transform == null)
+                continue;
+
+            if (age == 0)
+                block.GeneratingTick();
+            
+            block.Tick(false);
+            yield return new WaitForSecondsRealtime(timePerBlock);
+        }
+
+    }
+
+
+    IEnumerator AutosaveAllBlocks()
+    {
+        //Tick Blocks
+        Block[] blocks = transform.GetComponentsInChildren<Block>();
+
+        float timePerBlock = 5 / blocks.Length;
+        foreach (Block block in blocks)
+        {
+            if (block == null || block.transform == null)
+                continue;
+
+            if (block.autosave == false)
+                continue;
+
+            block.Tick(false);
+            block.Autosave();
+        }
+        yield return new WaitForSecondsRealtime(0);
+
+    }
+
     IEnumerator Tick()
     {
         while (true)
@@ -164,21 +206,9 @@ public class Chunk : MonoBehaviour
             {
                 UnloadChunk();
             }
-
-            //Tick Blocks
-            //Update neighbor chunks
+            
             if (isTickedChunk || age < 5)
             {
-                Block[] blocks = transform.GetComponentsInChildren<Block>();
-                float timePerBlock = (1 / TickRate) / blocks.Length;
-
-                foreach (Block block in blocks)
-                {
-                    if (age == 0)
-                        block.GeneratingTick();
-
-                    block.Tick();
-                }
 
                 TrySpawnMobs();
             }
@@ -265,9 +295,9 @@ public class Chunk : MonoBehaviour
                 if (loadedBlock != null)
                     blocksGenerated++;
             }
-            if (blocksGenerated > 0 && y % 7 == 0)
+            if (blocksGenerated > 0 && y % 1 == 5)
             {
-                yield return new WaitForSecondsRealtime(0.001f);
+                yield return new WaitForSecondsRealtime(0.05f);
             }
 
             float timeNotInRenderdistance = 0;
@@ -295,13 +325,9 @@ public class Chunk : MonoBehaviour
 
         LoadAllEntities();
 
-        //Tick world a few times so stuctures are generated before we load world changes
+        StartCoroutine(TickAllBlocks());
         StartCoroutine(Tick());
-
-        while (age < 3)
-        {
-            yield return new WaitForSecondsRealtime(0.5f);
-        }
+        yield return new WaitForSecondsRealtime(1f);
 
 
         //Load block changes
@@ -426,15 +452,13 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             yield return new WaitForSecondsRealtime(AutosaveDuration);
+            StartCoroutine(AutosaveAllBlocks());
             Save();
         }
     }
 
     public void Save()
     {
-        if (age <= 5)
-            return;
-
         //Save Blocks
         if (blockChanges.Count > 0)
         {
@@ -462,6 +486,7 @@ public class Chunk : MonoBehaviour
 
             foreach (KeyValuePair<Vector2Int, string> line in blockChanges)
             {
+
                 c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
             }
 
@@ -520,13 +545,19 @@ public class Chunk : MonoBehaviour
     {
         return setBlock(worldPos, mat, "", save);
     }
-
+    
     public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save)
+    {
+        return setBlock(worldPos, mat, data, save, true);
+    }
+
+    public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
         Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
 
-        return chunk.setLocalBlock(worldPos, mat, data, save);
+        return chunk.setLocalBlock(worldPos, mat, data, save, spreadTick);
     }
+
 
     public Block setLocalBlock(Vector2Int worldPos, Material mat)
     {
@@ -539,6 +570,11 @@ public class Chunk : MonoBehaviour
     }
 
     public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save)
+    {
+        return setLocalBlock(worldPos, mat, data, save, true);
+    }
+
+    public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
         System.Type type = System.Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
@@ -587,6 +623,10 @@ public class Chunk : MonoBehaviour
                 blocks.Add(worldPos, block.GetComponent<Block>());
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
+
+            block.GetComponent<Block>().FirstTick();
+            block.GetComponent<Block>().Tick(spreadTick);
+            
 
             return block.GetComponent<Block>();
         }
@@ -637,7 +677,7 @@ public class Chunk : MonoBehaviour
         if (mat == Material.Air)
             return null;
 
-        block = setLocalBlock(worldPos, mat, false);
+        block = setLocalBlock(worldPos, mat, "", false, false);
 
         return block;
     }
