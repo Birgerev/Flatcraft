@@ -28,8 +28,10 @@ public class Block : MonoBehaviour
     public float blockHealth = 0;
 
     public int randomTickNumber = 0;
-    
+
+    private bool firstTick = true;
     private float time_of_last_hit = 0;
+    private float time_of_last_autosave = 0;
     private void Start()
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
@@ -38,6 +40,7 @@ public class Block : MonoBehaviour
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
+        FirstTick();
         Render();
     }
 
@@ -53,21 +56,22 @@ public class Block : MonoBehaviour
 
     public virtual void GeneratingTick()
     {
+        firstTick = false;
     }
 
-    public virtual void Tick(bool spread)
+    public virtual void Tick()
     {
-        if (Time.time - time_of_last_hit > 1.5f)
-        {
-            ResetBlockDamage();
-        }
-
         if (requiresGround)
         {
             if(Chunk.getBlock(getPosition() - new Vector2Int(0, 1)) == null)
             {
                 Break();
             }
+        }
+
+        if (Time.time - time_of_last_hit > 1.5f)
+        {
+            ResetBlockDamage();
         }
 
         UpdateLight();
@@ -78,30 +82,16 @@ public class Block : MonoBehaviour
 
         RenderRotate();
 
-        if (spread)
-            SpreadTick();
-    }
 
-    public void SpreadTick()
-    {
-        List<Block> blocks = new List<Block>();
-
-        blocks.Add(Chunk.getBlock(new Vector2Int(0, 1)));
-        blocks.Add(Chunk.getBlock(new Vector2Int(0, -1)));
-        blocks.Add(Chunk.getBlock(new Vector2Int(-1, 1)));
-        blocks.Add(Chunk.getBlock(new Vector2Int(1, 0)));
-
-        foreach (Block block in blocks) {
-            if (block != null)
-            {
-                block.Tick(false);
-            }
+        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime)
+        {
+            Autosave();
+            return;
         }
     }
     
     public void UpdateLight()
     {
-        /*
         if (glowingLevel != 0)
         {
             GameObject light;
@@ -120,7 +110,7 @@ public class Block : MonoBehaviour
             light.GetComponent<BlockLight>().glowingLevel = glowingLevel;
             light.GetComponent<BlockLight>().color = glowingColor;
             light.GetComponent<BlockLight>().flickerLevel = flickerLevel;
-        }*/
+        }
     }
 
     public virtual void UpdateColliders()
@@ -165,7 +155,9 @@ public class Block : MonoBehaviour
 
     public virtual void Autosave()
     {
-        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true, false);
+        time_of_last_autosave = Time.time;
+
+        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true);
     }
 
     public virtual void Hit(float time)
@@ -190,12 +182,7 @@ public class Block : MonoBehaviour
         }
 
         blockHealth -= time;
-
-
-        RenderBlockDamage();
-
-        Tick(true);
-
+        
         if (blockHealth <= 0)
         {
             if (properToolStats)
@@ -203,6 +190,8 @@ public class Block : MonoBehaviour
             else
                 Break(false);
         }
+
+        RenderBlockDamage();
     }
 
     public virtual void Break()
@@ -230,7 +219,6 @@ public class Block : MonoBehaviour
 
     public virtual void Interact()
     {
-        Tick(true);
     }
 
     public void ResetBlockDamage()
@@ -241,6 +229,7 @@ public class Block : MonoBehaviour
 
     public virtual void RenderBlockDamage()
     {
+
         Transform damageIndicator = transform.Find("BreakIndicator");
 
         if (blockHealth != breakTime)

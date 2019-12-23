@@ -11,4 +11,9 @@ public class Torch : Block
     
     public override int glowingLevel { get; } = 14;
     public override float flickerLevel { get; } = 1f;
+
+    public override void Tick()
+    {
+        base.Tick();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class BlockLight : MonoBehaviour
 {
@@ -22,7 +23,6 @@ public class BlockLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
         GetComponent<Light2D>().lightType = Light2D.LightType.Point;
         GetComponent<Light2D>().pointLightInnerRadius = (glowingLevel / 10) + flickerValue;
         GetComponent<Light2D>().pointLightOuterRadius = glowingLevel;
@@ -34,7 +34,7 @@ public class BlockLight : MonoBehaviour
         transform.GetChild(0).GetComponent<Light2D>().color = color;
         if (sunlight)
             transform.GetChild(0).GetComponent<Light2D>().intensity = Sky.sunlightIntensity;
-        else transform.GetChild(0).GetComponent<Light2D>().intensity = intensity;*/
+        else transform.GetChild(0).GetComponent<Light2D>().intensity = intensity;
 
     }
 

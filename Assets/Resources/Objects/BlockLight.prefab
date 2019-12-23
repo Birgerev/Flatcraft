@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &6279937293221837807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3644866678658699128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e9406820784441458ab7db0c8991143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowingLevel: 4
+  flickerLevel: 0
+  flickersInASecond: 4
+  color: {r: 0, g: 0, b: 0, a: 0}
+--- !u!1001 &8692029545737098508
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5347285956703558260, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_Name
+      value: BlockLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809336585176502063, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c07467e0f14f90d4b9cf7a82700bbe37, type: 3}
+--- !u!1 &3644866678658699128 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5347285956703558260, guid: c07467e0f14f90d4b9cf7a82700bbe37,
+    type: 3}
+  m_PrefabInstance: {fileID: 8692029545737098508}
+  m_PrefabAsset: {fileID: 0}

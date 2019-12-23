@@ -16,4 +16,9 @@ public class Diamond_Ore : Block
     {
         return new ItemStack(Material.Diamond, 1);
     }
+
+    public override void Tick()
+    {
+        base.Tick();
+    }
 }

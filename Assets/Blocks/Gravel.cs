@@ -9,9 +9,9 @@ public class Gravel : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        base.Tick(spread);
+        base.Tick();
 
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
         {

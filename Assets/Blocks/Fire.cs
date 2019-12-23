@@ -16,15 +16,15 @@ public class Fire : Block
         return new ItemStack();
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        base.Tick(spread);
+        base.Tick();
 
         if (randomTickNumber < 100 / Chunk.TickRate)
         {
-            bool spreadFire = (100 / Chunk.TickRate < 50 / Chunk.TickRate);
+            bool spread = (100 / Chunk.TickRate < 50 / Chunk.TickRate);
 
-            if (spreadFire)
+            if (spread)
             {
                 int r = Random.Range(0, 2);
 
