@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
+    public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
+
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
     public virtual float change_texture_time { get; } = 0;
-
+    
     public virtual bool playerCollide { get; } = true;
     public virtual bool trigger { get; } = false;
     public virtual bool requiresGround { get; } = false;
@@ -20,9 +24,7 @@ public class Block : MonoBehaviour
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
     
-    public virtual int glowingLevel { get; } = 0;
-    public virtual float flickerLevel { get; } = 0;
-    public virtual Color glowingColor { get; } = new Color(1, 0.75f, 0.4f);
+    public virtual int glowLevel { get; } = 0;
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
@@ -73,8 +75,10 @@ public class Block : MonoBehaviour
                 Break();
             }
         }
-
-        UpdateLight();
+        
+        if(spread)
+            UpdateLight();
+        UpdateBlockLight();
 
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
@@ -94,7 +98,7 @@ public class Block : MonoBehaviour
             Tick(false);
         }
     }
-
+    
     public static void SpreadTick(Vector2Int pos)
     {
         List<Block> blocks = new List<Block>();
@@ -111,29 +115,120 @@ public class Block : MonoBehaviour
             }
         }
     }
-    
-    public void UpdateLight()
+    public static void UpdateSunlightSources()
     {
-        /*
-        if (glowingLevel != 0)
+        //Clear previous sources
+        List<Vector2Int> sources = sunlightSources.ToList();
+
+        sunlightSources.Clear();
+        foreach (Vector2Int pos in sunlightSources)
         {
-            GameObject light;
-            if (transform.Find("_light"))
+            if(Chunk.getBlock(pos) != null)
+                Chunk.getBlock(pos).UpdateBlockLight();
+        }
+
+        //Find new sources and populate the list
+        int lightRenderDistance = (Chunk.RenderDistance * 16) / 2;
+        for (int x = (int)Player.localInstance.transform.position.x - lightRenderDistance; x < lightRenderDistance; x++)
+        {
+            Block topBlock = Chunk.getTopmostBlock(x);
+            if (topBlock == null)
+                continue;
+
+            int y = topBlock.getPosition().y;
+
+            sunlightSources.Add(new Vector2Int(x, y));
+            topBlock.UpdateBlockLight();
+        }
+
+
+    }
+
+    public bool IsSunlightSource()
+    {
+        return sunlightSources.Contains(getPosition());
+    }
+
+    public void UpdateBlockLight()
+    {
+        if (GetLightSourceLevel(getPosition()) > 0)
+            lightSources[getPosition()] = GetLightSourceLevel(getPosition());
+
+        float brightnessColorValue = (float)GetLightLevel(getPosition()) / 15f;
+        GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
+    }
+
+    public static void UpdateLight()
+    {
+        //Update Sunlight
+        UpdateSunlightSources();
+
+        //Make Sure List is correct
+        foreach (Vector2Int key in lightSources.Keys.ToList())
+        {
+            Block block = Chunk.getBlock(key);
+
+            if (block == null || GetLightSourceLevel(block.getPosition()) == 0)
             {
-                light = transform.Find("_light").gameObject;
-            }
-            else
-            {
-                light = Instantiate((GameObject)Resources.Load("Objects/BlockLight"));
-                light.transform.SetParent(transform);
-                light.transform.localPosition = Vector3.zero;
-                light.transform.name = "_light";
+                lightSources.Remove(key);
+                continue;
             }
 
-            light.GetComponent<BlockLight>().glowingLevel = glowingLevel;
-            light.GetComponent<BlockLight>().color = glowingColor;
-            light.GetComponent<BlockLight>().flickerLevel = flickerLevel;
-        }*/
+            lightSources[key] = GetLightSourceLevel(block.getPosition());
+        }
+
+        List<Vector2Int> updatedBlocks = new List<Vector2Int>();
+
+        //Update all nearby lights
+        foreach (Vector2Int key in lightSources.Keys)
+        {
+            for (int x = -7; x > 7; x++)
+            {
+                for (int y = -7; y > 7; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    //Prevent a block from being updated more than once, for performance
+                    if (updatedBlocks.Contains(pos))
+                        continue;
+                    updatedBlocks.Add(pos);
+
+
+                    Block block = Chunk.getBlock(pos);
+                    //Skip if block is air
+                    if (block == null)
+                        continue;
+
+                    //Update light if everything checks out
+                    block.UpdateBlockLight();
+                }
+            }
+        }
+    }
+
+
+    public static int GetLightSourceLevel(Vector2Int pos)
+    {
+        if (Chunk.getBlock(pos) == null)
+            return 0;
+        
+        return Chunk.getBlock(pos).IsSunlightSource() ? 15 : Chunk.getBlock(pos).glowLevel;
+    }
+
+    public static int GetLightLevel(Vector2Int pos)
+    {
+        int result = 0;
+
+        List<Vector2Int> sortedLight = lightSources.Keys.ToList().OrderBy(x => GetLightSourceLevel(x) - (int)(Vector2Int.Distance(x, pos))).ToList();
+
+        if (sortedLight.Count <= 0)
+            return 0;
+
+        Vector2Int brightestLightPos = sortedLight[sortedLight.Count - 1];
+
+        result = GetLightSourceLevel(brightestLightPos) - (int)(Vector2Int.Distance(brightestLightPos, pos));
+
+        return result;
     }
 
     public virtual void UpdateColliders()
@@ -173,9 +268,7 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
     }
-
-
-
+    
     public virtual void Autosave()
     {
         Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true, false);

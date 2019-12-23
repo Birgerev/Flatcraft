@@ -226,6 +226,9 @@ public class Chunk : MonoBehaviour
                 TrySpawnMobs();
             }
 
+            //Update lightning
+            Block.UpdateLight();
+
             age++;
             yield return new WaitForSeconds(1 / TickRate);
         }
@@ -801,7 +804,16 @@ public class Chunk : MonoBehaviour
         return entities.ToArray();
     }
 
-    public Block getTopmostBlock(int x)
+    public static Block getTopmostBlock(int x)
+    {
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x));
+        if (chunk == null)
+            return null;
+
+        return chunk.getLocalTopmostBlock(x);
+    }
+
+    public Block getLocalTopmostBlock(int x)
     {
         for(int y = Height; y > 0; y--)
         {
