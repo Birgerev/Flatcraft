@@ -94,7 +94,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   age: 0
-  id: 0
   currentChunk: {fileID: 0}
   isOnGround: 0
   isInLiquid: 0
@@ -110,7 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3577453786400946058}
   - component: {fileID: 5801944449292507794}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +148,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -13,18 +13,18 @@ public class Furnace : InventoryContainer
 
     public override System.Type inventoryType { get; } = typeof(FurnaceInventory);
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         if (inventory == null)
         {
-            base.Tick(spread);
+            base.Tick();
             return;
         }
 
         CheckFuels();
         SmeltTick();
         
-        base.Tick(spread);
+        base.Tick();
     }
 
     public void CheckFuels()

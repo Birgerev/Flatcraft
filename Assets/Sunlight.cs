@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class Sunlight : MonoBehaviour
 {
@@ -11,7 +12,6 @@ public class Sunlight : MonoBehaviour
 
     public static Sunlight instance;
 
-    /*
     // Start is called before the first frame update
     void Start()
     {
@@ -96,5 +96,5 @@ public class Sunlight : MonoBehaviour
             if (!loaded)
                 loaded = true;
         }
-    }*/
+    }
 }

@@ -9,7 +9,6 @@ public class Chicken : PassiveEntity
     
     public override List<ItemStack> GetDrops()
     {
-        //Drop a random amount of a certain item
         List<ItemStack> result = new List<ItemStack>();
         System.Random r = new System.Random(Chunk.seedByPosition(Vector2Int.CeilToInt(transform.position)));
 
@@ -22,12 +21,11 @@ public class Chicken : PassiveEntity
     {
         base.FixedUpdate();
         
-        //Slow Falling
+        
         if (!isOnGround && getVelocity().y < -1)
             setVelocity(new Vector2(getVelocity().x, -1));
     }
 
-    //Disable Fall Damage
     public override void TakeFallDamage(float damage)
     {
     }

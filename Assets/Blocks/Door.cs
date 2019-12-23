@@ -29,7 +29,7 @@ public class Door : Block
         data["open"] = !open + "";
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         bool open = false;
 
@@ -42,7 +42,7 @@ public class Door : Block
 
         Render();
 
-        base.Tick(spread);
+        base.Tick();
     }
 
     public override void UpdateColliders()

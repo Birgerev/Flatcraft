@@ -7,14 +7,9 @@ public class Structure_Block : Block
     public static string default_texture  = "block_structure";
     public override float breakTime { get; } = 10000000;
 
-    public string tickResult;
-
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        if (data.ContainsKey("structure"))
-            tickResult = data["structure"];
-        else
-            tickResult = "empty";
+        base.Tick();
 
         if (data.ContainsKey("structure"))
         {
@@ -49,8 +44,6 @@ public class Structure_Block : Block
             }
             
             Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save);
-
-            base.Tick(spread);
         }
     }
 }
