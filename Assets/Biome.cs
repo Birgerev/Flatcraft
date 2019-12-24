@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Biome
 {
-    public static int averageBlocks = 10;
+    public static int averageBlocks = 4;
 
     [Space]
     [Header("Landscape")]
