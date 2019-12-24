@@ -151,6 +151,9 @@ public class Block : MonoBehaviour
 
     public void UpdateBlockLight()
     {
+        if (WorldManager.instance.loadingProgress != 1)
+            return;
+
         if (GetLightSourceLevel(getPosition()) > 0)
             lightSources[getPosition()] = GetLightSourceLevel(getPosition());
 
@@ -160,11 +163,14 @@ public class Block : MonoBehaviour
 
     public static void UpdateLight()
     {
+        if (WorldManager.instance.loadingProgress != 1)
+            return;
+
         //Update Sunlight
         UpdateSunlightSources();
 
         //Make Sure List is correct
-        foreach (Vector2Int key in lightSources.Keys.ToList())
+        foreach (Vector2Int key in new List<Vector2Int>(lightSources.Keys))
         {
             Block block = Chunk.getBlock(key);
 
@@ -209,26 +215,34 @@ public class Block : MonoBehaviour
 
     public static int GetLightSourceLevel(Vector2Int pos)
     {
-        if (Chunk.getBlock(pos) == null)
+        Block block = Chunk.getBlock(pos);
+        if (block == null)
             return 0;
         
-        return Chunk.getBlock(pos).IsSunlightSource() ? 15 : Chunk.getBlock(pos).glowLevel;
+        return block.IsSunlightSource() ? 15 : block.glowLevel;
     }
 
     public static int GetLightLevel(Vector2Int pos)
     {
-        int result = 0;
-
-        List<Vector2Int> sortedLight = lightSources.Keys.ToList().OrderBy(x => GetLightSourceLevel(x) - (int)(Vector2Int.Distance(x, pos))).ToList();
-
-        if (sortedLight.Count <= 0)
+        if (lightSources.Count <= 0)
             return 0;
 
-        Vector2Int brightestLightPos = sortedLight[sortedLight.Count - 1];
+        Vector2Int brightestSourcePos = Vector2Int.zero;
+        int brightestValue = 0;
+        int i = 0;
+        foreach(Vector2Int source in lightSources.Keys)
+        {
+            int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
 
-        result = GetLightSourceLevel(brightestLightPos) - (int)(Vector2Int.Distance(brightestLightPos, pos));
+            if(value > brightestValue)
+            {
+                brightestValue = value;
+                brightestSourcePos = source;
+            }
+            i++;
+        }
 
-        return result;
+        return brightestValue;
     }
 
     public virtual void UpdateColliders()
