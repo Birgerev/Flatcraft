@@ -161,8 +161,7 @@ public class Chunk : MonoBehaviour
     {
         //Tick Blocks
         Block[] blocks = transform.GetComponentsInChildren<Block>();
-
-        int tickedBlocks = 0;
+        
         foreach (Block block in blocks)
         {
             if (block == null || block.transform == null)
@@ -170,8 +169,7 @@ public class Chunk : MonoBehaviour
 
             if (age == 0)
                 block.GeneratingTick();
-
-            tickedBlocks++;
+            
             block.Tick(false);
         }
         yield return new WaitForSecondsRealtime(0f);
@@ -225,9 +223,6 @@ public class Chunk : MonoBehaviour
 
                 TrySpawnMobs();
             }
-
-            //Update lightning
-            Block.UpdateLight();
 
             age++;
             yield return new WaitForSeconds(1 / TickRate);
@@ -361,6 +356,10 @@ public class Chunk : MonoBehaviour
             }
         }
 
+        print("trying update light from c: "+ChunkPosition);
+        Block.UpdateSunlightSourceList();
+        Block.UpdateLight();
+
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
@@ -404,13 +403,13 @@ public class Chunk : MonoBehaviour
                 //Trees
                 if (r.Next(0, 100) <= 10)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false, false);
                 }
 
                 //Large Trees
                 if (r.Next(0, 100) <= 1)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
                 }
 
                 //Vegetation
@@ -418,7 +417,7 @@ public class Chunk : MonoBehaviour
                 {
                     Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
 
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
                 }
             }
         }
@@ -429,7 +428,7 @@ public class Chunk : MonoBehaviour
                 //Cactie
                 if (r.Next(0, 100) <= 8)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
                 }
             }
         }
@@ -439,27 +438,27 @@ public class Chunk : MonoBehaviour
         {
             if (r.NextDouble() < Chunk.ore_diamond_chance && pos.y <= Chunk.ore_diamond_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_redstone_chance && pos.y <= Chunk.ore_redstone_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_lapis_chance && pos.y <= Chunk.ore_lapis_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_gold_chance && pos.y <= Chunk.ore_gold_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_iron_chance && pos.y <= Chunk.ore_iron_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_coal_chance && pos.y <= Chunk.ore_coal_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false, false);
             }
         }
     }
@@ -594,12 +593,6 @@ public class Chunk : MonoBehaviour
         if (!type.IsSubclassOf(typeof(Block)))
             return null;
 
-        if (!isLoaded && age > 0)
-        {
-            StartCoroutine(ScheduleSetBlock(1, worldPos, mat, data, save));
-            return null;
-        }
-
         if (!isBlockLocal(worldPos))
         {
             Debug.LogWarning("Tried setting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
@@ -651,12 +644,6 @@ public class Chunk : MonoBehaviour
             return block.GetComponent<Block>();
         }
         return null;
-    }
-
-    IEnumerator ScheduleSetBlock(float delay, Vector2Int worldPos, Material mat, string data, bool save)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        setLocalBlock(worldPos, mat, data, save);
     }
 
     public static Block getBlock(Vector2Int worldPos)

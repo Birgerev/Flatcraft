@@ -75,10 +75,13 @@ public class Block : MonoBehaviour
                 Break();
             }
         }
-        
-        if(spread)
-            UpdateLight();
+
+        if (spread)
+        {
+            UpdateLightSources();
+        }
         UpdateBlockLight();
+        RenderBlockLight();
 
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
@@ -115,7 +118,7 @@ public class Block : MonoBehaviour
             }
         }
     }
-    public static void UpdateSunlightSources()
+    public static void UpdateSunlightSourceList()
     {
         //Clear previous sources
         List<Vector2Int> sources = sunlightSources.ToList();
@@ -128,8 +131,8 @@ public class Block : MonoBehaviour
         }
 
         //Find new sources and populate the list
-        int lightRenderDistance = (Chunk.RenderDistance * 16) / 2;
-        for (int x = (int)Player.localInstance.transform.position.x - lightRenderDistance; x < lightRenderDistance; x++)
+        int lightRenderDistance = (Chunk.RenderDistance * 12);
+        for (int x = (int)Player.localInstance.transform.position.x - lightRenderDistance; x < (int)Player.localInstance.transform.position.x + lightRenderDistance; x++)
         {
             Block topBlock = Chunk.getTopmostBlock(x);
             if (topBlock == null)
@@ -151,23 +154,33 @@ public class Block : MonoBehaviour
 
     public void UpdateBlockLight()
     {
-        if (WorldManager.instance.loadingProgress != 1)
-            return;
-
         if (GetLightSourceLevel(getPosition()) > 0)
             lightSources[getPosition()] = GetLightSourceLevel(getPosition());
+    }
 
+
+    public void RenderBlockLight()
+    {
         float brightnessColorValue = (float)GetLightLevel(getPosition()) / 15f;
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
 
     public static void UpdateLight()
     {
-        if (WorldManager.instance.loadingProgress != 1)
-            return;
-
         //Update Sunlight
-        UpdateSunlightSources();
+        foreach (Chunk chunk in WorldManager.instance.chunks.Values)
+        {
+            foreach (Block block in chunk.GetComponentsInChildren<Block>())
+            {
+                block.RenderBlockLight();
+            }
+        }
+    }
+
+    public static void UpdateLightSources()
+    {
+        //Update Sunlight
+        UpdateSunlightSourceList();
 
         //Make Sure List is correct
         foreach (Vector2Int key in new List<Vector2Int>(lightSources.Keys))
@@ -183,10 +196,12 @@ public class Block : MonoBehaviour
             lightSources[key] = GetLightSourceLevel(block.getPosition());
         }
 
+        List<Vector2Int> sources = new List<Vector2Int>(lightSources.Keys);
+        sources.AddRange(sunlightSources);
         List<Vector2Int> updatedBlocks = new List<Vector2Int>();
 
         //Update all nearby lights
-        foreach (Vector2Int key in lightSources.Keys)
+        foreach (Vector2Int key in sources)
         {
             for (int x = -7; x > 7; x++)
             {
@@ -206,12 +221,11 @@ public class Block : MonoBehaviour
                         continue;
 
                     //Update light if everything checks out
-                    block.UpdateBlockLight();
+                    block.RenderBlockLight();
                 }
             }
         }
     }
-
 
     public static int GetLightSourceLevel(Vector2Int pos)
     {
@@ -224,7 +238,7 @@ public class Block : MonoBehaviour
 
     public static int GetLightLevel(Vector2Int pos)
     {
-        if (lightSources.Count <= 0)
+        if (lightSources.Count <= 0)// || WorldManager.instance.loadingProgress != 1)
             return 0;
 
         Vector2Int brightestSourcePos = Vector2Int.zero;

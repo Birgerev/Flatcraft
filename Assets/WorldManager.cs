@@ -64,7 +64,7 @@ public class WorldManager : MonoBehaviour
         //Load Chunk [0]
         mainChunk = Chunk.LoadChunk(0);
 
-        while (!mainChunk.isLoaded)
+        while (mainChunk.isLoading)
         {
             yield return new WaitForSeconds(0.5f);
         }
@@ -81,12 +81,7 @@ public class WorldManager : MonoBehaviour
         loadingProgress = 4f / steps;
 
         //Sunlight.instance.BeginGenerating();
-        while (false)
-        {
-            Debug.Log("Notice! loading screen doesn't wait for light");
-
-            yield return new WaitForSeconds(0.2f);
-        }
+        yield return new WaitForSeconds(0.5f);
 
         loadingState = "Done!";
         loadingProgress = 5f / steps;
