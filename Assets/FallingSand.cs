@@ -27,7 +27,7 @@ public class FallingSand : Entity
     {
         base.Update();
 
-        if (isOnGround && age > 1f && !dead)
+        if ((isOnGround || (isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0)) && age > 1f && !dead)
         {
             //Rounding Errors!
             if (Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
