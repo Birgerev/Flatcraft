@@ -64,7 +64,7 @@ public class Liquid : Block
             return;
         if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
         {
-            Chunk.setBlock(getPosition() + new Vector2Int(0, -1), GetMaterial(), "source_block=0.1", true, false);
+            Chunk.setBlock(getPosition() + new Vector2Int(0, -1), GetMaterial(), "source_block=0.1", true, true);
             return;
         }
 
@@ -74,11 +74,11 @@ public class Liquid : Block
         {
             if (Chunk.getBlock(getPosition() + new Vector2Int(-1, 0)) == null)
             {
-                Chunk.setBlock(getPosition() + new Vector2Int(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, false);
+                Chunk.setBlock(getPosition() + new Vector2Int(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, true);
             }
             if (Chunk.getBlock(getPosition() + new Vector2Int(1, 0)) == null)
             {
-                Chunk.setBlock(getPosition() + new Vector2Int(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, false);
+                Chunk.setBlock(getPosition() + new Vector2Int(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, true);
             }
         }
     }
