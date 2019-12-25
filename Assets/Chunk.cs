@@ -80,17 +80,6 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + ChunkPosition + "]";
         transform.position = new Vector3(ChunkPosition * Width, 0, 0);
 
-        /*
-        for (int i = GetMinXWorldPosition() -1; i < GetMinXWorldPosition() + 17; i++)
-        {
-            print("isBlockLocal("+i+", 5): "+isBlockLocal(new Vector2Int(i, 5)));
-        }*/
-
-        /*for (int i = GetMinXWorldPosition() - 1; i < GetMinXWorldPosition() + 17; i++)
-        {
-            print(ChunkPosition + " GetChunkPosFromWorldPosition(" + i + "): " + GetChunkPosFromWorldPosition((int)i));
-        }*/
-
         StartCoroutine(GenerateChunk());
         StartCoroutine(SaveLoop());
     }
@@ -357,8 +346,7 @@ public class Chunk : MonoBehaviour
                 setLocalBlock(pos, mat, data, false);
             }
         }
-
-        print("trying update light from c: "+ChunkPosition);
+        
         Block.UpdateSunlightSourceList();
         Block.UpdateLight();
 
@@ -539,12 +527,7 @@ public class Chunk : MonoBehaviour
         
         if (worldPos.y < 0 || worldPos.y > Height)
             local = false;
-        /*
-        if (worldPos.y % 10 == 1)
-            print(worldPos.x + "/16 == " + GetChunkPosFromWorldPosition(worldPos.x) + " =? " + ChunkPosition + ", loocal="+local);
-        if ((GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition) != local)
-            Debug.LogError(worldPos.x + "/16 == " + GetChunkPosFromWorldPosition(worldPos.x) + " =? " + ChunkPosition + ", loocal=" + local);
-           */
+
         return local;
     }
 
