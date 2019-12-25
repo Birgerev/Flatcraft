@@ -548,7 +548,7 @@ public class Chunk : MonoBehaviour
 
     public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
 
         if (chunk == null)
             return null;
