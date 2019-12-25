@@ -37,8 +37,12 @@ public class BreakIndicator : MonoBehaviour
     {
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
 
+        Sprite sprite = null;
+        if(index < sprites.Length && index >= 0)
+            sprite = sprites[index];
+
         transform.position = (Vector2)pos;
-        GetComponent<SpriteRenderer>().sprite = sprites[index];
+        GetComponent<SpriteRenderer>().sprite = sprite;
 
         lastTimeChanged = Time.time;
     }
