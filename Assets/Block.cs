@@ -76,12 +76,12 @@ public class Block : MonoBehaviour
             }
         }
 
+        UpdateBlockLight();
         if (spread)
         {
             UpdateLightSources();
+            RenderBlockLight();
         }
-        UpdateBlockLight();
-        RenderBlockLight();
 
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
@@ -238,7 +238,7 @@ public class Block : MonoBehaviour
 
     public static int GetLightLevel(Vector2Int pos)
     {
-        if (lightSources.Count <= 0)// || WorldManager.instance.loadingProgress != 1)
+        if (lightSources.Count <= 0 || WorldManager.instance.loadingProgress != 1)
             return 0;
 
         Vector2Int brightestSourcePos = Vector2Int.zero;
