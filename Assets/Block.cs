@@ -79,7 +79,7 @@ public class Block : MonoBehaviour
         UpdateBlockLight();
         if (spread)
         {
-            UpdateLightSources();
+            UpdateLightAtSources();
             RenderBlockLight();
         }
 
@@ -167,6 +167,9 @@ public class Block : MonoBehaviour
 
     public static void UpdateLight()
     {
+        if (WorldManager.instance.loadingProgress != 1 && WorldManager.instance.loadingState != "Waiting For Light")
+            return;
+
         //Update Sunlight
         foreach (Chunk chunk in WorldManager.instance.chunks.Values)
         {
@@ -177,8 +180,10 @@ public class Block : MonoBehaviour
         }
     }
 
-    public static void UpdateLightSources()
+    public static void UpdateLightAtSources()
     {
+        if (WorldManager.instance.loadingProgress != 1)
+            return;
         //Update Sunlight
         UpdateSunlightSourceList();
 
@@ -238,7 +243,7 @@ public class Block : MonoBehaviour
 
     public static int GetLightLevel(Vector2Int pos)
     {
-        if (lightSources.Count <= 0 || WorldManager.instance.loadingProgress != 1)
+        if (lightSources.Count <= 0)
             return 0;
 
         Vector2Int brightestSourcePos = Vector2Int.zero;
