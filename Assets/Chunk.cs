@@ -150,6 +150,8 @@ public class Chunk : MonoBehaviour
         if (cPos != 0 && (GetChunk(0, false) == null || GetChunk(0, false).age < 4))
             return null;
 
+        print("loading chunk " + cPos);
+
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
 
         newChunk.GetComponent<Chunk>().ChunkPosition = cPos;
@@ -648,7 +650,7 @@ public class Chunk : MonoBehaviour
 
     public static Block getBlock(Vector2Int worldPos)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
 
         if (chunk == null)
             return null;
@@ -793,7 +795,7 @@ public class Chunk : MonoBehaviour
 
     public static Block getTopmostBlock(int x)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x));
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x), false);
         if (chunk == null)
             return null;
 

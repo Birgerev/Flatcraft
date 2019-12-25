@@ -25,6 +25,8 @@ public class FallingSand : Entity
 
     public override void Update()
     {
+        base.Update();
+
         if (isOnGround && age > 1f && !dead)
         {
             //Rounding Errors!
@@ -38,8 +40,6 @@ public class FallingSand : Entity
             Die();
             return;
         }
-
-        base.Update();
     }
 
     public override void Hit(float damage)
