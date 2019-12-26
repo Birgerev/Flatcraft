@@ -80,8 +80,8 @@ public class Block : MonoBehaviour
         if (spread)
         {
             UpdateLightAtSources();
-            RenderBlockLight();
         }
+        RenderBlockLight();
 
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
 
@@ -161,6 +161,9 @@ public class Block : MonoBehaviour
 
     public void RenderBlockLight()
     {
+        if (WorldManager.instance.loadingProgress != 1 && WorldManager.instance.loadingState != "Waiting For Light")
+            return;
+
         float brightnessColorValue = (float)GetLightLevel(getPosition()) / 15f;
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
@@ -184,6 +187,7 @@ public class Block : MonoBehaviour
     {
         if (WorldManager.instance.loadingProgress != 1)
             return;
+        
         //Update Sunlight
         UpdateSunlightSourceList();
 
@@ -205,14 +209,16 @@ public class Block : MonoBehaviour
         sources.AddRange(sunlightSources);
         List<Vector2Int> updatedBlocks = new List<Vector2Int>();
 
+        int i = 0;
+
         //Update all nearby lights
         foreach (Vector2Int key in sources)
         {
-            for (int x = -7; x > 7; x++)
+            for (int x = -15; x < 15; x++)
             {
-                for (int y = -7; y > 7; y++)
+                for (int y = -15; y < 15; y++)
                 {
-                    Vector2Int pos = new Vector2Int(x, y);
+                    Vector2Int pos = new Vector2Int(x + key.x, y + key.y);
 
                     //Prevent a block from being updated more than once, for performance
                     if (updatedBlocks.Contains(pos))
@@ -227,6 +233,7 @@ public class Block : MonoBehaviour
 
                     //Update light if everything checks out
                     block.RenderBlockLight();
+                    i++;
                 }
             }
         }
@@ -329,11 +336,8 @@ public class Block : MonoBehaviour
         }
 
         blockHealth -= time;
-
-
+        
         RenderBlockDamage();
-
-        Tick(true);
 
         if (blockHealth <= 0)
         {

@@ -139,8 +139,6 @@ public class Chunk : MonoBehaviour
         if (cPos != 0 && (GetChunk(0, false) == null || GetChunk(0, false).age < 4))
             return null;
 
-        print("loading chunk " + cPos);
-
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
 
         newChunk.GetComponent<Chunk>().ChunkPosition = cPos;
@@ -601,6 +599,7 @@ public class Chunk : MonoBehaviour
         if (mat == Material.Air)
         {
             Block.SpreadTick(worldPos);
+            Block.UpdateLightAtSources();
         }else
         {
             //Place new block
