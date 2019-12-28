@@ -728,7 +728,8 @@ public class Chunk : MonoBehaviour
     {
         System.Random r = new System.Random(seedByPosition(worldPos));
         Material mat = Material.Air;
-        List<Biome> biomes = getBiomes(worldPos.x);
+
+        List<Biome> biomes = getTwoMostProminantBiomes(worldPos.x);
         Biome biome = biomes[0];
 
         //-Terrain Generation-//
@@ -848,19 +849,38 @@ public class Chunk : MonoBehaviour
 
     public static Biome getMostProminantBiome(int pos)
     {
-        return getBiomes(pos)[0];
+        return getTwoMostProminantBiomes(pos)[0];
     }
 
-    public static List<Biome> getBiomes(int pos)
+    public static List<Biome> getTwoMostProminantBiomes(int pos)
     {
-        List<Biome> biomes = new List<Biome>();
-        WorldManager.instance.biomes.ForEach((item) =>
+        List<Biome> biomes = new List<Biome>(WorldManager.instance.biomes);
+
+        Biome mostProminant = null;
+        float mostProminantValue = 0;
+        Biome secondMostProminant = null;
+        float secondMostProminantValue = 0;
+        foreach (Biome biome in biomes)
         {
-            biomes.Add(item);
-        });
+            float value = biome.getBiomeValueAt(pos);
 
-        biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
+            if (value > mostProminantValue)
+            {
+                mostProminant = biome;
+                mostProminantValue = value;
+            }else if(value > secondMostProminantValue)
+            {
+                secondMostProminant = biome;
+                secondMostProminantValue = value;
+            }
+        }
 
-        return biomes;
+        List<Biome> results = new List<Biome>()
+        {
+            mostProminant,
+            secondMostProminant
+        };
+
+        return results;
     }
 }

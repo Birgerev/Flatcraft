@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Biome
 {
-    public static int averageBlocks = 4;
+    public static int averageBlocks = 1;
 
     [Space]
     [Header("Landscape")]
@@ -89,7 +89,7 @@ public class Biome
     {
         float value = 0;
 
-        for(int i = -Mathf.FloorToInt((float)(averageBlocks) / 2f); i < averageBlocks - (Mathf.CeilToInt((float)(averageBlocks) / 2f)); i++)
+        for(int i = -Mathf.FloorToInt((float)(averageBlocks) / 2f); i <= averageBlocks - (Mathf.CeilToInt((float)(averageBlocks) / 2f)); i++)
         {
             value += getBiomeValueAt(i + x);
         }
