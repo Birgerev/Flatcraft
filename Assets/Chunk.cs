@@ -388,7 +388,6 @@ public class Chunk : MonoBehaviour
 
         UpdateSunlightSources();
         UpdateLightSources();
-        UpdateLightRender();
     }
 
 
