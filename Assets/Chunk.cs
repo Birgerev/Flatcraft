@@ -213,6 +213,7 @@ public class Chunk : MonoBehaviour
                 TrySpawnMobs();
             }
 
+            Block.lightUpdatedThisTick.Clear();
             age++;
             yield return new WaitForSeconds(1 / TickRate);
         }

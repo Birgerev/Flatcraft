@@ -7,6 +7,7 @@ public class Block : MonoBehaviour
 {
     public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
     public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
+    public static List<Vector2Int> lightUpdatedThisTick = new List<Vector2Int>(); 
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -178,7 +179,11 @@ public class Block : MonoBehaviour
             {
                 if (y < 0 || y > Chunk.Height)
                     continue;
-                Block block = Chunk.getBlock(new Vector2Int(x, y));
+                Vector2Int blockPos = new Vector2Int(x, y);
+
+                if (lightUpdatedThisTick.Contains(blockPos))
+                    continue;
+                Block block = Chunk.getBlock(blockPos);
 
                 //Skip if block is air
                 if (block == null)
@@ -186,6 +191,7 @@ public class Block : MonoBehaviour
 
                 //Update light if everything checks out
                 block.RenderBlockLight();
+                lightUpdatedThisTick.Add(blockPos);
             }
         }
     }
@@ -221,7 +227,6 @@ public class Block : MonoBehaviour
             }
             i++;
         }
-
         return brightestValue;
     }
 
