@@ -57,7 +57,6 @@ public class Chunk : MonoBehaviour
 
 
     public static float mobSpawningChance = 0.01f;
-    public static float mobSpawningAmountCap = 2;
     public static List<string> mobSpawns = new List<string> { "Chicken", "Sheep" };
 
 
@@ -223,7 +222,7 @@ public class Chunk : MonoBehaviour
     {
         System.Random r = new System.Random();
 
-        if(r.NextDouble() < mobSpawningChance / TickRate &&GetEntities().Length < mobSpawningAmountCap)
+        if(r.NextDouble() < mobSpawningChance / TickRate && Entity.Amount < Entity.MaxAmount)
         {
             int x = r.Next(0, Width) + ChunkPosition*Width;
             int y = getTopmostBlock(x).getPosition().y + 1;
