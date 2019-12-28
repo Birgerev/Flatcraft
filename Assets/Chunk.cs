@@ -217,44 +217,7 @@ public class Chunk : MonoBehaviour
             yield return new WaitForSeconds(1 / TickRate);
         }
     }
-
-    public void UpdateLightSources()
-    {
-        int i = 0;
-        //Update Light Sources
-        foreach (Block block in GetComponentsInChildren<Block>())
-        {
-            if (Block.GetLightSourceLevel(block.getPosition()) > 0)
-            {
-                Block.UpdateLightAround(block.getPosition());
-                i++;
-            }
-        }
-    }
-
-    public void UpdateLightRender()
-    {
-        int i = 0;
-        //Update Light Rendering
-        foreach (Block block in GetComponentsInChildren<Block>())
-        {
-            block.RenderBlockLight();
-            i++;
-        }
-    }
-
-    public void UpdateSunlightSources()
-    {
-        int minChunkXPos = GetMinXWorldPosition();
-        int maxChunkXPos = GetMinXWorldPosition() + Width-1;
-
-        //Find new sources and populate the list
-        for (int x = minChunkXPos; x <= maxChunkXPos; x++)
-        {
-            Block.UpdateSunlightSourceAt(x);
-        }
-    }
-
+    
     public void TrySpawnMobs()
     {
         System.Random r = new System.Random();
@@ -386,10 +349,31 @@ public class Chunk : MonoBehaviour
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
 
-        UpdateSunlightSources();
-        UpdateLightSources();
+        StartCoroutine(GenerateLight());
     }
 
+    IEnumerator GenerateLight()
+    {
+        //Fill sunlight source list
+        int minChunkXPos = GetMinXWorldPosition();
+        int maxChunkXPos = GetMinXWorldPosition() + Width - 1;
+
+        for (int x = minChunkXPos; x <= maxChunkXPos; x++)
+        {
+            yield return new WaitForSecondsRealtime(0.05f);
+            Block.UpdateSunlightSourceAt(x);
+        }
+
+        //Update Light Sources (not sunlight again)
+        foreach (Block block in GetComponentsInChildren<Block>())
+        {
+            if (block.glowLevel > 0)
+            {
+                Block.UpdateLightAround(block.getPosition());
+            }
+            yield return new WaitForSecondsRealtime(0.1f);
+        }
+    }
 
     private void LoadAllEntities()
     {
