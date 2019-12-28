@@ -47,6 +47,8 @@ public class Block : MonoBehaviour
     public virtual void FirstTick()
     {
         UpdateColliders();
+        
+        RenderNoLight();
 
         if (rotate_x || rotate_y)
         {
@@ -77,8 +79,6 @@ public class Block : MonoBehaviour
         }
 
         randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
-
-        RenderNoLight();
 
         UpdateColliders();
 
