@@ -218,6 +218,43 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    public void UpdateLightSources()
+    {
+        int i = 0;
+        //Update Light Sources
+        foreach (Block block in GetComponentsInChildren<Block>())
+        {
+            if (Block.GetLightSourceLevel(block.getPosition()) > 0)
+            {
+                Block.UpdateLightAround(block.getPosition());
+                i++;
+            }
+        }
+    }
+
+    public void UpdateLightRender()
+    {
+        int i = 0;
+        //Update Light Rendering
+        foreach (Block block in GetComponentsInChildren<Block>())
+        {
+            block.RenderBlockLight();
+            i++;
+        }
+    }
+
+    public void UpdateSunlightSources()
+    {
+        int minChunkXPos = GetMinXWorldPosition();
+        int maxChunkXPos = GetMinXWorldPosition() + Width-1;
+
+        //Find new sources and populate the list
+        for (int x = minChunkXPos; x <= maxChunkXPos; x++)
+        {
+            Block.UpdateSunlightSourceAt(x);
+        }
+    }
+
     public void TrySpawnMobs()
     {
         System.Random r = new System.Random();
@@ -344,13 +381,14 @@ public class Chunk : MonoBehaviour
                 setLocalBlock(pos, mat, data, false);
             }
         }
-        
-        Block.UpdateSunlightSourceList();
-        Block.UpdateLight();
 
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
+
+        UpdateSunlightSources();
+        UpdateLightSources();
+        UpdateLightRender();
     }
 
 
@@ -596,10 +634,11 @@ public class Chunk : MonoBehaviour
             blockChanges.Add(worldPos, mat.ToString() + "*" + data);
         }
 
+        Block result = null;
+
         if (mat == Material.Air)
         {
             Block.SpreadTick(worldPos);
-            Block.UpdateLightAtSources();
         }else
         {
             //Place new block
@@ -625,9 +664,15 @@ public class Chunk : MonoBehaviour
             block.GetComponent<Block>().Tick(spreadTick);
             
 
-            return block.GetComponent<Block>();
+            result = block.GetComponent<Block>();
         }
-        return null;
+
+        if (isLoaded)
+        {
+            Block.UpdateSunlightSourceAt(worldPos.x);
+            Block.UpdateLightAround(worldPos);
+        }
+        return result;
     }
 
     public static Block getBlock(Vector2Int worldPos)

@@ -79,8 +79,7 @@ public class WorldManager : MonoBehaviour
 
         loadingState = "Waiting For Light";
         loadingProgress = 4f / steps;
-
-        Block.UpdateLight();
+        
         yield return new WaitForSeconds(1f);
 
         loadingState = "Done!";
