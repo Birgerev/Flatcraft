@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LibNoise;
 using System.IO;
+using System.Threading;
 
 public class Chunk : MonoBehaviour
 {
@@ -277,6 +278,27 @@ public class Chunk : MonoBehaviour
         StartCoroutine(GenerateChunk());
     }
 
+    public Dictionary<Vector2Int, Material> loadChunkTerrain()
+    {
+        Dictionary<Vector2Int, Material> blocks = new Dictionary<Vector2Int, Material>();
+
+        for (int y = 0; y <= Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                Vector2Int pos = new Vector2Int(x + (ChunkPosition * Width), y);
+                Material mat = getTheoreticalTerrainBlock(pos);
+                
+                if(mat != Material.Air)
+                {
+                    blocks.Add(pos, mat);
+                }
+            }
+        }
+
+        return blocks;
+    }
+
     IEnumerator GenerateChunk()
     {
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
@@ -284,34 +306,27 @@ public class Chunk : MonoBehaviour
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
 
         isLoading = true;
-
         WorldManager.instance.amountOfChunksLoading++;
-        for (int y = 0; y <= Height; y++)
+
+
+        Dictionary<Vector2Int, Material> terrainBlocks = null;
+        Thread terrainThread = new Thread(() => { terrainBlocks = loadChunkTerrain(); });
+        terrainThread.Start();
+
+        while (terrainThread.IsAlive)
         {
-            int blocksGenerated = 0;
-            for (int x = 0; x < Width; x++)
-            {
-                Block loadedBlock = loadTheoreticalBlock(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
+            yield return new WaitForSeconds(0.5f);
+        }
+        Debug.Log("terrain thread done! result List length: "+ terrainBlocks.Count);
 
-                if (loadedBlock != null)
-                    blocksGenerated++;
-            }
-            if (blocksGenerated > 0 && y % 2 == 0)
+        int i = 0;
+        foreach (KeyValuePair<Vector2Int, Material> entry in terrainBlocks)
+        {
+            setLocalBlock(entry.Key, entry.Value, "", false, false);
+            i++;
+            if(i % 10 == 1)
             {
-                yield return new WaitForSecondsRealtime(0.05f);
-            }
-
-            float timeNotInRenderdistance = 0;
-            while (!inRenderDistance() && timeNotInRenderdistance < 10) { 
-
-                yield return new WaitForSecondsRealtime(0.1f);
-                timeNotInRenderdistance += 0.1f;
-                WorldManager.instance.amountOfChunksLoading--;
-            }
-            if(timeNotInRenderdistance >= 10)
-            {
-                Destroy(gameObject);
-                yield break;
+                yield return new WaitForSeconds(0.05f);
             }
         }
 
@@ -686,22 +701,6 @@ public class Chunk : MonoBehaviour
 
         if (block == null)
             return null;
-
-        return block;
-    }
-
-    public Block loadTheoreticalBlock(Vector2Int worldPos)
-    {
-        Block block = null;
-        Material mat = Material.Air;
-
-
-        if (mat == Material.Air)
-            mat = getTheoreticalTerrainBlock(worldPos);
-        if (mat == Material.Air)
-            return null;
-
-        block = setLocalBlock(worldPos, mat, "", false, false);
 
         return block;
     }
