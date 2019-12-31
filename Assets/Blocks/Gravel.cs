@@ -13,13 +13,13 @@ public class Gravel : Block
     {
         base.Tick(spread);
 
-        if (Chunk.getBlock(getPosition() + new Vector2Int(0, -1)) == null)
+        if (Chunk.getBlock(position + new Vector2Int(0, -1)) == null)
         {
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
-            fs.transform.position = (Vector2)getPosition();
+            fs.transform.position = (Vector2)position;
             fs.material = GetMaterial();
 
-            Chunk.setBlock(getPosition(), Material.Air, true);
+            Chunk.setBlock(position, Material.Air, true);
         }
     }
 }

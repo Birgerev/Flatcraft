@@ -81,6 +81,7 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + ChunkPosition + "]";
         transform.position = new Vector3(ChunkPosition * Width, 0, 0);
 
+
         StartCoroutine(GenerateChunk());
         StartCoroutine(SaveLoop());
     }
@@ -170,17 +171,20 @@ public class Chunk : MonoBehaviour
         //Tick Blocks
         Block[] blocks = transform.GetComponentsInChildren<Block>();
 
-        float timePerBlock = 5 / blocks.Length;
-        foreach (Block block in blocks)
+        if (blocks.Length > 0)
         {
-            if (block == null || block.transform == null)
-                continue;
+            float timePerBlock = 5 / blocks.Length;
+            foreach (Block block in blocks)
+            {
+                if (block == null || block.transform == null)
+                    continue;
 
-            if (block.autosave == false)
-                continue;
+                if (block.autosave == false)
+                    continue;
 
-            block.Tick(false);
-            block.Autosave();
+                block.Tick(false);
+                block.Autosave();
+            }
         }
         yield return new WaitForSecondsRealtime(0);
 
@@ -214,7 +218,6 @@ public class Chunk : MonoBehaviour
                 TrySpawnMobs();
             }
 
-            Block.lightUpdatedThisTick.Clear();
             age++;
             yield return new WaitForSeconds(1 / TickRate);
         }
@@ -227,7 +230,7 @@ public class Chunk : MonoBehaviour
         if(r.NextDouble() < mobSpawningChance / TickRate &&GetEntities().Length < mobSpawningAmountCap)
         {
             int x = r.Next(0, Width) + ChunkPosition*Width;
-            int y = getTopmostBlock(x).getPosition().y + 1;
+            int y = getTopmostBlock(x).position.y + 1;
             List<string> entities = mobSpawns;
             entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
@@ -317,8 +320,7 @@ public class Chunk : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
         }
-        Debug.Log("terrain thread done! result List length: "+ terrainBlocks.Count);
-
+        
         int i = 0;
         foreach (KeyValuePair<Vector2Int, Material> entry in terrainBlocks)
         {
@@ -364,8 +366,12 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
-
+        
         StartCoroutine(GenerateLight());
+        if (isSpawnChunk)
+        {
+            StartCoroutine(processDirtyLight());
+        }
     }
 
     IEnumerator GenerateLight()
@@ -385,9 +391,53 @@ public class Chunk : MonoBehaviour
         {
             if (block.glowLevel > 0)
             {
-                Block.UpdateLightAround(block.getPosition());
+                Block.UpdateLightAround(block.position);
+                yield return new WaitForSecondsRealtime(0.1f);
             }
-            yield return new WaitForSecondsRealtime(0.1f);
+        }
+    }
+
+    IEnumerator processDirtyLight()
+    {
+        while (true)
+        {
+            List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
+            List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
+            Block.oldLight.Clear();
+
+            if (oldLight.Count == 0)
+            {
+                yield return new WaitForSeconds(1f);
+                continue;
+            }
+
+            //Process
+            int i = 0;
+            int batchSize = 20;
+            float timePerBatch = 5 / (oldLight.Count / batchSize);
+            foreach (Vector2Int pos in oldLight)
+            {
+                if(i % batchSize == 1)
+                    yield return new WaitForSeconds(timePerBatch);
+
+                i++;
+
+                Block block = Chunk.getBlock(pos);
+                if (block == null)
+                    continue;
+
+                lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(pos)));
+            }
+
+
+            //Render
+            foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
+            {
+                if (entry.Key == null)
+                    continue;
+
+                entry.Key.RenderBlockLight(entry.Value);
+            }
         }
     }
 
@@ -494,7 +544,21 @@ public class Chunk : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(AutosaveDuration);
             StartCoroutine(AutosaveAllBlocks());
-            Save();
+            
+            Thread worldThread = new Thread(Save);
+            worldThread.Start();
+
+            while (worldThread.IsAlive)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+
+
+            //Save Entities
+            foreach (Entity e in GetEntities())
+            {
+                e.Save();
+            }
         }
     }
 
@@ -503,42 +567,41 @@ public class Chunk : MonoBehaviour
         //Save Blocks
         if (blockChanges.Count > 0)
         {
-            string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
-            if (!Directory.Exists(path))
+            lock (blockChanges)
             {
-                Directory.CreateDirectory(path);
-                Directory.CreateDirectory(path+"\\entities");
-                File.Create(path + "\\blocks").Close();
+                Dictionary<Vector2Int, string> changes = new Dictionary<Vector2Int, string>(blockChanges);
+                blockChanges.Clear();
+
+                string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path + "\\entities");
+                    File.Create(path + "\\blocks").Close();
+                }
+
+                foreach (string line in File.ReadAllLines(path + "\\blocks"))
+                {
+                    Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
+                    string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
+
+                    if (!changes.ContainsKey(linePos))
+                        changes.Add(linePos, lineData);
+                }
+
+                //Empty lines before writing
+                File.WriteAllText(path + "\\blocks", "");
+
+                TextWriter c = new StreamWriter(path + "\\blocks");
+
+                foreach (KeyValuePair<Vector2Int, string> line in changes)
+                {
+
+                    c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
+                }
+
+                c.Close();
             }
-
-            foreach (string line in File.ReadAllLines(path + "\\blocks"))
-            {
-                Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
-                string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
-
-                if (!blockChanges.ContainsKey(linePos))
-                    blockChanges.Add(linePos, lineData);
-            }
-
-            //Empty lines before writing
-            File.WriteAllText(path + "\\blocks", "");
-
-            TextWriter c = new StreamWriter(path + "\\blocks");
-
-            foreach (KeyValuePair<Vector2Int, string> line in blockChanges)
-            {
-
-                c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
-            }
-
-            c.Close();
-            blockChanges.Clear();
-        }
-
-        //Save Entities
-        foreach (Entity e in GetEntities())
-        {
-            e.Save();
         }
     }
 

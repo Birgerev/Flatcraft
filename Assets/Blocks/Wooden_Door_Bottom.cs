@@ -16,17 +16,17 @@ public class Wooden_Door_Bottom : Door
 
     public override void FirstTick()
     {
-        Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Wooden_Door_Top);
+        Chunk.setBlock(position + new Vector2Int(0, 1), Material.Wooden_Door_Top);
 
         base.FirstTick();
     }
 
     public override void Break()
     {
-        Block block = Chunk.getBlock(getPosition() + new Vector2Int(0, 1));
+        Block block = Chunk.getBlock(position + new Vector2Int(0, 1));
         if (block != null && block.GetMaterial() == Material.Wooden_Door_Top)
         {
-            Chunk.setBlock(getPosition() + new Vector2Int(0, 1), Material.Air);
+            Chunk.setBlock(position + new Vector2Int(0, 1), Material.Air);
         }
 
         base.Break();
@@ -34,7 +34,7 @@ public class Wooden_Door_Bottom : Door
 
     public override void Interact()
     {
-        Door block = (Door)Chunk.getBlock(getPosition() + new Vector2Int(0, 1));
+        Door block = (Door)Chunk.getBlock(position + new Vector2Int(0, 1));
 
         block.ToggleOpen();
 
