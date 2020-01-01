@@ -360,13 +360,14 @@ public class Chunk : MonoBehaviour
             {
                 GenerateStructures(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
             }
+            if(y < 80 && y % 4 == 0)
+                yield return new WaitForSeconds(0.05f);
         }
 
 
         LoadAllEntities();
 
         StartCoroutine(Tick());
-        yield return new WaitForSecondsRealtime(1f);
         StartCoroutine(TickAllBlocks());
         yield return new WaitForSecondsRealtime(1f);
 
