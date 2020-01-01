@@ -379,7 +379,7 @@ public class Chunk : MonoBehaviour
         StartCoroutine(GenerateLight());
         if (isSpawnChunk)
         {
-            StartCoroutine(processDirtyLight());
+            StartCoroutine(processLightLoop());
         }
     }
 
@@ -406,39 +406,22 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    IEnumerator processDirtyLight()
+    IEnumerator processLightLoop()
     {
         while (true)
         {
-            List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
             List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
             Block.oldLight.Clear();
+            List<KeyValuePair<Block, int>> lightToRender = null;
 
-            if (oldLight.Count == 0)
+            Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLight); });
+            lightThread.Start();
+
+            while (lightThread.IsAlive)
             {
-                yield return new WaitForSeconds(1f);
-                continue;
+                yield return new WaitForSeconds(0.1f);
             }
-
-            //Process
-            int i = 0;
-            int batchSize = 20;
-            float timePerBatch = 5f / ((float)oldLight.Count / (float)batchSize);
-            foreach (Vector2Int pos in oldLight)
-            {
-                if(i % batchSize == 1)
-                    yield return new WaitForSeconds(timePerBatch);
-
-                i++;
-
-                Block block = Chunk.getBlock(pos);
-                if (block == null)
-                    continue;
-
-                lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(pos)));
-            }
-
-
+            
             //Render
             foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
             {
@@ -447,7 +430,30 @@ public class Chunk : MonoBehaviour
 
                 entry.Key.RenderBlockLight(entry.Value);
             }
+
+
+            yield return new WaitForSecondsRealtime(1f);
         }
+    }
+
+    public List<KeyValuePair<Block, int>> processDirtyLight(List<Vector2Int> oldLight)
+    {
+        List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
+
+        if (oldLight.Count == 0)
+            return lightToRender;
+
+        //Process
+        foreach (Vector2Int pos in oldLight)
+        {
+            Block block = Chunk.getBlock(pos);
+            if (block == null)
+                continue;
+
+            lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(pos)));
+        }
+
+        return lightToRender;
     }
 
     private void LoadAllEntities()

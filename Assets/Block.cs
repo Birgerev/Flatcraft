@@ -208,27 +208,30 @@ public class Block : MonoBehaviour
 
     public static int GetLightLevel(Vector2Int pos)
     {
-        if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
-            return 0;
-
-        List<Vector2Int> sources = new List<Vector2Int>(lightSources.Keys);
-        sources.AddRange(sunlightSources);
-
-        Vector2Int brightestSourcePos = Vector2Int.zero;
-        int brightestValue = 0;
-        int i = 0;
-        foreach(Vector2Int source in sources)
+        lock (lightSources)
         {
-            int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
+            if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
+                return 0;
 
-            if(value > brightestValue)
+            List<Vector2Int> sources = new List<Vector2Int>(lightSources.Keys);
+            sources.AddRange(sunlightSources);
+
+            Vector2Int brightestSourcePos = Vector2Int.zero;
+            int brightestValue = 0;
+            int i = 0;
+            foreach (Vector2Int source in sources)
             {
-                brightestValue = value;
-                brightestSourcePos = source;
+                int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
+
+                if (value > brightestValue)
+                {
+                    brightestValue = value;
+                    brightestSourcePos = source;
+                }
+                i++;
             }
-            i++;
+            return brightestValue;
         }
-        return brightestValue;
     }
 
     public virtual void UpdateColliders()
