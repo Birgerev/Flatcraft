@@ -173,20 +173,19 @@ public class Chunk : MonoBehaviour
 
         if (blocks.Length > 0)
         {
-            float timePerBlock = 5 / blocks.Length;
+            int blocksPerBatch = 20;
+            float timePerBatch = 5f / ((float)blocks.Length/ (float)blocksPerBatch);
             foreach (Block block in blocks)
             {
-                if (block == null || block.transform == null)
+                yield return new WaitForSeconds(timePerBatch);
+                if (block == null || !block.autosave)
                     continue;
 
-                if (block.autosave == false)
-                    continue;
 
                 block.Tick(false);
                 block.Autosave();
             }
         }
-        yield return new WaitForSecondsRealtime(0);
 
     }
 
