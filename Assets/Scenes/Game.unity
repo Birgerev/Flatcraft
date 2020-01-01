@@ -11055,6 +11055,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 515523490}
+  - component: {fileID: 515523491}
   m_Layer: 5
   m_Name: hotbar
   m_TagString: Untagged
@@ -11084,6 +11085,18 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000015259, y: 62.8}
   m_SizeDelta: {x: 900, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &515523491
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515523489}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1001 &516778078
 PrefabInstance:
   m_ObjectHideFlags: 0
