@@ -437,29 +437,32 @@ public class Chunk : MonoBehaviour
     {
         while (true)
         {
-            List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
-            Block.oldLight.Clear();
-            List<KeyValuePair<Block, int>> lightToRender = null;
-
-            Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLight); });
-            lightThread.Start();
-
-            while (lightThread.IsAlive)
+            if (Block.oldLight.Count > 0)
             {
-                yield return new WaitForSeconds(0.1f);
+
+                List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
+                Block.oldLight.Clear();
+                List<KeyValuePair<Block, int>> lightToRender = null;
+
+                Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLight); });
+                lightThread.Start();
+
+                while (lightThread.IsAlive)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                }
+
+                //Render
+                foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
+                {
+                    if (entry.Key == null)
+                        continue;
+
+                    entry.Key.RenderBlockLight(entry.Value);
+                }
             }
-            
-            //Render
-            foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
-            {
-                if (entry.Key == null)
-                    continue;
 
-                entry.Key.RenderBlockLight(entry.Value);
-            }
-
-
-            yield return new WaitForSecondsRealtime(0.2f);
+            yield return new WaitForSecondsRealtime(0.05f);
         }
     }
 
