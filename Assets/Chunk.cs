@@ -413,7 +413,7 @@ public class Chunk : MonoBehaviour
             //Process
             int i = 0;
             int batchSize = 20;
-            float timePerBatch = 5 / (oldLight.Count / batchSize);
+            float timePerBatch = 5f / ((float)oldLight.Count / (float)batchSize);
             foreach (Vector2Int pos in oldLight)
             {
                 if(i % batchSize == 1)
