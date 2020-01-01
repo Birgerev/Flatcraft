@@ -83,7 +83,7 @@ public class World
 
     public static string GetSavesPath()
     {
-        string savesPath = Application.dataPath + "\\..\\Saves\\";
+        string savesPath = WorldManager.appPath + "\\..\\Saves\\";
 
         if (!Directory.Exists(savesPath))
             Directory.CreateDirectory(savesPath);

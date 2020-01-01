@@ -545,7 +545,9 @@ public class Chunk : MonoBehaviour
             yield return new WaitForSecondsRealtime(AutosaveDuration);
             StartCoroutine(AutosaveAllBlocks());
             
-            Thread worldThread = new Thread(Save);
+
+            //Save Block Changes
+            Thread worldThread = new Thread(SaveBlockChanges);
             worldThread.Start();
 
             while (worldThread.IsAlive)
@@ -562,7 +564,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public void Save()
+    public void SaveBlockChanges()
     {
         //Save Blocks
         if (blockChanges.Count > 0)
@@ -612,7 +614,6 @@ public class Chunk : MonoBehaviour
 
         if (age >= MinimumUnloadTime*TickRate)
         {
-            Save();
             WorldManager.instance.chunks.Remove(ChunkPosition);
             Destroy(gameObject);
         }
