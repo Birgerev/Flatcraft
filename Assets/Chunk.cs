@@ -339,6 +339,19 @@ public class Chunk : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.05f);
             }
+
+
+            float timePassed = 0f;
+            while(!inRenderDistance())
+            {
+                yield return new WaitForSeconds(0.1f);
+                timePassed += 0.1f;
+                if (timePassed > 10f)
+                {
+                    Destroy(gameObject);
+                    yield break;
+                }
+            }
         }
 
         for (int y = 0; y <= Height; y++)
