@@ -6,6 +6,8 @@ using System.IO;
 [System.Serializable]
 public class World 
 {
+    public static string appPath = Application.dataPath;
+
     public string name;
     public int seed;
     public float time;
@@ -83,7 +85,7 @@ public class World
 
     public static string GetSavesPath()
     {
-        string savesPath = WorldManager.appPath + "\\..\\Saves\\";
+        string savesPath = appPath + "\\..\\Saves\\";
 
         if (!Directory.Exists(savesPath))
             Directory.CreateDirectory(savesPath);
