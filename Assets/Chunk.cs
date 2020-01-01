@@ -445,7 +445,7 @@ public class Chunk : MonoBehaviour
             }
 
 
-            yield return new WaitForSecondsRealtime(1f);
+            yield return new WaitForSecondsRealtime(0.2f);
         }
     }
 
