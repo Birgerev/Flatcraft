@@ -12,7 +12,12 @@ public class Liquid : Block
     public string debugData;
 
     private int age;
-    
+
+    private Block leftBlock;
+    private Block rightBlock;
+    private Block topBlock;
+    private Block bottomBlock;
+
     public override void Tick(bool spread)
     {
         //If not covered by a block
@@ -21,7 +26,16 @@ public class Liquid : Block
 
         debugData = stringFromData(data);
 
-        if(age > 1)
+        if (leftBlock == null)
+            leftBlock = Chunk.getBlock(position + new Vector2Int(-1, 0));
+        if (rightBlock == null)
+            rightBlock = Chunk.getBlock(position + new Vector2Int(1, 0));
+        if (topBlock == null)
+            topBlock = Chunk.getBlock(position + new Vector2Int(0, 1));
+        if (bottomBlock == null)
+            bottomBlock = Chunk.getBlock(position + new Vector2Int(0, -1));
+
+        if (age > 1 && (leftBlock == null || rightBlock == null || topBlock == null || bottomBlock == null))
             Flow();
         CheckSource();
 
@@ -60,9 +74,9 @@ public class Liquid : Block
 
     public void Flow()
     {
-        if (Chunk.getBlock(position + new Vector2Int(0, -1)) != null && Chunk.getBlock(position + new Vector2Int(0, -1)).GetMaterial() == GetMaterial())
+        if (bottomBlock != null && bottomBlock.GetMaterial() == GetMaterial())
             return;
-        if (Chunk.getBlock(position + new Vector2Int(0, -1)) == null)
+        if (bottomBlock == null)
         {
             Chunk.setBlock(position + new Vector2Int(0, -1), GetMaterial(), "source_block=0.1", true, true);
             return;
@@ -72,11 +86,11 @@ public class Liquid : Block
 
         if (liquidLevel > 1)
         {
-            if (Chunk.getBlock(position + new Vector2Int(-1, 0)) == null)
+            if (leftBlock == null)
             {
                 Chunk.setBlock(position + new Vector2Int(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, true);
             }
-            if (Chunk.getBlock(position + new Vector2Int(1, 0)) == null)
+            if (rightBlock == null)
             {
                 Chunk.setBlock(position + new Vector2Int(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, true);
             }
