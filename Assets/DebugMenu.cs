@@ -42,7 +42,7 @@ public class DebugMenu : MonoBehaviour
         Player player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;
         text_y.text = "y: " + player.transform.position.y;
-        text_biome.text = "biome: " + Chunk.getMostProminantBiome((int)player.transform.position.x).name;
+        text_biome.text = "biome: " + Chunk.getBiome((int)player.transform.position.x).name;
 
         text_seed.text = "seed: " + WorldManager.world.seed;
         text_time.text = "time: " + WorldManager.world.time;
