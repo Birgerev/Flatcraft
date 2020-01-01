@@ -34,9 +34,9 @@ public class Block : MonoBehaviour
 
     public float blockHealth = 0;
 
-    public int randomTickNumber = 0;
     public Vector2Int position;
-    
+
+    public int age = 0;
     private float time_of_last_hit = 0;
     private void Start()
     {
@@ -86,14 +86,18 @@ public class Block : MonoBehaviour
             }
         }
 
-        randomTickNumber = new System.Random(Chunk.seedByPosition(position)).Next(0, 1000);
-
         UpdateColliders();
 
         RenderRotate();
-        
+
+        age++;
         if (spread)
             SpreadTick(position);
+    }
+
+    public float getRandomChance()
+    {
+        return (float)new System.Random(Chunk.seedByPosition(position) + age).NextDouble();
     }
 
     IEnumerator autoTickLoop()

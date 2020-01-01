@@ -11,8 +11,6 @@ public class Liquid : Block
 
     public string debugData;
 
-    private int age;
-
     private Block leftBlock;
     private Block rightBlock;
     private Block topBlock;
@@ -38,8 +36,6 @@ public class Liquid : Block
         if (age > 1 && (leftBlock == null || rightBlock == null || topBlock == null || bottomBlock == null))
             Flow();
         CheckSource();
-
-        age++;
 
         base.Tick(spread);
     }

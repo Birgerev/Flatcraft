@@ -20,7 +20,7 @@ public class Fire : Block
     {
         base.Tick(spread);
 
-        if (randomTickNumber < 100 / Chunk.TickRate)
+        if (getRandomChance() < 0.1f / Chunk.TickRate)
         {
             bool spreadFire = (100 / Chunk.TickRate < 50 / Chunk.TickRate);
 
