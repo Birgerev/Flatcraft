@@ -908,7 +908,7 @@ public class Chunk : MonoBehaviour
         List<Entity> entities = new List<Entity>();
 
         int chunkXPosition = this.GetMinXWorldPosition();
-        foreach (Entity e in GameObject.FindObjectsOfType<Entity>())
+        foreach (Entity e in entities)
         {
             if (e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
                 entities.Add(e);

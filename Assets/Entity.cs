@@ -7,6 +7,9 @@ using System.IO;
 [System.Serializable]
 public class Entity : MonoBehaviour
 {
+    public static List<Entity> entities = new List<Entity>();
+
+
     //Entity properties
     public virtual bool chunk_loading { get; } = false;
 
@@ -30,6 +33,7 @@ public class Entity : MonoBehaviour
     public virtual void Start()
     {
         gameObject.name = "Entity ["+this.GetType().Name+"]";
+        entities.Add(this);
 
         Load();
     }
@@ -140,6 +144,7 @@ public class Entity : MonoBehaviour
         DeleteOldSavePath();
 
         dead = true;
+        entities.Remove(this);
 
         Destroy(gameObject, 0.1f);
     }
