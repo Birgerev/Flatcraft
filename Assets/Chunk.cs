@@ -927,7 +927,8 @@ public class Chunk : MonoBehaviour
 
     public static int seedByPosition(Vector2Int pos)
     {
-        return new System.Random((pos.GetHashCode() + WorldManager.world.seed).GetHashCode()).Next(int.MinValue, int.MaxValue);
+        return new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y)
+               .GetHashCode()).Next(int.MinValue, int.MaxValue);
     }
 
     public static Biome getBiome(int pos)
