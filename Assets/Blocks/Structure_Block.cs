@@ -20,7 +20,7 @@ public class Structure_Block : Block
         {
             string structureId = data["structure"];
             TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
-            TextAsset structure = structures[new System.Random(Chunk.seedByPosition(getPosition())).Next(0, structures.Length)];
+            TextAsset structure = structures[new System.Random(Chunk.seedByPosition(position)).Next(0, structures.Length)];
             bool save = (data["save"] == "false") ? false : true;
 
             Material replaceMaterial = Material.Air;
@@ -43,12 +43,12 @@ public class Structure_Block : Block
                     continue;
                 }
 
-                pos += getPosition();
+                pos += position;
 
                 Chunk.setBlock(pos, mat, data, save, false);
             }
             
-            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save, false);
+            Chunk.setBlock(position, replaceMaterial, replaceData, save, false);
 
             base.Tick(spread);
         }

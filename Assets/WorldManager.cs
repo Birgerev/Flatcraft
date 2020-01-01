@@ -7,6 +7,7 @@ public class WorldManager : MonoBehaviour
 {
     public static World world;
     public static WorldManager instance;
+    public static string appPath;
 
     public List<Biome> biomes = new List<Biome>();
 
@@ -27,6 +28,7 @@ public class WorldManager : MonoBehaviour
     void Start()
     {
         instance = this;
+        appPath = Application.dataPath; //Cache app path for use in multithreading
         StartCoroutine(LoadWorld());
     }
 

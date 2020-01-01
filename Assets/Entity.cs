@@ -14,6 +14,7 @@ public class Entity : MonoBehaviour
     [EntityDataTag(false)]
     public float age = 0;
 
+
     //Entity State
     public int id = 0;
     public Chunk currentChunk;
@@ -21,6 +22,7 @@ public class Entity : MonoBehaviour
     public bool isInLiquid = false;
     public bool flipRenderX = false;
     public bool dead = false;
+    private Vector2 cachedPosition;     //For use in multithreading
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -40,6 +42,8 @@ public class Entity : MonoBehaviour
             isOnGround = false;
 
         getRenderer().flipX = flipRenderX;
+
+        cachedPosition = transform.position;
 
         CheckChunk();
         checkVoidDamage();
@@ -169,7 +173,7 @@ public class Entity : MonoBehaviour
     {
         List<string> result = new List<string>();
 
-        result.Add("position=" + JsonUtility.ToJson(transform.position));
+        result.Add("position=" + JsonUtility.ToJson(cachedPosition));
 
         IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 

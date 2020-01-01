@@ -7,7 +7,8 @@ public class Block : MonoBehaviour
 {
     public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
     public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
-    public static List<Vector2Int> lightUpdatedThisTick = new List<Vector2Int>(); 
+
+    public static HashSet<Vector2Int> oldLight = new HashSet<Vector2Int>();
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -32,13 +33,14 @@ public class Block : MonoBehaviour
     public float blockHealth = 0;
 
     public int randomTickNumber = 0;
+    public Vector2Int position;
     
     private float time_of_last_hit = 0;
     private void Start()
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
-
+        
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
@@ -50,6 +52,9 @@ public class Block : MonoBehaviour
         UpdateColliders();
         
         RenderNoLight();
+
+        //Cache position for use in multithreading
+        position = Vector2Int.RoundToInt(transform.position);
 
         if (rotate_x || rotate_y)
         {
@@ -73,20 +78,20 @@ public class Block : MonoBehaviour
 
         if (requiresGround)
         {
-            if(Chunk.getBlock(getPosition() - new Vector2Int(0, 1)) == null)
+            if(Chunk.getBlock(position - new Vector2Int(0, 1)) == null)
             {
                 Break();
             }
         }
 
-        randomTickNumber = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, 1000);
+        randomTickNumber = new System.Random(Chunk.seedByPosition(position)).Next(0, 1000);
 
         UpdateColliders();
 
         RenderRotate();
         
         if (spread)
-            SpreadTick(getPosition());
+            SpreadTick(position);
     }
 
     IEnumerator autoTickLoop()
@@ -132,7 +137,7 @@ public class Block : MonoBehaviour
         }
 
         //Add the new position
-        Vector2Int pos = topBlock.getPosition();
+        Vector2Int pos = topBlock.position;
 
         sunlightSources.Add(pos);
         UpdateLightAround(pos);
@@ -140,17 +145,17 @@ public class Block : MonoBehaviour
 
     public bool IsSunlightSource()
     {
-        return sunlightSources.Contains(getPosition());
+        return sunlightSources.Contains(position);
     }
 
     public bool CheckBlockLightSource()
     {
         if (glowLevel > 0)
         {
-            lightSources[getPosition()] = glowLevel;
+            lightSources[position] = glowLevel;
         }
 
-        return GetLightSourceLevel(getPosition()) > 0;
+        return GetLightSourceLevel(position) > 0;
     }
     
     public void RenderNoLight()
@@ -159,9 +164,9 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
 
-    public void RenderBlockLight()
+    public void RenderBlockLight(int lightLevel)
     {
-        float brightnessColorValue = (float)GetLightLevel(getPosition()) / 15f;
+        float brightnessColorValue = (float)lightLevel / 15f;
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
 
@@ -179,19 +184,9 @@ public class Block : MonoBehaviour
             {
                 if (y < 0 || y > Chunk.Height)
                     continue;
-                Vector2Int blockPos = new Vector2Int(x, y);
-
-                if (lightUpdatedThisTick.Contains(blockPos))
-                    continue;
-                Block block = Chunk.getBlock(blockPos);
-
-                //Skip if block is air
-                if (block == null)
-                    continue;
-
-                //Update light if everything checks out
-                block.RenderBlockLight();
-                lightUpdatedThisTick.Add(blockPos);
+                Vector2Int block = new Vector2Int(x, y);
+                if (!oldLight.Contains(block))
+                    oldLight.Add(block);
             }
         }
     }
@@ -243,11 +238,11 @@ public class Block : MonoBehaviour
 
         if (rotate_y)
         {
-            rotated_y = (Player.localInstance.transform.position.y < getPosition().y);
+            rotated_y = (Player.localInstance.transform.position.y < position.y);
         }
         if (rotate_x)
         {
-            rotated_x = (Player.localInstance.transform.position.x < getPosition().x);
+            rotated_x = (Player.localInstance.transform.position.x < position.x);
         }
 
         data["rotated_x"] = rotated_x ? "true" : "false";
@@ -270,7 +265,7 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
-        Chunk.setBlock(getPosition(), GetMaterial(), stringFromData(data), true, false);
+        Chunk.setBlock(position, GetMaterial(), stringFromData(data), true, false);
     }
 
     public virtual void Hit(float time)
@@ -317,12 +312,12 @@ public class Block : MonoBehaviour
         if(drop)
             Drop();
 
-        Chunk.setBlock(getPosition(), Material.Air);
+        Chunk.setBlock(position, Material.Air);
     }
 
     public virtual void Drop()
     {
-        GetDrop().Drop(getPosition());
+        GetDrop().Drop(position);
     }
 
     public virtual ItemStack GetDrop()
@@ -350,7 +345,7 @@ public class Block : MonoBehaviour
             Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
             int spriteIndex = (int)((blockHealth/breakTime) / (1f / ((float)sprites.Length)));
 
-            BreakIndicator.instance.UpdateState(spriteIndex, getPosition());
+            BreakIndicator.instance.UpdateState(spriteIndex, position);
         }
     }
 
@@ -370,7 +365,7 @@ public class Block : MonoBehaviour
         }
         else if(alternative_textures.Length > 0)
         {
-            int textureIndex = new System.Random(Chunk.seedByPosition(getPosition())).Next(0, alternative_textures.Length);
+            int textureIndex = new System.Random(Chunk.seedByPosition(position)).Next(0, alternative_textures.Length);
 
             return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
         }
@@ -380,11 +375,6 @@ public class Block : MonoBehaviour
     public Material GetMaterial()
     {
         return (Material)System.Enum.Parse(typeof(Material), this.GetType().Name);
-    }
-
-    public Vector2Int getPosition()
-    {
-        return Vector2Int.CeilToInt((Vector2)transform.position);
     }
 
     public static Dictionary<string, string> dataFromString(string dataString)
