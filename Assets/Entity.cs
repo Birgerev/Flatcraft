@@ -192,7 +192,7 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(transform.position.x)))+"\\entities\\"+id+"."+GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(cachedPosition.x)))+"\\entities\\"+id+"."+GetType().Name;
     }
 
     public virtual void Save()
