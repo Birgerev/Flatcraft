@@ -557,10 +557,23 @@ public class Chunk : MonoBehaviour
 
 
             //Save Entities
-            foreach (Entity e in GetEntities())
+            Entity[] entities = GetEntities();
+            Thread entityThread = new Thread(() => { SaveEntities(entities); });
+            entityThread.Start();
+
+            while (entityThread.IsAlive)
             {
-                e.Save();
+                yield return new WaitForSeconds(0.1f);
             }
+        }
+    }
+
+
+    public void SaveEntities(Entity[] entities)
+    {
+        foreach (Entity e in entities)
+        {
+            e.Save();
         }
     }
 
