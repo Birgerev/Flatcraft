@@ -26,7 +26,8 @@ public class Chunk : MonoBehaviour
     public Chunk rightChunk;
     public Chunk leftChunk;
     public Dictionary<Vector2Int, Block> blocks = new Dictionary<Vector2Int, Block>();
-
+    public Dictionary<int, Biome> cachedBiome = new Dictionary<int, Biome>();
+    
     [Header("Cave Generation Settings")]
     public static float caveFrequency = 5;
     public static float caveLacunarity = 0.6f;
@@ -231,7 +232,7 @@ public class Chunk : MonoBehaviour
             int x = r.Next(0, Width) + ChunkPosition*Width;
             int y = getTopmostBlock(x).position.y + 1;
             List<string> entities = mobSpawns;
-            entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
+            entities.AddRange(getBiome(x).biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
 
             Entity entity = Entity.Spawn(entityType);
@@ -282,6 +283,7 @@ public class Chunk : MonoBehaviour
 
     public Dictionary<Vector2Int, Material> loadChunkTerrain()
     {
+        cacheBiomes();
         Dictionary<Vector2Int, Material> blocks = new Dictionary<Vector2Int, Material>();
 
         for (int y = 0; y <= Height; y++)
@@ -299,6 +301,14 @@ public class Chunk : MonoBehaviour
         }
 
         return blocks;
+    }
+
+    public void cacheBiomes()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            getBiome(x + (ChunkPosition * Width));
+        }
     }
 
     IEnumerator GenerateChunk()
@@ -467,7 +477,7 @@ public class Chunk : MonoBehaviour
             return;
 
         Material mat = block.GetMaterial();
-        Biome biome = getMostProminantBiome(pos.x);
+        Biome biome = getBiome(pos.x);
         System.Random r = new System.Random(Chunk.seedByPosition(pos));
 
         if (biome.name == "forest")
@@ -907,9 +917,22 @@ public class Chunk : MonoBehaviour
             .GetHashCode()).Next(int.MinValue, int.MaxValue);
     }
 
-    public static Biome getMostProminantBiome(int pos)
+    public static Biome getBiome(int pos)
     {
-        return getTwoMostProminantBiomes(pos)[0];
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos));
+        Biome biome = null;
+
+        if (chunk.cachedBiome.ContainsKey(pos))
+        {
+            biome = chunk.cachedBiome[pos];
+        }
+        else
+        {
+            biome = getTwoMostProminantBiomes(pos)[0];
+            chunk.cachedBiome[pos] = biome;
+        }
+
+        return biome;
     }
 
     public static List<Biome> getTwoMostProminantBiomes(int pos)
