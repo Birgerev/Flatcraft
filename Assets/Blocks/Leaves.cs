@@ -8,6 +8,8 @@ public class Leaves : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
 
+    private int age = 0;
+
     public override ItemStack GetDrop()
     {
         return new ItemStack();
@@ -15,9 +17,11 @@ public class Leaves : Block
 
     public override void Tick(bool spread)
     {
-        if (randomTickNumber < 100 / Chunk.TickRate)
+        if (age > 1 && randomTickNumber < 100 / Chunk.TickRate)
             TryDecay();
 
+
+        age++;
         base.Tick(spread);
     }
 
