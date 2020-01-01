@@ -29,7 +29,8 @@ public class Chunk : MonoBehaviour
     public Chunk leftChunk;
     public Dictionary<Vector2Int, Block> blocks = new Dictionary<Vector2Int, Block>();
     public Dictionary<int, Biome> cachedBiome = new Dictionary<int, Biome>();
-    
+    public Dictionary<Vector2Int, int> cachedRandomSeeds = new Dictionary<Vector2Int, int>();
+
     [Header("Cave Generation Settings")]
     public static float caveFrequency = 5;
     public static float caveLacunarity = 0.6f;
@@ -284,6 +285,7 @@ public class Chunk : MonoBehaviour
     public Dictionary<Vector2Int, Material> loadChunkTerrain()
     {
         cacheBiomes();
+        cacheRandomSeeds();
         Dictionary<Vector2Int, Material> blocks = new Dictionary<Vector2Int, Material>();
 
         for (int y = 0; y <= Height; y++)
@@ -311,7 +313,18 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    IEnumerator GenerateChunk()
+    public void cacheRandomSeeds()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y <= Height; y++)
+            {
+                seedByPosition(new Vector2Int(x + (ChunkPosition * Width), y));
+            }
+        }
+    }
+
+   IEnumerator GenerateChunk()
     {
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
@@ -927,8 +940,19 @@ public class Chunk : MonoBehaviour
 
     public static int seedByPosition(Vector2Int pos)
     {
-        return new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y)
-               .GetHashCode()).Next(int.MinValue, int.MaxValue);
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos), false);
+        int seed = 0;
+
+        if (chunk == null)
+            return seed;
+
+        chunk.cachedRandomSeeds.TryGetValue(pos, out seed);
+        if (seed == 0) {
+            seed = new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y).GetHashCode()).Next(int.MinValue, int.MaxValue);
+            chunk.cachedRandomSeeds[pos] = seed;
+        }
+
+        return seed;
     }
 
     public static Biome getBiome(int pos)
