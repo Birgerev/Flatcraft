@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Unity.Burst;
 
+[BurstCompile]
 public class Block : MonoBehaviour
 {
     public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();

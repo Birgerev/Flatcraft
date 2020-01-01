@@ -4,7 +4,9 @@ using UnityEngine;
 using LibNoise;
 using System.IO;
 using System.Threading;
+using Unity.Burst;
 
+[BurstCompile]
 public class Chunk : MonoBehaviour
 {
     public static float AutosaveDuration = 15;
@@ -122,7 +124,7 @@ public class Chunk : MonoBehaviour
         int chunkPos = 0;
         if (worldPos >= 0)
         {
-            chunkPos = Mathf.FloorToInt((float)worldPos / (float)Width);
+            chunkPos = (int)((float)worldPos / (float)Width);
         }
         else
         {
