@@ -919,8 +919,11 @@ public class Chunk : MonoBehaviour
 
     public static Biome getBiome(int pos)
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos));
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos), false);
         Biome biome = null;
+
+        if (chunk == null)
+            return null;
 
         if (chunk.cachedBiome.ContainsKey(pos))
         {
@@ -929,7 +932,7 @@ public class Chunk : MonoBehaviour
         else
         {
             biome = getTwoMostProminantBiomes(pos)[0];
-            chunk.cachedBiome[pos] = biome;
+            chunk.cachedBiome.Add(pos, biome);
         }
 
         return biome;
