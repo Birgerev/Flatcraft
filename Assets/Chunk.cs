@@ -940,7 +940,7 @@ public class Chunk : MonoBehaviour
 
     public static int seedByPosition(Vector2Int pos)
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos), false);
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos.x), false);
         int seed = 0;
 
         if (chunk == null)
