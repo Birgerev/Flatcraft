@@ -101,7 +101,8 @@ public class Block : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1 / Chunk.TickRate);
-            Tick(false);
+            if(GetChunk().isTickedChunk)
+                Tick(false);
         }
     }
     
@@ -307,6 +308,11 @@ public class Block : MonoBehaviour
     public virtual void Break()
     {
         Break(true);
+    }
+
+    public Chunk GetChunk()
+    {
+        return transform.parent.GetComponent<Chunk>();
     }
 
     public virtual void Break(bool drop)
