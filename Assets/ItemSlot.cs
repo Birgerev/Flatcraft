@@ -11,16 +11,16 @@ public class ItemSlot : MonoBehaviour
     public ItemStack item;
 
     private CanvasGroup canvasGroup;
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        canvasGroup = GetComponentInParent<CanvasGroup>();
-    }
-
+    
     // Start is called before the first frame update
     private void Update()
     {
+        if (canvasGroup == null)
+        {
+            canvasGroup = GetComponentInParent<CanvasGroup>();
+            return;
+        }
+
         if (Time.frameCount % 5 == 0 && canvasGroup.interactable)
         {
             UpdateSlot();
