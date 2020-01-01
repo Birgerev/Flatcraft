@@ -21,7 +21,7 @@ public class ItemSlot : MonoBehaviour
     // Start is called before the first frame update
     private void Update()
     {
-        if (Time.frameCount % 10 == 0 && canvasGroup.interactable)
+        if (Time.frameCount % 5 == 0 && canvasGroup.interactable)
         {
             UpdateSlot();
         }
