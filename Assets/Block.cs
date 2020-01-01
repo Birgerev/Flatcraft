@@ -8,7 +8,7 @@ using Unity.Burst;
 public class Block : MonoBehaviour
 {
     public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
-    public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
+    public static HashSet<Vector2Int> sunlightSources = new HashSet<Vector2Int>();
 
     public static HashSet<Vector2Int> oldLight = new HashSet<Vector2Int>();
 

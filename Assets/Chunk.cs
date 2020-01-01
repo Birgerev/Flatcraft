@@ -108,11 +108,9 @@ public class Chunk : MonoBehaviour
     {
         Chunk chunk = null;
 
-        if (WorldManager.instance.chunks.ContainsKey(cPos))
-            chunk = WorldManager.instance.chunks[cPos];
-        if (chunk == null)
+        WorldManager.instance.chunks.TryGetValue(cPos, out chunk);
+        if (loadIfNotFound && chunk == null && cPos != 0)
         {
-            if (cPos != 0 && loadIfNotFound)
                 chunk = LoadChunk(cPos);
         }
 
@@ -645,7 +643,6 @@ public class Chunk : MonoBehaviour
 
     public bool isBlockLocal(Vector2Int worldPos)
     {
-        //(ChunkPosition == GetChunkPosFromWorldPosition(worldPos.x));
         bool local = (GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition);
         
         if (worldPos.y < 0 || worldPos.y > Height)
@@ -781,14 +778,9 @@ public class Chunk : MonoBehaviour
             Debug.LogWarning("Tried getting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
             return null;
         }
-
-        if (!blocks.ContainsKey(worldPos))
-            return null;
-
-        Block block = blocks[worldPos];
-
-        if (block == null)
-            return null;
+        
+        Block block = null;
+        blocks.TryGetValue(worldPos, out block);
 
         return block;
     }
