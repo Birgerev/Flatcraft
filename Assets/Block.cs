@@ -98,6 +98,9 @@ public class Block : MonoBehaviour
 
     IEnumerator autoTickLoop()
     {
+        //Wait a random duration, to smooth out ticks across time
+        yield return new WaitForSeconds((float)new System.Random(Chunk.seedByPosition(position)).NextDouble() * (1f / Chunk.TickRate));
+
         while (true)
         {
             yield return new WaitForSeconds(1 / Chunk.TickRate);
