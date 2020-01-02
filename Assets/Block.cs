@@ -217,11 +217,13 @@ public class Block : MonoBehaviour
             Dictionary<Vector2Int, int> sourcesDictionary = new Dictionary<Vector2Int, int>(lightSources);
             lock (sunlightSources)
             {
-                if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
+                List<Vector2Int> sunlight = new List<Vector2Int>(sunlightSources);
+
+                if (sourcesDictionary.Count <= 0 && sunlight.Count <= 0)
                     return 0;
 
                 List<Vector2Int> sources = new List<Vector2Int>(sourcesDictionary.Keys);
-                sources.AddRange(sunlightSources);
+                sources.AddRange(sunlight);
 
                 Vector2Int brightestSourcePos = Vector2Int.zero;
                 int brightestValue = 0;
