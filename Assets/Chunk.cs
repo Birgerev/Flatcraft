@@ -170,13 +170,12 @@ public class Chunk : MonoBehaviour
 
     IEnumerator AutosaveAllBlocks()
     {
-        //Tick Blocks
-        Block[] blocks = transform.GetComponentsInChildren<Block>();
+        List<Block> blocks = new List<Block>(this.blocks.Values);
 
-        if (blocks.Length > 0)
+        if (blocks.Count > 0)
         {
             int blocksPerBatch = 20;
-            float timePerBatch = 5f / ((float)blocks.Length/ (float)blocksPerBatch);
+            float timePerBatch = 5f / ((float)blocks.Count / (float)blocksPerBatch);
             foreach (Block block in blocks)
             {
                 yield return new WaitForSeconds(timePerBatch);
