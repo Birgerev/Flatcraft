@@ -212,6 +212,7 @@ public class Block : MonoBehaviour
 
     public static int GetLightLevel(Vector2Int pos)
     {
+        //Messy layout due to multithreading
         lock (lightSources)
         {
             Dictionary<Vector2Int, int> sourcesDictionary = new Dictionary<Vector2Int, int>(lightSources);
