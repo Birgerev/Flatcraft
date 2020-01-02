@@ -7,6 +7,9 @@ using System.IO;
 [System.Serializable]
 public class Entity : MonoBehaviour
 {
+    public static List<Entity> entities = new List<Entity>();
+
+
     //Entity properties
     public virtual bool chunk_loading { get; } = false;
 
@@ -14,12 +17,15 @@ public class Entity : MonoBehaviour
     [EntityDataTag(false)]
     public float age = 0;
 
+
     //Entity State
     public int id = 0;
     public Chunk currentChunk;
     public bool isOnGround;
     public bool isInLiquid = false;
     public bool flipRenderX = false;
+    public bool dead = false;
+    private Vector2 cachedPosition;     //For use in multithreading
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -27,6 +33,7 @@ public class Entity : MonoBehaviour
     public virtual void Start()
     {
         gameObject.name = "Entity ["+this.GetType().Name+"]";
+        entities.Add(this);
 
         Load();
     }
@@ -35,7 +42,12 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
 
+        if (isInLiquid)
+            isOnGround = false;
+
         getRenderer().flipX = flipRenderX;
+
+        cachedPosition = transform.position;
 
         CheckChunk();
         checkVoidDamage();
@@ -131,6 +143,9 @@ public class Entity : MonoBehaviour
 
         DeleteOldSavePath();
 
+        dead = true;
+        entities.Remove(this);
+
         Destroy(gameObject, 0.1f);
     }
 
@@ -163,7 +178,7 @@ public class Entity : MonoBehaviour
     {
         List<string> result = new List<string>();
 
-        result.Add("position=" + JsonUtility.ToJson(transform.position));
+        result.Add("position=" + JsonUtility.ToJson(cachedPosition));
 
         IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
@@ -182,7 +197,7 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(transform.position.x)))+"\\entities\\"+id+"."+GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(cachedPosition.x)))+"\\entities\\"+id+"."+GetType().Name;
     }
 
     public virtual void Save()
@@ -262,7 +277,7 @@ public class Entity : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D col)
     {
-        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f)
+        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 

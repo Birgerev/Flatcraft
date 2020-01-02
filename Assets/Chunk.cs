@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using LibNoise;
 using System.IO;
+using System.Threading;
+using Unity.Burst;
 
+[BurstCompile]
 public class Chunk : MonoBehaviour
 {
     public static float AutosaveDuration = 5;
@@ -25,6 +28,8 @@ public class Chunk : MonoBehaviour
     public Chunk rightChunk;
     public Chunk leftChunk;
     public Dictionary<Vector2Int, Block> blocks = new Dictionary<Vector2Int, Block>();
+    public Dictionary<int, Biome> cachedBiome = new Dictionary<int, Biome>();
+    public Dictionary<Vector2Int, int> cachedRandomSeeds = new Dictionary<Vector2Int, int>();
 
     [Header("Cave Generation Settings")]
     public static float caveFrequency = 5;
@@ -80,6 +85,7 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + ChunkPosition + "]";
         transform.position = new Vector3(ChunkPosition * Width, 0, 0);
 
+
         StartCoroutine(GenerateChunk());
         StartCoroutine(SaveLoop());
     }
@@ -103,11 +109,9 @@ public class Chunk : MonoBehaviour
     {
         Chunk chunk = null;
 
-        if (WorldManager.instance.chunks.ContainsKey(cPos))
-            chunk = WorldManager.instance.chunks[cPos];
-        if (chunk == null)
+        WorldManager.instance.chunks.TryGetValue(cPos, out chunk);
+        if (loadIfNotFound && chunk == null && cPos != 0)
         {
-            if (cPos != 0 && loadIfNotFound)
                 chunk = LoadChunk(cPos);
         }
 
@@ -119,11 +123,11 @@ public class Chunk : MonoBehaviour
         int chunkPos = 0;
         if (worldPos >= 0)
         {
-            chunkPos = Mathf.FloorToInt(worldPos / (Width));
+            chunkPos = (int)((float)worldPos / (float)Width);
         }
         else
         {
-            chunkPos = Mathf.CeilToInt((worldPos+1) / Width) - 1;
+            chunkPos = Mathf.CeilToInt( ( (float)worldPos + 1f) / (float)Width) - 1;
         }
 
         return chunkPos;
@@ -136,6 +140,9 @@ public class Chunk : MonoBehaviour
 
     public static Chunk LoadChunk(int cPos)
     {
+        if (cPos != 0 && (GetChunk(0, false) == null || GetChunk(0, false).age < 4))
+            return null;
+
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
 
         newChunk.GetComponent<Chunk>().ChunkPosition = cPos;
@@ -143,6 +150,46 @@ public class Chunk : MonoBehaviour
         return newChunk.GetComponent<Chunk>();
     }
 
+    IEnumerator TickAllBlocks()
+    {
+        //Tick Blocks
+        Block[] blocks = transform.GetComponentsInChildren<Block>();
+        
+        foreach (Block block in blocks)
+        {
+            if (block == null || block.transform == null)
+                continue;
+
+            if (age == 0)
+                block.GeneratingTick();
+            
+            block.Tick(false);
+        }
+        yield return new WaitForSecondsRealtime(0f);
+    }
+
+    IEnumerator AutosaveAllBlocks()
+    {
+        List<Block> blocks = new List<Block>(this.blocks.Values);
+
+        if (blocks.Count > 0)
+        {
+            int blocksPerBatch = 20;
+            float timePerBatch = 5f / ((float)blocks.Count / (float)blocksPerBatch);
+            foreach (Block block in blocks)
+            {
+                yield return new WaitForSeconds(timePerBatch);
+                if (block == null || !block.autosave)
+                    continue;
+
+
+                block.Tick(false);
+                block.Autosave();
+            }
+        }
+
+    }
+    
     IEnumerator Tick()
     {
         while (true)
@@ -187,7 +234,7 @@ public class Chunk : MonoBehaviour
             yield return new WaitForSeconds(1 / TickRate);
         }
     }
-
+    
     public void TrySpawnMobs()
     {
         System.Random r = new System.Random();
@@ -195,9 +242,9 @@ public class Chunk : MonoBehaviour
         if(r.NextDouble() < mobSpawningChance / TickRate &&GetEntities().Length < mobSpawningAmountCap)
         {
             int x = r.Next(0, Width) + ChunkPosition*Width;
-            int y = getTopmostBlock(x).getPosition().y + 1;
+            int y = getTopmostBlock(x).position.y + 1;
             List<string> entities = mobSpawns;
-            entities.AddRange(getMostProminantBiome(x).biomeSpecificEntitySpawns);
+            entities.AddRange(getBiome(x).biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
 
             Entity entity = Entity.Spawn(entityType);
@@ -246,41 +293,88 @@ public class Chunk : MonoBehaviour
         StartCoroutine(GenerateChunk());
     }
 
-    IEnumerator GenerateChunk()
+    public Dictionary<Vector2Int, Material> loadChunkTerrain()
+    {
+        cacheBiomes();
+        cacheRandomSeeds();
+        Dictionary<Vector2Int, Material> blocks = new Dictionary<Vector2Int, Material>();
+
+        for (int y = 0; y <= Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                Vector2Int pos = new Vector2Int(x + (ChunkPosition * Width), y);
+                Material mat = getTheoreticalTerrainBlock(pos);
+                
+                if(mat != Material.Air)
+                {
+                    blocks.Add(pos, mat);
+                }
+            }
+        }
+
+        return blocks;
+    }
+
+    public void cacheBiomes()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            getBiome(x + (ChunkPosition * Width));
+        }
+    }
+
+    public void cacheRandomSeeds()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y <= Height; y++)
+            {
+                seedByPosition(new Vector2Int(x + (ChunkPosition * Width), y));
+            }
+        }
+    }
+
+   IEnumerator GenerateChunk()
     {
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
 
         isLoading = true;
-
         WorldManager.instance.amountOfChunksLoading++;
-        for (int y = 0; y <= Height; y++)
+
+
+        Dictionary<Vector2Int, Material> terrainBlocks = null;
+        Thread terrainThread = new Thread(() => { terrainBlocks = loadChunkTerrain(); });
+        terrainThread.Start();
+
+        while (terrainThread.IsAlive)
         {
-            int blocksGenerated = 0;
-            for (int x = 0; x < Width; x++)
+            yield return new WaitForSeconds(0.5f);
+        }
+        
+        int i = 0;
+        foreach (KeyValuePair<Vector2Int, Material> entry in terrainBlocks)
+        {
+            setLocalBlock(entry.Key, entry.Value, "", false, false);
+            i++;
+            if(i % 10 == 1)
             {
-                Block loadedBlock = loadTheoreticalBlock(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
-
-                if (loadedBlock != null)
-                    blocksGenerated++;
+                yield return new WaitForSeconds(0.05f);
             }
-            if (blocksGenerated > 0 && y % 7 == 0)
+
+
+            float timePassed = 0f;
+            while(!inRenderDistance())
             {
-                yield return new WaitForSecondsRealtime(0.001f);
-            }
-
-            float timeNotInRenderdistance = 0;
-            while (!inRenderDistance() && timeNotInRenderdistance < 10) { 
-
-                yield return new WaitForSecondsRealtime(0.1f);
-                timeNotInRenderdistance += 0.1f;
-                WorldManager.instance.amountOfChunksLoading--;
-            }
-            if(timeNotInRenderdistance >= 10)
-            {
-                Destroy(gameObject);
-                yield break;
+                yield return new WaitForSeconds(0.1f);
+                timePassed += 0.1f;
+                if (timePassed > 10f)
+                {
+                    Destroy(gameObject);
+                    yield break;
+                }
             }
         }
 
@@ -290,18 +384,16 @@ public class Chunk : MonoBehaviour
             {
                 GenerateStructures(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
             }
+            if(y < 80 && y % 4 == 0)
+                yield return new WaitForSeconds(0.05f);
         }
 
 
         LoadAllEntities();
 
-        //Tick world a few times so stuctures are generated before we load world changes
         StartCoroutine(Tick());
-
-        while (age < 3)
-        {
-            yield return new WaitForSecondsRealtime(0.5f);
-        }
+        StartCoroutine(TickAllBlocks());
+        yield return new WaitForSecondsRealtime(1f);
 
 
         //Load block changes
@@ -321,8 +413,89 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
+        
+        StartCoroutine(GenerateLight());
+        if (isSpawnChunk)
+        {
+            StartCoroutine(processLightLoop());
+        }
     }
 
+    IEnumerator GenerateLight()
+    {
+        //Fill sunlight source list
+        int minChunkXPos = GetMinXWorldPosition();
+        int maxChunkXPos = GetMinXWorldPosition() + Width - 1;
+
+        for (int x = minChunkXPos; x <= maxChunkXPos; x++)
+        {
+            yield return new WaitForSecondsRealtime(0.05f);
+            Block.UpdateSunlightSourceAt(x);
+        }
+
+        //Update Light Sources (not sunlight again)
+        foreach (Block block in GetComponentsInChildren<Block>())
+        {
+            if (block.glowLevel > 0)
+            {
+                Block.UpdateLightAround(block.position);
+                yield return new WaitForSecondsRealtime(0.1f);
+            }
+        }
+    }
+
+    IEnumerator processLightLoop()
+    {
+        while (true)
+        {
+            if (Block.oldLight.Count > 0)
+            {
+
+                List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
+                Block.oldLight.Clear();
+                List<KeyValuePair<Block, int>> lightToRender = null;
+
+                Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLight); });
+                lightThread.Start();
+
+                while (lightThread.IsAlive)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                }
+
+                //Render
+                foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
+                {
+                    if (entry.Key == null)
+                        continue;
+
+                    entry.Key.RenderBlockLight(entry.Value);
+                }
+            }
+
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
+    }
+
+    public List<KeyValuePair<Block, int>> processDirtyLight(List<Vector2Int> oldLight)
+    {
+        List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
+
+        if (oldLight.Count == 0)
+            return lightToRender;
+
+        //Process
+        foreach (Vector2Int pos in oldLight)
+        {
+            Block block = Chunk.getBlock(pos);
+            if (block == null)
+                continue;
+
+            lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(pos)));
+        }
+
+        return lightToRender;
+    }
 
     private void LoadAllEntities()
     {
@@ -351,7 +524,7 @@ public class Chunk : MonoBehaviour
             return;
 
         Material mat = block.GetMaterial();
-        Biome biome = getMostProminantBiome(pos.x);
+        Biome biome = getBiome(pos.x);
         System.Random r = new System.Random(Chunk.seedByPosition(pos));
 
         if (biome.name == "forest")
@@ -361,13 +534,13 @@ public class Chunk : MonoBehaviour
                 //Trees
                 if (r.Next(0, 100) <= 10)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false, false);
                 }
 
                 //Large Trees
                 if (r.Next(0, 100) <= 1)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
                 }
 
                 //Vegetation
@@ -375,7 +548,7 @@ public class Chunk : MonoBehaviour
                 {
                     Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
 
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
                 }
             }
         }
@@ -386,7 +559,7 @@ public class Chunk : MonoBehaviour
                 //Cactie
                 if (r.Next(0, 100) <= 8)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false);
+                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
                 }
             }
         }
@@ -396,27 +569,27 @@ public class Chunk : MonoBehaviour
         {
             if (r.NextDouble() < Chunk.ore_diamond_chance && pos.y <= Chunk.ore_diamond_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_redstone_chance && pos.y <= Chunk.ore_redstone_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_lapis_chance && pos.y <= Chunk.ore_lapis_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_gold_chance && pos.y <= Chunk.ore_gold_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_iron_chance && pos.y <= Chunk.ore_iron_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false, false);
             }
             else if (r.NextDouble() < Chunk.ore_coal_chance && pos.y <= Chunk.ore_coal_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false);
+                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false, false);
             }
         }
     }
@@ -426,11 +599,42 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             yield return new WaitForSecondsRealtime(AutosaveDuration);
-            Save();
+
+            StartCoroutine(AutosaveAllBlocks());
+            
+
+            //Save Block Changes
+            Thread worldThread = new Thread(SaveBlockChanges);
+            worldThread.Start();
+
+            while (worldThread.IsAlive)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+
+
+            //Save Entities
+            Entity[] entities = GetEntities();
+            Thread entityThread = new Thread(() => { SaveEntities(entities); });
+            entityThread.Start();
+
+            while (entityThread.IsAlive)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
         }
     }
 
-    public void Save()
+
+    public void SaveEntities(Entity[] entities)
+    {
+        foreach (Entity e in entities)
+        {
+            e.Save();
+        }
+    }
+
+    public void SaveBlockChanges()
     {
         if (age <= 5)
             return;
@@ -438,41 +642,40 @@ public class Chunk : MonoBehaviour
         //Save Blocks
         if (blockChanges.Count > 0)
         {
-            string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
-            if (!Directory.Exists(path))
+            lock (blockChanges)
             {
-                Directory.CreateDirectory(path);
-                Directory.CreateDirectory(path+"\\entities");
-                File.Create(path + "\\blocks").Close();
+                Dictionary<Vector2Int, string> changes = new Dictionary<Vector2Int, string>(blockChanges);
+                blockChanges.Clear();
+
+                string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path + "\\entities");
+                    File.Create(path + "\\blocks").Close();
+                }
+
+                foreach (string line in File.ReadAllLines(path + "\\blocks"))
+                {
+                    Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
+                    string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
+
+                    if (!changes.ContainsKey(linePos))
+                        changes.Add(linePos, lineData);
+                }
+
+                //Empty lines before writing
+                File.WriteAllText(path + "\\blocks", "");
+
+                TextWriter c = new StreamWriter(path + "\\blocks");
+
+                foreach (KeyValuePair<Vector2Int, string> line in changes)
+                {
+                    c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
+                }
+
+                c.Close();
             }
-
-            foreach (string line in File.ReadAllLines(path + "\\blocks"))
-            {
-                Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
-                string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
-
-                if (!blockChanges.ContainsKey(linePos))
-                    blockChanges.Add(linePos, lineData);
-            }
-
-            //Empty lines before writing
-            File.WriteAllText(path + "\\blocks", "");
-
-            TextWriter c = new StreamWriter(path + "\\blocks");
-
-            foreach (KeyValuePair<Vector2Int, string> line in blockChanges)
-            {
-                c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
-            }
-
-            c.Close();
-            blockChanges.Clear();
-        }
-
-        //Save Entities
-        foreach (Entity e in GetEntities())
-        {
-            e.Save();
         }
     }
 
@@ -483,7 +686,6 @@ public class Chunk : MonoBehaviour
 
         if (age >= MinimumUnloadTime*TickRate)
         {
-            Save();
             WorldManager.instance.chunks.Remove(ChunkPosition);
             Destroy(gameObject);
         }
@@ -491,20 +693,8 @@ public class Chunk : MonoBehaviour
 
     public bool isBlockLocal(Vector2Int worldPos)
     {
-        bool local = true;
-
-        if (worldPos.x < transform.position.x)
-            local = false;
-
-        if (worldPos.x > (transform.position.x + (Width - 1)))
-        {
-            if (worldPos.x < 0)
-            {
-                if(worldPos.x > (transform.position.x + (Width + 1)))
-                    local = false;
-            }
-            else local = false;
-        }
+        bool local = (GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition);
+        
         if (worldPos.y < 0 || worldPos.y > Height)
             local = false;
 
@@ -513,42 +703,39 @@ public class Chunk : MonoBehaviour
 
     public static Block setBlock(Vector2Int worldPos, Material mat)
     {
-        return setBlock(worldPos, mat, "", true);
+        return setBlock(worldPos, mat, true);
     }
 
     public static Block setBlock(Vector2Int worldPos, Material mat, bool save)
     {
-        return setBlock(worldPos, mat, "", save);
+        return setBlock(worldPos, mat, "", save, true);
     }
 
-    public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save)
+    public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
 
-        return chunk.setLocalBlock(worldPos, mat, data, save);
+        if (chunk == null)
+            return null;
+
+        return chunk.setLocalBlock(worldPos, mat, data, save, spreadTick);
     }
 
     public Block setLocalBlock(Vector2Int worldPos, Material mat)
     {
-        return setLocalBlock(worldPos, mat, "", true);
+        return setLocalBlock(worldPos, mat, true);
     }
 
     public Block setLocalBlock(Vector2Int worldPos, Material mat, bool save)
     {
-        return setLocalBlock(worldPos, mat, "", save);
+        return setLocalBlock(worldPos, mat, "", save, true);
     }
 
-    public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save)
+    public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
     {
         System.Type type = System.Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
             return null;
-
-        if (!isLoaded && age > 0)
-        {
-            StartCoroutine(ScheduleSetBlock(1, worldPos, mat, data, save));
-            return null;
-        }
 
         if (!isBlockLocal(worldPos))
         {
@@ -570,7 +757,12 @@ public class Chunk : MonoBehaviour
             blockChanges.Add(worldPos, mat.ToString() + "*" + data);
         }
 
-        if (mat != Material.Air)
+        Block result = null;
+
+        if (mat == Material.Air)
+        {
+            Block.SpreadTick(worldPos);
+        }else
         {
             //Place new block
             GameObject block = null;
@@ -583,25 +775,36 @@ public class Chunk : MonoBehaviour
             block.transform.parent = transform;
             block.transform.position = (Vector2)worldPos;
 
+            //Add the block to block list
             if(!blocks.ContainsKey(worldPos))
                 blocks.Add(worldPos, block.GetComponent<Block>());
+            else
+                blocks[worldPos] = block.GetComponent<Block>();
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
+            
+            block.GetComponent<Block>().FirstTick();
+            block.GetComponent<Block>().Tick(spreadTick);
+            
 
-            return block.GetComponent<Block>();
+            result = block.GetComponent<Block>();
         }
-        return null;
-    }
 
-    IEnumerator ScheduleSetBlock(float delay, Vector2Int worldPos, Material mat, string data, bool save)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        setLocalBlock(worldPos, mat, data, save);
+        if (isLoaded)
+        {
+            Block.UpdateSunlightSourceAt(worldPos.x);
+            Block.UpdateLightAround(worldPos);
+        }
+        return result;
     }
 
     public static Block getBlock(Vector2Int worldPos)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x));
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
+
+        if (chunk == null)
+            return null;
+
         Block block = chunk.getLocalBlock(worldPos);
 
         return block;
@@ -611,33 +814,13 @@ public class Chunk : MonoBehaviour
     {
         if (!isBlockLocal(worldPos))
         {
-            Debug.LogWarning("Tried setting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
+            Debug.LogWarning("Tried getting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
             return null;
         }
-
-        if (!blocks.ContainsKey(worldPos))
-            return null;
-
-        Block block = blocks[worldPos];
-
-        if (block == null)
-            return null;
-
-        return block;
-    }
-
-    public Block loadTheoreticalBlock(Vector2Int worldPos)
-    {
+        
         Block block = null;
-        Material mat = Material.Air;
 
-
-        if (mat == Material.Air)
-            mat = getTheoreticalTerrainBlock(worldPos);
-        if (mat == Material.Air)
-            return null;
-
-        block = setLocalBlock(worldPos, mat, false);
+        blocks.TryGetValue(worldPos, out block);
 
         return block;
     }
@@ -649,7 +832,8 @@ public class Chunk : MonoBehaviour
     {
         System.Random r = new System.Random(seedByPosition(worldPos));
         Material mat = Material.Air;
-        List<Biome> biomes = getBiomes(worldPos.x);
+
+        List<Biome> biomes = getTwoMostProminantBiomes(worldPos.x);
         Biome biome = biomes[0];
 
         //-Terrain Generation-//
@@ -731,7 +915,7 @@ public class Chunk : MonoBehaviour
         List<Entity> entities = new List<Entity>();
 
         int chunkXPosition = this.GetMinXWorldPosition();
-        foreach (Entity e in GameObject.FindObjectsOfType<Entity>())
+        foreach (Entity e in entities)
         {
             if (e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
                 entities.Add(e);
@@ -740,7 +924,16 @@ public class Chunk : MonoBehaviour
         return entities.ToArray();
     }
 
-    public Block getTopmostBlock(int x)
+    public static Block getTopmostBlock(int x)
+    {
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x), false);
+        if (chunk == null)
+            return null;
+
+        return chunk.getLocalTopmostBlock(x);
+    }
+
+    public Block getLocalTopmostBlock(int x)
     {
         for(int y = Height; y > 0; y--)
         {
@@ -754,25 +947,71 @@ public class Chunk : MonoBehaviour
 
     public static int seedByPosition(Vector2Int pos)
     {
-        return new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y)
-            .GetHashCode()).Next(int.MinValue, int.MaxValue);
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos.x), false);
+        int seed = 0;
+
+        if (chunk == null)
+            return seed;
+
+        chunk.cachedRandomSeeds.TryGetValue(pos, out seed);
+        if (seed == 0) {
+            seed = new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y).GetHashCode()).Next(int.MinValue, int.MaxValue);
+            chunk.cachedRandomSeeds[pos] = seed;
+        }
+
+        return seed;
     }
 
-    public static Biome getMostProminantBiome(int pos)
+    public static Biome getBiome(int pos)
     {
-        return getBiomes(pos)[0];
-    }
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos), false);
+        Biome biome = null;
 
-    public static List<Biome> getBiomes(int pos)
-    {
-        List<Biome> biomes = new List<Biome>();
-        WorldManager.instance.biomes.ForEach((item) =>
+        if (chunk == null)
+            return null;
+
+        if (chunk.cachedBiome.ContainsKey(pos))
         {
-            biomes.Add(item);
-        });
+            biome = chunk.cachedBiome[pos];
+        }
+        else
+        {
+            biome = getTwoMostProminantBiomes(pos)[0];
+            chunk.cachedBiome.Add(pos, biome);
+        }
 
-        biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
+        return biome;
+    }
 
-        return biomes;
+    public static List<Biome> getTwoMostProminantBiomes(int pos)
+    {
+        List<Biome> biomes = new List<Biome>(WorldManager.instance.biomes);
+
+        Biome mostProminant = null;
+        float mostProminantValue = 0;
+        Biome secondMostProminant = null;
+        float secondMostProminantValue = 0;
+        foreach (Biome biome in biomes)
+        {
+            float value = biome.getBiomeValueAt(pos);
+
+            if (value > mostProminantValue)
+            {
+                mostProminant = biome;
+                mostProminantValue = value;
+            }else if(value > secondMostProminantValue)
+            {
+                secondMostProminant = biome;
+                secondMostProminantValue = value;
+            }
+        }
+
+        List<Biome> results = new List<Biome>()
+        {
+            mostProminant,
+            secondMostProminant
+        };
+
+        return results;
     }
 }

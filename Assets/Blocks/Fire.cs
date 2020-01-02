@@ -20,7 +20,7 @@ public class Fire : Block
     {
         base.Tick();
 
-        if (randomTickNumber < 100 / Chunk.TickRate)
+        if (getRandomChance() < 0.1f / Chunk.TickRate)
         {
             bool spread = (100 / Chunk.TickRate < 50 / Chunk.TickRate);
 
@@ -28,22 +28,22 @@ public class Fire : Block
             {
                 int r = Random.Range(0, 2);
 
-                if (r == 0 && Chunk.getBlock(getPosition() + new Vector2Int(-1, 0)) == null && Chunk.getBlock(getPosition() + new Vector2Int(-1, -1)) != null)
+                if (r == 0 && Chunk.getBlock(position + new Vector2Int(-1, 0)) == null && Chunk.getBlock(position + new Vector2Int(-1, -1)) != null)
                 {
-                    Chunk.setBlock(getPosition() + new Vector2Int(-1, 0), Material.Fire);
+                    Chunk.setBlock(position + new Vector2Int(-1, 0), Material.Fire);
                 }
-                if (r == 1 && Chunk.getBlock(getPosition() + new Vector2Int(1, 0)) == null && Chunk.getBlock(getPosition() + new Vector2Int(1, -1)) != null)
+                if (r == 1 && Chunk.getBlock(position + new Vector2Int(1, 0)) == null && Chunk.getBlock(position + new Vector2Int(1, -1)) != null)
                 {
-                    Chunk.setBlock(getPosition() + new Vector2Int(1, 0), Material.Fire);
+                    Chunk.setBlock(position + new Vector2Int(1, 0), Material.Fire);
                 }
-                if (r == 2 && Chunk.getBlock(getPosition() + new Vector2Int(0, 2)) == null && Chunk.getBlock(getPosition() + new Vector2Int(0, 1)) != null)
+                if (r == 2 && Chunk.getBlock(position + new Vector2Int(0, 2)) == null && Chunk.getBlock(position + new Vector2Int(0, 1)) != null)
                 {
-                    Chunk.setBlock(getPosition() + new Vector2Int(0, 2), Material.Fire);
+                    Chunk.setBlock(position + new Vector2Int(0, 2), Material.Fire);
                 }
             }
             else
             {
-                Chunk.setBlock(getPosition(), Material.Air);
+                Chunk.setBlock(position, Material.Air);
             }
         }
     }

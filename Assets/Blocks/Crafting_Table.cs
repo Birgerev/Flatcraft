@@ -36,7 +36,7 @@ public class Crafting_Table : InventoryContainer
     {
         CraftingInventory newInv = new CraftingInventory();
         inventory = newInv;
-        newInv.Open(getPosition());
+        newInv.Open(position);
     }
 
     private CraftingInventory getInventory()

@@ -7,15 +7,13 @@ public class Structure_Block : Block
     public static string default_texture  = "block_structure";
     public override float breakTime { get; } = 10000000;
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
-        base.Tick();
-
         if (data.ContainsKey("structure"))
         {
             string structureId = data["structure"];
             TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
-            TextAsset structure = structures[new System.Random(Chunk.seedByPosition(getPosition())).Next(0, structures.Length)];
+            TextAsset structure = structures[new System.Random(Chunk.seedByPosition(position)).Next(0, structures.Length)];
             bool save = (data["save"] == "false") ? false : true;
 
             Material replaceMaterial = Material.Air;
@@ -38,12 +36,13 @@ public class Structure_Block : Block
                     continue;
                 }
 
-                pos += getPosition();
+                pos += position;
 
-                Chunk.setBlock(pos, mat, save);
+                Chunk.setBlock(pos, mat, data, save, false);
             }
-            
-            Chunk.setBlock(getPosition(), replaceMaterial, replaceData, save);
+            Chunk.setBlock(position, replaceMaterial, replaceData, save, false);
+
+            base.Tick(spread);
         }
     }
 }

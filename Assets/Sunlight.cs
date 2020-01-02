@@ -50,7 +50,7 @@ public class Sunlight : MonoBehaviour
                     if (chunk.Value.getTopmostBlock(i) == null)
                         continue;
 
-                    lightPoints.Add(new Vector3(i, chunk.Value.getTopmostBlock(i).getPosition().y));
+                    lightPoints.Add(new Vector3(i, chunk.Value.getTopmostBlock(i).position.y));
 
                     if (i > maxX)
                         maxX = i;

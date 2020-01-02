@@ -8,12 +8,6 @@ public class Torch : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
     public override bool requiresGround { get; } = true;
-    
-    public override int glowingLevel { get; } = 14;
-    public override float flickerLevel { get; } = 1f;
 
-    public override void Tick()
-    {
-        base.Tick();
-    }
+    public override int glowLevel { get; } = 15;
 }

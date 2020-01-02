@@ -25,11 +25,12 @@ public class Player : HumanEntity
     public GameObject crosshair;
     private float lastFrameScroll;
     private float lastHitTime;
+    private bool hasTouchedGround = false;
 
     public override void Start()
     {
         localInstance = this;
-
+        
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
@@ -218,16 +219,16 @@ public class Player : HumanEntity
         inventory.Clear();
     }
 
-    public static Vector2 ValidSpawn(Vector2 pos)
+    public static Vector2 ValidSpawn(int pos)
     {
         for (int i = Chunk.Height; i <= 0; i --)
         {
-            if(Chunk.getBlock(new Vector2Int((int)pos.x, i)) != null && Chunk.getBlock(new Vector2Int((int)pos.x, i)).playerCollide)
+            if(Chunk.getBlock(new Vector2Int((int)pos, i)) != null && Chunk.getBlock(new Vector2Int((int)pos, i)).playerCollide)
             {
-                return new Vector2(pos.x, i+2);
+                return new Vector2(pos, i+2);
             }
         }
-        return pos;
+        return new Vector2(pos, 80);
     }
 
     public override void Die()
@@ -237,13 +238,27 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
-        transform.position = ValidSpawn(spawnPosition);
+        transform.position = ValidSpawn((int)spawnPosition.x);
         Save();
     }
 
     public override void Hit(float damage)
     {
 
+    }
+
+    //Disable fall damage when player is spawned
+    public override void TakeFallDamage(float damage)
+    {
+        if (hasTouchedGround)
+        {
+            base.TakeFallDamage(damage);
+        }
+        else
+        {
+            hasTouchedGround = true;
+            return;
+        }
     }
 
     public override string SavePath()
