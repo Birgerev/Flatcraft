@@ -9,10 +9,8 @@ public class Gravel : Block
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
-        base.Tick();
-
         if (Chunk.getBlock(position + new Vector2Int(0, -1)) == null)
         {
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
@@ -21,5 +19,7 @@ public class Gravel : Block
 
             Chunk.setBlock(position, Material.Air, true);
         }
+
+        base.Tick(spread);
     }
 }

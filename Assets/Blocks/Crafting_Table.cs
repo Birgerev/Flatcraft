@@ -12,11 +12,11 @@ public class Crafting_Table : InventoryContainer
 
     public override System.Type inventoryType { get; } = typeof(CraftingInventory);
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
         CheckCraftingRecepies();
 
-        base.Tick();
+        base.Tick(spread);
     }
     
     public void CheckCraftingRecepies()

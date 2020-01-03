@@ -211,22 +211,10 @@ public class Chunk : MonoBehaviour
             {
                 UnloadChunk();
             }
-
-            //Tick Blocks
+            
             //Update neighbor chunks
             if (isTickedChunk || age < 5)
             {
-                Block[] blocks = transform.GetComponentsInChildren<Block>();
-                float timePerBlock = (1 / TickRate) / blocks.Length;
-
-                foreach (Block block in blocks)
-                {
-                    if (age == 0)
-                        block.GeneratingTick();
-
-                    block.Tick();
-                }
-
                 TrySpawnMobs();
             }
 
@@ -281,16 +269,6 @@ public class Chunk : MonoBehaviour
         float distanceFromPlayer = Mathf.Abs((cPos * Width) - playerPosition.x);
 
         return distanceFromPlayer < range * Width;
-    }
-
-    public void RegenerateChunk()
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Destroy(transform.GetChild(i).gameObject);
-        }
-
-        StartCoroutine(GenerateChunk());
     }
 
     public Dictionary<Vector2Int, Material> loadChunkTerrain()
@@ -406,7 +384,7 @@ public class Chunk : MonoBehaviour
                 Material mat = (Material)System.Enum.Parse(typeof(Material), line.Split('*')[1]);
                 string data = line.Split('*')[2];
                 
-                setLocalBlock(pos, mat, data, false);
+                setLocalBlock(pos, mat, data, false, false);
             }
         }
 

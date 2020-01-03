@@ -19,11 +19,11 @@ public class InventoryContainer : Block
         base.FirstTick();
     }
 
-    public override void Tick()
+    public override void Tick(bool spread)
     {
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
 
-        base.Tick();
+        base.Tick(spread);
     }
 
     public override void Break(bool drop)
