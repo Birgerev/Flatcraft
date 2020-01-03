@@ -315,6 +315,9 @@ public class Chunk : MonoBehaviour
 
    IEnumerator GenerateChunk()
     {
+        //Wait for scene to load
+        yield return new WaitForSeconds(0.2f);
+
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
@@ -965,31 +968,8 @@ public class Chunk : MonoBehaviour
     {
         List<Biome> biomes = new List<Biome>(WorldManager.instance.biomes);
 
-        Biome mostProminant = null;
-        float mostProminantValue = 0;
-        Biome secondMostProminant = null;
-        float secondMostProminantValue = 0;
-        foreach (Biome biome in biomes)
-        {
-            float value = biome.getBiomeValueAt(pos);
+        biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
 
-            if (value > mostProminantValue)
-            {
-                mostProminant = biome;
-                mostProminantValue = value;
-            }else if(value > secondMostProminantValue)
-            {
-                secondMostProminant = biome;
-                secondMostProminantValue = value;
-            }
-        }
-
-        List<Biome> results = new List<Biome>()
-        {
-            mostProminant,
-            secondMostProminant
-        };
-
-        return results;
+        return biomes;
     }
 }
