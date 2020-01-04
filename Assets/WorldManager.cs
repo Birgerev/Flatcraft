@@ -50,7 +50,7 @@ public class WorldManager : MonoBehaviour
         chunks.Clear();
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
-        float steps = 6;
+        float steps = 5;
 
         loadingState = "Loading Player";
         loadingProgress = 1f / steps;
@@ -59,35 +59,35 @@ public class WorldManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        loadingState = "Generating Spawn Chunks";
+        loadingState = "Generating Chunks: 0";
         loadingProgress = 2f / steps;
         //Load Chunk [0]
         mainChunk = Chunk.LoadChunk(0);
 
-        while (mainChunk.isLoading)
+        for(int i = -Chunk.RenderDistance; i < Chunk.RenderDistance; i++)
         {
-            yield return new WaitForSeconds(0.5f);
+            Chunk.LoadChunk((int)((float)Player.localInstance.transform.position.x/(float)Chunk.Width) + i);
+
+            print("index " + i + " loading " + ((int)((float)Player.localInstance.transform.position.x / (float)Chunk.Width) + i));
         }
-        
-        loadingState = "Generating Chunks";
-        loadingProgress = 3f / steps;
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {
+            loadingState = "Generating Chunks: "+ amountOfChunksLoading;
             yield return new WaitForSeconds(0.5f);
         }
 
         loadingState = "Waiting For Light";
-        loadingProgress = 4f / steps;
+        loadingProgress = 3f / steps;
         
         yield return new WaitForSeconds(1f);
 
         loadingState = "Done!";
-        loadingProgress = 5f / steps;
+        loadingProgress = 4f / steps;
 
         yield return new WaitForSeconds(0.2f);
 
-        loadingProgress = 6f / steps;
+        loadingProgress = 5f / steps;
 
         StartCoroutine(SaveLoop());
     }
