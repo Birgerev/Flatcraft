@@ -11,7 +11,7 @@ public class ItemSlot : MonoBehaviour
     public ItemStack item;
 
     private CanvasGroup canvasGroup;
-    
+
     // Start is called before the first frame update
     private void Update()
     {
