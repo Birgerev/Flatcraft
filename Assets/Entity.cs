@@ -8,7 +8,7 @@ using System.IO;
 public class Entity : MonoBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
-
+    public static int MaxAmount = 6;
 
     //Entity properties
     public virtual bool chunk_loading { get; } = false;
