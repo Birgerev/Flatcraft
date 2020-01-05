@@ -8,6 +8,7 @@ public class DebugMenu : MonoBehaviour
     public static bool active = false;
 
     public Text text_fps;
+    public Text text_entityCount;
     public Text text_x;
     public Text text_y;
     public Text text_biome;
@@ -38,6 +39,8 @@ public class DebugMenu : MonoBehaviour
     private void updateText()
     {
         text_fps.text = "fps: " + (1.0f / deltaTime);
+
+        text_entityCount.text = "entity count: " + Entity.entities.Count;
 
         Player player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;
