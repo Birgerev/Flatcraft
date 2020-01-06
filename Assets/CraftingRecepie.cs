@@ -166,20 +166,27 @@ public class CraftingRecepie
     public static CraftingRecepie FileToRecepie(TextAsset file)
     {
         CraftingRecepie recepie = new CraftingRecepie();
-        string[] lines = file.text.Split('\n');
 
-        recepie.result = new ItemStack(
-            (Material)System.Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
-            int.Parse(lines[0].Split('*')[1]), lines[0].Split('*')[2]);
-
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            Material mat = (Material)System.Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
-            Vector2Int pos = new Vector2Int(
-                int.Parse(lines[i].Split('*')[1].Split(',')[0]),
-                int.Parse(lines[i].Split('*')[1].Split(',')[1]));
+            string[] lines = file.text.Split('\n');
 
-            recepie.recepieShape.Add(pos, mat);
+            recepie.result = new ItemStack(
+                (Material)System.Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
+                int.Parse(lines[0].Split('*')[1]), lines[0].Split('*')[2]);
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                Material mat = (Material)System.Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
+                Vector2Int pos = new Vector2Int(
+                    int.Parse(lines[i].Split('*')[1].Split(',')[0]),
+                    int.Parse(lines[i].Split('*')[1].Split(',')[1]));
+
+                recepie.recepieShape.Add(pos, mat);
+            }
+        }catch(System.Exception e)
+        {
+            Debug.LogError("faulty crafting recepie \""+file.name+"\", error: "+e.StackTrace);
         }
 
         return recepie;
