@@ -67,8 +67,6 @@ public class WorldManager : MonoBehaviour
         for(int i = -Chunk.RenderDistance; i < Chunk.RenderDistance; i++)
         {
             Chunk.LoadChunk((int)((float)Player.localInstance.transform.position.x/(float)Chunk.Width) + i);
-
-            print("index " + i + " loading " + ((int)((float)Player.localInstance.transform.position.x / (float)Chunk.Width) + i));
         }
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
