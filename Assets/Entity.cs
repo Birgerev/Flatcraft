@@ -35,7 +35,7 @@ public class Entity : MonoBehaviour
     public bool isInLiquid = false;
     public bool flipRenderX = false;
     public bool dead = false;
-    private Vector2 cachedPosition;     //For use in multithreading
+    public Vector2 cachedPosition;     //For use in multithreading
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();

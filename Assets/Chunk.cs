@@ -902,7 +902,7 @@ public class Chunk : MonoBehaviour
         int chunkXPosition = this.GetMinXWorldPosition();
         foreach (Entity e in Entity.entities)
         {
-            if (e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
+            if (e.cachedPosition.x >= chunkXPosition && e.cachedPosition.x <= (chunkXPosition + Width))
                 entities.Add(e);
         }
 
