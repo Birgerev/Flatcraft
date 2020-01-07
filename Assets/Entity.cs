@@ -8,7 +8,17 @@ using System.IO;
 public class Entity : MonoBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
-    public static int MaxAmount = 6;
+    public static int entityCount { get { return entities.Count; } }
+    public static int livingEntityCount { get {
+            int i = 0;
+            foreach (Entity entity in entities)
+            {
+                if (entity is LivingEntity)
+                    i++;
+            }
+            return i; } }
+     
+    public static int MaxLivingAmount = 6;
 
     //Entity properties
     public virtual bool chunk_loading { get; } = false;

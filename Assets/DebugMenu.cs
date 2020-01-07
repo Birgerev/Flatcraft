@@ -23,7 +23,9 @@ public class DebugMenu : MonoBehaviour
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
 
         updateState();
-        updateText();
+
+        if(active)
+            updateText();
     }
 
     private void updateState()
@@ -40,7 +42,7 @@ public class DebugMenu : MonoBehaviour
     {
         text_fps.text = "fps: " + (1.0f / deltaTime);
 
-        text_entityCount.text = "entity count: " + Entity.entities.Count;
+        text_entityCount.text = "entity count: " + Entity.entityCount + ",  living: "+Entity.livingEntityCount;
 
         Player player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;

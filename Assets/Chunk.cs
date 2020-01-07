@@ -226,7 +226,7 @@ public class Chunk : MonoBehaviour
     {
         System.Random r = new System.Random();
 
-        if(r.NextDouble() < mobSpawningChance / TickRate && Entity.entities.Count < Entity.MaxAmount)
+        if(r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
         {
             int x = r.Next(0, Width) + ChunkPosition*Width;
             int y = getTopmostBlock(x).position.y + 1;
