@@ -52,6 +52,6 @@ public class DebugMenu : MonoBehaviour
             text_biome.text = "biome: " + biome.name;
 
         text_seed.text = "seed: " + WorldManager.world.seed;
-        text_time.text = "time: " + WorldManager.world.time;
+        text_time.text = "time: " + WorldManager.world.time + ", (day "+ (int)(WorldManager.world.time/WorldManager.dayLength) + ")";
     }
 }
