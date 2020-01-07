@@ -26,6 +26,7 @@ public class Player : HumanEntity
     private float lastFrameScroll;
     private float lastHitTime;
     private bool hasTouchedGround = false;
+    private bool inventoryOpenLastFrame = false;
 
     public override void Start()
     {
@@ -56,6 +57,7 @@ public class Player : HumanEntity
 
 
         performInput();
+        inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
     }
 
     public override void FixedUpdate()
@@ -65,7 +67,7 @@ public class Player : HumanEntity
 
     private void performInput()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !inventory.open)
+        if (Input.GetKeyDown(KeyCode.E) && !inventoryOpenLastFrame)
             inventory.Open(Vector2Int.RoundToInt(transform.position));
 
         if (Inventory.anyOpen)

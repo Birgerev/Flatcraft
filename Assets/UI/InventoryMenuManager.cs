@@ -15,4 +15,16 @@ public class InventoryMenuManager : MonoBehaviour
     {
         instance = this;
     }
+    
+    public bool anyInventoryOpen()
+    {
+        bool open = false;
+
+        foreach(InventoryMenu menu in transform.GetComponentsInChildren<InventoryMenu>())
+        {
+            if (menu.active)
+                open = true;
+        }
+        return open;
+    }
 }
