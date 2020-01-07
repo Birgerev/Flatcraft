@@ -40,7 +40,7 @@ public class DebugMenu : MonoBehaviour
 
     private void updateText()
     {
-        text_fps.text = "fps: " + (1.0f / deltaTime);
+        text_fps.text = "fps: " + (int)(1.0f / deltaTime);
 
         text_entityCount.text = "entity count: " + Entity.entityCount + ",  living: "+Entity.livingEntityCount;
 
@@ -52,6 +52,6 @@ public class DebugMenu : MonoBehaviour
             text_biome.text = "biome: " + biome.name;
 
         text_seed.text = "seed: " + WorldManager.world.seed;
-        text_time.text = "time: " + WorldManager.world.time + ", (day "+ (int)(WorldManager.world.time/WorldManager.dayLength) + ")";
+        text_time.text = "time: " + (int)WorldManager.world.time + ", (day "+ (int)(WorldManager.world.time/WorldManager.dayLength) + ")";
     }
 }
