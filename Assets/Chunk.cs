@@ -609,7 +609,13 @@ public class Chunk : MonoBehaviour
     {
         foreach (Entity e in entities)
         {
-            e.Save();
+            try
+            {
+                e.Save();
+            }catch(System.Exception ex)
+            {
+                Debug.LogError("Error in saving entity: "+ex.StackTrace);
+            }
         }
     }
 
