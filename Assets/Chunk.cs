@@ -86,7 +86,6 @@ public class Chunk : MonoBehaviour
 
 
         StartCoroutine(GenerateChunk());
-        StartCoroutine(SaveLoop());
     }
 
     private void OnDestroy()
@@ -395,6 +394,7 @@ public class Chunk : MonoBehaviour
         WorldManager.instance.amountOfChunksLoading--;
         
         StartCoroutine(GenerateLight());
+        StartCoroutine(SaveLoop());
         if (isSpawnChunk)
         {
             StartCoroutine(processLightLoop());
@@ -591,8 +591,7 @@ public class Chunk : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
-
-
+            
             //Save Entities
             Entity[] entities = GetEntities();
             Thread entityThread = new Thread(() => { SaveEntities(entities); });
@@ -895,7 +894,7 @@ public class Chunk : MonoBehaviour
         List<Entity> entities = new List<Entity>();
 
         int chunkXPosition = this.GetMinXWorldPosition();
-        foreach (Entity e in entities)
+        foreach (Entity e in Entity.entities)
         {
             if (e.transform.position.x >= chunkXPosition && e.transform.position.x <= (chunkXPosition + Width))
                 entities.Add(e);
