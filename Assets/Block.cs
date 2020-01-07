@@ -8,7 +8,7 @@ using Unity.Burst;
 public class Block : MonoBehaviour
 {
     public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
-    public static HashSet<Vector2Int> sunlightSources = new HashSet<Vector2Int>();
+    public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
 
     public static HashSet<Vector2Int> oldLight = new HashSet<Vector2Int>();
 
@@ -219,36 +219,40 @@ public class Block : MonoBehaviour
     public static int GetLightLevel(Vector2Int pos)
     {
         //Messy layout due to multithreading
+        if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
+            return 0;
+        
+        List<Vector2Int> sources;
         lock (lightSources)
         {
-            Dictionary<Vector2Int, int> sourcesDictionary = new Dictionary<Vector2Int, int>(lightSources);
-            lock (sunlightSources)
+            //clone actual list to avoid threading errors
+            sources = new Dictionary<Vector2Int, int>(lightSources).Keys.ToList();
+        }
+
+        lock (sunlightSources)
+        {   
+            //Clone sunlight sources to avoid thread conflicts (AddRange doesn't work)
+            for (int ii = 0; ii < sunlightSources.Count; ii++)
             {
-                List<Vector2Int> sunlight = new List<Vector2Int>(sunlightSources);
-
-                if (sourcesDictionary.Count <= 0 && sunlight.Count <= 0)
-                    return 0;
-
-                List<Vector2Int> sources = new List<Vector2Int>(sourcesDictionary.Keys);
-                sources.AddRange(sunlight);
-
-                Vector2Int brightestSourcePos = Vector2Int.zero;
-                int brightestValue = 0;
-                int i = 0;
-                foreach (Vector2Int source in sources)
-                {
-                    int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
-
-                    if (value > brightestValue)
-                    {
-                        brightestValue = value;
-                        brightestSourcePos = source;
-                    }
-                    i++;
-                }
-                return brightestValue;
+                sources.Add(sunlightSources[ii]);
             }
         }
+
+        Vector2Int brightestSourcePos = Vector2Int.zero;
+        int brightestValue = 0;
+        int i = 0;
+        foreach (Vector2Int source in sources)
+        {
+            int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
+
+            if (value > brightestValue)
+            {
+                brightestValue = value;
+                brightestSourcePos = source;
+            }
+            i++;
+        }
+        return brightestValue;
     }
 
     public virtual void UpdateColliders()
