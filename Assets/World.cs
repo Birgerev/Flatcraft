@@ -6,7 +6,14 @@ using System.IO;
 [System.Serializable]
 public class World 
 {
-    public static string appPath = Application.dataPath;
+    public static string cachedAppPath = "";
+    public static string appPath { get {
+            if (cachedAppPath != "")
+                return cachedAppPath;
+
+            cachedAppPath = Application.dataPath;
+            return cachedAppPath;
+        } }
 
     public string name;
     public int seed;
