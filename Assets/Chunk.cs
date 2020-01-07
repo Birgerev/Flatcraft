@@ -72,7 +72,7 @@ public class Chunk : MonoBehaviour
     {
         if (WorldManager.instance.chunks.ContainsKey(ChunkPosition))
         {
-            Debug.LogWarning("A duplicate of Chunk ["+ChunkPosition+"] has been destroyed.");
+            Debug.LogWarning("A duplicate of Chunk [" + ChunkPosition + "] has been destroyed.");
             Destroy(gameObject);
             return;
         }
@@ -97,7 +97,7 @@ public class Chunk : MonoBehaviour
     private void Update()
     {
     }
-    
+
     public static Chunk GetChunk(int cPos)
     {
         return GetChunk(cPos, true);
@@ -110,7 +110,7 @@ public class Chunk : MonoBehaviour
         WorldManager.instance.chunks.TryGetValue(cPos, out chunk);
         if (loadIfNotFound && chunk == null && cPos != 0)
         {
-                chunk = LoadChunk(cPos);
+            chunk = LoadChunk(cPos);
         }
 
         return chunk;
@@ -125,7 +125,7 @@ public class Chunk : MonoBehaviour
         }
         else
         {
-            chunkPos = Mathf.CeilToInt( ( (float)worldPos + 1f) / (float)Width) - 1;
+            chunkPos = Mathf.CeilToInt(((float)worldPos + 1f) / (float)Width) - 1;
         }
 
         return chunkPos;
@@ -152,7 +152,7 @@ public class Chunk : MonoBehaviour
     {
         //Tick Blocks
         Block[] blocks = transform.GetComponentsInChildren<Block>();
-        
+
         foreach (Block block in blocks)
         {
             if (block == null || block.transform == null)
@@ -160,7 +160,7 @@ public class Chunk : MonoBehaviour
 
             if (age == 0)
                 block.GeneratingTick();
-            
+
             block.Tick(false);
         }
         yield return new WaitForSecondsRealtime(0f);
@@ -187,14 +187,14 @@ public class Chunk : MonoBehaviour
         }
 
     }
-    
+
     IEnumerator Tick()
     {
         while (true)
         {
             if (inRenderDistance())
             {
-                if (rightChunk == null && inRenderDistance(ChunkPosition+1))
+                if (rightChunk == null && inRenderDistance(ChunkPosition + 1))
                 {
                     rightChunk = GetChunk(ChunkPosition + 1);
                 }
@@ -204,12 +204,12 @@ public class Chunk : MonoBehaviour
                 }
             }
 
-            isTickedChunk = inRenderDistance(ChunkPosition, RenderDistance-1);
+            isTickedChunk = inRenderDistance(ChunkPosition, RenderDistance - 1);
             if (!inRenderDistance())
             {
                 UnloadChunk();
             }
-            
+
             //Update neighbor chunks
             if (isTickedChunk || age < 5)
             {
@@ -220,14 +220,14 @@ public class Chunk : MonoBehaviour
             yield return new WaitForSeconds(1 / TickRate);
         }
     }
-    
+
     public void TrySpawnMobs()
     {
         System.Random r = new System.Random();
 
-        if(r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
+        if (r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
         {
-            int x = r.Next(0, Width) + ChunkPosition*Width;
+            int x = r.Next(0, Width) + ChunkPosition * Width;
             int y = getTopmostBlock(x).position.y + 1;
             List<string> entities = mobSpawns;
             entities.AddRange(getBiome(x).biomeSpecificEntitySpawns);
@@ -281,8 +281,8 @@ public class Chunk : MonoBehaviour
             {
                 Vector2Int pos = new Vector2Int(x + (ChunkPosition * Width), y);
                 Material mat = getTheoreticalTerrainBlock(pos);
-                
-                if(mat != Material.Air)
+
+                if (mat != Material.Air)
                 {
                     blocks.Add(pos, mat);
                 }
@@ -311,7 +311,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-   IEnumerator GenerateChunk()
+    IEnumerator GenerateChunk()
     {
         //Wait for scene to load
         yield return new WaitForSeconds(0.2f);
@@ -332,20 +332,20 @@ public class Chunk : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
         }
-        
+
         int i = 0;
         foreach (KeyValuePair<Vector2Int, Material> entry in terrainBlocks)
         {
             setLocalBlock(entry.Key, entry.Value, "", false, false);
             i++;
-            if(i % 10 == 1)
+            if (i % 10 == 1)
             {
                 yield return new WaitForSeconds(0.05f);
             }
 
 
             float timePassed = 0f;
-            while(!inRenderDistance())
+            while (!inRenderDistance())
             {
                 yield return new WaitForSeconds(0.1f);
                 timePassed += 0.1f;
@@ -363,7 +363,7 @@ public class Chunk : MonoBehaviour
             {
                 GenerateStructures(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
             }
-            if(y < 80 && y % 4 == 0)
+            if (y < 80 && y % 4 == 0)
                 yield return new WaitForSeconds(0.05f);
         }
 
@@ -384,7 +384,7 @@ public class Chunk : MonoBehaviour
                 Vector2Int pos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
                 Material mat = (Material)System.Enum.Parse(typeof(Material), line.Split('*')[1]);
                 string data = line.Split('*')[2];
-                
+
                 setLocalBlock(pos, mat, data, false, false);
             }
         }
@@ -392,7 +392,7 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
-        
+
         StartCoroutine(GenerateLight());
         StartCoroutine(SaveLoop());
         if (isSpawnChunk)
@@ -509,7 +509,7 @@ public class Chunk : MonoBehaviour
 
         if (biome.name == "forest")
         {
-            if(mat == Material.Grass && getBlock((pos + new Vector2Int(0, 1))) == null)
+            if (mat == Material.Grass && getBlock((pos + new Vector2Int(0, 1))) == null)
             {
                 //Trees
                 if (r.Next(0, 100) <= 10)
@@ -580,8 +580,10 @@ public class Chunk : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(AutosaveDuration);
 
+            CreateChunkPath();
+
             StartCoroutine(AutosaveAllBlocks());
-            
+
 
             //Save Block Changes
             Thread worldThread = new Thread(SaveBlockChanges);
@@ -591,7 +593,7 @@ public class Chunk : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
-            
+
             //Save Entities
             Entity[] entities = GetEntities();
             Thread entityThread = new Thread(() => { SaveEntities(entities); });
@@ -612,18 +614,26 @@ public class Chunk : MonoBehaviour
             try
             {
                 e.Save();
-            }catch(System.Exception ex)
+            } catch (System.Exception ex)
             {
-                Debug.LogError("Error in saving entity: "+ex.StackTrace);
+                Debug.LogError("Error in saving entity: " + ex.StackTrace);
             }
+        }
+    }
+
+    public void CreateChunkPath()
+    {
+        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path + "\\entities");
+            File.Create(path + "\\blocks").Close();
         }
     }
 
     public void SaveBlockChanges()
     {
-        if (age <= 5)
-            return;
-
         //Save Blocks
         if (blockChanges.Count > 0)
         {
@@ -633,13 +643,6 @@ public class Chunk : MonoBehaviour
                 blockChanges.Clear();
 
                 string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                    Directory.CreateDirectory(path + "\\entities");
-                    File.Create(path + "\\blocks").Close();
-                }
-
                 foreach (string line in File.ReadAllLines(path + "\\blocks"))
                 {
                     Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
