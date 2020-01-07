@@ -7,6 +7,7 @@ public class InventoryContainer : Block
     public Inventory inventory;
     public override bool autosave { get; } = true;
     public virtual System.Type inventoryType { get; } = typeof(Inventory);
+    public override bool autoTick { get; } = true;
 
     public override void FirstTick()
     {
