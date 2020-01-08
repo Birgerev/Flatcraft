@@ -770,8 +770,10 @@ public class Chunk : MonoBehaviour
                 blocks[worldPos] = block.GetComponent<Block>();
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
-            
-            block.GetComponent<Block>().FirstTick();
+
+            block.GetComponent<Block>().Initialize();
+            if (spreadTick)
+                block.GetComponent<Block>().FirstTick();
             block.GetComponent<Block>().Tick(spreadTick);
             
 

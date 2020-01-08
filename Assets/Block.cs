@@ -40,34 +40,34 @@ public class Block : MonoBehaviour
 
     private float time_of_last_hit = 0;
     private float time_of_last_autosave = 0;
-    private void Start()
+    public virtual void Initialize()
     {
         gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
-        
+
         texture = (string)this.GetType().
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
-        FirstTick();
-        Render();
-    }
 
-    public virtual void FirstTick()
-    {
         UpdateColliders();
-        
+
         RenderNoLight();
 
         //Cache position for use in multithreading
         position = Vector2Int.RoundToInt(transform.position);
 
+        if (autoTick)
+            StartCoroutine(autoTickLoop());
+
+        Render();
+    }
+
+    public virtual void FirstTick()
+    {
         if (rotate_x || rotate_y)
         {
             Rotate();
         }
-
-        if (autoTick)
-            StartCoroutine(autoTickLoop());
     }
 
     public virtual void GeneratingTick()
@@ -125,7 +125,7 @@ public class Block : MonoBehaviour
 
         blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, 1)));
         blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, -1)));
-        blocks.Add(Chunk.getBlock(pos + new Vector2Int(-1, 1)));
+        blocks.Add(Chunk.getBlock(pos + new Vector2Int(-1, 0)));
         blocks.Add(Chunk.getBlock(pos + new Vector2Int(1, 0)));
 
         foreach (Block block in blocks) {
@@ -277,6 +277,9 @@ public class Block : MonoBehaviour
 
         data["rotated_x"] = rotated_x ? "true" : "false";
         data["rotated_y"] = rotated_y ? "true" : "false";
+        
+        //Save new rotation
+        Autosave();
     }
 
     public void RenderRotate()
@@ -447,15 +450,12 @@ public class Block : MonoBehaviour
         string result = "";
 
         bool first = true;
-        foreach (string key in data.Keys)
+        foreach (KeyValuePair<string, string> entry in data)
         {
-            foreach (string value in data.Values)
-            {
-                if (!first)
-                    result += "|";
-                result += key + "=" + value; 
-                first = false;
-            }
+            if (!first)
+                result += "|";
+            result += entry.Key + "=" + entry.Value; 
+            first = false;
         }
 
         return result;

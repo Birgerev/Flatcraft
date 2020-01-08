@@ -1,5 +1,5 @@
 Wooden_Hoe*1*
 Stick*1,0*
 Stick*1,1*
-Planks*0,2*
-Planks*1,2*
+Oak_Planks*0,2*
+Oak_Planks*1,2*

@@ -263,6 +263,23 @@ public class Player : HumanEntity
         }
     }
 
+    public void Sleep()
+    {
+        int currentDay = (int)(WorldManager.world.time/WorldManager.dayLength);
+        float newTime = (currentDay+1) * WorldManager.dayLength;
+        bool isNight = (WorldManager.world.time % WorldManager.dayLength) > (WorldManager.dayLength/2);
+
+        if (isNight)
+        {
+            Debug.LogError("slept");
+            WorldManager.world.time = newTime;
+        }
+        else
+        {
+            Debug.LogError("cant sleep at day");
+        }
+    }
+
     public override string SavePath()
     {
         return WorldManager.world.getPath() + "\\players\\player.dat";

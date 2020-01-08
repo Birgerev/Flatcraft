@@ -21,7 +21,7 @@
     Lava,
     Sand,
     Gravel,
-    Planks,
+    Oak_Planks,
     Stick,
 
     Wooden_Pickaxe,
@@ -75,5 +75,8 @@
     Wooden_Door_Top,
     Wooden_Door_Bottom,
 
-    Wool_Block
+    Wool_Block,
+
+    Bed_Bottom,
+    Bed_Top,
 }

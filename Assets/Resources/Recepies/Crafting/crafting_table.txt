@@ -1,5 +1,5 @@
 Crafting_Table*1*
-Planks*0,0*
-Planks*1,0*
-Planks*0,1*
-Planks*1,1*
+Oak_Planks*0,0*
+Oak_Planks*1,0*
+Oak_Planks*0,1*
+Oak_Planks*1,1*
