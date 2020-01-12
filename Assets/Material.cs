@@ -69,7 +69,7 @@
     Raw_Chicken,
     Cooked_Chicken,
 
-    Plank_Stairs,
+    Oak_Plank_Stairs,
 
     Wooden_Trapdoor,
     Wooden_Door_Top,
