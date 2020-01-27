@@ -9,6 +9,7 @@ public class Player : HumanEntity
     public override bool chunk_loading { get; } = true;
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
+    public float reach = 5;
 
 
     //Entity Data Tags
@@ -103,17 +104,37 @@ public class Player : HumanEntity
         Crosshair();
     }
 
-    private void Crosshair() { 
-        //Crosshair
-        if (WorldManager.instance.loadingProgress == 1)
+    private void Crosshair() {
+        if (WorldManager.instance.loadingProgress != 1)
+            return;
+
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2Int blockedMousePosition = (Vector2Int)Vector3Int.RoundToInt(mousePosition);
+        mousePosition.z = 0;
+        Block block = Chunk.getBlock(blockedMousePosition);
+        bool isInRange = (Mathf.Abs(((Vector3)mousePosition - transform.position).magnitude) <= reach);
+        bool isAboveEntity = false;
+            
+
+        //Hit Entities
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+        if (hit.collider != null && hit.transform.GetComponent<Entity>() != null)
         {
-            Vector3Int mousePosition = Vector3Int.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            mousePosition.z = 0;
-            Block block = Chunk.getBlock((Vector2Int)mousePosition);
+            isAboveEntity = true;
 
-            crosshair.transform.position = mousePosition;
+            if (Input.GetMouseButtonDown(0) && Time.time > lastHitTime + 0.5f && isInRange)
+            {
+                hit.transform.GetComponent<Entity>().Hit(1);
+                lastHitTime = Time.time;
+            }
+        }
 
 
+        crosshair.transform.position = blockedMousePosition;
+        crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
+
+        if (isInRange)
+        {
             if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
             {
                 if (block == null || (block.GetMaterial() == Material.Water || block.GetMaterial() == Material.Lava))
@@ -124,7 +145,7 @@ public class Player : HumanEntity
                             (inventory.getSelectedItem().amount > 0))
                         {
 
-                            Chunk.setBlock((Vector2Int)mousePosition, inventory.getSelectedItem().material);
+                            Chunk.setBlock((Vector2Int)Vector3Int.RoundToInt(mousePosition), inventory.getSelectedItem().material);
                             inventory.setItem(inventory.selectedSlot,
         new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount - 1));
                         }
@@ -136,57 +157,43 @@ public class Player : HumanEntity
 
                     if (Input.GetMouseButtonDown(1))
                     {
-                        sampleItem.Interact((Vector2Int)mousePosition, 1, true);
+                        sampleItem.Interact(blockedMousePosition, 1, true);
                     }
                     else if (Input.GetMouseButton(1))
                     {
-                        sampleItem.Interact((Vector2Int)mousePosition, 1, false);
+                        sampleItem.Interact(blockedMousePosition, 1, false);
                     }
 
                     if (Input.GetMouseButtonDown(0))
                     {
-                        sampleItem.Interact((Vector2Int)mousePosition, 0, true);
+                        sampleItem.Interact(blockedMousePosition, 0, true);
                     }
                     else if (Input.GetMouseButton(0))
                     {
-                        sampleItem.Interact((Vector2Int)mousePosition, 0, false);
+                        sampleItem.Interact(blockedMousePosition, 0, false);
                     }
                 }
             }
-            else if(System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
+            else if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
             {
                 Item item = (Item)System.Activator.CreateInstance(System.Type.GetType(inventory.getSelectedItem().material.ToString()));
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    item.Interact((Vector2Int)mousePosition, 1, true);
+                    item.Interact(blockedMousePosition, 1, true);
                 }
                 else if (Input.GetMouseButton(1))
                 {
-                    item.Interact((Vector2Int)mousePosition, 1, false);
+                    item.Interact(blockedMousePosition, 1, false);
                 }
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    item.Interact((Vector2Int)mousePosition, 0, true);
+                    item.Interact(blockedMousePosition, 0, true);
                 }
                 else if (Input.GetMouseButton(0))
                 {
-                    item.Interact((Vector2Int)mousePosition, 0, false);
-                }
-            }
-
-            //Hit Entities
-            if (Input.GetMouseButtonDown(0) && Time.time > lastHitTime + 0.5f)
-            {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-                if (hit.collider != null && hit.transform.GetComponent<Entity>() != null)
-                {
-                    hit.transform.GetComponent<Entity>().Hit(1);
-                    lastHitTime = Time.time;
+                    item.Interact(blockedMousePosition, 0, false);
                 }
             }
         }
