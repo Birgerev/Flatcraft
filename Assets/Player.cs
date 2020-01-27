@@ -130,7 +130,7 @@ public class Player : HumanEntity
         }
 
 
-        crosshair.transform.position = blockedMousePosition;
+        crosshair.transform.position = (Vector2)blockedMousePosition;
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
 
         if (isInRange)
