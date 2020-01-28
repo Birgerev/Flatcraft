@@ -8,4 +8,5 @@ public class Golden_Sword : Tool
     public override Tool_Level tool_level { get; } = Tool_Level.Gold;
 
     public static string default_texture = "item_golden_sword";
+    public override int maxDurabulity { get; } = 32;
 }

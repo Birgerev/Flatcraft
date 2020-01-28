@@ -334,6 +334,9 @@ public class Block : MonoBehaviour
                 Break();
             else
                 Break(false);
+
+            Player.localInstance.DoToolDurability();
+
             return;
         }
 

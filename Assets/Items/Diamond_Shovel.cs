@@ -8,4 +8,5 @@ public class Diamond_Shovel : Tool
     public override Tool_Level tool_level { get; } = Tool_Level.Diamond;
 
     public static string default_texture = "item_diamond_shovel";
+    public override int maxDurabulity { get; } = 1561;
 }

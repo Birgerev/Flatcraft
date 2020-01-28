@@ -8,6 +8,7 @@ public class ItemStack
     public Material material;
     public int amount;
     public string data;
+    public int durablity;
 
     public ItemStack()
     {
@@ -19,12 +20,14 @@ public class ItemStack
     {
         this.material = material;
         this.amount = 1;
+        this.durablity = getMaxDurability();
     }
     
     public ItemStack(Material material, int amount)
     {
         this.material = material;
         this.amount = amount;
+        this.durablity = getMaxDurability();
     }
     
     public ItemStack(Material material, int amount, string data)
@@ -32,6 +35,15 @@ public class ItemStack
         this.material = material;
         this.amount = amount;
         this.data = data;
+        this.durablity = getMaxDurability();
+    }
+
+    public ItemStack(Material material, int amount, string data, int durablity)
+    {
+        this.material = material;
+        this.amount = amount;
+        this.data = data;
+        this.durablity = durablity;
     }
 
     public Sprite getSprite()
@@ -43,6 +55,21 @@ public class ItemStack
         string texture = (string)type.GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
 
         return (Sprite)Resources.Load<Sprite>("Sprites/" + texture);
+    }
+
+    public int getMaxDurability()
+    {
+        if (material == Material.Air)
+            return -1;
+
+        System.Type type = System.Type.GetType(material.ToString());
+
+        if (type == null || !type.IsSubclassOf(typeof(Item)))
+            return -1;
+
+        object item = System.Activator.CreateInstance(type);
+        
+        return ((Item)item).maxDurabulity;
     }
 
     public void Drop(Vector2Int position)

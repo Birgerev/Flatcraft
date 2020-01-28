@@ -176,26 +176,37 @@ public class Player : HumanEntity
             }
             else if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
             {
-                Item item = (Item)System.Activator.CreateInstance(System.Type.GetType(inventory.getSelectedItem().material.ToString()));
+                Item itemType = (Item)System.Activator.CreateInstance(System.Type.GetType(inventory.getSelectedItem().material.ToString()));
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    item.Interact(blockedMousePosition, 1, true);
+                    itemType.Interact(blockedMousePosition, 1, true);
                 }
                 else if (Input.GetMouseButton(1))
                 {
-                    item.Interact(blockedMousePosition, 1, false);
+                    itemType.Interact(blockedMousePosition, 1, false);
                 }
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    item.Interact(blockedMousePosition, 0, true);
+                    itemType.Interact(blockedMousePosition, 0, true);
                 }
                 else if (Input.GetMouseButton(0))
                 {
-                    item.Interact(blockedMousePosition, 0, false);
+                    itemType.Interact(blockedMousePosition, 0, false);
                 }
             }
+        }
+    }
+
+    public void DoToolDurability()
+    {
+        if (inventory.getSelectedItem().getMaxDurability() != -1)
+        {
+            inventory.getSelectedItem().durablity--;
+
+            if (inventory.getSelectedItem().durablity < 0)
+                inventory.setItem(inventory.selectedSlot, new ItemStack());
         }
     }
 

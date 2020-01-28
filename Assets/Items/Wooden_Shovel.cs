@@ -8,4 +8,5 @@ public class Wooden_Shovel : Tool
     public override Tool_Level tool_level { get; } = Tool_Level.Wooden;
 
     public static string default_texture = "item_wooden_shovel";
+    public override int maxDurabulity { get; } = 59;
 }

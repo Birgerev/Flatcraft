@@ -7,6 +7,8 @@ public class ItemSlot : MonoBehaviour
 {
     public Text amountText;
     public Image texture;
+    public GameObject durabilityBar;
+    public Image durabilityBarFiller;
 
     public ItemStack item;
 
@@ -50,6 +52,16 @@ public class ItemSlot : MonoBehaviour
         }
 
         texture.sprite = item.getSprite();
+
+        if (item.getMaxDurability() == -1)
+        {
+            durabilityBar.SetActive(false);
+        }
+        else
+        {
+            durabilityBar.SetActive(true);
+            durabilityBarFiller.fillAmount = (float)item.durablity / (float)item.getMaxDurability();
+        }
     }
 
     public virtual void Click()

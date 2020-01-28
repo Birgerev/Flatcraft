@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Item
 {
+    public virtual int maxDurabulity { get; } = -1;
+
     public string texture;
     public Dictionary<string, string> data = new Dictionary<string, string>();
     

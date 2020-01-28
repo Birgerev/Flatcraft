@@ -28,6 +28,10 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
 
         pointerSlot.item.material = ((CraftingInventory)inventory).getItem(((CraftingInventory)inventory).getCraftingResultSlot()).material;
         pointerSlot.item.amount += ((CraftingInventory)inventory).getItem(((CraftingInventory)inventory).getCraftingResultSlot()).amount;
+        pointerSlot.item.data = ((CraftingInventory)inventory).getItem(((CraftingInventory)inventory).getCraftingResultSlot()).data;
+        pointerSlot.item.durablity = ((CraftingInventory)inventory).getItem(((CraftingInventory)inventory).getCraftingResultSlot()).durablity;
+
+        //Clear Crafting slot
         ((CraftingInventory)inventory).setItem(((CraftingInventory)inventory).getCraftingResultSlot(), new ItemStack());
 
         foreach (ItemStack craftingItem in ((CraftingInventory)inventory).getCraftingTable())
