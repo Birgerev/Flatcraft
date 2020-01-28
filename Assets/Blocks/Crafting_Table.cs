@@ -14,11 +14,11 @@ public class Crafting_Table : InventoryContainer
 
     public override void Tick(bool spread)
     {
-        CheckCraftingRecepies();
-
         base.Tick(spread);
+
+        CheckCraftingRecepies();
     }
-    
+
     public void CheckCraftingRecepies()
     {
         CraftingRecepie curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().getCraftingTable());

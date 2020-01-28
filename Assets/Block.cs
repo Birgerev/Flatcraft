@@ -90,7 +90,7 @@ public class Block : MonoBehaviour
         RenderRotate();
 
 
-        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime)
+        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime && age > 1)
         {
             Autosave();
             return;

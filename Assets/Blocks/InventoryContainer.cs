@@ -9,15 +9,15 @@ public class InventoryContainer : Block
     public virtual System.Type inventoryType { get; } = typeof(Inventory);
     public override bool autoTick { get; } = true;
 
-    public override void FirstTick()
+    public override void Initialize()
     {
+        base.Initialize();
+
         if (data.ContainsKey("inventory") && data["inventory"] != "")
         {
             inventory = (Inventory)JsonUtility.FromJson(data["inventory"], inventoryType);
         }
         else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
-
-        base.FirstTick();
     }
 
     public override void Tick(bool spread)
