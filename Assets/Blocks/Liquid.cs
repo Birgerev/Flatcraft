@@ -20,13 +20,13 @@ public class Liquid : Block
             data.Add("liquid_level", max_liquid_level.ToString());
 
         if (leftBlock == null)
-            leftBlock = Chunk.getBlock(position + new Vector2Int(-1, 0));
+            leftBlock = Chunk.getBlock(location + new Location(-1, 0));
         if (rightBlock == null)
-            rightBlock = Chunk.getBlock(position + new Vector2Int(1, 0));
+            rightBlock = Chunk.getBlock(location + new Location(1, 0));
         if (topBlock == null)
-            topBlock = Chunk.getBlock(position + new Vector2Int(0, 1));
+            topBlock = Chunk.getBlock(location + new Location(0, 1));
         if (bottomBlock == null)
-            bottomBlock = Chunk.getBlock(position + new Vector2Int(0, -1));
+            bottomBlock = Chunk.getBlock(location + new Location(0, -1));
 
         if (age > 1 && (leftBlock == null || rightBlock == null || topBlock == null || bottomBlock == null))
             Flow();
@@ -40,16 +40,16 @@ public class Liquid : Block
 
         if (!data.ContainsKey("source_block") || !data.ContainsKey("liquid_level"))
         {
-            Chunk.setBlock(position, Material.Air, "", true, false);
+            Chunk.setBlock(location, Material.Air, "", true, false);
             return;
         }
 
-        Vector2Int source = new Vector2Int(int.Parse(data["source_block"].Split('.')[0]), (int.Parse(data["source_block"].Split('.')[1])));
-        Block sourceBlock = Chunk.getBlock(position + source);
+        Location source = new Location(int.Parse(data["source_block"].Split('.')[0]), (int.Parse(data["source_block"].Split('.')[1])));
+        Block sourceBlock = Chunk.getBlock(location + source);
 
         if(sourceBlock == null || !sourceBlock.data.ContainsKey("liquid_level"))
         {
-            Chunk.setBlock(position, Material.Air, "", true, false);
+            Chunk.setBlock(location, Material.Air, "", true, false);
             return;
         }
         if(sourceBlock.GetMaterial() != GetMaterial() || 
@@ -57,7 +57,7 @@ public class Liquid : Block
             int.Parse(data["liquid_level"]) < 1 ||
             int.Parse(sourceBlock.data["liquid_level"]) < int.Parse(data["liquid_level"]))
         {
-            Chunk.setBlock(position, Material.Air, "", true, false);
+            Chunk.setBlock(location, Material.Air, "", true, false);
         }
     }
 
@@ -67,7 +67,7 @@ public class Liquid : Block
             return;
         if (bottomBlock == null)
         {
-            Chunk.setBlock(position + new Vector2Int(0, -1), GetMaterial(), "source_block=0.1", true, true);
+            Chunk.setBlock(location + new Location(0, -1), GetMaterial(), "source_block=0.1", true, true);
             return;
         }
 
@@ -77,11 +77,11 @@ public class Liquid : Block
         {
             if (leftBlock == null)
             {
-                Chunk.setBlock(position + new Vector2Int(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, true);
+                Chunk.setBlock(location + new Location(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, true);
             }
             if (rightBlock == null)
             {
-                Chunk.setBlock(position + new Vector2Int(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, true);
+                Chunk.setBlock(location + new Location(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, true);
             }
         }
     }

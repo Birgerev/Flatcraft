@@ -9,7 +9,7 @@ public class Bed : Block
 
     public override float breakTime { get; } = 0.65f;
 
-    public Vector2Int otherBlockPosition
+    public Location otherBlockLocation
     {
         get
         { 
@@ -20,7 +20,7 @@ public class Bed : Block
                 if (data["rotated_x"] == "true")
                     otherBlockXRelative *= -1;
 
-            return new Vector2Int(position.x + otherBlockXRelative, position.y);
+            return location + new Location(otherBlockXRelative, 0);
         }
     }
     public Material otherBlockMaterial
@@ -34,7 +34,7 @@ public class Bed : Block
     public override void Interact()
     {
         Player.localInstance.Sleep();
-        Player.localInstance.spawnPosition = position;
+        Player.localInstance.spawnLocation = location;
 
         base.Interact();
     }
@@ -42,7 +42,7 @@ public class Bed : Block
     public override void Tick(bool spreadTick)
     {
         if (age > 0) { 
-            Block otherBlock = Chunk.getBlock(otherBlockPosition);
+            Block otherBlock = Chunk.getBlock(otherBlockLocation);
             if (otherBlock == null)
             {
                 Break(false);

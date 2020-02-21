@@ -16,12 +16,12 @@ public class Grass : Block
 
     public override void Tick(bool spread)
     {
-        if (Chunk.getBlock(position + new Vector2Int(0, 1)) != null)
+        if (Chunk.getBlock(location + new Location(0, 1)) != null)
         {
             //Turn to dirt if covered
-            if (Chunk.getBlock(position + new Vector2Int(0, 1)).playerCollide)
+            if (Chunk.getBlock(location + new Location(0, 1)).playerCollide)
             {
-                Chunk.setBlock(position, Material.Dirt, "", false, false);
+                Chunk.setBlock(location, Material.Dirt, "", false, false);
             }
         }
 

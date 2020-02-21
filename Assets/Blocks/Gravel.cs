@@ -11,13 +11,13 @@ public class Gravel : Block
 
     public override void Tick(bool spread)
     {
-        if (Chunk.getBlock(position + new Vector2Int(0, -1)) == null)
+        if (Chunk.getBlock(location + new Location(0, -1)) == null)
         {
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
-            fs.transform.position = (Vector2)position;
+            fs.transform.position = location.getPosition();
             fs.material = GetMaterial();
 
-            Chunk.setBlock(position, Material.Air, true);
+            Chunk.setBlock(location, Material.Air, true);
         }
 
         base.Tick(spread);

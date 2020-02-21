@@ -47,7 +47,7 @@ public class DebugMenu : MonoBehaviour
         Player player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;
         text_y.text = "y: " + player.transform.position.y;
-        Biome biome = Chunk.getBiome((int)player.transform.position.x);
+        Biome biome = Chunk.getBiome((int)player.transform.position.x, player.location.dimension);
         if(biome != null)
             text_biome.text = "biome: " + biome.name;
 

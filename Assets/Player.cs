@@ -18,7 +18,7 @@ public class Player : HumanEntity
     [EntityDataTag(true)]
     public PlayerInventory inventory = new PlayerInventory();
     [EntityDataTag(true)]
-    public Vector2 spawnPosition = new Vector2(0, 80);
+    public Location spawnLocation = new Location(0, 80);
 
     //Entity State
     [Space]
@@ -69,7 +69,7 @@ public class Player : HumanEntity
     private void performInput()
     {
         if (Input.GetKeyDown(KeyCode.E) && !inventoryOpenLastFrame)
-            inventory.Open(Vector2Int.RoundToInt(transform.position));
+            inventory.Open(location);
 
         if (Inventory.anyOpen)
             return;
@@ -109,9 +109,9 @@ public class Player : HumanEntity
             return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2Int blockedMousePosition = (Vector2Int)Vector3Int.RoundToInt(mousePosition);
+        Location blockedMouseLocation = Location.locationByPosition(mousePosition, location.dimension);
         mousePosition.z = 0;
-        Block block = Chunk.getBlock(blockedMousePosition);
+        Block block = Chunk.getBlock(blockedMouseLocation);
         bool isInRange = (Mathf.Abs(((Vector3)mousePosition - transform.position).magnitude) <= reach);
         bool isAboveEntity = false;
             
@@ -130,7 +130,7 @@ public class Player : HumanEntity
         }
 
 
-        crosshair.transform.position = (Vector2)blockedMousePosition;
+        crosshair.transform.position = blockedMouseLocation.getPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
 
         if (isInRange)
@@ -145,7 +145,7 @@ public class Player : HumanEntity
                             (inventory.getSelectedItem().amount > 0))
                         {
 
-                            Chunk.setBlock((Vector2Int)Vector3Int.RoundToInt(mousePosition), inventory.getSelectedItem().material);
+                            Chunk.setBlock(blockedMouseLocation, inventory.getSelectedItem().material);
                             inventory.setItem(inventory.selectedSlot,
         new ItemStack(inventory.getSelectedItem().material, inventory.getSelectedItem().amount - 1));
                         }
@@ -157,20 +157,20 @@ public class Player : HumanEntity
 
                     if (Input.GetMouseButtonDown(1))
                     {
-                        sampleItem.Interact(blockedMousePosition, 1, true);
+                        sampleItem.Interact(blockedMouseLocation, 1, true);
                     }
                     else if (Input.GetMouseButton(1))
                     {
-                        sampleItem.Interact(blockedMousePosition, 1, false);
+                        sampleItem.Interact(blockedMouseLocation, 1, false);
                     }
 
                     if (Input.GetMouseButtonDown(0))
                     {
-                        sampleItem.Interact(blockedMousePosition, 0, true);
+                        sampleItem.Interact(blockedMouseLocation, 0, true);
                     }
                     else if (Input.GetMouseButton(0))
                     {
-                        sampleItem.Interact(blockedMousePosition, 0, false);
+                        sampleItem.Interact(blockedMouseLocation, 0, false);
                     }
                 }
             }
@@ -180,20 +180,20 @@ public class Player : HumanEntity
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    itemType.Interact(blockedMousePosition, 1, true);
+                    itemType.Interact(blockedMouseLocation, 1, true);
                 }
                 else if (Input.GetMouseButton(1))
                 {
-                    itemType.Interact(blockedMousePosition, 1, false);
+                    itemType.Interact(blockedMouseLocation, 1, false);
                 }
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    itemType.Interact(blockedMousePosition, 0, true);
+                    itemType.Interact(blockedMouseLocation, 0, true);
                 }
                 else if (Input.GetMouseButton(0))
                 {
-                    itemType.Interact(blockedMousePosition, 0, false);
+                    itemType.Interact(blockedMouseLocation, 0, false);
                 }
             }
         }
@@ -229,7 +229,7 @@ public class Player : HumanEntity
         item.amount = 1;
         inventory.getSelectedItem().amount --;
 
-        item.Drop(Vector2Int.CeilToInt(transform.position + new Vector3(4, 0)));
+        item.Drop(location);
     }
 
     public override void DropAllDrops()
@@ -239,16 +239,18 @@ public class Player : HumanEntity
         inventory.Clear();
     }
 
-    public static Vector2 ValidSpawn(int pos)
+    public Location ValidSpawn(int pos)
     {
+        Dimension curDimension = location.dimension;
+
         for (int i = Chunk.Height; i <= 0; i --)
         {
-            if(Chunk.getBlock(new Vector2Int((int)pos, i)) != null && Chunk.getBlock(new Vector2Int((int)pos, i)).playerCollide)
+            if(Chunk.getBlock(new Location((int)pos, i, curDimension)) != null && Chunk.getBlock(new Location((int)pos, i, curDimension)).playerCollide)
             {
-                return new Vector2(pos, i+2);
+                return new Location(pos, i+2, curDimension);
             }
         }
-        return new Vector2(pos, 80);
+        return new Location(pos, 80, curDimension);
     }
 
     public override void Die()
@@ -258,7 +260,7 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
-        transform.position = ValidSpawn((int)spawnPosition.x);
+        transform.position = ValidSpawn((int)spawnLocation.x).getPosition();
         Save();
     }
 

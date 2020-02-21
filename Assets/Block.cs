@@ -7,10 +7,10 @@ using Unity.Burst;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public static Dictionary<Vector2Int, int> lightSources = new Dictionary<Vector2Int, int>();
-    public static List<Vector2Int> sunlightSources = new List<Vector2Int>();
+    public static Dictionary<Location, int> lightSources = new Dictionary<Location, int>();
+    public static List<Location> sunlightSources = new List<Location>();
 
-    public static HashSet<Vector2Int> oldLight = new HashSet<Vector2Int>();
+    public static HashSet<Location> oldLight = new HashSet<Location>();
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -35,7 +35,7 @@ public class Block : MonoBehaviour
     public float blockHealth = 0;
     private bool firstTick = true;
 
-    public Vector2Int position;
+    public Location location;
     public int age = 0;
 
     private float time_of_last_hit = 0;
@@ -54,7 +54,7 @@ public class Block : MonoBehaviour
         RenderNoLight();
 
         //Cache position for use in multithreading
-        position = Vector2Int.RoundToInt(transform.position);
+        location = Location.locationByPosition(transform.position, location.dimension);
 
         if (autoTick)
             StartCoroutine(autoTickLoop());
@@ -79,7 +79,8 @@ public class Block : MonoBehaviour
     {
         if (requiresGround)
         {
-            if(Chunk.getBlock(position - new Vector2Int(0, 1)) == null)
+            //print((location - new Location(0, 1)).getPosition() + " found block: " + (Chunk.getBlock(location - new Location(0, 1)) != null) + ", by list directy: "+ (Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension)).blocks[Vector2Int.RoundToInt(location.getPosition() - new Vector2(0, 1))] != null));
+            if (Chunk.getBlock(location - new Location(0, 1)) == null)
             {
                 Break();
             }
@@ -98,18 +99,18 @@ public class Block : MonoBehaviour
 
         age++;
         if (spread)
-            SpreadTick(position);
+            SpreadTick(location);
     }
 
     public float getRandomChance()
     {
-        return (float)new System.Random(Chunk.seedByPosition(position) + age).NextDouble();
+        return (float)new System.Random(Chunk.seedByLocation(location) + age).NextDouble();
     }
 
     IEnumerator autoTickLoop()
     {
         //Wait a random duration, to smooth out ticks across time
-        yield return new WaitForSeconds((float)new System.Random(Chunk.seedByPosition(position)).NextDouble() * (1f / Chunk.TickRate));
+        yield return new WaitForSeconds((float)new System.Random(Chunk.seedByLocation(location)).NextDouble() * (1f / Chunk.TickRate));
 
         while (true)
         {
@@ -119,14 +120,14 @@ public class Block : MonoBehaviour
         }
     }
     
-    public static void SpreadTick(Vector2Int pos)
+    public static void SpreadTick(Location loc)
     {
         List<Block> blocks = new List<Block>();
 
-        blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, 1)));
-        blocks.Add(Chunk.getBlock(pos + new Vector2Int(0, -1)));
-        blocks.Add(Chunk.getBlock(pos + new Vector2Int(-1, 0)));
-        blocks.Add(Chunk.getBlock(pos + new Vector2Int(1, 0)));
+        blocks.Add(Chunk.getBlock(loc + new Location(0, 1)));
+        blocks.Add(Chunk.getBlock(loc + new Location(0, -1)));
+        blocks.Add(Chunk.getBlock(loc + new Location(-1, 0)));
+        blocks.Add(Chunk.getBlock(loc + new Location(1, 0)));
 
         foreach (Block block in blocks) {
             if (block != null)
@@ -136,24 +137,24 @@ public class Block : MonoBehaviour
         }
     }
     
-    public static void UpdateSunlightSourceAt(int x)
+    public static void UpdateSunlightSourceAt(int x, Dimension dimension)
     {
-        Block topBlock = Chunk.getTopmostBlock(x);
+        Block topBlock = Chunk.getTopmostBlock(x, dimension);
         if (topBlock == null)
             return;
 
         //remove all sunlight sources in the same column
-        foreach(Vector2Int sourcePos in sunlightSources.ToList())
+        foreach(Location sourceLoc in sunlightSources.ToList())
         {
-            if (sourcePos.x == x)
+            if (sourceLoc.x == x && sourceLoc.dimension == dimension)
             {
-                sunlightSources.Remove(sourcePos);
-                UpdateLightAround(sourcePos);
+                sunlightSources.Remove(sourceLoc);
+                UpdateLightAround(sourceLoc);
             }
         }
 
         //Add the new position
-        Vector2Int pos = topBlock.position;
+        Location pos = topBlock.location;
 
         sunlightSources.Add(pos);
         UpdateLightAround(pos);
@@ -161,17 +162,17 @@ public class Block : MonoBehaviour
 
     public bool IsSunlightSource()
     {
-        return sunlightSources.Contains(position);
+        return sunlightSources.Contains(location);
     }
 
     public bool CheckBlockLightSource()
     {
         if (glowLevel > 0)
         {
-            lightSources[position] = glowLevel;
+            lightSources[location] = glowLevel;
         }
 
-        return GetLightSourceLevel(position) > 0;
+        return GetLightSourceLevel(location) > 0;
     }
     
     public void RenderNoLight()
@@ -186,47 +187,47 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
 
-    public static void UpdateLightAround(Vector2Int pos)
+    public static void UpdateLightAround(Location loc)
     {
-        Block source = Chunk.getBlock(pos);
+        Block source = Chunk.getBlock(loc);
         if(source != null)
         {
             source.CheckBlockLightSource();
         }
 
-        for (int x = pos.x - 15; x < pos.x + 15; x++)
+        for (int x = loc.x - 15; x < loc.x + 15; x++)
         {
-            for (int y = pos.y - 15; y < pos.y + 15; y++)
+            for (int y = loc.y - 15; y < loc.y + 15; y++)
             {
                 if (y < 0 || y > Chunk.Height)
                     continue;
-                Vector2Int block = new Vector2Int(x, y);
-                if (!oldLight.Contains(block))
-                    oldLight.Add(block);
+
+                Location blockLoc = new Location(x, y, loc.dimension);
+                oldLight.Add(blockLoc);
             }
         }
     }
 
-    public static int GetLightSourceLevel(Vector2Int pos)
+    public static int GetLightSourceLevel(Location loc)
     {
-        Block block = Chunk.getBlock(pos);
+        Block block = Chunk.getBlock(loc);
         if (block == null)
             return 0;
         
         return block.IsSunlightSource() ? 15 : block.glowLevel;
     }
 
-    public static int GetLightLevel(Vector2Int pos)
+    public static int GetLightLevel(Location loc)
     {
         //Messy layout due to multithreading
         if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
             return 0;
         
-        List<Vector2Int> sources;
+        List<Location> sources;
         lock (lightSources)
         {
             //clone actual list to avoid threading errors
-            sources = new Dictionary<Vector2Int, int>(lightSources).Keys.ToList();
+            sources = new Dictionary<Location, int>(lightSources).Keys.ToList();
         }
 
         lock (sunlightSources)
@@ -238,19 +239,20 @@ public class Block : MonoBehaviour
             }
         }
 
-        Vector2Int brightestSourcePos = Vector2Int.zero;
+        Location brightestSourceLoc = new Location(0, 0);
         int brightestValue = 0;
-        int i = 0;
-        foreach (Vector2Int source in sources)
+        foreach (Location source in sources)
         {
-            int value = GetLightSourceLevel(source) - (int)(Vector2Int.Distance(source, pos));
-
-            if (value > brightestValue)
+            if (source.dimension == loc.dimension)
             {
-                brightestValue = value;
-                brightestSourcePos = source;
+                int value = GetLightSourceLevel(source) - (int)(Vector2.Distance(source.getPosition(), loc.getPosition()));
+
+                if (value > brightestValue)
+                {
+                    brightestValue = value;
+                    brightestSourceLoc = source;
+                }
             }
-            i++;
         }
         return brightestValue;
     }
@@ -268,11 +270,11 @@ public class Block : MonoBehaviour
 
         if (rotate_y)
         {
-            rotated_y = (Player.localInstance.transform.position.y < position.y);
+            rotated_y = (Player.localInstance.transform.position.y < location.y);
         }
         if (rotate_x)
         {
-            rotated_x = (Player.localInstance.transform.position.x < position.x);
+            rotated_x = (Player.localInstance.transform.position.x < location.x);
         }
 
         data["rotated_x"] = rotated_x ? "true" : "false";
@@ -300,7 +302,7 @@ public class Block : MonoBehaviour
     {
         time_of_last_autosave = Time.time;
         
-        Chunk.setBlock(position, GetMaterial(), stringFromData(data), true, false);
+        Chunk.setBlock(location, GetMaterial(), stringFromData(data), true, false);
     }
 
     public virtual void Hit(float time)
@@ -367,15 +369,15 @@ public class Block : MonoBehaviour
 
     public virtual void Break(bool drop)
     {
-        if(drop)
+        if (drop)
             Drop();
-
-        Chunk.setBlock(position, Material.Air);
+        
+        Chunk.setBlock(location, Material.Air);
     }
 
     public virtual void Drop()
     {
-        GetDrop().Drop(position);
+        GetDrop().Drop(location);
     }
 
     public virtual ItemStack GetDrop()
@@ -403,7 +405,7 @@ public class Block : MonoBehaviour
             Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
             int spriteIndex = (int)((blockHealth/breakTime) / (1f / ((float)sprites.Length)));
 
-            BreakIndicator.instance.UpdateState(spriteIndex, position);
+            BreakIndicator.instance.UpdateState(spriteIndex, location);
         }
     }
 
@@ -423,7 +425,7 @@ public class Block : MonoBehaviour
         }
         else if(alternative_textures.Length > 0)
         {
-            int textureIndex = new System.Random(Chunk.seedByPosition(position)).Next(0, alternative_textures.Length);
+            int textureIndex = new System.Random(Chunk.seedByLocation(location)).Next(0, alternative_textures.Length);
 
             return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
         }

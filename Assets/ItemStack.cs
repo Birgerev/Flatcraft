@@ -72,33 +72,33 @@ public class ItemStack
         return ((Item)item).maxDurabulity;
     }
 
-    public void Drop(Vector2Int position)
+    public void Drop(Location location)
     {
-        Drop(position, false);
+        Drop(location, false);
     }
 
-    public void Drop(Vector2Int position, bool randomVelocity)
+    public void Drop(Location location, bool randomVelocity)
     {
         Vector2 velocity = Vector2.zero;
         if (randomVelocity)
         {
-            System.Random random = new System.Random((this).GetHashCode() + position.GetHashCode());
+            System.Random random = new System.Random((this).GetHashCode() + location.GetHashCode());
             Vector2 maxVelocity = new Vector2(1, 2);
             velocity = new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
             (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x);
         }
 
-        Drop(position, velocity);
+        Drop(location, velocity);
     }
 
-    public void Drop(Vector2Int position, Vector2 velocity)
+    public void Drop(Location location, Vector2 velocity)
     {
         if (material == Material.Air || amount <= 0)
             return;
 
         GameObject obj = Entity.Spawn("DroppedItem").gameObject;
 
-        obj.transform.position = new Vector3(position.x, position.y, 0);
+        obj.transform.position = new Vector3(location.x, location.y, 0);
         obj.GetComponent<DroppedItem>().item = this;
         obj.GetComponent<Rigidbody2D>().velocity = velocity;
     }

@@ -19,8 +19,8 @@ public class AnimalController : EntityController
     {
         base.Tick();
 
-        Block block = Chunk.getBlock(Vector2Int.RoundToInt(instance.transform.position));
-        Block blockInFront = Chunk.getBlock(Vector2Int.RoundToInt(instance.transform.position + new Vector3(walkingRight ? 1 : -1, 0)));
+        Block block = Chunk.getBlock(instance.location);
+        Block blockInFront = Chunk.getBlock(instance.location + new Location(walkingRight ? 1 : -1, 0));
         if (isWalking)
         {
             instance.Walk(walkingRight ? 1 : -1);
@@ -38,7 +38,7 @@ public class AnimalController : EntityController
 
 
         //Change States
-        System.Random r = new System.Random((instance.transform.position.ToString() + " "+instance.age).GetHashCode());
+        System.Random r = new System.Random((instance.location.ToString() + " "+instance.age).GetHashCode());
         
         if(r.NextDouble() < (isWalking ? walkingStateChangeChance : idleStateChangeChance) / (1.0f / Time.deltaTime))
         {

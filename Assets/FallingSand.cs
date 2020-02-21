@@ -29,12 +29,11 @@ public class FallingSand : Entity
 
         if ((isOnGround || (isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0)) && age > 1f && !dead)
         {
-            //Rounding Errors!
-            if (Chunk.getBlock(Vector2Int.RoundToInt((Vector2)transform.position)) == null)
-                Chunk.setBlock(Vector2Int.RoundToInt((Vector2)transform.position), material);
+            if (Chunk.getBlock(location) == null)
+                Chunk.setBlock(location, material);
             else
             {
-                new ItemStack(material, 1).Drop(Vector2Int.RoundToInt((Vector2)transform.position));
+                new ItemStack(material, 1).Drop(location);
             }
 
             Die();

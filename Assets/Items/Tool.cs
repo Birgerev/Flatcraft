@@ -7,9 +7,9 @@ public class Tool : Item
     public virtual Tool_Type tool_type { get; } = Tool_Type.None;
     public virtual Tool_Level tool_level { get; } = Tool_Level.None;
 
-    public override void InteractLeft(Vector2Int position, bool firstFrameDown)
+    public override void InteractLeft(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(position);
+        Block block = Chunk.getBlock(loc);
 
         if (block != null)
         {
