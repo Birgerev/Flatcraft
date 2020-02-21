@@ -20,7 +20,7 @@ public class BreakIndicator : MonoBehaviour
             Hide();
             return;
         }
-        if(Chunk.getBlock(Vector2Int.RoundToInt(transform.position)) == null)
+        if(Chunk.getBlock(Location.locationByPosition(transform.position, Player.localInstance.location.dimension)) == null)
         {
             Hide();
             return;
@@ -33,7 +33,7 @@ public class BreakIndicator : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = null;
     }
 
-    public void UpdateState(int index, Vector2Int pos)
+    public void UpdateState(int index, Location loc)
     {
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
 
@@ -41,7 +41,7 @@ public class BreakIndicator : MonoBehaviour
         if(index < sprites.Length && index >= 0)
             sprite = sprites[index];
 
-        transform.position = (Vector2)pos;
+        transform.position = loc.getPosition();
         GetComponent<SpriteRenderer>().sprite = sprite;
 
         lastTimeChanged = Time.time;

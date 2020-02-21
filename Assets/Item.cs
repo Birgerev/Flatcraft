@@ -16,22 +16,22 @@ public class Item
             GetField("default_texture", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null);
     }
 
-    public void Interact(Vector2Int position, int mouseType, bool firstFrameDown)
+    public void Interact(Location loc, int mouseType, bool firstFrameDown)
     {
         if (mouseType == 0)
         {
-            InteractLeft(position, firstFrameDown);
+            InteractLeft(loc, firstFrameDown);
         }
 
         if (mouseType == 1)
         {
-            InteractRight(position, firstFrameDown);
+            InteractRight(loc, firstFrameDown);
         }
     }
 
-    public virtual void InteractLeft(Vector2Int position, bool firstFrameDown)
+    public virtual void InteractLeft(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(position);
+        Block block = Chunk.getBlock(loc);
         
         if (block != null)
         {
@@ -39,9 +39,9 @@ public class Item
         }
     }
 
-    public virtual void InteractRight(Vector2Int position, bool firstFrameDown)
+    public virtual void InteractRight(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(position);
+        Block block = Chunk.getBlock(loc);
         
         if (firstFrameDown)
         {

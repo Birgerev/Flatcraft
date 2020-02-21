@@ -10,10 +10,10 @@ public class Bed_Bottom : Bed
     {
         base.FirstTick();
 
-        Block otherBlock = Chunk.getBlock(otherBlockPosition);
+        Block otherBlock = Chunk.getBlock(otherBlockLocation);
         if (otherBlock == null)
         {
-            otherBlock = Chunk.setBlock(otherBlockPosition, otherBlockMaterial, "", true, true);
+            otherBlock = Chunk.setBlock(otherBlockLocation, otherBlockMaterial, "", true, true);
         }
         else if (otherBlock.GetMaterial() != otherBlockMaterial)
         {

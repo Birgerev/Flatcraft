@@ -26,22 +26,22 @@ public class Fire : Block
             {
                 int r = Random.Range(0, 2);
 
-                if (r == 0 && Chunk.getBlock(position + new Vector2Int(-1, 0)) == null && Chunk.getBlock(position + new Vector2Int(-1, -1)) != null)
+                if (r == 0 && Chunk.getBlock(location + new Location(-1, 0)) == null && Chunk.getBlock(location + new Location(-1, -1)) != null)
                 {
-                    Chunk.setBlock(position + new Vector2Int(-1, 0), Material.Fire);
+                    Chunk.setBlock(location + new Location(-1, 0), Material.Fire);
                 }
-                if (r == 1 && Chunk.getBlock(position + new Vector2Int(1, 0)) == null && Chunk.getBlock(position + new Vector2Int(1, -1)) != null)
+                if (r == 1 && Chunk.getBlock(location + new Location(1, 0)) == null && Chunk.getBlock(location + new Location(1, -1)) != null)
                 {
-                    Chunk.setBlock(position + new Vector2Int(1, 0), Material.Fire);
+                    Chunk.setBlock(location + new Location(1, 0), Material.Fire);
                 }
-                if (r == 2 && Chunk.getBlock(position + new Vector2Int(0, 2)) == null && Chunk.getBlock(position + new Vector2Int(0, 1)) != null)
+                if (r == 2 && Chunk.getBlock(location + new Location(0, 2)) == null && Chunk.getBlock(location + new Location(0, 1)) != null)
                 {
-                    Chunk.setBlock(position + new Vector2Int(0, 2), Material.Fire);
+                    Chunk.setBlock(location + new Location(0, 2), Material.Fire);
                 }
             }
             else
             {
-                Chunk.setBlock(position, Material.Air);
+                Chunk.setBlock(location, Material.Air);
             }
         }
 

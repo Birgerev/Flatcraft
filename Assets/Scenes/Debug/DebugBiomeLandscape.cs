@@ -31,7 +31,7 @@ public class DebugBiomeLandscape : MonoBehaviour
                 {
                     bool exists = blocks.ContainsKey(new Vector2(x, y));
 
-                    float noiseValue = biome.getLandscapeNoiseAt(new Vector2Int(x, y));
+                    float noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
                     if (noiseValue > 0.1f)
                     {
                         if (!exists)

@@ -31,9 +31,9 @@ public class Leaves : Block
         {
             for (int y = -range; y < range; y++)
             {
-                if (Chunk.getBlock(new Vector2Int(position.x + x, position.y + y)) != null)
+                if (Chunk.getBlock(new Location(location.x + x, location.y + y)) != null)
                 {
-                    if (Chunk.getBlock(new Vector2Int(position.x + x, position.y + y)).GetMaterial() == Material.Oak_Log)
+                    if (Chunk.getBlock(new Location(location.x + x, location.y + y)).GetMaterial() == Material.Oak_Log)
                     {
                         foundSupport = true;
                         break;

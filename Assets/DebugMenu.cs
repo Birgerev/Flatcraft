@@ -11,6 +11,7 @@ public class DebugMenu : MonoBehaviour
     public Text text_entityCount;
     public Text text_x;
     public Text text_y;
+    public Text text_dimension;    
     public Text text_biome;
     public Text text_seed;
     public Text text_time;
@@ -47,7 +48,8 @@ public class DebugMenu : MonoBehaviour
         Player player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;
         text_y.text = "y: " + player.transform.position.y;
-        Biome biome = Chunk.getBiome((int)player.transform.position.x);
+        text_dimension.text = "dimension: " + player.location.dimension.ToString();
+        Biome biome = Chunk.getBiome((int)player.transform.position.x, player.location.dimension);
         if(biome != null)
             text_biome.text = "biome: " + biome.name;
 

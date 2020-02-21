@@ -45,12 +45,12 @@ public class Biome
         return new LibNoise.Generator.Perlin(1, landscapeLacunarity, landscapePercistance, landscapeOctaves, seed, QualityMode.Low);
     }
 
-    public float getLandscapeNoiseAt(Vector2Int pos)
+    public float getLandscapeNoiseAt(Location loc)
     {
-        float value = (float)getLandscapeNoise().GetValue(pos.x * landscapeSize, pos.y * landscapeSize) + 4;
-        if (pos.y > Chunk.sea_level - 10)
+        float value = (float)getLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
+        if (loc.y > Chunk.sea_level - 10)
         {
-            value -= (landscapeHeightWeight * ((float)pos.y + landscapeHeightOverSeaLevel - (Chunk.sea_level)));
+            value -= (landscapeHeightWeight * ((float)loc.y + landscapeHeightOverSeaLevel - (Chunk.sea_level)));
         }
         return value;
     }
@@ -99,10 +99,10 @@ public class Biome
         return value;
     }
 
-    public float blendNoiseValues(Biome secondBiome, Vector2Int pos)
+    public float blendNoiseValues(Biome secondBiome, Location loc)
     {
-        float biomeNoiseA = getAverageBiomeValueAt(pos.x);
-        float biomeNoiseB = secondBiome.getAverageBiomeValueAt(pos.x);
+        float biomeNoiseA = getAverageBiomeValueAt(loc.x);
+        float biomeNoiseB = secondBiome.getAverageBiomeValueAt(loc.x);
 
         float weightA = biomeNoiseA / (biomeNoiseA + biomeNoiseB);
         float weightB = 1 - weightA;
@@ -110,8 +110,8 @@ public class Biome
         weightA = Mathf.Clamp(weightA, 0, 1);
         weightB = Mathf.Clamp(weightB, 0, 1);
 
-        float landscapeNoiseA = getLandscapeNoiseAt(pos) * weightA;
-        float landscapeNoiseB = secondBiome.getLandscapeNoiseAt(pos) * weightB;
+        float landscapeNoiseA = getLandscapeNoiseAt(loc) * weightA;
+        float landscapeNoiseB = secondBiome.getLandscapeNoiseAt(loc) * weightB;
 
         return landscapeNoiseA + landscapeNoiseB;
     }

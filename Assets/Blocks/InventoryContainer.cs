@@ -29,7 +29,7 @@ public class InventoryContainer : Block
 
     public override void Break(bool drop)
     {
-        inventory.DropAll(position);
+        inventory.DropAll(location);
 
         base.Break(drop);
     }
@@ -50,6 +50,6 @@ public class InventoryContainer : Block
     {
         base.Interact();
 
-        inventory.Open(position);
+        inventory.Open(location);
     }
 }

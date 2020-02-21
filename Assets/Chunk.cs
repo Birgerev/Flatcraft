@@ -13,12 +13,12 @@ public class Chunk : MonoBehaviour
     public static int Width = 16, Height = 255;
     public static int RenderDistance = 4;
     public static int SpawnChunkDistance = 0;
-    public static int MinimumUnloadTime = 5;
+    public static int MinimumUnloadTime = 20;
     public static int TickRate = 1;
 
     public GameObject blockPrefab;
 
-    public int ChunkPosition = 0;
+    public ChunkPosition chunkPosition;
     public bool isSpawnChunk = false;
     public bool isTickedChunk = false;
     public bool isLoaded = false;
@@ -29,7 +29,7 @@ public class Chunk : MonoBehaviour
     public Chunk leftChunk;
     public Dictionary<Vector2Int, Block> blocks = new Dictionary<Vector2Int, Block>();
     public Dictionary<int, Biome> cachedBiome = new Dictionary<int, Biome>();
-    public Dictionary<Vector2Int, int> cachedRandomSeeds = new Dictionary<Vector2Int, int>();
+    public Dictionary<Location, int> cachedRandomSeeds = new Dictionary<Location, int>();
 
     [Header("Cave Generation Settings")]
     public static float caveFrequency = 5;
@@ -66,23 +66,25 @@ public class Chunk : MonoBehaviour
 
 
 
-    public Dictionary<Vector2Int, string> blockChanges = new Dictionary<Vector2Int, string>();
+    public Dictionary<Location, string> blockChanges = new Dictionary<Location, string>();
 
     private void Start()
     {
-        if (WorldManager.instance.chunks.ContainsKey(ChunkPosition))
+        if (WorldManager.instance.chunks.ContainsKey(chunkPosition))
         {
-            Debug.LogWarning("A duplicate of Chunk [" + ChunkPosition + "] has been destroyed.");
+            Debug.LogWarning("A duplicate of Chunk [" + chunkPosition.chunkX + "] has been destroyed.");
             Destroy(gameObject);
             return;
         }
 
-        isSpawnChunk = (ChunkPosition >= -SpawnChunkDistance && ChunkPosition <= SpawnChunkDistance);
+        isSpawnChunk = (chunkPosition.chunkX >= -SpawnChunkDistance && chunkPosition.chunkX <= SpawnChunkDistance);
 
-        WorldManager.instance.chunks.Add(ChunkPosition, this);
+        WorldManager.instance.chunks.Add(chunkPosition, this);
 
-        gameObject.name = "Chunk [" + ChunkPosition + "]";
-        transform.position = new Vector3(ChunkPosition * Width, 0, 0);
+        StartCoroutine(SelfDestructionChecker());
+
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + "]";
+        transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
 
         StartCoroutine(GenerateChunk());
@@ -90,62 +92,67 @@ public class Chunk : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (WorldManager.instance.chunks.ContainsKey(ChunkPosition) && (isLoaded || isLoading))
-            WorldManager.instance.chunks.Remove(ChunkPosition);
+        if (WorldManager.instance.chunks.ContainsKey(chunkPosition) && (isLoaded || isLoading))
+            WorldManager.instance.chunks.Remove(chunkPosition);
     }
 
     private void Update()
     {
     }
 
-    public static Chunk GetChunk(int cPos)
+    public static Chunk GetChunk(ChunkPosition pos)
     {
-        return GetChunk(cPos, true);
+        return GetChunk(pos, true);
     }
 
-    public static Chunk GetChunk(int cPos, bool loadIfNotFound)
+    public static Chunk GetChunk(ChunkPosition pos, bool loadIfNotFound)
     {
         Chunk chunk = null;
 
-        WorldManager.instance.chunks.TryGetValue(cPos, out chunk);
-        if (loadIfNotFound && chunk == null && cPos != 0)
+        WorldManager.instance.chunks.TryGetValue(pos, out chunk);
+        if (loadIfNotFound && chunk == null && pos.chunkX != 0)
         {
-            chunk = LoadChunk(cPos);
+            chunk = LoadChunk(pos);
         }
 
         return chunk;
     }
 
-    public static int GetChunkPosFromWorldPosition(int worldPos)
+    public static ChunkPosition GetChunkPosFromWorldPosition(int worldPos, Dimension dimension)
     {
-        int chunkPos = 0;
+        int chunkX = 0;
         if (worldPos >= 0)
         {
-            chunkPos = (int)((float)worldPos / (float)Width);
+            chunkX = (int)((float)worldPos / (float)Width);
         }
         else
         {
-            chunkPos = Mathf.CeilToInt(((float)worldPos + 1f) / (float)Width) - 1;
+            chunkX = Mathf.CeilToInt(((float)worldPos + 1f) / (float)Width) - 1;
         }
 
-        return chunkPos;
+        return new ChunkPosition(chunkX, dimension);
     }
 
-    public int GetMinXWorldPosition()
+    public static Chunk LoadChunk(ChunkPosition cPos)
     {
-        return Mathf.FloorToInt(this.ChunkPosition * (Width));
-    }
-
-    public static Chunk LoadChunk(int cPos)
-    {
-        //if (cPos != 0)// (GetChunk(0, false) == null || GetChunk(0, false).age < 4))
-        //    return null;
-
         GameObject newChunk = Instantiate(WorldManager.instance.chunkPrefab);
 
-        newChunk.GetComponent<Chunk>().ChunkPosition = cPos;
+        newChunk.GetComponent<Chunk>().chunkPosition = cPos;
 
         return newChunk.GetComponent<Chunk>();
+    }
+    
+    public void UnloadChunk()
+    {
+        if (isSpawnChunk)
+            return;
+
+        WorldManager.instance.chunks.Remove(chunkPosition);
+
+        if (isLoading)
+            WorldManager.instance.amountOfChunksLoading--;
+
+        Destroy(gameObject);
     }
 
     IEnumerator TickAllBlocks()
@@ -188,27 +195,42 @@ public class Chunk : MonoBehaviour
 
     }
 
+    IEnumerator SelfDestructionChecker()
+    {
+        while (true)
+        {
+            float timePassed = 0f;
+            while (!inRenderDistance())
+            {
+                yield return new WaitForSeconds(1f);
+                timePassed += 1f;
+                if (timePassed > MinimumUnloadTime)
+                {
+                    UnloadChunk();
+                    yield break;
+                }
+            }
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
     IEnumerator Tick()
     {
         while (true)
         {
             if (inRenderDistance())
             {
-                if (rightChunk == null && inRenderDistance(ChunkPosition + 1))
+                if (rightChunk == null && inRenderDistance(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension)))
                 {
-                    rightChunk = GetChunk(ChunkPosition + 1);
+                    rightChunk = GetChunk(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension));
                 }
-                if (leftChunk == null && inRenderDistance(ChunkPosition - 1))
+                if (leftChunk == null && inRenderDistance(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension)))
                 {
-                    leftChunk = GetChunk(ChunkPosition - 1);
+                    leftChunk = GetChunk(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension));
                 }
             }
 
-            isTickedChunk = inRenderDistance(ChunkPosition, RenderDistance - 1);
-            if (!inRenderDistance())
-            {
-                UnloadChunk();
-            }
+            isTickedChunk = inRenderDistance(chunkPosition, RenderDistance - 1);
 
             //Update neighbor chunks
             if (isTickedChunk || age < 5)
@@ -227,64 +249,63 @@ public class Chunk : MonoBehaviour
 
         if (r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
         {
-            int x = r.Next(0, Width) + ChunkPosition * Width;
-            int y = getTopmostBlock(x).position.y + 1;
+            int x = r.Next(0, Width) + chunkPosition.worldX;
+            int y = getTopmostBlock(x, chunkPosition.dimension).location.y + 1;
             List<string> entities = mobSpawns;
-            entities.AddRange(getBiome(x).biomeSpecificEntitySpawns);
+            entities.AddRange(getBiome(x, chunkPosition.dimension).biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
 
+            if (y <= 0) print("y below 0");
+
             Entity entity = Entity.Spawn(entityType);
-            entity.transform.position = new Vector3(x, y);
+            entity.location = new Location(x, y, chunkPosition.dimension);
         }
     }
 
     public bool inRenderDistance()
     {
-        return inRenderDistance(ChunkPosition);
+        return inRenderDistance(chunkPosition);
     }
 
-    public bool inRenderDistance(int cPos)
+    public bool inRenderDistance(ChunkPosition cPos)
     {
         return inRenderDistance(cPos, RenderDistance);
     }
 
-    public bool inRenderDistance(int cPos, int range)
+    public bool inRenderDistance(ChunkPosition cPos, int range)
     {
-        if (cPos == 0)
+        if (cPos.chunkX == 0)
             return true;
 
-        cPos++;
-
-        Vector2 playerPosition;
+        Location playerLocation;
 
 
         if (Player.localInstance == null)
-            playerPosition = Vector2.zero;
+            playerLocation = new Location(0, 0);
         else
-            playerPosition = Player.localInstance.transform.position;
+            playerLocation = Player.localInstance.location;
 
-        int chunkXPosition = cPos * (int)Width;
-        float distanceFromPlayer = Mathf.Abs((cPos * Width) - playerPosition.x);
+        float distanceFromPlayer = Mathf.Abs((cPos.worldX + (Width/2)) - playerLocation.x);
 
         return distanceFromPlayer < range * Width;
     }
 
-    public Dictionary<Vector2Int, Material> loadChunkTerrain()
+    public Dictionary<Location, Material> loadChunkTerrain()
     {
         cacheBiomes();
         cacheRandomSeeds();
-        Dictionary<Vector2Int, Material> blocks = new Dictionary<Vector2Int, Material>();
+        Dictionary<Location, Material> blocks = new Dictionary<Location, Material>();
 
         for (int y = 0; y <= Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
-                Vector2Int pos = new Vector2Int(x + (ChunkPosition * Width), y);
-                Material mat = getTheoreticalTerrainBlock(pos);
+                Location loc = new Location(x + chunkPosition.worldX, y);
+                Material mat = getTheoreticalTerrainBlock(loc);
 
                 if (mat != Material.Air)
                 {
-                    blocks.Add(pos, mat);
+                    blocks.Add(loc, mat);
                 }
             }
         }
@@ -296,7 +317,7 @@ public class Chunk : MonoBehaviour
     {
         for (int x = 0; x < Width; x++)
         {
-            getBiome(x + (ChunkPosition * Width));
+            getBiome(x + chunkPosition.worldX, chunkPosition.dimension);
         }
     }
 
@@ -306,7 +327,7 @@ public class Chunk : MonoBehaviour
         {
             for (int y = 0; y <= Height; y++)
             {
-                seedByPosition(new Vector2Int(x + (ChunkPosition * Width), y));
+                seedByLocation(new Location(x + chunkPosition.worldX, y));
             }
         }
     }
@@ -322,19 +343,19 @@ public class Chunk : MonoBehaviour
 
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
+        
 
-
-        Dictionary<Vector2Int, Material> terrainBlocks = null;
+        Dictionary<Location, Material> terrainBlocks = null;
         Thread terrainThread = new Thread(() => { terrainBlocks = loadChunkTerrain(); });
         terrainThread.Start();
-
+        
         while (terrainThread.IsAlive)
         {
             yield return new WaitForSeconds(0.5f);
         }
 
         int i = 0;
-        foreach (KeyValuePair<Vector2Int, Material> entry in terrainBlocks)
+        foreach (KeyValuePair<Location, Material> entry in terrainBlocks)
         {
             setLocalBlock(entry.Key, entry.Value, "", false, false);
             i++;
@@ -342,57 +363,45 @@ public class Chunk : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.05f);
             }
-
-
-            float timePassed = 0f;
-            while (!inRenderDistance())
-            {
-                yield return new WaitForSeconds(0.1f);
-                timePassed += 0.1f;
-                if (timePassed > 10f)
-                {
-                    Destroy(gameObject);
-                    yield break;
-                }
-            }
         }
+        
 
         for (int y = 0; y <= Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
-                GenerateStructures(new Vector2Int(x, y) + Vector2Int.CeilToInt(transform.position));
+                GenerateStructures(Location.locationByPosition(transform.position, chunkPosition.dimension) + new Location(x, y));
             }
             if (y < 80 && y % 4 == 0)
                 yield return new WaitForSeconds(0.05f);
         }
-
+        
 
         LoadAllEntities();
-
+        
         StartCoroutine(Tick());
         StartCoroutine(TickAllBlocks());
         yield return new WaitForSecondsRealtime(1f);
 
 
         //Load block changes
-        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition + "\\blocks";
+        string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension.ToString() + "\\" + chunkPosition.chunkX + "\\blocks";
         if (File.Exists(path))
         {
             foreach (string line in File.ReadAllLines(path))
             {
-                Vector2Int pos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
+                Location loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
                 Material mat = (Material)System.Enum.Parse(typeof(Material), line.Split('*')[1]);
                 string data = line.Split('*')[2];
 
-                setLocalBlock(pos, mat, data, false, false);
+                setLocalBlock(loc, mat, data, false, false);
             }
         }
 
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
-
+        
         StartCoroutine(GenerateLight());
         StartCoroutine(SaveLoop());
         if (isSpawnChunk)
@@ -404,13 +413,13 @@ public class Chunk : MonoBehaviour
     IEnumerator GenerateLight()
     {
         //Fill sunlight source list
-        int minChunkXPos = GetMinXWorldPosition();
-        int maxChunkXPos = GetMinXWorldPosition() + Width - 1;
+        int minXPos = chunkPosition.worldX;
+        int maxXPos = chunkPosition.worldX + Width - 1;
 
-        for (int x = minChunkXPos; x <= maxChunkXPos; x++)
+        for (int x = minXPos; x <= maxXPos; x++)
         {
             yield return new WaitForSecondsRealtime(0.05f);
-            Block.UpdateSunlightSourceAt(x);
+            Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
         }
 
         //Update Light Sources (not sunlight again)
@@ -418,7 +427,7 @@ public class Chunk : MonoBehaviour
         {
             if (block.glowLevel > 0)
             {
-                Block.UpdateLightAround(block.position);
+                Block.UpdateLightAround(block.location);
                 yield return new WaitForSecondsRealtime(0.1f);
             }
         }
@@ -431,7 +440,7 @@ public class Chunk : MonoBehaviour
             if (Block.oldLight.Count > 0)
             {
 
-                List<Vector2Int> oldLight = new List<Vector2Int>(Block.oldLight);
+                List<Location> oldLight = new List<Location>(Block.oldLight);
                 Block.oldLight.Clear();
                 List<KeyValuePair<Block, int>> lightToRender = null;
 
@@ -457,7 +466,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public List<KeyValuePair<Block, int>> processDirtyLight(List<Vector2Int> oldLight)
+    public List<KeyValuePair<Block, int>> processDirtyLight(List<Location> oldLight)
     {
         List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
 
@@ -465,13 +474,13 @@ public class Chunk : MonoBehaviour
             return lightToRender;
 
         //Process
-        foreach (Vector2Int pos in oldLight)
+        foreach (Location loc in oldLight)
         {
-            Block block = Chunk.getBlock(pos);
+            Block block = Chunk.getBlock(loc);
             if (block == null)
                 continue;
 
-            lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(pos)));
+            lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(loc)));
         }
 
         return lightToRender;
@@ -479,7 +488,7 @@ public class Chunk : MonoBehaviour
 
     private void LoadAllEntities()
     {
-        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition + "\\entities";
+        string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX + "\\entities";
 
         if (!Directory.Exists(path))
             return;
@@ -492,35 +501,35 @@ public class Chunk : MonoBehaviour
 
             Entity entity = Entity.Spawn(entityType);
             entity.id = entityId;
-            //Make sure the newly created entity is in the chunk, to make loading work correctly
+            //Make sure the newly created entity is in the chunk, to make loading work correctly (setting actual position happens inside Entity class)
             entity.transform.position = transform.position + new Vector3(1, 1);
         }
     }
 
-    private void GenerateStructures(Vector2Int pos)
+    private void GenerateStructures(Location loc)
     {
-        Block block = getBlock(pos);
+        Block block = getBlock(loc);
         if (block == null)
             return;
 
         Material mat = block.GetMaterial();
-        Biome biome = getBiome(pos.x);
-        System.Random r = new System.Random(Chunk.seedByPosition(pos));
+        Biome biome = getBiome(loc.x, chunkPosition.dimension);
+        System.Random r = new System.Random(Chunk.seedByLocation(loc));
 
         if (biome.name == "forest")
         {
-            if (mat == Material.Grass && getBlock((pos + new Vector2Int(0, 1))) == null)
+            if (mat == Material.Grass && getBlock((loc + new Location(0, 1))) == null)
             {
                 //Trees
                 if (r.Next(0, 100) <= 10)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Tree|save=false", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Tree|save=false", false, false);
                 }
 
                 //Large Trees
                 if (r.Next(0, 100) <= 1)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
                 }
 
                 //Vegetation
@@ -528,18 +537,18 @@ public class Chunk : MonoBehaviour
                 {
                     Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
 
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
                 }
             }
         }
         else if (biome.name == "desert")
         {
-            if (mat == Material.Sand && getBlock((pos + new Vector2Int(0, 1))) == null)
+            if (mat == Material.Sand && getBlock((loc + new Location(0, 1))) == null)
             {
                 //Cactie
                 if (r.Next(0, 100) <= 8)
                 {
-                    Chunk.setBlock(pos + new Vector2Int(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
                 }
             }
         }
@@ -547,29 +556,29 @@ public class Chunk : MonoBehaviour
         //Generate Ores
         if (mat == Material.Stone)
         {
-            if (r.NextDouble() < Chunk.ore_diamond_chance && pos.y <= Chunk.ore_diamond_height)
+            if (r.NextDouble() < Chunk.ore_diamond_chance && loc.y <= Chunk.ore_diamond_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Diamond|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Diamond|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_redstone_chance && pos.y <= Chunk.ore_redstone_height)
+            else if (r.NextDouble() < Chunk.ore_redstone_chance && loc.y <= Chunk.ore_redstone_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Redstone|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Redstone|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_lapis_chance && pos.y <= Chunk.ore_lapis_height)
+            else if (r.NextDouble() < Chunk.ore_lapis_chance && loc.y <= Chunk.ore_lapis_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Lapis|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Lapis|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_gold_chance && pos.y <= Chunk.ore_gold_height)
+            else if (r.NextDouble() < Chunk.ore_gold_chance && loc.y <= Chunk.ore_gold_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Gold|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Gold|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_iron_chance && pos.y <= Chunk.ore_iron_height)
+            else if (r.NextDouble() < Chunk.ore_iron_chance && loc.y <= Chunk.ore_iron_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Iron|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Iron|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_coal_chance && pos.y <= Chunk.ore_coal_height)
+            else if (r.NextDouble() < Chunk.ore_coal_chance && loc.y <= Chunk.ore_coal_height)
             {
-                Chunk.setBlock(pos, Material.Structure_Block, "structure=Ore_Coal|save=false", false, false);
+                Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Coal|save=false", false, false);
             }
         }
     }
@@ -616,14 +625,14 @@ public class Chunk : MonoBehaviour
                 e.Save();
             } catch (System.Exception ex)
             {
-                Debug.LogError("Error in saving entity: " + ex.StackTrace);
+                Debug.LogWarning("Error in saving entity: " + ex.StackTrace);
             }
         }
     }
 
     public void CreateChunkPath()
     {
-        string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+        string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX;
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
@@ -639,17 +648,17 @@ public class Chunk : MonoBehaviour
         {
             lock (blockChanges)
             {
-                Dictionary<Vector2Int, string> changes = new Dictionary<Vector2Int, string>(blockChanges);
+                Dictionary<Location, string> changes = new Dictionary<Location, string>(blockChanges);
                 blockChanges.Clear();
 
-                string path = WorldManager.world.getPath() + "\\region\\Overworld\\" + ChunkPosition;
+                string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX;
                 foreach (string line in File.ReadAllLines(path + "\\blocks"))
                 {
-                    Vector2Int linePos = new Vector2Int(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
+                    Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
                     string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
 
-                    if (!changes.ContainsKey(linePos))
-                        changes.Add(linePos, lineData);
+                    if (!changes.ContainsKey(lineLoc))
+                        changes.Add(lineLoc, lineData);
                 }
 
                 //Empty lines before writing
@@ -657,7 +666,7 @@ public class Chunk : MonoBehaviour
 
                 TextWriter c = new StreamWriter(path + "\\blocks");
 
-                foreach (KeyValuePair<Vector2Int, string> line in changes)
+                foreach (KeyValuePair<Location, string> line in changes)
                 {
                     c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
                 }
@@ -667,89 +676,79 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public void UnloadChunk()
+    public bool isBlockLocal(Location loc)
     {
-        if (isSpawnChunk)
-            return;
-
-        if (age >= MinimumUnloadTime*TickRate)
-        {
-            WorldManager.instance.chunks.Remove(ChunkPosition);
-            Destroy(gameObject);
-        }
-    }
-
-    public bool isBlockLocal(Vector2Int worldPos)
-    {
-        bool local = (GetChunkPosFromWorldPosition(worldPos.x) == ChunkPosition);
+        bool local = (GetChunkPosFromWorldPosition(loc.x, loc.dimension).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension);
         
-        if (worldPos.y < 0 || worldPos.y > Height)
+        if (loc.y < 0 || loc.y > Height || loc.dimension != chunkPosition.dimension)
             local = false;
 
         return local;
     }
 
-    public static Block setBlock(Vector2Int worldPos, Material mat)
+    public static Block setBlock(Location loc, Material mat)
     {
-        return setBlock(worldPos, mat, true);
+        return setBlock(loc, mat, true);
     }
 
-    public static Block setBlock(Vector2Int worldPos, Material mat, bool save)
+    public static Block setBlock(Location loc, Material mat, bool save)
     {
-        return setBlock(worldPos, mat, "", save, true);
+        return setBlock(loc, mat, "", save, true);
     }
 
-    public static Block setBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
+    public static Block setBlock(Location loc, Material mat, string data, bool save, bool spreadTick)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
 
         if (chunk == null)
             return null;
 
-        return chunk.setLocalBlock(worldPos, mat, data, save, spreadTick);
+        return chunk.setLocalBlock(loc, mat, data, save, spreadTick);
     }
 
-    public Block setLocalBlock(Vector2Int worldPos, Material mat)
+    public Block setLocalBlock(Location loc, Material mat)
     {
-        return setLocalBlock(worldPos, mat, true);
+        return setLocalBlock(loc, mat, true);
     }
 
-    public Block setLocalBlock(Vector2Int worldPos, Material mat, bool save)
+    public Block setLocalBlock(Location loc, Material mat, bool save)
     {
-        return setLocalBlock(worldPos, mat, "", save, true);
+        return setLocalBlock(loc, mat, "", save, true);
     }
 
-    public Block setLocalBlock(Vector2Int worldPos, Material mat, string data, bool save, bool spreadTick)
+    public Block setLocalBlock(Location loc, Material mat, string data, bool save, bool spreadTick)
     {
+        Vector2Int pos = Vector2Int.RoundToInt(loc.getPosition());
+
         System.Type type = System.Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
             return null;
 
-        if (!isBlockLocal(worldPos))
+        if (!isBlockLocal(loc))
         {
-            Debug.LogWarning("Tried setting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
+            Debug.LogWarning("Tried setting local block outside of chunk (" + loc.x + ", " + loc.y + ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension.ToString() + "]");
             return null;
         }
 
         //remove old block
-        if (getLocalBlock(worldPos) != null)
+        if (getLocalBlock(loc) != null)
         {
-            Destroy(getLocalBlock(worldPos).gameObject);
-            blocks.Remove(worldPos);
+            Destroy(getLocalBlock(loc).gameObject);
+            blocks.Remove(pos);
         }
         
         if (save)
         {
-            if (blockChanges.ContainsKey(worldPos))
-                blockChanges.Remove(worldPos);
-            blockChanges.Add(worldPos, mat.ToString() + "*" + data);
+            if (blockChanges.ContainsKey(loc))
+                blockChanges.Remove(loc);
+            blockChanges.Add(loc, mat.ToString() + "*" + data);
         }
 
         Block result = null;
 
         if (mat == Material.Air)
         {
-            Block.SpreadTick(worldPos);
+            Block.SpreadTick(loc);
         }else
         {
             //Place new block
@@ -761,56 +760,65 @@ public class Chunk : MonoBehaviour
             block.AddComponent(type);
 
             block.transform.parent = transform;
-            block.transform.position = (Vector2)worldPos;
+            block.transform.position = loc.getPosition();
 
             //Add the block to block list
-            if(!blocks.ContainsKey(worldPos))
-                blocks.Add(worldPos, block.GetComponent<Block>());
+            if(blocks.ContainsKey(pos))
+                blocks[pos] = block.GetComponent<Block>();
             else
-                blocks[worldPos] = block.GetComponent<Block>();
+                blocks.Add(pos, block.GetComponent<Block>());
 
             block.GetComponent<Block>().data = Block.dataFromString(data);
-
+            block.GetComponent<Block>().location = loc;
             block.GetComponent<Block>().Initialize();
             if (spreadTick)
                 block.GetComponent<Block>().FirstTick();
-            block.GetComponent<Block>().Tick(spreadTick);
-            
+            block.GetComponent<Block>().Tick(spreadTick);   ///TICKED BEFORE OTHER BLOCKS            
 
             result = block.GetComponent<Block>();
         }
 
         if (isLoaded)
         {
-            Block.UpdateSunlightSourceAt(worldPos.x);
-            Block.UpdateLightAround(worldPos);
+            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.location.dimension);
+            Block.UpdateLightAround(loc);
         }
         return result;
     }
 
-    public static Block getBlock(Vector2Int worldPos)
+    public static Block getBlock(Location loc)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition((int)worldPos.x), false);
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
 
         if (chunk == null)
+        {
             return null;
+        }
 
-        Block block = chunk.getLocalBlock(worldPos);
+        Block block = chunk.getLocalBlock(loc);
 
         return block;
     }
 
-    public Block getLocalBlock(Vector2Int worldPos)
+    public Block getLocalBlock(Location loc)
     {
-        if (!isBlockLocal(worldPos))
+        if (!isBlockLocal(loc))
         {
-            Debug.LogWarning("Tried getting local block outside of chunk (" + worldPos.x + ", " + worldPos.y + ") inside Chunk [" + ChunkPosition + "]");
+            Debug.LogWarning("Tried getting local block outside of chunk (" + loc.x + ", " + loc.y + ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension.ToString() + "]");
             return null;
         }
         
         Block block = null;
 
-        blocks.TryGetValue(worldPos, out block);
+        if(loc.getPosition() == new Vector2(-16, 73))
+        {
+            print("-16, 73 exists: " + blocks.ContainsKey(Vector2Int.RoundToInt(loc.getPosition())));
+
+        }
+        blocks.TryGetValue(Vector2Int.RoundToInt(loc.getPosition()), out block);
+
+        if(block == null && blocks.ContainsKey(Vector2Int.RoundToInt(loc.getPosition())))
+            Debug.LogWarning("cth dasd");
 
         return block;
     }
@@ -818,16 +826,16 @@ public class Chunk : MonoBehaviour
     LibNoise.Generator.Perlin caveNoise;
     LibNoise.Generator.Perlin patchNoise;
     LibNoise.Generator.Perlin lakeNoise;
-    public Material getTheoreticalTerrainBlock(Vector2Int worldPos)
+    public Material getTheoreticalTerrainBlock(Location loc)
     {
-        System.Random r = new System.Random(seedByPosition(worldPos));
+        System.Random r = new System.Random(seedByLocation(loc));
         Material mat = Material.Air;
 
-        List<Biome> biomes = getTwoMostProminantBiomes(worldPos.x);
+        List<Biome> biomes = getTwoMostProminantBiomes(loc.x);
         Biome biome = biomes[0];
 
         //-Terrain Generation-//
-        float noiseValue = biome.blendNoiseValues(biomes[1], worldPos);
+        float noiseValue = biome.blendNoiseValues(biomes[1], loc);
 
         //-Ground-//
         if (noiseValue > 0.1f)
@@ -848,7 +856,7 @@ public class Chunk : MonoBehaviour
         }
 
         //-Lakes-//
-        if (mat == Material.Air && worldPos.y <= sea_level && biome.name == "lake")
+        if (mat == Material.Air && loc.y <= sea_level && biome.name == "lake")
         {
             mat = Material.Water;
         }
@@ -856,18 +864,18 @@ public class Chunk : MonoBehaviour
         //-Dirt & Gravel Patches-//
         if (mat == Material.Stone)
         {
-            if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20)) > 7.5f)
+            if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20)) > 7.5f)
             {
                 mat = Material.Dirt;
             }
-            if (Mathf.Abs((float)caveNoise.GetValue((float)worldPos.x / 20 + 100, (float)worldPos.y / 20, 200)) > 7.5f)
+            if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20 + 100, (float)loc.y / 20, 200)) > 7.5f)
             {
                 mat = Material.Gravel;
             }
         }
 
         //-Sea-//
-        if (mat == Material.Air && worldPos.y <= sea_level)
+        if (mat == Material.Air && loc.y <= sea_level)
         {
             mat = Material.Water;
         }
@@ -876,24 +884,24 @@ public class Chunk : MonoBehaviour
         if(noiseValue > 0.1f)
         {
             double caveValue =
-                (caveNoise.GetValue((float)worldPos.x / 20, (float)worldPos.y / 20) + 4.0f) / 4f;
+                (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
             if (caveValue > caveHollowValue)
             {
                 mat = Material.Air;
 
         //-Lava Lakes-//
-                if (worldPos.y <= lava_height)
+                if (loc.y <= lava_height)
                     mat = Material.Lava;
             }
         }
 
         //-Bedrock Generation-//
-        if (worldPos.y <= 4)
+        if (loc.y <= 4)
         {
             //Fill layer 0 and then progressively less chance of bedrock further up
-            if (worldPos.y == 0)
+            if (loc.y == 0)
                 mat = Material.Bedrock;
-            else if (r.Next(0, (int)worldPos.y+2) <= 1)
+            else if (r.Next(0, (int)loc.y+2) <= 1)
                 mat = Material.Bedrock;
         }
 
@@ -903,20 +911,20 @@ public class Chunk : MonoBehaviour
     public Entity[] GetEntities()
     {
         List<Entity> entities = new List<Entity>();
-
-        int chunkXPosition = this.GetMinXWorldPosition();
+        
         foreach (Entity e in Entity.entities)
         {
-            if (e.cachedPosition.x >= chunkXPosition && e.cachedPosition.x <= (chunkXPosition + Width))
+            if (e.location.x >= chunkPosition.worldX && 
+                e.location.x <= chunkPosition.worldX + Width)
                 entities.Add(e);
         }
 
         return entities.ToArray();
     }
 
-    public static Block getTopmostBlock(int x)
+    public static Block getTopmostBlock(int x, Dimension dimension)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x), false);
+        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x, dimension), false);
         if (chunk == null)
             return null;
 
@@ -927,34 +935,34 @@ public class Chunk : MonoBehaviour
     {
         for(int y = Height; y > 0; y--)
         {
-            if(getLocalBlock(new Vector2Int(x, y)) != null)
+            if(getLocalBlock(new Location(x, y, chunkPosition.dimension)) != null)
             {
-                return getLocalBlock(new Vector2Int(x, y));
+                return getLocalBlock(new Location(x, y, chunkPosition.dimension));
             }
         }
         return null;
     }
 
-    public static int seedByPosition(Vector2Int pos)
+    public static int seedByLocation(Location loc)
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos.x), false);
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
         int seed = 0;
 
         if (chunk == null)
             return seed;
 
-        chunk.cachedRandomSeeds.TryGetValue(pos, out seed);
+        chunk.cachedRandomSeeds.TryGetValue(loc, out seed);
         if (seed == 0) {
-            seed = new System.Random((WorldManager.world.seed.ToString() + ", " + pos.x + ", " + pos.y).GetHashCode()).Next(int.MinValue, int.MaxValue);
-            chunk.cachedRandomSeeds[pos] = seed;
+            seed = new System.Random((WorldManager.world.seed.ToString() + ", " + loc.x + ", " + loc.y + ", " + loc.dimension.ToString()).GetHashCode()).Next(int.MinValue, int.MaxValue);
+            chunk.cachedRandomSeeds[loc] = seed;
         }
 
         return seed;
     }
 
-    public static Biome getBiome(int pos)
+    public static Biome getBiome(int pos, Dimension dimension)
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos), false);
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos, dimension), false);
         Biome biome = null;
 
         if (chunk == null)

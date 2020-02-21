@@ -35,7 +35,20 @@ public class Entity : MonoBehaviour
     public bool isInLiquid = false;
     public bool flipRenderX = false;
     public bool dead = false;
-    public Vector2 cachedPosition;     //For use in multithreading
+    public Location location
+    {
+        get
+        {
+            return Location.locationByPosition(_cachedposition, _dimension);
+        }
+        set
+        {
+            transform.position = new Vector3(value.x, value.y);
+            _dimension = value.dimension;
+        }
+    }
+    private Vector2 _cachedposition;
+    private Dimension _dimension;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -57,7 +70,7 @@ public class Entity : MonoBehaviour
 
         getRenderer().flipX = flipRenderX;
 
-        cachedPosition = transform.position;
+        _cachedposition = transform.position;
 
         CheckChunk();
         checkVoidDamage();
@@ -69,7 +82,7 @@ public class Entity : MonoBehaviour
         bool result = false;
 
         //Get current chunk
-        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition((int)transform.position.x), chunk_loading);
+        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), chunk_loading);
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
@@ -89,7 +102,7 @@ public class Entity : MonoBehaviour
 
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
         {
-            Block block = Chunk.getBlock(Vector2Int.RoundToInt(((Vector2)transform.position)));
+            Block block = Chunk.getBlock(location);
 
             if (block != null)
             {
@@ -136,7 +149,7 @@ public class Entity : MonoBehaviour
             {
                 System.Random random = new System.Random((transform.position + "" + i).GetHashCode());
                 Vector2 maxVelocity = new Vector2(2, 2);
-                Vector2Int dropPosition = Vector2Int.FloorToInt((Vector2)transform.position + new Vector2(0, 2));
+                Location dropPosition = location + new Location(0, 2);
 
                 item.Drop(dropPosition,
                     new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
@@ -188,7 +201,7 @@ public class Entity : MonoBehaviour
     {
         List<string> result = new List<string>();
 
-        result.Add("position=" + JsonUtility.ToJson(cachedPosition));
+        result.Add("location=" + JsonUtility.ToJson(location));
 
         IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
@@ -207,7 +220,7 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\Overworld\\"+(Chunk.GetChunkPosFromWorldPosition(Mathf.FloorToInt(cachedPosition.x)))+"\\entities\\"+id+"."+GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\" + location.dimension.ToString() + "\\"+(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension)).chunkX+"\\entities\\"+id+"."+GetType().Name;
     }
 
     public virtual void Save()
@@ -230,22 +243,17 @@ public class Entity : MonoBehaviour
 
     public virtual void DeleteOldSavePath()
     {
-        string[] dimensions = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\");
-
-        foreach (string dimension in dimensions)
-        {
-            string[] chunks = Directory.GetDirectories(dimension);
+        string[] chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\"+location.dimension.ToString());
             
-            foreach (string chunk in chunks)
-            {
-                string[] entities = Directory.GetFiles(chunk + "\\entities\\");
+        foreach (string chunk in chunks)
+        {
+            string[] entities = Directory.GetFiles(chunk + "\\entities\\");
 
-                foreach (string entity in entities)
+            foreach (string entity in entities)
+            {
+                if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
                 {
-                    if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
-                    {
-                        File.Delete(entity);
-                    }
+                    File.Delete(entity);
                 }
             }
         }
@@ -266,7 +274,7 @@ public class Entity : MonoBehaviour
         if (lines.Count <= 1)
             return;
 
-        transform.position = JsonUtility.FromJson<Vector3>(lines["position"]);
+        location = JsonUtility.FromJson<Location>(lines["location"]);
 
 
         IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));

@@ -10,7 +10,7 @@ public class WorldManager : MonoBehaviour
 
     public List<Biome> biomes = new List<Biome>();
 
-    public Dictionary<int, Chunk> chunks = new Dictionary<int, Chunk>();
+    public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
     public int amountOfChunksLoading = 0;
 
     public GameObject chunkPrefab;
@@ -59,14 +59,14 @@ public class WorldManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        loadingState = "Generating Chunks: 0";
+        loadingState = "Generating Spawn Chunk: 0";
         loadingProgress = 2f / steps;
         //Load Chunk [0]
-        mainChunk = Chunk.LoadChunk(0);
+        mainChunk = Chunk.LoadChunk(new ChunkPosition(0, Dimension.Overworld));
 
         for(int i = -Chunk.RenderDistance; i < Chunk.RenderDistance; i++)
         {
-            Chunk.LoadChunk((int)((float)Player.localInstance.transform.position.x/(float)Chunk.Width) + i);
+            Chunk.GetChunk(new ChunkPosition((int)((float)Player.localInstance.transform.position.x / (float)Chunk.Width) + i, Player.localInstance.location.dimension), true);
         }
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
