@@ -79,7 +79,6 @@ public class Block : MonoBehaviour
     {
         if (requiresGround)
         {
-            //print((location - new Location(0, 1)).getPosition() + " found block: " + (Chunk.getBlock(location - new Location(0, 1)) != null) + ", by list directy: "+ (Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension)).blocks[Vector2Int.RoundToInt(location.getPosition() - new Vector2(0, 1))] != null));
             if (Chunk.getBlock(location - new Location(0, 1)) == null)
             {
                 Break();

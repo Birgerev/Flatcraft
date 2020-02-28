@@ -255,8 +255,6 @@ public class Chunk : MonoBehaviour
             entities.AddRange(getBiome(x, chunkPosition.dimension).biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
 
-            if (y <= 0) print("y below 0");
-
             Entity entity = Entity.Spawn(entityType);
             entity.location = new Location(x, y, chunkPosition.dimension);
         }
@@ -809,17 +807,9 @@ public class Chunk : MonoBehaviour
         }
         
         Block block = null;
-
-        if(loc.getPosition() == new Vector2(-16, 73))
-        {
-            print("-16, 73 exists: " + blocks.ContainsKey(Vector2Int.RoundToInt(loc.getPosition())));
-
-        }
+        
         blocks.TryGetValue(Vector2Int.RoundToInt(loc.getPosition()), out block);
-
-        if(block == null && blocks.ContainsKey(Vector2Int.RoundToInt(loc.getPosition())))
-            Debug.LogWarning("cth dasd");
-
+        
         return block;
     }
     
