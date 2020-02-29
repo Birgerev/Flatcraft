@@ -371,7 +371,9 @@ public class Block : MonoBehaviour
     {
         if (drop)
             Drop();
-        
+
+        Sound.Play(location, "block_sand_break", SoundType.Blocks, 1);
+
         Chunk.setBlock(location, Material.Air);
     }
 
