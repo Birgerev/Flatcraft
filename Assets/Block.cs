@@ -330,6 +330,8 @@ public class Block : MonoBehaviour
 
         blockHealth -= time;
 
+        Sound.Play(location, "block_" + blockSoundType.ToString().ToLower() + "_hit", SoundType.Blocks, 1);
+
         RenderBlockDamage();
 
         if (blockHealth <= 0)
@@ -474,10 +476,10 @@ public class Block : MonoBehaviour
 public enum Block_SoundType
 {
     Stone,
+    Wood,
+    Sand,
     Dirt,
     Grass,
-    Sand,
-    Wood,
     Wool,
     Gravel
 }
