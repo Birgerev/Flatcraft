@@ -330,7 +330,7 @@ public class Block : MonoBehaviour
 
         blockHealth -= time;
 
-        Sound.Play(location, "block_" + blockSoundType.ToString().ToLower() + "_hit", SoundType.Blocks, 1);
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Blocks, 0.8f, 1.2f);
 
         RenderBlockDamage();
 
@@ -376,7 +376,7 @@ public class Block : MonoBehaviour
         if (drop)
             Drop();
 
-        Sound.Play(location, "block_" + blockSoundType.ToString().ToLower() + "_break", SoundType.Blocks, 1);
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
         Chunk.setBlock(location, Material.Air);
     }
