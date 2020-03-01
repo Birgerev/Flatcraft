@@ -79,6 +79,11 @@ public class Block : MonoBehaviour
 
     public virtual void Tick(bool spread)
     {
+        if(age == 0 && spread)    //Block place sound
+        {
+            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
+        }
+
         if (requiresGround)
         {
             //print((location - new Location(0, 1)).getPosition() + " found block: " + (Chunk.getBlock(location - new Location(0, 1)) != null) + ", by list directy: "+ (Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension)).blocks[Vector2Int.RoundToInt(location.getPosition() - new Vector2(0, 1))] != null));
