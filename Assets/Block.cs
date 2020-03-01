@@ -28,6 +28,8 @@ public class Block : MonoBehaviour
     public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
     
+    public virtual Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
+
     public virtual int glowLevel { get; } = 0;
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -372,7 +374,7 @@ public class Block : MonoBehaviour
         if (drop)
             Drop();
 
-        Sound.Play(location, "block_sand_break", SoundType.Blocks, 1);
+        Sound.Play(location, "block_" + blockSoundType.ToString().ToLower() + "_break", SoundType.Blocks, 1);
 
         Chunk.setBlock(location, Material.Air);
     }
@@ -467,4 +469,15 @@ public class Block : MonoBehaviour
 
         return result;
     }
+}
+
+public enum Block_SoundType
+{
+    Stone,
+    Dirt,
+    Grass,
+    Sand,
+    Wood,
+    Wool,
+    Gravel
 }

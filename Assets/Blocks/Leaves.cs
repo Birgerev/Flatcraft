@@ -7,7 +7,9 @@ public class Leaves : Block
     public static string default_texture = "block_leaves";
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
-    
+
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+
     public override ItemStack GetDrop()
     {
         return new ItemStack();

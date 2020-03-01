@@ -10,6 +10,7 @@ public class Furnace : InventoryContainer
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Pickaxe;
     public override Tool_Level propperToolLevel { get; } = Tool_Level.Wooden;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
     public override System.Type inventoryType { get; } = typeof(FurnaceInventory);
 

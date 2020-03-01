@@ -10,6 +10,7 @@ public class Logged_Leaves : Block
     public override float breakTime { get; } = 3f;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
     public override ItemStack GetDrop()
     {

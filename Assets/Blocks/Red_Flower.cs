@@ -10,4 +10,6 @@ public class Red_Flower : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
     public override bool requiresGround { get; } = true;
+
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 }
