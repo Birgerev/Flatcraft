@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amountText: {fileID: 5558368527372161950}
   texture: {fileID: 5608158011184257420}
-  durabilityBar: {fileID: 6032516071497619804}
+  durabilityBar: {fileID: 0}
   durabilityBarFiller: {fileID: 3564188275151492409}
   item:
     material: 0
@@ -79,7 +79,7 @@ PrefabInstance:
     - target: {fileID: 4274927837936829525, guid: b9379dde221be1a4bb99a3c445109a4f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.2
+      value: 0.20000076
       objectReference: {fileID: 0}
     - target: {fileID: 4274927837936829525, guid: b9379dde221be1a4bb99a3c445109a4f,
         type: 3}
@@ -231,12 +231,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &6032516071497619804 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1352336613103253772, guid: b9379dde221be1a4bb99a3c445109a4f,
-    type: 3}
-  m_PrefabInstance: {fileID: 4716319512800354384}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3564188275151492409 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8071912615933195625, guid: b9379dde221be1a4bb99a3c445109a4f,
