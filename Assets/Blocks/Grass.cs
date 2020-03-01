@@ -8,6 +8,7 @@ public class Grass : Block
     public override float breakTime { get; } = 0.75f;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
     public override ItemStack GetDrop()
     {

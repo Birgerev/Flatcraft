@@ -9,6 +9,7 @@ public class Chest : InventoryContainer
     public override float breakTime { get; } = 6;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
     public override System.Type inventoryType { get; } = typeof(Inventory);
 

@@ -133,7 +133,11 @@ public class LivingEntity : Entity
         {
             float damage = (highestYlevelsinceground - transform.position.y) - 3;
             if (damage >= 1)
+            {
+                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f);
+
                 TakeFallDamage(damage);
+            }
         }
 
         if (isOnGround || isInLiquid)
@@ -156,6 +160,8 @@ public class LivingEntity : Entity
 
     public override void Damage(float damage)
     {
+        Sound.Play(location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
+
         health -= damage;
 
         if (health <= 0)

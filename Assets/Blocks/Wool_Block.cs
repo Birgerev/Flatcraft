@@ -8,5 +8,6 @@ public class Wool_Block : Block
     public override float breakTime { get; } = 1.25f;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.None;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wool;
 
 }
