@@ -160,6 +160,8 @@ public class LivingEntity : Entity
 
     public override void Damage(float damage)
     {
+        Sound.Play(location, "entity_damage", SoundType.Entities, 1);
+
         health -= damage;
 
         if (health <= 0)
