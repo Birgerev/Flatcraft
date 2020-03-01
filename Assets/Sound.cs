@@ -65,5 +65,6 @@ public enum SoundType
     Music,
     Weather,
     Blocks,
-    Entities
+    Entities,
+    Menu
 }
