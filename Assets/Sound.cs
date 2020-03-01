@@ -18,7 +18,12 @@ public class Sound : MonoBehaviour
     }
 
 
-    public static void Play(Location loc, string sound, SoundType type, float pitch)
+    public static void Play(Location loc, string sound, SoundType type)
+    {
+        Play(loc, sound, type, 1, 1);
+    }
+
+    public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch)
     {
         GameObject obj = new GameObject("sound "+sound);
         AudioSource source = obj.AddComponent<AudioSource>();
@@ -47,6 +52,8 @@ public class Sound : MonoBehaviour
                 group = instance.entitiesGroup;
                 break;
         }
+
+        float pitch = Random.Range(minPitch, maxPitch);
 
         source.outputAudioMixerGroup = group;
         source.clip = clip;
