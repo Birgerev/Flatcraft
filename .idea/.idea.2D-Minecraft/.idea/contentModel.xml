@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\birge\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\birge\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_2D-Minecraft.-858933879.00" t="ExcludeRecursive" />
+    <e p="D:\projects\.GitHub\2D-Minecraft" t="IncludeRecursive">
+      <e p="2D-Minecraft.sln" t="IncludeFlat" />
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="AnimalController.cs" t="Include" />
+        <e p="Biome.cs" t="Include" />
+        <e p="Block.cs" t="Include" />
+        <e p="Blocks" t="Include">
+          <e p="Air.cs" t="Include" />
+          <e p="Bed.cs" t="Include" />
+          <e p="Bed_Bottom.cs" t="Include" />
+          <e p="Bed_Top.cs" t="Include" />
+          <e p="Bedrock.cs" t="Include" />
+          <e p="Cactus.cs" t="Include" />
+          <e p="Chest.cs" t="Include" />
+          <e p="Coal_Ore.cs" t="Include" />
+          <e p="Cobblestone.cs" t="Include" />
+          <e p="Crafting_Table.cs" t="Include" />
+          <e p="Diamond_Ore.cs" t="Include" />
+          <e p="Dirt.cs" t="Include" />
+          <e p="Door.cs" t="Include" />
+          <e p="Fire.cs" t="Include" />
+          <e p="Furnace.cs" t="Include" />
+          <e p="Gold_Ore.cs" t="Include" />
+          <e p="Grass.cs" t="Include" />
+          <e p="Gravel.cs" t="Include" />
+          <e p="InventoryContainer.cs" t="Include" />
+          <e p="Iron_Ore.cs" t="Include" />
+          <e p="Lapis_Ore.cs" t="Include" />
+          <e p="Lava.cs" t="Include" />
+          <e p="Leaves.cs" t="Include" />
+          <e p="Liquid.cs" t="Include" />
+          <e p="Logged_Leaves.cs" t="Include" />
+          <e p="Oak_log.cs" t="Include" />
+          <e p="Oak_Plank_Stairs.cs" t="Include" />
+          <e p="Oak_Planks.cs" t="Include" />
+          <e p="Red_Flower.cs" t="Include" />
+          <e p="Redstone_Ore.cs" t="Include" />
+          <e p="Sand.cs" t="Include" />
+          <e p="Stairs.cs" t="Include" />
+          <e p="Stone.cs" t="Include" />
+          <e p="Structure_Block.cs" t="Include" />
+          <e p="Tall_Grass.cs" t="Include" />
+          <e p="Torch.cs" t="Include" />
+          <e p="Water.cs" t="Include" />
+          <e p="Wooden_Door.cs" t="Include" />
+          <e p="Wooden_Door_Bottom.cs" t="Include" />
+          <e p="Wooden_Door_Top.cs" t="Include" />
+          <e p="Wooden_Trapdoor.cs" t="Include" />
+          <e p="Wool_Block.cs" t="Include" />
+        </e>
+        <e p="CameraController.cs" t="Include" />
+        <e p="Chicken.cs" t="Include" />
+        <e p="Chunk.cs" t="Include" />
+        <e p="ChunkPosition.cs" t="Include" />
+        <e p="Clouds.cs" t="Include" />
+        <e p="CraftingInventory.cs" t="Include" />
+        <e p="CraftingRecepie.cs" t="Include" />
+        <e p="DebugMenu.cs" t="Include" />
+        <e p="Dimension.cs" t="Include" />
+        <e p="DroppedItem.cs" t="Include" />
+        <e p="Editor" t="Include">
+          <e p="anchorToolEditor.cs" t="Include" />
+        </e>
+        <e p="Entity.cs" t="Include" />
+        <e p="EntityController.cs" t="Include" />
+        <e p="FallingSand.cs" t="Include" />
+        <e p="FurnaceInventory.cs" t="Include" />
+        <e p="HostileEntity.cs" t="Include" />
+        <e p="HumanEntity.cs" t="Include" />
+        <e p="Inventory.cs" t="Include" />
+        <e p="Item.cs" t="Include" />
+        <e p="Items" t="Include">
+          <e p="Coal.cs" t="Include" />
+          <e p="Cooked_Chicken.cs" t="Include" />
+          <e p="Diamond.cs" t="Include" />
+          <e p="Diamond_Axe.cs" t="Include" />
+          <e p="Diamond_Hoe.cs" t="Include" />
+          <e p="Diamond_Pickaxe.cs" t="Include" />
+          <e p="Diamond_Shovel.cs" t="Include" />
+          <e p="Diamond_Sword.cs" t="Include" />
+          <e p="Food.cs" t="Include" />
+          <e p="Golden_Axe.cs" t="Include" />
+          <e p="Golden_Hoe.cs" t="Include" />
+          <e p="Golden_Pickaxe.cs" t="Include" />
+          <e p="Golden_Shovel.cs" t="Include" />
+          <e p="Golden_Sword.cs" t="Include" />
+          <e p="Iron_Axe.cs" t="Include" />
+          <e p="Iron_Hoe.cs" t="Include" />
+          <e p="Iron_Ingot.cs" t="Include" />
+          <e p="Iron_Pickaxe.cs" t="Include" />
+          <e p="Iron_Shovel.cs" t="Include" />
+          <e p="Iron_Sword.cs" t="Include" />
+          <e p="Raw_Chicken.cs" t="Include" />
+          <e p="Stick.cs" t="Include" />
+          <e p="Stone_Axe.cs" t="Include" />
+          <e p="Stone_Hoe.cs" t="Include" />
+          <e p="Stone_Pickaxe.cs" t="Include" />
+          <e p="Stone_Shovel.cs" t="Include" />
+          <e p="Stone_Sword.cs" t="Include" />
+          <e p="Tool.cs" t="Include" />
+          <e p="Wooden_Axe.cs" t="Include" />
+          <e p="Wooden_Hoe.cs" t="Include" />
+          <e p="Wooden_Pickaxe.cs" t="Include" />
+          <e p="Wooden_Shovel.cs" t="Include" />
+          <e p="Wooden_Sword.cs" t="Include" />
+        </e>
+        <e p="ItemStack.cs" t="Include" />
+        <e p="LivingEntity.cs" t="Include" />
+        <e p="Location.cs" t="Include" />
+        <e p="Material.cs" t="Include" />
+        <e p="Noise" t="Include">
+          <e p="CLZF2.cs" t="Include" />
+          <e p="COPYING.LESSER.txt" t="Include" />
+          <e p="COPYING.txt" t="Include" />
+          <e p="Generator" t="Include">
+            <e p="Billow.cs" t="Include" />
+            <e p="Checker.cs" t="Include" />
+            <e p="Const.cs" t="Include" />
+            <e p="Cylinders.cs" t="Include" />
+            <e p="Perlin.cs" t="Include" />
+            <e p="RidgedMultifractal.cs" t="Include" />
+            <e p="Spheres.cs" t="Include" />
+            <e p="Voronoi.cs" t="Include" />
+          </e>
+          <e p="GradientPresets.cs" t="Include" />
+          <e p="ModuleBase.cs" t="Include" />
+          <e p="Noise2D.cs" t="Include" />
+          <e p="Operator" t="Include">
+            <e p="Abs.cs" t="Include" />
+            <e p="Add.cs" t="Include" />
+            <e p="Blend.cs" t="Include" />
+            <e p="Cache.cs" t="Include" />
+            <e p="Clamp.cs" t="Include" />
+            <e p="Curve.cs" t="Include" />
+            <e p="Displace.cs" t="Include" />
+            <e p="Exponent.cs" t="Include" />
+            <e p="Invert.cs" t="Include" />
+            <e p="Max.cs" t="Include" />
+            <e p="Min.cs" t="Include" />
+            <e p="Multiply.cs" t="Include" />
+            <e p="Power.cs" t="Include" />
+            <e p="Rotate.cs" t="Include" />
+            <e p="Scale.cs" t="Include" />
+            <e p="ScaleBias.cs" t="Include" />
+            <e p="Select.cs" t="Include" />
+            <e p="Subtract.cs" t="Include" />
+            <e p="Terrace.cs" t="Include" />
+            <e p="Translate.cs" t="Include" />
+            <e p="Turbulence.cs" t="Include" />
+          </e>
+          <e p="Properties" t="Include">
+            <e p="AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="SimplexNoiseGenerator.cs" t="Include" />
+          <e p="Utils.cs" t="Include" />
+        </e>
+        <e p="Particle.cs" t="Include" />
+        <e p="PassiveEntity.cs" t="Include" />
+        <e p="Player.cs" t="Include" />
+        <e p="PlayerInventory.cs" t="Include" />
+        <e p="Resources" t="Include">
+          <e p="Recepies" t="Include">
+            <e p="Crafting" t="Include">
+              <e p="bed.txt" t="Include" />
+              <e p="chest.txt" t="Include" />
+              <e p="crafting_table.txt" t="Include" />
+              <e p="diamond_axe.txt" t="Include" />
+              <e p="diamond_hoe.txt" t="Include" />
+              <e p="diamond_pickaxe.txt" t="Include" />
+              <e p="diamond_shovel.txt" t="Include" />
+              <e p="diamond_sword.txt" t="Include" />
+              <e p="furnace.txt" t="Include" />
+              <e p="golden_axe.txt" t="Include" />
+              <e p="golden_hoe.txt" t="Include" />
+              <e p="golden_pickaxe.txt" t="Include" />
+              <e p="golden_shovel.txt" t="Include" />
+              <e p="golden_sword.txt" t="Include" />
+              <e p="iron_axe.txt" t="Include" />
+              <e p="iron_hoe.txt" t="Include" />
+              <e p="iron_pickaxe.txt" t="Include" />
+              <e p="iron_shovel.txt" t="Include" />
+              <e p="iron_sword.txt" t="Include" />
+              <e p="planks.txt" t="Include" />
+              <e p="sticks.txt" t="Include" />
+              <e p="stone_axe.txt" t="Include" />
+              <e p="stone_hoe.txt" t="Include" />
+              <e p="stone_pickaxe.txt" t="Include" />
+              <e p="stone_shovel.txt" t="Include" />
+              <e p="stone_sword.txt" t="Include" />
+              <e p="torch.txt" t="Include" />
+              <e p="wooden_axe.txt" t="Include" />
+              <e p="wooden_door.txt" t="Include" />
+              <e p="wooden_hoe.txt" t="Include" />
+              <e p="wooden_pickaxe.txt" t="Include" />
+              <e p="wooden_shovel.txt" t="Include" />
+              <e p="wooden_sword.txt" t="Include" />
+              <e p="wooden_trapdoor.txt" t="Include" />
+            </e>
+            <e p="Smelting" t="Include">
+              <e p="cooked_chicken.txt" t="Include" />
+              <e p="iron_ingot.txt" t="Include" />
+            </e>
+          </e>
+          <e p="Structure" t="Include">
+            <e p="Cactus" t="Include">
+              <e p="Tree_01.txt" t="Include" />
+              <e p="Tree_02.txt" t="Include" />
+            </e>
+            <e p="Large_Tree" t="Include">
+              <e p="Large_Tree_01.txt" t="Include" />
+            </e>
+            <e p="Ore_Coal" t="Include">
+              <e p="Coal_01.txt" t="Include" />
+              <e p="Coal_02.txt" t="Include" />
+              <e p="Coal_03.txt" t="Include" />
+              <e p="Coal_04.txt" t="Include" />
+            </e>
+            <e p="Ore_Diamond" t="Include">
+              <e p="Diamond_01.txt" t="Include" />
+              <e p="Diamond_02.txt" t="Include" />
+              <e p="Diamond_03.txt" t="Include" />
+              <e p="Diamond_04.txt" t="Include" />
+            </e>
+            <e p="Ore_Gold" t="Include">
+              <e p="Gold_01.txt" t="Include" />
+              <e p="Gold_02.txt" t="Include" />
+              <e p="Gold_03.txt" t="Include" />
+              <e p="Gold_04.txt" t="Include" />
+            </e>
+            <e p="Ore_Iron" t="Include">
+              <e p="Iron_01.txt" t="Include" />
+              <e p="Iron_02.txt" t="Include" />
+              <e p="Iron_03.txt" t="Include" />
+              <e p="Iron_04.txt" t="Include" />
+            </e>
+            <e p="Ore_Lapis" t="Include">
+              <e p="Lapis_01.txt" t="Include" />
+              <e p="Lapis_02.txt" t="Include" />
+              <e p="Lapis_03.txt" t="Include" />
+              <e p="Lapis_04.txt" t="Include" />
+            </e>
+            <e p="Ore_Redstone" t="Include">
+              <e p="Redstone_01.txt" t="Include" />
+              <e p="Redstone_02.txt" t="Include" />
+              <e p="Redstone_03.txt" t="Include" />
+              <e p="Redstone_04.txt" t="Include" />
+            </e>
+            <e p="Tree" t="Include">
+              <e p="Tree_01.txt" t="Include" />
+              <e p="Tree_02.txt" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Scenes" t="Include">
+          <e p="Debug" t="Include">
+            <e p="DebugBiomeLandscape.cs" t="Include" />
+            <e p="DebugBiomeWave.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Sheep.cs" t="Include" />
+        <e p="Sky.cs" t="Include" />
+        <e p="SmeltingRecepie.cs" t="Include" />
+        <e p="Sound.cs" t="Include" />
+        <e p="UI" t="Include">
+          <e p="anchorTool.cs" t="Include" />
+          <e p="BreakIndicator.cs" t="Include" />
+          <e p="ContainerInventoryMenu.cs" t="Include" />
+          <e p="CraftingInventoryMenu.cs" t="Include" />
+          <e p="CreateWorldMenu.cs" t="Include" />
+          <e p="DeathMenu.cs" t="Include" />
+          <e p="FurnaceInventoryMenu.cs" t="Include" />
+          <e p="HotbarItemSlot.cs" t="Include" />
+          <e p="InventoryMenu.cs" t="Include" />
+          <e p="InventoryMenuManager.cs" t="Include" />
+          <e p="ItemSlot.cs" t="Include" />
+          <e p="LoadingMenu.cs" t="Include" />
+          <e p="MainMenu.cs" t="Include" />
+          <e p="MultiplayerMenu.cs" t="Include" />
+          <e p="PauseMenu.cs" t="Include" />
+          <e p="PlayerInventoryMenu.cs" t="Include" />
+          <e p="PointerSlot.cs" t="Include" />
+          <e p="SingleplayerMenu.cs" t="Include" />
+          <e p="StyledText.cs" t="Include" />
+          <e p="UIButtonSound.cs" t="Include" />
+          <e p="UIHeart.cs" t="Include" />
+          <e p="UIHunger.cs" t="Include" />
+          <e p="WorldButton.cs" t="Include" />
+        </e>
+        <e p="World.cs" t="Include" />
+        <e p="WorldManager.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
