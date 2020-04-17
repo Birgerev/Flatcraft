@@ -225,6 +225,7 @@ public class Entity : MonoBehaviour
 
     public virtual void Save()
     {
+        Update();
         DeleteOldSavePath();
 
         string path = SavePath();
