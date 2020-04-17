@@ -74,7 +74,7 @@ public class InventoryMenu : MonoBehaviour
     public virtual ItemSlot getSlotObject(int index)
     {
         if(index < slotList.childCount)
-            return slotList.GetChild(index).GetComponent<ItemSlot>();
+            return slotList.GetComponentsInChildren<ItemSlot>()[index];
         return null;
     }
 
