@@ -10,11 +10,11 @@ using Unity.Burst;
 public class Chunk : MonoBehaviour
 {
     public static float AutosaveDuration = 5;
-    public static int Width = 16, Height = 255;
-    public static int RenderDistance = 4;
-    public static int SpawnChunkDistance = 0;
-    public static int MinimumUnloadTime = 20;
-    public static int TickRate = 1;
+    public const int Width = 16, Height = 255;
+    public const int RenderDistance = 4;
+    public const int SpawnChunkDistance = 0;
+    public const int MinimumUnloadTime = 20;
+    public const int TickRate = 1;
 
     public GameObject blockPrefab;
 
@@ -32,33 +32,33 @@ public class Chunk : MonoBehaviour
     public Dictionary<Location, int> cachedRandomSeeds = new Dictionary<Location, int>();
 
     [Header("Cave Generation Settings")]
-    public static float caveFrequency = 5;
-    public static float caveLacunarity = 0.6f;
-    public static float cavePercistance = 2;
-    public static int caveOctaves = 4;
-    public static float caveHollowValue = 2.2f;
+    const float CaveFrequency = 5;
+    const float CaveLacunarity = 0.6f;
+    const float CavePercistance = 2;
+    const int CaveOctaves = 4;
+    const float CaveHollowValue = 2.2f;
 
     [Header("Ore Generation Settings")]
-    public static int ore_coal_height = 128;
-    public static double ore_coal_chance = 0.008f;
+    const int OreCoalHeight = 128;
+    const double OreCoalChance = 0.008f;
 
-    public static int ore_iron_height = 64;
-    public static double ore_iron_chance = 0.005f;
+    const int OreIronHeight = 64;
+    const double OreIronChance = 0.005f;
 
-    public static int ore_gold_height = 32;
-    public static double ore_gold_chance = 0.0015f;
+    const int OreGoldHeight = 32;
+    const double OreGoldChance = 0.0015f;
 
-    public static int ore_lapis_height = 32;
-    public static double ore_lapis_chance = 0.0015f;
+    const int OreLapisHeight = 32;
+    const double OreLapisChance = 0.0015f;
 
-    public static int ore_redstone_height = 16;
-    public static double ore_redstone_chance = 0.0015f;
+    const int OreRedstoneHeight = 16;
+    const double OreRedstoneChance = 0.0015f;
 
-    public static int ore_diamond_height = 16;
-    public static double ore_diamond_chance = 0.0015f;
+    const int OreDiamondHeight = 16;
+    const double OreDiamondChance = 0.0015f;
 
-    public static int lava_height = 10;
-    public static int sea_level = 62;
+    const int LavaHeight = 10;
+    public const int SeaLevel = 62;
 
 
     public static float mobSpawningChance = 0.01f;
@@ -337,7 +337,7 @@ public class Chunk : MonoBehaviour
 
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
-        caveNoise = new LibNoise.Generator.Perlin(caveFrequency, caveLacunarity, cavePercistance, caveOctaves, WorldManager.world.seed, QualityMode.High);
+        caveNoise = new LibNoise.Generator.Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves, WorldManager.world.seed, QualityMode.High);
 
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
@@ -554,27 +554,27 @@ public class Chunk : MonoBehaviour
         //Generate Ores
         if (mat == Material.Stone)
         {
-            if (r.NextDouble() < Chunk.ore_diamond_chance && loc.y <= Chunk.ore_diamond_height)
+            if (r.NextDouble() < Chunk.OreDiamondChance && loc.y <= Chunk.OreDiamondHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Diamond|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_redstone_chance && loc.y <= Chunk.ore_redstone_height)
+            else if (r.NextDouble() < Chunk.OreRedstoneChance && loc.y <= Chunk.OreRedstoneHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Redstone|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_lapis_chance && loc.y <= Chunk.ore_lapis_height)
+            else if (r.NextDouble() < Chunk.OreLapisChance && loc.y <= Chunk.OreLapisHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Lapis|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_gold_chance && loc.y <= Chunk.ore_gold_height)
+            else if (r.NextDouble() < Chunk.OreGoldChance && loc.y <= Chunk.OreGoldHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Gold|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_iron_chance && loc.y <= Chunk.ore_iron_height)
+            else if (r.NextDouble() < Chunk.OreIronChance && loc.y <= Chunk.OreIronHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Iron|save=false", false, false);
             }
-            else if (r.NextDouble() < Chunk.ore_coal_chance && loc.y <= Chunk.ore_coal_height)
+            else if (r.NextDouble() < Chunk.OreCoalChance && loc.y <= Chunk.OreCoalHeight)
             {
                 Chunk.setBlock(loc, Material.Structure_Block, "structure=Ore_Coal|save=false", false, false);
             }
@@ -846,7 +846,7 @@ public class Chunk : MonoBehaviour
         }
 
         //-Lakes-//
-        if (mat == Material.Air && loc.y <= sea_level && biome.name == "lake")
+        if (mat == Material.Air && loc.y <= SeaLevel && biome.name == "lake")
         {
             mat = Material.Water;
         }
@@ -865,7 +865,7 @@ public class Chunk : MonoBehaviour
         }
 
         //-Sea-//
-        if (mat == Material.Air && loc.y <= sea_level)
+        if (mat == Material.Air && loc.y <= SeaLevel)
         {
             mat = Material.Water;
         }
@@ -875,12 +875,12 @@ public class Chunk : MonoBehaviour
         {
             double caveValue =
                 (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
-            if (caveValue > caveHollowValue)
+            if (caveValue > CaveHollowValue)
             {
                 mat = Material.Air;
 
         //-Lava Lakes-//
-                if (loc.y <= lava_height)
+                if (loc.y <= LavaHeight)
                     mat = Material.Lava;
             }
         }
