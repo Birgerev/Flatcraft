@@ -14,29 +14,4 @@ public class Wooden_Door_Top : Door
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
-
-    public override ItemStack GetDrop()
-    {
-        return new ItemStack(Material.Wooden_Door_Bottom, 1);
-    }
-
-    public override void Break()
-    {
-        Block block = Chunk.getBlock(location + new Location(0, -1));
-        if (block != null && block.GetMaterial() == Material.Wooden_Door_Bottom)
-        {
-            Chunk.setBlock(location + new Location(0, -1), Material.Air);
-        }
-
-        base.Break();
-    }
-
-    public override void Interact()
-    {
-        Door block = (Door)Chunk.getBlock(location + new Location(0, -1));
-
-        block.ToggleOpen(); 
-
-        base.Interact();
-    }
 }

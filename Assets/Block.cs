@@ -58,7 +58,7 @@ public class Block : MonoBehaviour
         //Cache position for use in multithreading
         location = Location.locationByPosition(transform.position, location.dimension);
 
-        if (autoTick)
+        if (autoTick || autosave)
             StartCoroutine(autoTickLoop());
 
         Render();
