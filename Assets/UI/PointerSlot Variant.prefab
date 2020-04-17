@@ -26,7 +26,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amountText: {fileID: 3212591218148658154}
   texture: {fileID: 3198134042278412792}
-  durabilityBar: {fileID: 3603422238902288680}
+  durabilityBar: {fileID: 8329974156044369365}
   durabilityBarFiller: {fileID: 5818837991215631693}
   item:
     material: 0
@@ -189,21 +189,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3212591218148658154 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 887474255779853262, guid: b9379dde221be1a4bb99a3c445109a4f,
-    type: 3}
-  m_PrefabInstance: {fileID: 2361464636047734820}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &3603422238902288680 stripped
+--- !u!1 &8329974156044369365 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 1352336613103253772, guid: b9379dde221be1a4bb99a3c445109a4f,
+  m_CorrespondingSourceObject: {fileID: 6007688444681176561, guid: b9379dde221be1a4bb99a3c445109a4f,
     type: 3}
   m_PrefabInstance: {fileID: 2361464636047734820}
   m_PrefabAsset: {fileID: 0}
@@ -217,5 +205,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3212591218148658154 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 887474255779853262, guid: b9379dde221be1a4bb99a3c445109a4f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2361464636047734820}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

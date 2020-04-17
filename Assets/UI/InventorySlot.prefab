@@ -169,7 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amountText: {fileID: 887474255779853262}
   texture: {fileID: 911862808546867676}
-  durabilityBar: {fileID: 0}
+  durabilityBar: {fileID: 6007688444681176561}
   durabilityBarFiller: {fileID: 8071912615933195625}
   item:
     material: 0
