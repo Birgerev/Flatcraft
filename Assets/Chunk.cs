@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using LibNoise;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Unity.Burst;
 
 [BurstCompile]
 public class Chunk : MonoBehaviour
 {
-    public static float AutosaveDuration = 5;
+    public static float AutosaveDuration = 10;
     public const int Width = 16, Height = 255;
     public const int RenderDistance = 4;
     public const int SpawnChunkDistance = 0;
@@ -64,7 +65,7 @@ public class Chunk : MonoBehaviour
     public static float mobSpawningChance = 0.01f;
     public static List<string> mobSpawns = new List<string> { "Chicken", "Sheep" };
 
-
+    public HashSet<Location> lightSourceToUpdate = new HashSet<Location>();
 
     public Dictionary<Location, string> blockChanges = new Dictionary<Location, string>();
 
@@ -375,7 +376,7 @@ public class Chunk : MonoBehaviour
         }
         
 
-        LoadAllEntities();
+        loadAllEntities();
         
         StartCoroutine(Tick());
         StartCoroutine(TickAllBlocks());
@@ -402,10 +403,8 @@ public class Chunk : MonoBehaviour
         
         StartCoroutine(GenerateLight());
         StartCoroutine(SaveLoop());
-        if (isSpawnChunk)
-        {
-            StartCoroutine(processLightLoop());
-        }
+        yield return new WaitForSecondsRealtime(10f);
+        StartCoroutine(ProcessLightLoop());
     }
 
     IEnumerator GenerateLight()
@@ -431,18 +430,17 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    IEnumerator processLightLoop()
+    IEnumerator ProcessLightLoop()
     {
         while (true)
         {
-            if (Block.oldLight.Count > 0)
+            if (lightSourceToUpdate.Count > 0)
             {
-
-                List<Location> oldLight = new List<Location>(Block.oldLight);
-                Block.oldLight.Clear();
+                List<Location> oldLightCopy = new List<Location>(lightSourceToUpdate);
+                lightSourceToUpdate.Clear();
                 List<KeyValuePair<Block, int>> lightToRender = null;
 
-                Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLight); });
+                Thread lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLightCopy); });
                 lightThread.Start();
 
                 while (lightThread.IsAlive)
@@ -451,7 +449,7 @@ public class Chunk : MonoBehaviour
                 }
 
                 //Render
-                foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))
+                foreach (KeyValuePair<Block, int> entry in new List<KeyValuePair<Block, int>>(lightToRender))    //Not using dictionaries, since it doesn't work multithreaded
                 {
                     if (entry.Key == null)
                         continue;
@@ -460,31 +458,48 @@ public class Chunk : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSecondsRealtime(0.05f);
+            yield return new WaitForSecondsRealtime(0.2f);
         }
     }
 
-    public List<KeyValuePair<Block, int>> processDirtyLight(List<Location> oldLight)
+    private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
     {
         List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
+        List<Location> processedLocations = new List<Location>();
 
-        if (oldLight.Count == 0)
+        if (lightToProcess.Count == 0)
             return lightToRender;
-
+        
         //Process
-        foreach (Location loc in oldLight)
+        foreach (Location loc in lightToProcess)
         {
-            Block block = Chunk.getBlock(loc);
-            if (block == null)
-                continue;
-
-            lightToRender.Add(new KeyValuePair<Block, int>(block, Block.GetLightLevel(loc)));
+            for (int x = loc.x - 15; x < loc.x + 15; x++)
+            {
+                for (int y = loc.y - 15; y < loc.y + 15; y++)
+                {
+                    Location blockLoc = new Location(x, y, loc.dimension);
+                    if(processedLocations.Contains(blockLoc))
+                        continue;
+                    
+                    Block block = Chunk.getBlock(blockLoc);
+                    if (block == null)
+                        continue;
+                    
+                    KeyValuePair<Block, int> result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
+                    lightToRender.Add(result);
+                    
+                    processedLocations.Add(blockLoc);
+                }
+            }
         }
-
+        
+        //Remove Copies
+        lightToRender = lightToRender.Distinct().ToList();
+        
         return lightToRender;
     }
 
-    private void LoadAllEntities()
+    private void loadAllEntities()
     {
         string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX + "\\entities";
 
@@ -593,12 +608,15 @@ public class Chunk : MonoBehaviour
 
 
             //Save Block Changes
-            Thread worldThread = new Thread(SaveBlockChanges);
-            worldThread.Start();
-
-            while (worldThread.IsAlive)
+            if (blockChanges.Count > 0)
             {
-                yield return new WaitForSeconds(0.1f);
+                Thread worldThread = new Thread(SaveBlockChanges);
+                worldThread.Start();
+
+                while (worldThread.IsAlive)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
 
             //Save Entities

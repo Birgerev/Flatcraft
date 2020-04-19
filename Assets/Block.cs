@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Burst;
+using Unity.Mathematics;
 
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public static Dictionary<Location, int> lightSources = new Dictionary<Location, int>();
-    public static List<Location> sunlightSources = new List<Location>();
-
-    public static HashSet<Location> oldLight = new HashSet<Location>();
+    public static Dictionary<Block, int> lightSources = new Dictionary<Block, int>();
+    public static List<Block> sunlightSources = new List<Block>();
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -150,35 +149,33 @@ public class Block : MonoBehaviour
             return;
 
         //remove all sunlight sources in the same column
-        foreach(Location sourceLoc in sunlightSources.ToList())
+        foreach(Block source in sunlightSources.ToList())
         {
-            if (sourceLoc.x == x && sourceLoc.dimension == dimension)
+            if (source.location.x == x && source.location.dimension == dimension)
             {
-                sunlightSources.Remove(sourceLoc);
-                UpdateLightAround(sourceLoc);
+                sunlightSources.Remove(source);
+                UpdateLightAround(source.location);
             }
         }
 
         //Add the new position
-        Location pos = topBlock.location;
-
-        sunlightSources.Add(pos);
-        UpdateLightAround(pos);
+        sunlightSources.Add(topBlock);
+        UpdateLightAround(topBlock.location);
     }
 
     public bool IsSunlightSource()
     {
-        return sunlightSources.Contains(location);
+        return sunlightSources.Contains(this);
     }
 
     public bool CheckBlockLightSource()
     {
         if (glowLevel > 0)
         {
-            lightSources[location] = glowLevel;
+            lightSources[this] = glowLevel;
         }
 
-        return GetLightSourceLevel(location) > 0;
+        return GetLightSourceLevel(this) > 0;
     }
     
     public void RenderNoLight()
@@ -200,23 +197,14 @@ public class Block : MonoBehaviour
         {
             source.CheckBlockLightSource();
         }
-
-        for (int x = loc.x - 15; x < loc.x + 15; x++)
-        {
-            for (int y = loc.y - 15; y < loc.y + 15; y++)
-            {
-                if (y < 0 || y > Chunk.Height)
-                    continue;
-
-                Location blockLoc = new Location(x, y, loc.dimension);
-                oldLight.Add(blockLoc);
-            }
-        }
+        
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
+        if(chunk != null)
+            chunk.lightSourceToUpdate.Add(loc);
     }
 
-    public static int GetLightSourceLevel(Location loc)
+    public static int GetLightSourceLevel(Block block)
     {
-        Block block = Chunk.getBlock(loc);
         if (block == null)
             return 0;
         
@@ -229,11 +217,11 @@ public class Block : MonoBehaviour
         if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
             return 0;
         
-        List<Location> sources;
+        List<Block> sources;
         lock (lightSources)
         {
             //clone actual list to avoid threading errors
-            sources = new Dictionary<Location, int>(lightSources).Keys.ToList();
+            sources = new Dictionary<Block, int>(lightSources).Keys.ToList();
         }
 
         lock (sunlightSources)
@@ -247,16 +235,19 @@ public class Block : MonoBehaviour
 
         Location brightestSourceLoc = new Location(0, 0);
         int brightestValue = 0;
-        foreach (Location source in sources)
+        
+        foreach (Block source in sources)
         {
-            if (source.dimension == loc.dimension)
+            Location sourceLoc = source.location;
+            if (sourceLoc.dimension == loc.dimension)
             {
-                int value = GetLightSourceLevel(source) - (int)(Vector2.Distance(source.getPosition(), loc.getPosition()));
+                int sourceBrightness = GetLightSourceLevel(source);
+                int value = sourceBrightness - (int)(math.distance(sourceLoc.getPosition(), loc.getPosition()));
 
                 if (value > brightestValue)
                 {
                     brightestValue = value;
-                    brightestSourceLoc = source;
+                    brightestSourceLoc = sourceLoc;
                 }
             }
         }
