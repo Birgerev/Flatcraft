@@ -5,12 +5,36 @@ using System.Linq;
 
 public class CraftingRecepie
 {
+    private static CraftingRecepie[] _cachedRecepies = null;
+
     public ItemStack result;
     public Dictionary<Vector2Int, Material> recepieShape = new Dictionary<Vector2Int, Material>();
 
     public CraftingRecepie()
     {
 
+    }
+
+    public static CraftingRecepie[] allRecepies()
+    {
+        if (_cachedRecepies == null)
+        {
+            TextAsset[] files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
+            List<CraftingRecepie> recepies = new List<CraftingRecepie>();
+
+            foreach (TextAsset file in files)
+            {
+                recepies.Add(FileToRecepie(file));
+            }
+
+            _cachedRecepies = recepies.ToArray();    //Cache results
+            
+            return recepies.ToArray();
+        }
+        else
+        {
+            return _cachedRecepies;
+        }
     }
 
     public bool Compare(ItemStack[] items)
@@ -148,19 +172,6 @@ public class CraftingRecepie
             }
         }
         return null;
-    }
-
-    public static CraftingRecepie[] allRecepies()
-    {
-        TextAsset[] files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
-        List<CraftingRecepie> recepies = new List<CraftingRecepie>();
-
-        foreach(TextAsset file in files)
-        {
-            recepies.Add(FileToRecepie(file));
-        }
-
-        return recepies.ToArray();
     }
 
     public static CraftingRecepie FileToRecepie(TextAsset file)
