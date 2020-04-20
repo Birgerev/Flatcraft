@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -68,7 +69,10 @@ public class ItemSlot : MonoBehaviour
 
     public virtual void Click()
     {
-        GetComponentInParent<InventoryMenu>().OnClickSlot(transform.GetSiblingIndex(), (Input.GetMouseButtonUp(0)) ? 0 : 1);
+        InventoryMenu menu = GetComponentInParent<InventoryMenu>();
+        int slot =  menu.getSlotObjects().ToList().IndexOf(this);
+        
+        GetComponentInParent<InventoryMenu>().OnClickSlot(slot, (Input.GetMouseButtonUp(0)) ? 0 : 1);
         UpdateSlot();
     }
 }
