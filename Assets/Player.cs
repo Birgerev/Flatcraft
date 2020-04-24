@@ -10,6 +10,7 @@ public class Player : HumanEntity
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
+    public static float blockHitsPerPerSecond = 4.5f;
 
 
     //Entity Data Tags
@@ -28,6 +29,7 @@ public class Player : HumanEntity
     private float lastHitTime;
     private bool hasTouchedGround = false;
     private bool inventoryOpenLastFrame = false;
+    private float lastBlockHit;
 
     public override void Start()
     {
@@ -101,10 +103,10 @@ public class Player : HumanEntity
         }
 
         //Crosshair
-        Crosshair();
+        MouseInput();
     }
 
-    private void Crosshair() {
+    private void MouseInput() {
         if (WorldManager.instance.loadingProgress != 1)
             return;
 
@@ -132,7 +134,7 @@ public class Player : HumanEntity
 
         crosshair.transform.position = blockedMouseLocation.getPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
-
+        
         if (isInRange)
         {
             if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
@@ -164,13 +166,18 @@ public class Player : HumanEntity
                         sampleItem.Interact(blockedMouseLocation, 1, false);
                     }
 
-                    if (Input.GetMouseButtonDown(0))
+                    if (Time.time - lastBlockHit > 1 / blockHitsPerPerSecond)
                     {
-                        sampleItem.Interact(blockedMouseLocation, 0, true);
-                    }
-                    else if (Input.GetMouseButton(0))
-                    {
-                        sampleItem.Interact(blockedMouseLocation, 0, false);
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            sampleItem.Interact(blockedMouseLocation, 0, true);
+                            lastBlockHit = Time.time;
+                        }
+                        else if (Input.GetMouseButton(0))
+                        {
+                            sampleItem.Interact(blockedMouseLocation, 0, false);
+                            lastBlockHit = Time.time;
+                        }
                     }
                 }
             }
@@ -187,13 +194,18 @@ public class Player : HumanEntity
                     itemType.Interact(blockedMouseLocation, 1, false);
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (Time.time - lastBlockHit > 1 / blockHitsPerPerSecond)
                 {
-                    itemType.Interact(blockedMouseLocation, 0, true);
-                }
-                else if (Input.GetMouseButton(0))
-                {
-                    itemType.Interact(blockedMouseLocation, 0, false);
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        itemType.Interact(blockedMouseLocation, 0, true);
+                        lastBlockHit = Time.time;
+                    }
+                    else if (Input.GetMouseButton(0))
+                    {
+                        itemType.Interact(blockedMouseLocation, 0, false);
+                        lastBlockHit = Time.time;
+                    }
                 }
             }
         }

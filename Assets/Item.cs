@@ -35,7 +35,7 @@ public class Item
         
         if (block != null)
         {
-            block.Hit(Time.deltaTime);
+            block.Hit(1 / Player.blockHitsPerPerSecond);
         }
     }
 
