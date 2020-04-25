@@ -79,7 +79,7 @@ public class WorldManager : MonoBehaviour
         loadingProgress = 3f / steps;
         
         yield return new WaitForSeconds(1f);
-
+        
         loadingState = "Done!";
         loadingProgress = 4f / steps;
 
@@ -87,6 +87,9 @@ public class WorldManager : MonoBehaviour
 
         loadingProgress = 5f / steps;
 
+
+        Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).getPosition();    //Place player at ground
+        
         StartCoroutine(SaveLoop());
     }
 

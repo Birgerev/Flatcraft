@@ -21,7 +21,7 @@ public class Entity : MonoBehaviour
     public static int MaxLivingAmount = 6;
 
     //Entity properties
-    public virtual bool chunk_loading { get; } = false;
+    public virtual bool ChunkLoadingEntity { get; } = false;
 
     //Entity data tags
     [EntityDataTag(false)]
@@ -71,18 +71,16 @@ public class Entity : MonoBehaviour
         getRenderer().flipX = flipRenderX;
 
         _cachedposition = transform.position;
+        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), ChunkLoadingEntity);
 
-        CheckChunk();
+        GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
         checkVoidDamage();
         checkSuffocation();
     }
 
-    public virtual bool CheckChunk()
+    public virtual bool isChunkLoaded()
     {
         bool result = false;
-
-        //Get current chunk
-        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), chunk_loading);
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
@@ -90,14 +88,13 @@ public class Entity : MonoBehaviour
         else if (currentChunk != null)
             result = (currentChunk.isLoaded);
         else result = false;
-
-        GetComponent<Rigidbody2D>().simulated = result;
+        
         return result;
     }
 
     private void checkSuffocation()
     {
-        if (!CheckChunk())
+        if (!isChunkLoaded())
             return;
 
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)

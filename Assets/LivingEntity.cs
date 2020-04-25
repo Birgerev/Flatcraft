@@ -25,9 +25,9 @@ public class LivingEntity : Entity
     
 
     //Entity State
-    private float last_jump_time;
-    private float highestYlevelsinceground;
-    public EntityController controller;
+    protected float last_jump_time;
+    protected float highestYlevelsinceground;
+    protected EntityController controller;
 
     public override void Start()
     {

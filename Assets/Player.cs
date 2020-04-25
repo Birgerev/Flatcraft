@@ -6,7 +6,7 @@ using System.IO;
 public class Player : HumanEntity
 {
     //Entity Properties
-    public override bool chunk_loading { get; } = true;
+    public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
@@ -27,7 +27,6 @@ public class Player : HumanEntity
     public GameObject crosshair;
     private float lastFrameScroll;
     private float lastHitTime;
-    private bool hasTouchedGround = false;
     private bool inventoryOpenLastFrame = false;
     private float lastBlockHit;
 
@@ -38,6 +37,8 @@ public class Player : HumanEntity
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
+        StartCoroutine(MoveToValidSpawnOnceLoaded());
+        
         base.Start();
     }
 
@@ -58,14 +59,8 @@ public class Player : HumanEntity
         }
         lastFrameScroll = scroll;
 
-
         performInput();
         inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
-    }
-
-    public override void FixedUpdate()
-    {
-        base.FixedUpdate();
     }
 
     private void performInput()
@@ -255,7 +250,7 @@ public class Player : HumanEntity
     {
         Dimension curDimension = location.dimension;
 
-        for (int i = Chunk.Height; i <= 0; i --)
+        for (int i = Chunk.Height; i > 0; i --)
         {
             if(Chunk.getBlock(new Location((int)pos, i, curDimension)) != null && Chunk.getBlock(new Location((int)pos, i, curDimension)).playerCollide)
             {
@@ -279,20 +274,6 @@ public class Player : HumanEntity
     public override void Hit(float damage)
     {
 
-    }
-
-    //Disable fall damage when player is spawned
-    public override void TakeFallDamage(float damage)
-    {
-        if (hasTouchedGround)
-        {
-            base.TakeFallDamage(damage);
-        }
-        else
-        {
-            hasTouchedGround = true;
-            return;
-        }
     }
 
     public void Sleep()
@@ -328,5 +309,17 @@ public class Player : HumanEntity
         }
 
         return resultData;
+    }
+
+    IEnumerator MoveToValidSpawnOnceLoaded()
+    {
+        yield return new WaitForSeconds(2f);
+        while (!isChunkLoaded())
+        {
+            yield return new WaitForSeconds(0.25f);
+        }
+
+        highestYlevelsinceground = 0;    //Reset falldamage
+        transform.position = ValidSpawn(location.x).getPosition();
     }
 }

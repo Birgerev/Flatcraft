@@ -300,7 +300,7 @@ public class Chunk : MonoBehaviour
             for (int x = 0; x < Width; x++)
             {
                 Location loc = new Location(x + chunkPosition.worldX, y);
-                Material mat = getTheoreticalTerrainBlock(loc);
+                Material mat = GetTheoreticalTerrainBlock(loc);
 
                 if (mat != Material.Air)
                 {
@@ -834,7 +834,7 @@ public class Chunk : MonoBehaviour
     LibNoise.Generator.Perlin caveNoise;
     LibNoise.Generator.Perlin patchNoise;
     LibNoise.Generator.Perlin lakeNoise;
-    public Material getTheoreticalTerrainBlock(Location loc)
+    public Material GetTheoreticalTerrainBlock(Location loc)
     {
         System.Random r = new System.Random(seedByLocation(loc));
         Material mat = Material.Air;
