@@ -313,7 +313,7 @@ public class Block : MonoBehaviour
 
         bool properToolStats = false;
 
-        if(tool_type == propperToolType && tool_level >= propperToolLevel)
+        if(tool_level != Tool_Level.None && tool_type == propperToolType && tool_level >= propperToolLevel)
         {
             time *= 2 + ((float)tool_level * 2f);
         }
