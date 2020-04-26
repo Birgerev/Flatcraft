@@ -9,7 +9,7 @@ using Unity.Mathematics;
 public class Block : MonoBehaviour
 {
     public static Dictionary<Block, int> lightSources = new Dictionary<Block, int>();
-    public static List<Block> sunlightSources = new List<Block>();
+    public static HashSet<Block> sunlightSources = new HashSet<Block>();
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -154,12 +154,14 @@ public class Block : MonoBehaviour
             if (source.location.x == x && source.location.dimension == dimension)
             {
                 sunlightSources.Remove(source);
+                lightSources.Remove(source);
                 UpdateLightAround(source.location);
             }
         }
 
         //Add the new position
         sunlightSources.Add(topBlock);
+        lightSources.Add(topBlock, 15);
         UpdateLightAround(topBlock.location);
     }
 
@@ -224,15 +226,6 @@ public class Block : MonoBehaviour
             sources = new Dictionary<Block, int>(lightSources).Keys.ToList();
         }
 
-        lock (sunlightSources)
-        {   
-            //Clone sunlight sources to avoid thread conflicts (AddRange doesn't work)
-            for (int ii = 0; ii < sunlightSources.Count; ii++)
-            {
-                sources.Add(sunlightSources[ii]);
-            }
-        }
-
         Location brightestSourceLoc = new Location(0, 0);
         int brightestValue = 0;
         
@@ -251,6 +244,7 @@ public class Block : MonoBehaviour
                 }
             }
         }
+        
         return brightestValue;
     }
 

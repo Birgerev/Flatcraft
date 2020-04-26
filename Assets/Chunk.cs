@@ -403,7 +403,6 @@ public class Chunk : MonoBehaviour
         
         StartCoroutine(GenerateLight());
         StartCoroutine(SaveLoop());
-        yield return new WaitForSecondsRealtime(10f);
         StartCoroutine(ProcessLightLoop());
     }
 
@@ -415,7 +414,6 @@ public class Chunk : MonoBehaviour
 
         for (int x = minXPos; x <= maxXPos; x++)
         {
-            yield return new WaitForSecondsRealtime(0.05f);
             Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
         }
 
@@ -425,9 +423,9 @@ public class Chunk : MonoBehaviour
             if (block.glowLevel > 0)
             {
                 Block.UpdateLightAround(block.location);
-                yield return new WaitForSecondsRealtime(0.1f);
             }
         }
+        yield return new WaitForSecondsRealtime(0.05f);
     }
 
     IEnumerator ProcessLightLoop()
@@ -465,7 +463,6 @@ public class Chunk : MonoBehaviour
     private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
     {
         List<KeyValuePair<Block, int>> lightToRender = new List<KeyValuePair<Block, int>>();
-        List<Location> processedLocations = new List<Location>();
 
         if (lightToProcess.Count == 0)
             return lightToRender;
@@ -475,20 +472,17 @@ public class Chunk : MonoBehaviour
         {
             for (int x = loc.x - 15; x < loc.x + 15; x++)
             {
-                for (int y = loc.y - 15; y < loc.y + 15; y++)
+                for (int y = loc.y - 15; y < loc.y + 15 && y > 0 && y < Chunk.Height; y++)
                 {
                     Location blockLoc = new Location(x, y, loc.dimension);
-                    if(processedLocations.Contains(blockLoc))
-                        continue;
                     
                     Block block = Chunk.getBlock(blockLoc);
+                    
                     if (block == null)
                         continue;
                     
                     KeyValuePair<Block, int> result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
                     lightToRender.Add(result);
-                    
-                    processedLocations.Add(blockLoc);
                 }
             }
         }
