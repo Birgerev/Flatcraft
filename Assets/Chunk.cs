@@ -10,7 +10,7 @@ using Unity.Burst;
 [BurstCompile]
 public class Chunk : MonoBehaviour
 {
-    public static float AutosaveDuration = 10;
+    public static float AutosaveDuration = 5;
     public const int Width = 16, Height = 255;
     public const int RenderDistance = 4;
     public const int SpawnChunkDistance = 0;
