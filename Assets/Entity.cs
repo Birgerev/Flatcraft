@@ -222,7 +222,6 @@ public class Entity : MonoBehaviour
 
     public virtual void Save()
     {
-        _cachedposition = transform.position;
         DeleteOldSavePath();
 
         string path = SavePath();
