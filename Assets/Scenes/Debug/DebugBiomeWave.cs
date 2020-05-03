@@ -11,6 +11,7 @@ public class DebugBiomeWave : MonoBehaviour
     public int previewWidth;
     public float previewUpdateFrequency;
     public float lineWidth;
+    public int highestPixel = 1000;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +21,6 @@ public class DebugBiomeWave : MonoBehaviour
 
     IEnumerator UpdateLoop()
     {
-        int highestPixel = 1000;
         while (true)
         {
             Texture2D tex = new Texture2D(previewWidth, highestPixel);
@@ -28,13 +28,8 @@ public class DebugBiomeWave : MonoBehaviour
             {
                 int noiseValue = (int)biome.getBiomeValueAt(x);
                 
-                if(noiseValue < 0)
+                if(noiseValue < 0 || noiseValue > highestPixel)
                     continue;
-                if (noiseValue > highestPixel)
-                {
-                    highestPixel = noiseValue;
-                    continue;
-                }
                 
                 for (int y = noiseValue; y >= noiseValue - lineWidth; y--)
                     tex.SetPixel(x, y, Color.black);
