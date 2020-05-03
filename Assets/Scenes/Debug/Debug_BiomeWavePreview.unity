@@ -254,10 +254,10 @@ MonoBehaviour:
     biomeAmplitude: 16.16
     name: 
     biomeSpecificEntitySpawns: []
-  previewWidth: 200
+  previewWidth: 1000
   previewUpdateFrequency: 0.2
   lineWidth: 5
-  highestPixel: 1000
+  highestPixel: 200
 --- !u!4 &2098192874
 Transform:
   m_ObjectHideFlags: 0

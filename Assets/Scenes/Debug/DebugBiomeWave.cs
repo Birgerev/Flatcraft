@@ -27,12 +27,14 @@ public class DebugBiomeWave : MonoBehaviour
             for (int x = 0; x < previewWidth; x++)
             {
                 int noiseValue = (int)biome.getBiomeValueAt(x);
-                
-                if(noiseValue < 0 || noiseValue > highestPixel)
-                    continue;
-                
+
                 for (int y = noiseValue; y >= noiseValue - lineWidth; y--)
+                {
+                    if(y < 0 || y > highestPixel)
+                        continue;
+                    
                     tex.SetPixel(x, y, Color.black);
+                }
             }
             
             tex.Apply();
