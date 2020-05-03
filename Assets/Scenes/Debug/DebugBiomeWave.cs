@@ -4,17 +4,13 @@ using UnityEngine;
 
 public class DebugBiomeWave : MonoBehaviour
 {
-    public Dictionary<int, GameObject> blocks = new Dictionary<int, GameObject>();
-
-    public GameObject block;
-
     [Space]
     public Biome biome;
 
     [Space]
-    public int previewSize;
+    public int previewWidth;
     public float previewUpdateFrequency;
-    public float startHeight;
+    public float lineWidth;
 
     // Start is called before the first frame update
     void Start()
@@ -24,28 +20,31 @@ public class DebugBiomeWave : MonoBehaviour
 
     IEnumerator UpdateLoop()
     {
+        int highestPixel = 1000;
         while (true)
         {
-            for (int x = 0; x < previewSize; x++)
+            Texture2D tex = new Texture2D(previewWidth, highestPixel);
+            for (int x = 0; x < previewWidth; x++)
             {
-                GameObject obj = null;
-                if (blocks.ContainsKey(x))
-                    obj = (blocks[x]);
-
-                float noiseValue = biome.getBiomeValueAt(x);
-
-                if (obj == null)
+                int noiseValue = (int)biome.getBiomeValueAt(x);
+                
+                if(noiseValue < 0)
+                    continue;
+                if (noiseValue > highestPixel)
                 {
-                    obj = Instantiate(block);
-                    yield return new WaitForSeconds(previewUpdateFrequency / previewSize);
+                    highestPixel = noiseValue;
+                    continue;
                 }
-
-                obj.transform.SetParent(transform);
-                obj.transform.position = new Vector3(x, startHeight);
-                obj.transform.localScale = new Vector3(1, startHeight + noiseValue);
-                blocks[x] = obj;
-
+                
+                for (int y = noiseValue; y >= noiseValue - lineWidth; y--)
+                    tex.SetPixel(x, y, Color.black);
             }
+            
+            tex.Apply();
+            
+            Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
+            GetComponent<SpriteRenderer>().sprite = sprite;
+            
             yield return new WaitForSeconds(previewUpdateFrequency);
         }
     }

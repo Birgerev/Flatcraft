@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class DebugBiomeLandscape : MonoBehaviour
 {
-    public Dictionary<Vector2, GameObject> blocks = new Dictionary<Vector2, GameObject>();
-
-    public GameObject block;
-
     [Space]
     public Biome biome;
 
     [Space]
-    public int previewSize;
+    public int previewWidth;
     public float previewUpdateFrequency;
 
     // Start is called before the first frame update
@@ -25,32 +21,24 @@ public class DebugBiomeLandscape : MonoBehaviour
     {
         while (true)
         {
-            for(int x = 0; x < previewSize; x++)
+            Texture2D tex = new Texture2D(previewWidth, Chunk.Height);
+            for(int x = 0; x < previewWidth; x++)
             {
                 for (int y = 0; y < Chunk.Height; y++)
                 {
-                    bool exists = blocks.ContainsKey(new Vector2(x, y));
-
                     float noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
                     if (noiseValue > 0.1f)
                     {
-                        if (!exists)
-                        {
-                            GameObject obj = Instantiate(block);
-
-                            obj.transform.SetParent(transform);
-                            obj.transform.position = new Vector3(x, y);
-                            blocks[new Vector2(x, y)] = obj;
-                        }
-                    }
-                    else if (exists)
-                    {
-                        Destroy(blocks[new Vector2(x, y)]);
-                        blocks.Remove(new Vector2(x, y));
+                        tex.SetPixel(x, y, Color.black);
                     }
                 }
-                yield return new WaitForSeconds(previewUpdateFrequency / previewSize);
             }
+            tex.Apply();
+            
+            Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
+            GetComponent<SpriteRenderer>().sprite = sprite;
+            
+            yield return new WaitForSeconds(previewUpdateFrequency);
         }
     }
 }
