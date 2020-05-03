@@ -257,6 +257,7 @@ MonoBehaviour:
   previewWidth: 200
   previewUpdateFrequency: 0.2
   lineWidth: 5
+  highestPixel: 1000
 --- !u!4 &2098192874
 Transform:
   m_ObjectHideFlags: 0
