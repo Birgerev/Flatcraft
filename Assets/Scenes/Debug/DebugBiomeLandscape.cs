@@ -10,6 +10,7 @@ public class DebugBiomeLandscape : MonoBehaviour
     [Space]
     public int previewWidth;
     public float previewUpdateFrequency;
+    public bool showSeaLevel;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,7 @@ public class DebugBiomeLandscape : MonoBehaviour
         while (true)
         {
             Texture2D tex = new Texture2D(previewWidth, Chunk.Height);
+            
             for(int x = 0; x < previewWidth; x++)
             {
                 for (int y = 0; y < Chunk.Height; y++)
@@ -33,6 +35,11 @@ public class DebugBiomeLandscape : MonoBehaviour
                     }
                 }
             }
+            
+            if(showSeaLevel)
+                for (int x = 0; x < previewWidth; x++)
+                    tex.SetPixel(x, Chunk.SeaLevel, Color.red);
+            
             tex.Apply();
             
             Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
