@@ -527,6 +527,14 @@ public class Chunk : MonoBehaviour
         {
             if (mat == Material.Grass && getBlock((loc + new Location(0, 1))) == null)
             {
+                //Vegetation
+                if (r.Next(0, 100) <= 25)
+                {
+                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
+
+                    Chunk.setBlock(loc + new Location(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
+                }
+                
                 //Trees
                 if (r.Next(0, 100) <= 10)
                 {
@@ -537,14 +545,6 @@ public class Chunk : MonoBehaviour
                 if (r.Next(0, 100) <= 1)
                 {
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
-                }
-
-                //Vegetation
-                if (r.Next(0, 100) <= 25)
-                {
-                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
-
-                    Chunk.setBlock(loc + new Location(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
                 }
             }
         }
