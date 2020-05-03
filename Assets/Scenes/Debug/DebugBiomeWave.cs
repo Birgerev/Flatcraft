@@ -11,7 +11,7 @@ public class DebugBiomeWave : MonoBehaviour
     public int previewWidth;
     public float previewUpdateFrequency;
     public float lineWidth;
-    public int highestPixel = 1000;
+    public int highestPixel;
 
     // Start is called before the first frame update
     void Start()
