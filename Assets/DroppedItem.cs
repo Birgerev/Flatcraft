@@ -70,4 +70,9 @@ public class DroppedItem : Entity
             }
         }
     }
+
+    public override void Hit(float damage)
+    {
+        //Disabling Hit
+    }
 }
