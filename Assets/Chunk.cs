@@ -851,7 +851,7 @@ public class Chunk : MonoBehaviour
                 mat = Material.Grass;
             }
 
-            if (noiseValue > 0.5f)
+            if (noiseValue > biome.stoneLayerNoiseValue)
             {
                 mat = Material.Stone;
             }

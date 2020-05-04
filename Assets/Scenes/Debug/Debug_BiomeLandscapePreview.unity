@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 1009806584}
   - component: {fileID: 1009806583}
   - component: {fileID: 1009806585}
+  - component: {fileID: 1009806586}
   m_Layer: 0
   m_Name: DebugManager
   m_TagString: Untagged
@@ -238,14 +239,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biome:
     landscapeLacunarity: 1
-    landscapePercistance: 1
-    landscapeOctaves: 2
+    landscapePercistance: 2.13
+    landscapeOctaves: 4
     landscapeSize: 0.05
-    landscapeHeightWeight: 0.08
-    landscapeHeightOverSeaLevel: 43
+    landscapeHeightWeight: 1.23
+    landscapeHeightOverSeaLevel: -0.02
+    stoneLayerNoiseValue: 4.32
     biomeLacunarity: 1
-    biomePercistance: 1
-    biomeOctaves: 2
+    biomePercistance: 2.13
+    biomeOctaves: 4
     biomeDiminishBelow: 20
     biomeDiminishLowWeight: 0.05
     biomeDiminishAbove: 80
@@ -253,9 +255,10 @@ MonoBehaviour:
     biomeAmplitude: 10
     name: 
     biomeSpecificEntitySpawns: []
-  previewWidth: 250
+  previewWidth: 200
   previewUpdateFrequency: 0.2
   showSeaLevel: 1
+  showStoneLayer: 1
 --- !u!4 &1009806584
 Transform:
   m_ObjectHideFlags: 0
@@ -321,6 +324,60 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1009806586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009806582}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a32bebd3afb1a94b8dc814814745476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomes:
+  - landscapeLacunarity: 1.12
+    landscapePercistance: 10.44
+    landscapeOctaves: 3
+    landscapeSize: 0.05
+    landscapeHeightWeight: 8.84
+    landscapeHeightOverSeaLevel: -5.49
+    stoneLayerNoiseValue: 30
+    biomeLacunarity: 0.01
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 4.24
+    biomeDiminishLowWeight: -4.14
+    biomeDiminishAbove: 4.97
+    biomeDiminishHighWeight: 0.6
+    biomeAmplitude: 20.71
+    name: forest
+    biomeSpecificEntitySpawns: []
+  - landscapeLacunarity: 1
+    landscapePercistance: 2.13
+    landscapeOctaves: 4
+    landscapeSize: 0.05
+    landscapeHeightWeight: 1.23
+    landscapeHeightOverSeaLevel: -0.02
+    stoneLayerNoiseValue: 30
+    biomeLacunarity: 0.01
+    biomePercistance: 6.3
+    biomeOctaves: 2
+    biomeDiminishBelow: 4.24
+    biomeDiminishLowWeight: -4.14
+    biomeDiminishAbove: 4.97
+    biomeDiminishHighWeight: 0.6
+    biomeAmplitude: 4.32
+    name: desert
+    biomeSpecificEntitySpawns: []
+  amountOfChunksLoading: 0
+  chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
+    type: 3}
+  player: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61, type: 3}
+  loadingState: 
+  loadingProgress: 0
+  mainChunk: {fileID: 0}
 --- !u!850595691 &1068284029
 LightingSettings:
   m_ObjectHideFlags: 0

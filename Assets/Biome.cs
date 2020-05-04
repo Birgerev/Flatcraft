@@ -16,6 +16,7 @@ public class Biome
     public float landscapeSize = 0.05f;
     public float landscapeHeightWeight = 0.08f;
     public float landscapeHeightOverSeaLevel = 43;
+    public float stoneLayerNoiseValue;
 
     [Space]
     [Header("Biome")]
@@ -47,9 +48,10 @@ public class Biome
 
     public float getLandscapeNoiseAt(Location loc)
     {
-        float value = (float)getLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
-        if (loc.y > Chunk.SeaLevel - 10)
+        float value = 100;
+        if (loc.y > Chunk.SeaLevel - 20)
         {
+            value = (float) getLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
             value -= (landscapeHeightWeight * ((float)loc.y + landscapeHeightOverSeaLevel - (Chunk.SeaLevel)));
         }
         return value;

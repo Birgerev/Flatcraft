@@ -6844,12 +6844,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   biomes:
-  - landscapeLacunarity: 1
-    landscapePercistance: 1
-    landscapeOctaves: 2
+  - landscapeLacunarity: 1.12
+    landscapePercistance: 10.44
+    landscapeOctaves: 3
     landscapeSize: 0.05
-    landscapeHeightWeight: 0.08
-    landscapeHeightOverSeaLevel: 43
+    landscapeHeightWeight: 8.84
+    landscapeHeightOverSeaLevel: -5.49
+    stoneLayerNoiseValue: 25
     biomeLacunarity: 0.01
     biomePercistance: 6.3
     biomeOctaves: 2
@@ -6861,11 +6862,12 @@ MonoBehaviour:
     name: forest
     biomeSpecificEntitySpawns: []
   - landscapeLacunarity: 1
-    landscapePercistance: 1
-    landscapeOctaves: 2
+    landscapePercistance: 2.13
+    landscapeOctaves: 4
     landscapeSize: 0.05
-    landscapeHeightWeight: 0.4
-    landscapeHeightOverSeaLevel: 0
+    landscapeHeightWeight: 1.23
+    landscapeHeightOverSeaLevel: -0.02
+    stoneLayerNoiseValue: 5
     biomeLacunarity: 0.01
     biomePercistance: 6.3
     biomeOctaves: 2
@@ -6875,22 +6877,6 @@ MonoBehaviour:
     biomeDiminishHighWeight: 0.6
     biomeAmplitude: 20.71
     name: desert
-    biomeSpecificEntitySpawns: []
-  - landscapeLacunarity: 1
-    landscapePercistance: 0.7
-    landscapeOctaves: 2
-    landscapeSize: 0.05
-    landscapeHeightWeight: 0.2
-    landscapeHeightOverSeaLevel: 20
-    biomeLacunarity: 0.06
-    biomePercistance: 0.26
-    biomeOctaves: 2
-    biomeDiminishBelow: 5.59
-    biomeDiminishLowWeight: -5.9
-    biomeDiminishAbove: -5.46
-    biomeDiminishHighWeight: 36.18
-    biomeAmplitude: -1.34
-    name: lake
     biomeSpecificEntitySpawns: []
   amountOfChunksLoading: 0
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,

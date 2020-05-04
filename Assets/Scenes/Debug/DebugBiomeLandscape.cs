@@ -11,6 +11,7 @@ public class DebugBiomeLandscape : MonoBehaviour
     public int previewWidth;
     public float previewUpdateFrequency;
     public bool showSeaLevel;
+    public bool showStoneLayer;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,9 @@ public class DebugBiomeLandscape : MonoBehaviour
                     float noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
                     if (noiseValue > 0.1f)
                     {
-                        tex.SetPixel(x, y, Color.black);
+                        bool isStone = (noiseValue > biome.stoneLayerNoiseValue);
+                        
+                        tex.SetPixel(x, y, (showStoneLayer && isStone ) ? Color.black : Color.gray);
                     }
                 }
             }
