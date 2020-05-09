@@ -337,7 +337,6 @@ public class Chunk : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
-        lakeNoise = new LibNoise.Generator.Perlin(2, 0.8f, 5f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves, WorldManager.world.seed, QualityMode.High);
 
         isLoading = true;
@@ -827,7 +826,6 @@ public class Chunk : MonoBehaviour
     
     LibNoise.Generator.Perlin caveNoise;
     LibNoise.Generator.Perlin patchNoise;
-    LibNoise.Generator.Perlin lakeNoise;
     public Material GetTheoreticalTerrainBlock(Location loc)
     {
         System.Random r = new System.Random(seedByLocation(loc));
@@ -842,7 +840,7 @@ public class Chunk : MonoBehaviour
         //-Ground-//
         if (noiseValue > 0.1f)
         {
-            if (biome.name == "desert" || biome.name == "lake")
+            if (biome.name == "desert")
             {
                 mat = Material.Sand;
             }
@@ -858,7 +856,7 @@ public class Chunk : MonoBehaviour
         }
 
         //-Lakes-//
-        if (mat == Material.Air && loc.y <= SeaLevel && biome.name == "lake")
+        if (mat == Material.Air && loc.y <= SeaLevel)
         {
             mat = Material.Water;
         }
