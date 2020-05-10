@@ -17,6 +17,7 @@
           <e p="Bed_Bottom.cs" t="Include" />
           <e p="Bed_Top.cs" t="Include" />
           <e p="Bedrock.cs" t="Include" />
+          <e p="Birch_Log.cs" t="Include" />
           <e p="Cactus.cs" t="Include" />
           <e p="Chest.cs" t="Include" />
           <e p="Coal_Ore.cs" t="Include" />
@@ -170,6 +171,7 @@
           <e p="Recepies" t="Include">
             <e p="Crafting" t="Include">
               <e p="bed.txt" t="Include" />
+              <e p="birch_planks.txt" t="Include" />
               <e p="chest.txt" t="Include" />
               <e p="crafting_table.txt" t="Include" />
               <e p="diamond_axe.txt" t="Include" />
@@ -188,7 +190,7 @@
               <e p="iron_pickaxe.txt" t="Include" />
               <e p="iron_shovel.txt" t="Include" />
               <e p="iron_sword.txt" t="Include" />
-              <e p="planks.txt" t="Include" />
+              <e p="oak_planks.txt" t="Include" />
               <e p="sticks.txt" t="Include" />
               <e p="stone_axe.txt" t="Include" />
               <e p="stone_hoe.txt" t="Include" />

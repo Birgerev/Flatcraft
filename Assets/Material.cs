@@ -81,4 +81,5 @@
     Bed_Top,
     
     Dead_Bush,
+    Birch_Log
 }
