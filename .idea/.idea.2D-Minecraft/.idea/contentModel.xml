@@ -22,6 +22,7 @@
           <e p="Coal_Ore.cs" t="Include" />
           <e p="Cobblestone.cs" t="Include" />
           <e p="Crafting_Table.cs" t="Include" />
+          <e p="Dead_Bush.cs" t="Include" />
           <e p="Diamond_Ore.cs" t="Include" />
           <e p="Dirt.cs" t="Include" />
           <e p="Door.cs" t="Include" />

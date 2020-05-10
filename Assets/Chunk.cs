@@ -551,8 +551,14 @@ public class Chunk : MonoBehaviour
         {
             if (mat == Material.Sand && getBlock((loc + new Location(0, 1))) == null)
             {
+                //Dead Bushes
+                if (r.Next(0, 100) <= 5)
+                {
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Dead_Bush, "", false, false);
+                }
+                
                 //Cactie
-                if (r.Next(0, 100) <= 8)
+                if (r.Next(0, 100) <= 5)
                 {
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
                 }

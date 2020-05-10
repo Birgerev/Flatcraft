@@ -79,4 +79,6 @@
 
     Bed_Bottom,
     Bed_Top,
+    
+    Dead_Bush,
 }
