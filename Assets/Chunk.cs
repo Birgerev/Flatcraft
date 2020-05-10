@@ -527,11 +527,18 @@ public class Chunk : MonoBehaviour
             if (mat == Material.Grass && getBlock((loc + new Location(0, 1))) == null)
             {
                 //Vegetation
-                if (r.Next(0, 100) <= 25)
+                if (r.Next(0, 100) <= 30)
                 {
-                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass, Material.Red_Flower };
+                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass};
 
                     Chunk.setBlock(loc + new Location(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
+                }
+                //Flowers
+                if (r.Next(0, 100) <= 10)
+                {
+                    Material[] flowerMaterials = new Material[] { Material.Red_Flower };
+
+                    Chunk.setBlock(loc + new Location(0, 1), flowerMaterials[r.Next(0, flowerMaterials.Length)], "", false, false);
                 }
                 
                 //Trees
@@ -552,7 +559,7 @@ public class Chunk : MonoBehaviour
             if (mat == Material.Sand && getBlock((loc + new Location(0, 1))) == null)
             {
                 //Dead Bushes
-                if (r.Next(0, 100) <= 5)
+                if (r.Next(0, 100) <= 10)
                 {
                     Chunk.setBlock(loc + new Location(0, 1), Material.Dead_Bush, "", false, false);
                 }
