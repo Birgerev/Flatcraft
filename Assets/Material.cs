@@ -81,5 +81,7 @@
     Bed_Top,
     
     Dead_Bush,
-    Birch_Log
+    Birch_Log,
+    
+    Mossy_Cobblestone
 }

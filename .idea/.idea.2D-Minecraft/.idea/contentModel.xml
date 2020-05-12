@@ -39,6 +39,7 @@
           <e p="Leaves.cs" t="Include" />
           <e p="Liquid.cs" t="Include" />
           <e p="Logged_Leaves.cs" t="Include" />
+          <e p="Mossy_Cobblestone.cs" t="Include" />
           <e p="Oak_log.cs" t="Include" />
           <e p="Oak_Plank_Stairs.cs" t="Include" />
           <e p="Oak_Planks.cs" t="Include" />
