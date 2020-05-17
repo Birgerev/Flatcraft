@@ -548,7 +548,7 @@ public class Chunk : MonoBehaviour
                 }
 
                 //Large Trees
-                if (r.Next(0, 100) <= 10)
+                if (r.Next(0, 100) <= 1)
                 {
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Oak_Tree|save=false", false, false);
                 }

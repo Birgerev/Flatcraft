@@ -214,8 +214,8 @@
           </e>
           <e p="Structure" t="Include">
             <e p="Cactus" t="Include">
-              <e p="Tree_01.txt" t="Include" />
-              <e p="Tree_02.txt" t="Include" />
+              <e p="Cactus_01.txt" t="Include" />
+              <e p="Cactus_02.txt" t="Include" />
             </e>
             <e p="Large_Oak_Tree" t="Include">
               <e p="Large_Oak_Tree_01.txt" t="Include" />
