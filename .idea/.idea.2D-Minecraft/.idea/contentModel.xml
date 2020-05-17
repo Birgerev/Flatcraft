@@ -217,8 +217,12 @@
               <e p="Tree_01.txt" t="Include" />
               <e p="Tree_02.txt" t="Include" />
             </e>
-            <e p="Large_Tree" t="Include">
-              <e p="Large_Tree_01.txt" t="Include" />
+            <e p="Large_Oak_Tree" t="Include">
+              <e p="Large_Oak_Tree_01.txt" t="Include" />
+            </e>
+            <e p="Oak_Tree" t="Include">
+              <e p="Oak_Tree_01.txt" t="Include" />
+              <e p="Oak_Tree_02.txt" t="Include" />
             </e>
             <e p="Ore_Coal" t="Include">
               <e p="Coal_01.txt" t="Include" />
@@ -255,10 +259,6 @@
               <e p="Redstone_02.txt" t="Include" />
               <e p="Redstone_03.txt" t="Include" />
               <e p="Redstone_04.txt" t="Include" />
-            </e>
-            <e p="Tree" t="Include">
-              <e p="Tree_01.txt" t="Include" />
-              <e p="Tree_02.txt" t="Include" />
             </e>
           </e>
         </e>

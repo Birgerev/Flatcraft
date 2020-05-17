@@ -544,13 +544,13 @@ public class Chunk : MonoBehaviour
                 //Trees
                 if (r.Next(0, 100) <= 10)
                 {
-                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Tree|save=false", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Oak_Tree|save=false", false, false);
                 }
 
                 //Large Trees
-                if (r.Next(0, 100) <= 1)
+                if (r.Next(0, 100) <= 10)
                 {
-                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Tree|save=false", false, false);
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Oak_Tree|save=false", false, false);
                 }
             }
         }
