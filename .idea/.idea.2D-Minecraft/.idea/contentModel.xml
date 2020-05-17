@@ -213,6 +213,10 @@
             </e>
           </e>
           <e p="Structure" t="Include">
+            <e p="Birch_Tree" t="Include">
+              <e p="Birch_Tree_01.txt" t="Include" />
+              <e p="Birch_Tree_02.txt" t="Include" />
+            </e>
             <e p="Cactus" t="Include">
               <e p="Cactus_01.txt" t="Include" />
               <e p="Cactus_02.txt" t="Include" />
