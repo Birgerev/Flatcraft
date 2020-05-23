@@ -12,4 +12,14 @@ public class Tall_Grass : Block
     public override bool requiresGround { get; } = true;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    
+    public override ItemStack GetDrop()
+    {
+        float r = getRandomChance();
+
+        if (r < 0.25f)
+            return new ItemStack(Material.Wheat_Seeds, 1);
+        else
+            return new ItemStack();
+    }
 }
