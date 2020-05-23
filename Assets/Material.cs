@@ -87,4 +87,7 @@
     
     Wheat_Seeds,
     Wheat,
+    
+    Farmland_Dry,
+    Farmland_Wet,
 }

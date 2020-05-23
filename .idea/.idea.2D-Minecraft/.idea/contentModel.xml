@@ -27,6 +27,8 @@
           <e p="Diamond_Ore.cs" t="Include" />
           <e p="Dirt.cs" t="Include" />
           <e p="Door.cs" t="Include" />
+          <e p="Farmland_Dry.cs" t="Include" />
+          <e p="Farmland_Wet.cs" t="Include" />
           <e p="Fire.cs" t="Include" />
           <e p="Furnace.cs" t="Include" />
           <e p="Gold_Ore.cs" t="Include" />
