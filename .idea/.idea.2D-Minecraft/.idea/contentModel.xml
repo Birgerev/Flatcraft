@@ -23,6 +23,7 @@
           <e p="Coal_Ore.cs" t="Include" />
           <e p="Cobblestone.cs" t="Include" />
           <e p="Crafting_Table.cs" t="Include" />
+          <e p="Crop.cs" t="Include" />
           <e p="Dead_Bush.cs" t="Include" />
           <e p="Diamond_Ore.cs" t="Include" />
           <e p="Dirt.cs" t="Include" />
@@ -54,6 +55,7 @@
           <e p="Tall_Grass.cs" t="Include" />
           <e p="Torch.cs" t="Include" />
           <e p="Water.cs" t="Include" />
+          <e p="Wheat_Crop.cs" t="Include" />
           <e p="Wooden_Door.cs" t="Include" />
           <e p="Wooden_Door_Bottom.cs" t="Include" />
           <e p="Wooden_Door_Top.cs" t="Include" />

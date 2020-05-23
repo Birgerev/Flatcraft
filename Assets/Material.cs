@@ -90,4 +90,6 @@
     
     Farmland_Dry,
     Farmland_Wet,
+    
+    Wheat_Crop
 }
