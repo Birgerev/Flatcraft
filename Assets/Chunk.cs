@@ -97,10 +97,6 @@ public class Chunk : MonoBehaviour
             WorldManager.instance.chunks.Remove(chunkPosition);
     }
 
-    private void Update()
-    {
-    }
-
     public static Chunk GetChunk(ChunkPosition pos)
     {
         return GetChunk(pos, true);
@@ -400,22 +396,41 @@ public class Chunk : MonoBehaviour
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
         
+        StartCoroutine(GenerateSunlightLoop());
         StartCoroutine(GenerateLight());
         StartCoroutine(SaveLoop());
         StartCoroutine(ProcessLightLoop());
     }
 
+    IEnumerator GenerateSunlightLoop()
+    {
+        string lastUpdateTime = "none";
+
+        while (true)
+        {
+            bool isNight = (WorldManager.world.time % WorldManager.dayLength) > (WorldManager.dayLength / 2);
+            string currentTime = isNight ? "night" : "day";
+
+            if (currentTime != lastUpdateTime)
+            {
+                //Fill sunlight source list
+                int minXPos = chunkPosition.worldX;
+                int maxXPos = chunkPosition.worldX + Width - 1;
+
+                for (int x = minXPos; x <= maxXPos; x++)
+                {
+                    Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
+                }
+
+                lastUpdateTime = currentTime;
+            }
+
+            yield return new WaitForSecondsRealtime(10f);
+        }
+    }
+
     IEnumerator GenerateLight()
     {
-        //Fill sunlight source list
-        int minXPos = chunkPosition.worldX;
-        int maxXPos = chunkPosition.worldX + Width - 1;
-
-        for (int x = minXPos; x <= maxXPos; x++)
-        {
-            Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
-        }
-
         //Update Light Sources (not sunlight again)
         foreach (Block block in GetComponentsInChildren<Block>())
         {

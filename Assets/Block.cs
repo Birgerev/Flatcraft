@@ -145,6 +145,7 @@ public class Block : MonoBehaviour
     public static void UpdateSunlightSourceAt(int x, Dimension dimension)
     {
         Block topBlock = Chunk.getTopmostBlock(x, dimension);
+        bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
         if (topBlock == null)
             return;
 
@@ -161,7 +162,7 @@ public class Block : MonoBehaviour
 
         //Add the new position
         sunlightSources.Add(topBlock);
-        lightSources.Add(topBlock, 15);
+        lightSources.Add(topBlock, isDay ? 15 : 5);
         UpdateLightAround(topBlock.location);
     }
 
@@ -210,7 +211,8 @@ public class Block : MonoBehaviour
         if (block == null)
             return 0;
         
-        return block.IsSunlightSource() ? 15 : block.glowLevel;
+        bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
+        return block.IsSunlightSource() ? (isDay ? 15 : 5) : block.glowLevel;
     }
 
     public static int GetLightLevel(Location loc)
