@@ -6,6 +6,8 @@ public class Leaves : Block
 {
     public static string default_texture = "block_leaves";
     public override bool playerCollide { get; } = false;
+    public override bool autoTick { get; } = true;
+
     public override float breakTime { get; } = 0.3f;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
@@ -17,7 +19,7 @@ public class Leaves : Block
 
     public override void Tick(bool spread)
     {
-        if (age > 1 && getRandomChance() < 0.1f / Chunk.TickRate)
+        if (age > 1 && getRandomChance() < 0.05f / Chunk.TickRate)
             TryDecay();
 
 
