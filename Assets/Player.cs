@@ -145,7 +145,7 @@ public class Player : HumanEntity
         else
             itemType = (Item)System.Activator.CreateInstance(typeof(Item));    
 
-        if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
+        if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)) || System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
         {
             if (crosshairBlock == null || (crosshairBlock.GetMaterial() == Material.Water || crosshairBlock.GetMaterial() == Material.Lava))
             {
@@ -154,8 +154,11 @@ public class Player : HumanEntity
                     if (inventory.getSelectedItem().material != Material.Air &&
                         (inventory.getSelectedItem().amount > 0))
                     {
-
-                        Chunk.setBlock(blockedMouseLocation, inventory.getSelectedItem().material);
+                        if(System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
+                            Chunk.setBlock(blockedMouseLocation, ((PlaceableItem)itemType).blockMaterial);
+                        if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
+                            Chunk.setBlock(blockedMouseLocation, inventory.getSelectedItem().material);
+                        
                         inventory.setItem(inventory.selectedSlot,
                             new ItemStack(inventory.getSelectedItem().material,
                                 inventory.getSelectedItem().amount - 1));

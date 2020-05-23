@@ -105,6 +105,7 @@
           <e p="Iron_Pickaxe.cs" t="Include" />
           <e p="Iron_Shovel.cs" t="Include" />
           <e p="Iron_Sword.cs" t="Include" />
+          <e p="PlaceableItem.cs" t="Include" />
           <e p="Raw_Chicken.cs" t="Include" />
           <e p="Stick.cs" t="Include" />
           <e p="Stone_Axe.cs" t="Include" />
