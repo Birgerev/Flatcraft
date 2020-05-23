@@ -109,6 +109,8 @@
           <e p="Stone_Shovel.cs" t="Include" />
           <e p="Stone_Sword.cs" t="Include" />
           <e p="Tool.cs" t="Include" />
+          <e p="Wheat.cs" t="Include" />
+          <e p="Wheat_Seeds.cs" t="Include" />
           <e p="Wooden_Axe.cs" t="Include" />
           <e p="Wooden_Hoe.cs" t="Include" />
           <e p="Wooden_Pickaxe.cs" t="Include" />

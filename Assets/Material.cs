@@ -84,4 +84,5 @@
     
     Mossy_Cobblestone,
     Bed
+    Wheat_Seeds,
 }
