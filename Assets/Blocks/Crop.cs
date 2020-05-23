@@ -22,7 +22,7 @@ public class Crop : Block
     {
         CheckFarmland();
         
-        if (getRandomChance() < 0.00096f)
+        if (getRandomChance() < 0.00096f / Chunk.TickRate)
             Grow();
         
         texture = crop_textures[GetStage()];

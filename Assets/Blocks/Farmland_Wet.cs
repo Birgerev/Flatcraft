@@ -18,7 +18,7 @@ public class Farmland_Wet : Block
     
     public override void Tick(bool spreadTick)
     {
-        if (getRandomChance() < 0.1f)
+        if (getRandomChance() < 0.1f / Chunk.TickRate)
             CheckWater();
         
         base.Tick(spreadTick);
