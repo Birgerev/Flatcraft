@@ -16,6 +16,18 @@ public class Tool : Item
             block.Hit(1 / Player.blockHitsPerPerSecond, tool_type, tool_level);
         }
     }
+    
+    public override void InteractRight(Location loc, bool firstFrameDown)
+    {
+        Block block = Chunk.getBlock(loc);
+
+        if (tool_type == Tool_Type.Hoe && block != null && (block.GetMaterial() == Material.Grass || block.GetMaterial() == Material.Dirt))
+        {
+            Chunk.setBlock(loc, Material.Farmland_Dry);
+        }
+        
+        base.InteractRight(loc, firstFrameDown);
+    }
 }
 public enum Tool_Type
 {
