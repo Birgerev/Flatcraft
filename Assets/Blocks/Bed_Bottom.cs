@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bed_Bottom : Bed
+public class Bed_Bottom : Bed_Block
 {
     public static string default_texture = "block_bed_bottom";
 

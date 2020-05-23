@@ -13,7 +13,7 @@
         <e p="Block.cs" t="Include" />
         <e p="Blocks" t="Include">
           <e p="Air.cs" t="Include" />
-          <e p="Bed.cs" t="Include" />
+          <e p="Bed_Block.cs" t="Include" />
           <e p="Bed_Bottom.cs" t="Include" />
           <e p="Bed_Top.cs" t="Include" />
           <e p="Bedrock.cs" t="Include" />
@@ -80,6 +80,7 @@
         <e p="Inventory.cs" t="Include" />
         <e p="Item.cs" t="Include" />
         <e p="Items" t="Include">
+          <e p="Bed.cs" t="Include" />
           <e p="Coal.cs" t="Include" />
           <e p="Cooked_Chicken.cs" t="Include" />
           <e p="Diamond.cs" t="Include" />

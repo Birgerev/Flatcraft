@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bed : Block
+public class Bed_Block : Block
 {
     public override bool rotate_x { get; } = true;
     public override bool playerCollide { get; } = false;
@@ -55,9 +55,9 @@ public class Bed : Block
 
         base.Tick(spreadTick);
     }
-
-    public override void Break(bool drop)
+    
+    public override ItemStack GetDrop()
     {
-        base.Break(drop);
+        return new ItemStack(Material.Bed, 1);
     }
 }
