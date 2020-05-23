@@ -20,7 +20,9 @@ public class Crop : Block
     
     public override void Tick(bool spreadTick)
     {
-        if (getRandomChance() < 0.5f)
+        CheckFarmland();
+        
+        if (getRandomChance() < 0.00096f)
             Grow();
         
         texture = crop_textures[GetStage()];
