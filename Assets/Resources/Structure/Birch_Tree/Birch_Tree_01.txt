@@ -1,7 +1,7 @@
 Birch_Log*0,0*
 Birch_Log*0,1*
-Logged_Leaves*0,2*
-Logged_Leaves*0,3*
+Birch_Log*0,2*leaf_texture=true
+Birch_Log*0,3*leaf_texture=true
 Leaves*0,4*
 Leaves*0,5*
 Leaves*1,2*

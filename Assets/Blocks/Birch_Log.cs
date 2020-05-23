@@ -2,13 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Birch_Log : Block
+public class Birch_Log : Log
 {
-    public override bool playerCollide { get; } = false;
-
     public static string default_texture = "block_birch_log";
-    public override float breakTime { get; } = 3f;
-    
-    public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 }

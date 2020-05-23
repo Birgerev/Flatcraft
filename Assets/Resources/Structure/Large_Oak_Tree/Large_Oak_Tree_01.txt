@@ -3,9 +3,9 @@ Oak_Log*0,1*
 Oak_Log*0,2*
 Oak_Log*0,3*
 Oak_Log*0,3*
-Logged_Leaves*0,4*
-Logged_Leaves*0,5*
-Logged_Leaves*0,6*
+Oak_Log*0,4*leaf_texture=true
+Oak_Log*0,5*leaf_texture=true
+Oak_Log*0,6*leaf_texture=true
 Leaves*0,7*
 Leaves*0,8*
 Leaves*0,9*
