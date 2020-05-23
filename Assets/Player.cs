@@ -269,12 +269,7 @@ public class Player : HumanEntity
 
         if (isNight)
         {
-            Debug.LogError("slept");
             WorldManager.world.time = newTime;
-        }
-        else
-        {
-            Debug.LogError("cant sleep at day");
         }
     }
 
