@@ -6,7 +6,7 @@ public class Crop : Block
 {
     public override bool playerCollide { get; } = false;
 
-    public override float breakTime { get; } = 0.3f;
+    public override float breakTime { get; } = 0.05f;
     public override bool autoTick { get; } = true;
     public override bool autosave { get; } = true;
     public override bool requiresGround { get; } = true;
@@ -29,6 +29,16 @@ public class Crop : Block
         base.Tick(spreadTick);
     }
 
+    public void CheckFarmland()
+    {
+        Block blockBeneath = Chunk.getBlock(location - new Location(0, 1));
+
+        if (blockBeneath == null || (blockBeneath.GetMaterial() != Material.Farmland_Wet && blockBeneath.GetMaterial() != Material.Farmland_Dry))
+        {
+            Break();
+        }
+    }
+    
     public void Grow()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
