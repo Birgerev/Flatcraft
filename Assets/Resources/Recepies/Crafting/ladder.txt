@@ -1,0 +1,8 @@
+Ladder*3*
+Stick*0,0*
+Stick*2,0*
+Stick*0,1*
+Stick*1,1*
+Stick*2,1*
+Stick*0,2*
+Stick*2,2*

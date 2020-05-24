@@ -37,6 +37,7 @@
           <e p="Gravel.cs" t="Include" />
           <e p="InventoryContainer.cs" t="Include" />
           <e p="Iron_Ore.cs" t="Include" />
+          <e p="Ladder.cs" t="Include" />
           <e p="Lapis_Ore.cs" t="Include" />
           <e p="Lava.cs" t="Include" />
           <e p="Leaves.cs" t="Include" />
@@ -199,6 +200,7 @@
               <e p="iron_pickaxe.txt" t="Include" />
               <e p="iron_shovel.txt" t="Include" />
               <e p="iron_sword.txt" t="Include" />
+              <e p="ladder.txt" t="Include" />
               <e p="oak_planks.txt" t="Include" />
               <e p="stairs-mirror.txt" t="Include" />
               <e p="stairs.txt" t="Include" />

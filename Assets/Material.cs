@@ -91,5 +91,7 @@
     Farmland_Dry,
     Farmland_Wet,
     
-    Wheat_Crop
+    Wheat_Crop,
+    
+    Ladder,
 }

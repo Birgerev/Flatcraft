@@ -42,10 +42,17 @@ public class Player : HumanEntity
         base.Start();
     }
 
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        performInput();
+    }
+
     public override void Update()
     {
         base.Update();
-
+        
         float scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
@@ -57,9 +64,9 @@ public class Player : HumanEntity
             if (inventory.selectedSlot < 0)
                 inventory.selectedSlot = 8;
         }
+
         lastFrameScroll = scroll;
 
-        performInput();
         inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
     }
 

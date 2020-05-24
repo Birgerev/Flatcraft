@@ -14,10 +14,12 @@ public class LivingEntity : Entity
     private float sprintSpeed = 5.6f;
     private float sneakSpeed = 1.3f;
     private float swimUpSpeed = 2f;
+    private float climbSpeed = 0.35f;
     private float jumpVelocity = 6f;
     private float groundFriction = 0.92f;
     private float airDrag = 0.92f;
     private float liquidDrag = 0.75f;
+    private float ladderFriction = 0.95f;
 
     //Entity Data Tags
     [EntityDataTag(false)]
@@ -75,9 +77,11 @@ public class LivingEntity : Entity
     {
         if (isInLiquid)
             setVelocity(getVelocity() * liquidDrag);
-        if (!isInLiquid && !isOnGround)
+        if (isOnLadder)
+            setVelocity(getVelocity() * ladderFriction);
+        if (!isInLiquid && !isOnLadder && !isOnGround)
             setVelocity(new Vector3(getVelocity().x * airDrag, getVelocity().y));
-        if (!isInLiquid && isOnGround)
+        if (!isInLiquid && !isOnLadder && isOnGround)
             setVelocity(getVelocity() * groundFriction);
     }
     
@@ -93,7 +97,7 @@ public class LivingEntity : Entity
                 targetXVelocity += walkSpeed;
             else targetXVelocity = 0;
             
-            GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.deltaTime), 0);
+            GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.fixedDeltaTime), 0);
         }
 
         StairCheck(direction);
@@ -153,9 +157,15 @@ public class LivingEntity : Entity
             setVelocity(getVelocity() + new Vector2(0, jumpVelocity));
             last_jump_time = Time.time;
         }
+
         if (isInLiquid && getVelocity().y < swimUpSpeed)
         {
             setVelocity(getVelocity() + new Vector2(0, swimUpSpeed));
+        }
+        
+        if (isOnLadder)
+        {
+            setVelocity(getVelocity() + new Vector2(0, climbSpeed));
         }
     }
 
@@ -173,8 +183,8 @@ public class LivingEntity : Entity
             }
         }
 
-        if (isOnGround || isInLiquid)
-            highestYlevelsinceground = 0;
+        if (isOnGround || isInLiquid || isOnLadder)
+            highestYlevelsinceground = transform.position.y;
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }

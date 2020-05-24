@@ -35,6 +35,7 @@ public class Entity : MonoBehaviour
     public Chunk currentChunk;
     public bool isOnGround;
     public bool isInLiquid = false;
+    public bool isOnLadder = false;
     public bool flipRenderX = false;
     public bool dead = false;
     public Vector2 lastFramePosition;
