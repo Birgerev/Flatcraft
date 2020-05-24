@@ -95,6 +95,39 @@ public class LivingEntity : Entity
             
             GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.deltaTime), 0);
         }
+
+        StairCheck(direction);
+    }
+
+    public void StairCheck(int direction)
+    {
+        if ((Vector2)transform.position != lastFramePosition)    //Return if player has moved since last frame
+            return;
+        if (!isOnGround)    //Return if player isn't grounded
+            return;
+        
+        Block blockInFront = Chunk.getBlock(Location.locationByPosition((Vector2)transform.position + new Vector2(direction*0.7f, -0.5f), location.dimension));    //Get block in front of player acording to walk direction
+
+        if (blockInFront == null)
+        {
+            return;
+        }
+        
+        if (System.Type.GetType(blockInFront.GetMaterial().ToString()).IsSubclassOf(typeof(Stairs)))
+        {
+            bool rotated_x = false;
+            bool rotated_y = false;
+
+            if (blockInFront.data.ContainsKey("rotated_x"))
+                rotated_x = (blockInFront.data["rotated_x"] == "true");
+            if (blockInFront.data.ContainsKey("rotated_y"))
+                rotated_y = (blockInFront.data["rotated_y"] == "true");
+            
+            if (rotated_y == false && ((direction == -1 && rotated_x == false) || (direction == 1 &&  rotated_x == true)))    //if the stairs are rotated correctly
+            {
+                transform.position += new Vector3(0, 1);
+            }
+        }
     }
 
     public virtual EntityController GetController()

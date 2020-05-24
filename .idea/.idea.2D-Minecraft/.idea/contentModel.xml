@@ -200,6 +200,8 @@
               <e p="iron_shovel.txt" t="Include" />
               <e p="iron_sword.txt" t="Include" />
               <e p="oak_planks.txt" t="Include" />
+              <e p="stairs-mirror.txt" t="Include" />
+              <e p="stairs.txt" t="Include" />
               <e p="sticks.txt" t="Include" />
               <e p="stone_axe.txt" t="Include" />
               <e p="stone_hoe.txt" t="Include" />

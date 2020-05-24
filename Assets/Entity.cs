@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.IO;
+using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class Entity : MonoBehaviour
@@ -35,6 +37,7 @@ public class Entity : MonoBehaviour
     public bool isInLiquid = false;
     public bool flipRenderX = false;
     public bool dead = false;
+    public Vector2 lastFramePosition;
     public Location location
     {
         get
@@ -76,6 +79,11 @@ public class Entity : MonoBehaviour
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
         checkVoidDamage();
         checkSuffocation();
+    }
+
+    public void LateUpdate()
+    {
+        lastFramePosition = transform.position;
     }
 
     public virtual bool isChunkLoaded()
