@@ -293,9 +293,10 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
+        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), false);
         time_of_last_autosave = Time.time;
-        
-        Chunk.setBlock(location, GetMaterial(), stringFromData(data), true, false);
+
+        chunk.SaveBlock(this);
     }
 
     public virtual void Hit(float time)

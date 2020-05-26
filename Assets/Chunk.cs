@@ -776,9 +776,7 @@ public class Chunk : MonoBehaviour
         
         if (save)
         {
-            if (blockChanges.ContainsKey(loc))
-                blockChanges.Remove(loc);
-            blockChanges.Add(loc, mat.ToString() + "*" + data);
+            SaveBlock(loc, mat, data);
         }
 
         Block result = null;
@@ -823,6 +821,18 @@ public class Chunk : MonoBehaviour
         return result;
     }
 
+    public void SaveBlock(Block block)
+    {
+        SaveBlock(block.location, block.GetMaterial(), Block.stringFromData(block.data));
+    }
+
+    public void SaveBlock(Location loc, Material mat, string data)
+    {
+        if (blockChanges.ContainsKey(loc))
+            blockChanges.Remove(loc);
+        blockChanges.Add(loc, mat.ToString() + "*" + data);
+    }
+    
     public static Block getBlock(Location loc)
     {
         Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
