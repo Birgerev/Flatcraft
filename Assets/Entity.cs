@@ -74,7 +74,7 @@ public class Entity : MonoBehaviour
 
         getRenderer().flipX = flipRenderX;
 
-        _cachedposition = transform.position;
+        UpdateCachedPosition();
         currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), ChunkLoadingEntity);
 
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
@@ -85,6 +85,11 @@ public class Entity : MonoBehaviour
     public void LateUpdate()
     {
         lastFramePosition = transform.position;
+    }
+
+    public void UpdateCachedPosition()
+    {
+        _cachedposition = transform.position;
     }
 
     public virtual bool isChunkLoaded()
@@ -175,7 +180,7 @@ public class Entity : MonoBehaviour
         dead = true;
         entities.Remove(this);
 
-        Destroy(gameObject, 0.1f);
+        Destroy(gameObject, 0.2f);
     }
 
     public virtual void Damage(float damage)

@@ -21,6 +21,8 @@ public class Player : HumanEntity
     [EntityDataTag(true)]
     public Location spawnLocation = new Location(0, 80);
 
+    public Vector2 spawnLocationDebug;
+
     //Entity State
     [Space]
     public static Player localInstance;
@@ -52,7 +54,8 @@ public class Player : HumanEntity
     public override void Update()
     {
         base.Update();
-        
+
+        spawnLocationDebug = spawnLocation.getPosition();
         float scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
@@ -263,6 +266,7 @@ public class Player : HumanEntity
 
         base.Die();
         transform.position = ValidSpawn((int)spawnLocation.x).getPosition();
+        UpdateCachedPosition();
         Save();
     }
 
@@ -306,10 +310,10 @@ public class Player : HumanEntity
         yield return new WaitForSeconds(2f);
         while (!isChunkLoaded())
         {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(2f);
         }
 
         highestYlevelsinceground = 0;    //Reset falldamage
-        transform.position = ValidSpawn(location.x).getPosition();
+        transform.position = ValidSpawn(spawnLocation.x).getPosition();
     }
 }
