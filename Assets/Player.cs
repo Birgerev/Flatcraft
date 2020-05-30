@@ -21,8 +21,6 @@ public class Player : HumanEntity
     [EntityDataTag(true)]
     public Location spawnLocation = new Location(0, 80);
 
-    public Vector2 spawnLocationDebug;
-
     //Entity State
     [Space]
     public static Player localInstance;
@@ -54,8 +52,7 @@ public class Player : HumanEntity
     public override void Update()
     {
         base.Update();
-
-        spawnLocationDebug = spawnLocation.getPosition();
+        
         float scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
