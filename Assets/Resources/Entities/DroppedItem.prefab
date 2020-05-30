@@ -46,6 +46,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -133,12 +134,15 @@ MonoBehaviour:
   currentChunk: {fileID: 0}
   isOnGround: 0
   isInLiquid: 0
+  isOnLadder: 0
   flipRenderX: 0
   dead: 0
+  lastFramePosition: {x: 0, y: 0}
   item:
     material: 0
     amount: 0
     data: 
+    durablity: 0
   canPickup: 1
 --- !u!61 &3560120173737735801
 BoxCollider2D:
@@ -212,4 +216,4 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4

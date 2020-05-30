@@ -46,6 +46,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -157,6 +158,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -245,9 +247,10 @@ MonoBehaviour:
   currentChunk: {fileID: 0}
   isOnGround: 0
   isInLiquid: 0
+  isOnLadder: 0
   flipRenderX: 0
   dead: 0
-  cachedPosition: {x: 0, y: 0}
+  lastFramePosition: {x: 0, y: 0}
   health: 0
   maxHunger: 20
   reach: 5
@@ -258,117 +261,151 @@ MonoBehaviour:
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     - material: 0
       amount: 0
       data: 
+      durablity: 0
     name: Player Inventory
-    holder: {x: 0, y: 0}
     open: 0
     selectedSlot: 0
     baseInventorySize: 36
-  spawnPosition: {x: 0, y: 80}
   crosshair: {fileID: 1149122271182722694}
 --- !u!61 &1149122272397806803
 BoxCollider2D:
@@ -416,4 +453,4 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4

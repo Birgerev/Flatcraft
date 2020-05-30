@@ -80,7 +80,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &8466682603583594597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,8 +98,10 @@ MonoBehaviour:
   currentChunk: {fileID: 0}
   isOnGround: 0
   isInLiquid: 0
+  isOnLadder: 0
   flipRenderX: 0
   dead: 0
+  lastFramePosition: {x: 0, y: 0}
   maxBounces: 3
   maxAge: 5
   doGravity: 1
@@ -149,6 +151,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
