@@ -79,9 +79,9 @@ public class Biome
         int region;    //region position
 
         if (chunkPos.chunkX >= 0)
-            region = chunkPos.chunkX / Chunk.AmountOfChunksInRegion;
+            region = (int)((float)chunkPos.chunkX / (float)Chunk.AmountOfChunksInRegion);
         else
-            region = (chunkPos.chunkX / Chunk.AmountOfChunksInRegion) - 1;
+            region = Mathf.CeilToInt(((float)chunkPos.chunkX + 1) / (float)Chunk.AmountOfChunksInRegion) - 1;
                 
         int startChunk = region * Chunk.AmountOfChunksInRegion;    //first chunk of the region
         int endChunk = startChunk + Chunk.AmountOfChunksInRegion;    //last chunk of the region

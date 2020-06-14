@@ -28,7 +28,7 @@ public struct ChunkPosition
         {
             chunkX = Mathf.CeilToInt(((float)loc.x + 1f) / (float)Chunk.Width) - 1;
         }
-
+        
         this.chunkX = chunkX;
         this.dimension = loc.dimension;
     }
