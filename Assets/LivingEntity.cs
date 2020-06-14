@@ -177,7 +177,9 @@ public class LivingEntity : Entity
             float damage = (highestYlevelsinceground - transform.position.y) - 3;
             if (damage >= 1)
             {
-                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f);
+                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f);    //Play entity land sound
+
+                spawnFallDamageParticles();
 
                 TakeFallDamage(damage);
             }
@@ -187,6 +189,31 @@ public class LivingEntity : Entity
             highestYlevelsinceground = transform.position.y;
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
+    }
+
+    private void spawnFallDamageParticles()
+    {
+        System.Random r = new System.Random();
+        Block blockBeneath = null;
+        for (int y = 1; blockBeneath == null; y++)
+        {
+            Block block = Chunk.getBlock(location - new Location(0, y));
+            if (block != null)
+                blockBeneath = block;
+        }
+                
+        int particleAmount = r.Next(4, 8);
+        for (int i = 0; i < particleAmount; i++)    //Spawn landing partickes
+        {
+            Particle part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = blockBeneath.location.getPosition() + new Vector2(0,  0.6f);
+            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.doGravity = true;
+            part.velocity = new Vector2(((float)r.NextDouble() - 0.5f) * 2, 1.5f);
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
     }
 
     public override void Hit(float damage)
