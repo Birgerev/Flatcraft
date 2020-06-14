@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -254,6 +255,15 @@ public class Block : MonoBehaviour
     {
         GetComponent<Collider2D>().enabled = (playerCollide || trigger);
         GetComponent<Collider2D>().isTrigger = (trigger);
+    }
+
+    public Color GetRandomColourFromTexture()
+    {
+        Texture2D texture = getTexture().texture;
+        Color[] pixels = texture.GetPixels();
+        System.Random random = new System.Random();
+
+        return pixels[random.Next(pixels.Length)];
     }
 
     public void Rotate()
