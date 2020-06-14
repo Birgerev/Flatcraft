@@ -9,6 +9,7 @@ public class WorldManager : MonoBehaviour
     public static WorldManager instance;
 
     public List<Biome> biomes = new List<Biome>();
+    public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
     public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
     public int amountOfChunksLoading = 0;
