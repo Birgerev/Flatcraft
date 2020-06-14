@@ -13,6 +13,7 @@ public class Chunk : MonoBehaviour
     public static float AutosaveDuration = 5;
     public const int Width = 16, Height = 255;
     public const int RenderDistance = 4;
+    public const int AmountOfChunksInRegion = 16;
     public const int SpawnChunkDistance = 0;
     public const int MinimumUnloadTime = 20;
     public const int TickRate = 1;
@@ -29,7 +30,6 @@ public class Chunk : MonoBehaviour
     public Chunk rightChunk;
     public Chunk leftChunk;
     public Dictionary<Vector2Int, Block> blocks = new Dictionary<Vector2Int, Block>();
-    public Dictionary<int, Biome> cachedBiome = new Dictionary<int, Biome>();
     public Dictionary<Location, int> cachedRandomSeeds = new Dictionary<Location, int>();
 
     [Header("Cave Generation Settings")]
@@ -113,21 +113,6 @@ public class Chunk : MonoBehaviour
         }
 
         return chunk;
-    }
-
-    public static ChunkPosition GetChunkPosFromWorldPosition(int worldPos, Dimension dimension)
-    {
-        int chunkX = 0;
-        if (worldPos >= 0)
-        {
-            chunkX = (int)((float)worldPos / (float)Width);
-        }
-        else
-        {
-            chunkX = Mathf.CeilToInt(((float)worldPos + 1f) / (float)Width) - 1;
-        }
-
-        return new ChunkPosition(chunkX, dimension);
     }
 
     public static Chunk LoadChunk(ChunkPosition cPos)
@@ -249,7 +234,7 @@ public class Chunk : MonoBehaviour
             int x = r.Next(0, Width) + chunkPosition.worldX;
             int y = getTopmostBlock(x, chunkPosition.dimension).location.y + 1;
             List<string> entities = mobSpawns;
-            entities.AddRange(getBiome(x, chunkPosition.dimension).biomeSpecificEntitySpawns);
+            entities.AddRange(getBiome().biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
 
             Entity entity = Entity.Spawn(entityType);
@@ -287,7 +272,6 @@ public class Chunk : MonoBehaviour
 
     public Dictionary<Location, Material> loadChunkTerrain()
     {
-        cacheBiomes();
         cacheRandomSeeds();
         Dictionary<Location, Material> blocks = new Dictionary<Location, Material>();
 
@@ -295,7 +279,7 @@ public class Chunk : MonoBehaviour
         {
             for (int x = 0; x < Width; x++)
             {
-                Location loc = new Location(x + chunkPosition.worldX, y);
+                Location loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
                 Material mat = GetTheoreticalTerrainBlock(loc);
 
                 if (mat != Material.Air)
@@ -306,14 +290,6 @@ public class Chunk : MonoBehaviour
         }
 
         return blocks;
-    }
-
-    public void cacheBiomes()
-    {
-        for (int x = 0; x < Width; x++)
-        {
-            getBiome(x + chunkPosition.worldX, chunkPosition.dimension);
-        }
     }
 
     public void cacheRandomSeeds()
@@ -334,11 +310,10 @@ public class Chunk : MonoBehaviour
 
         patchNoise = new LibNoise.Generator.Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
         caveNoise = new LibNoise.Generator.Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves, WorldManager.world.seed, QualityMode.High);
-
+        
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
         
-
         Dictionary<Location, Material> terrainBlocks = null;
         Thread terrainThread = new Thread(() => { terrainBlocks = loadChunkTerrain(); });
         terrainThread.Start();
@@ -357,7 +332,7 @@ public class Chunk : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.05f);
             }
-        }
+        }  
         
 
         for (int y = 0; y <= Height; y++)
@@ -376,7 +351,7 @@ public class Chunk : MonoBehaviour
         StartCoroutine(Tick());
         StartCoroutine(TickAllBlocks());
         yield return new WaitForSecondsRealtime(1f);
-
+        
 
         //Load block changes
         string path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension.ToString() + "\\" + chunkPosition.chunkX + "\\blocks";
@@ -534,7 +509,7 @@ public class Chunk : MonoBehaviour
             return;
 
         Material mat = block.GetMaterial();
-        Biome biome = getBiome(loc.x, chunkPosition.dimension);
+        Biome biome = getBiome();
         System.Random r = new System.Random(Chunk.seedByLocation(loc));
 
         if (biome.name == "forest")
@@ -715,7 +690,7 @@ public class Chunk : MonoBehaviour
 
     public bool isBlockLocal(Location loc)
     {
-        bool local = (GetChunkPosFromWorldPosition(loc.x, loc.dimension).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension);
+        bool local = (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension);
         
         if (loc.y < 0 || loc.y > Height || loc.dimension != chunkPosition.dimension)
             local = false;
@@ -735,7 +710,7 @@ public class Chunk : MonoBehaviour
 
     public static Block setBlock(Location loc, Material mat, string data, bool save, bool spreadTick)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
+        Chunk chunk = GetChunk(new ChunkPosition(loc), false);
 
         if (chunk == null)
             return null;
@@ -835,7 +810,7 @@ public class Chunk : MonoBehaviour
     
     public static Block getBlock(Location loc)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
+        Chunk chunk = GetChunk(new ChunkPosition(loc), false);
 
         if (chunk == null)
         {
@@ -869,12 +844,30 @@ public class Chunk : MonoBehaviour
         System.Random r = new System.Random(seedByLocation(loc));
         Material mat = Material.Air;
 
-        List<Biome> biomes = getTwoMostProminantBiomes(loc.x);
-        Biome biome = biomes[0];
+        float noiseValue;
+        
+        Biome biome = getBiome();
+        Biome rightBiome = Biome.getBiomeAt(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension));
+        Biome leftBiome = Biome.getBiomeAt(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension));
+        float primaryBiomeWeight;
+        
+        if (biome != rightBiome)
+        {
+            primaryBiomeWeight = 0.5f - ((Mathf.Abs(loc.x - (new ChunkPosition(loc).chunkX * Width)) / Width) / 2);
+            noiseValue = Biome.blendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
+        }
+        else if (biome != leftBiome)
+        {
+            primaryBiomeWeight = 0.5f + ((Mathf.Abs(loc.x - (new ChunkPosition(loc).chunkX * Width)) / Width) / 2);
+            noiseValue = Biome.blendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
+        }
+        else
+        {
+            noiseValue = biome.getLandscapeNoiseAt(loc);
+        }
 
         //-Terrain Generation-//
-        float noiseValue = biome.blendNoiseValues(biomes[1], loc);
-
+        
         //-Ground-//
         if (noiseValue > 0.1f)
         {
@@ -892,7 +885,7 @@ public class Chunk : MonoBehaviour
                 mat = Material.Stone;
             }
         }
-
+        
         //-Lakes-//
         if (mat == Material.Air && loc.y <= SeaLevel)
         {
@@ -962,7 +955,7 @@ public class Chunk : MonoBehaviour
 
     public static Block getTopmostBlock(int x, Dimension dimension)
     {
-        Chunk chunk = GetChunk(GetChunkPosFromWorldPosition(x, dimension), false);
+        Chunk chunk = GetChunk(new ChunkPosition(new Location(x, 0, dimension)), false);
         if (chunk == null)
             return null;
 
@@ -983,7 +976,7 @@ public class Chunk : MonoBehaviour
 
     public static int seedByLocation(Location loc)
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
+        Chunk chunk = Chunk.GetChunk(new ChunkPosition(loc), false);
         int seed = 0;
 
         if (chunk == null)
@@ -998,33 +991,8 @@ public class Chunk : MonoBehaviour
         return seed;
     }
 
-    public static Biome getBiome(int pos, Dimension dimension)
+    public Biome getBiome()
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(pos, dimension), false);
-        Biome biome = null;
-
-        if (chunk == null)
-            return null;
-
-        if (chunk.cachedBiome.ContainsKey(pos))
-        {
-            biome = chunk.cachedBiome[pos];
-        }
-        else
-        {
-            biome = getTwoMostProminantBiomes(pos)[0];
-            chunk.cachedBiome.Add(pos, biome);
-        }
-
-        return biome;
-    }
-
-    public static List<Biome> getTwoMostProminantBiomes(int pos)
-    {
-        List<Biome> biomes = new List<Biome>(WorldManager.instance.biomes);
-
-        biomes.Sort((x, y) => x.getBiomeValueAt(pos).CompareTo(y.getBiomeValueAt(pos)));
-
-        return biomes;
+        return Biome.getBiomeAt(chunkPosition);
     }
 }

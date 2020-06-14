@@ -75,7 +75,7 @@ public class Entity : MonoBehaviour
         getRenderer().flipX = flipRenderX;
 
         UpdateCachedPosition();
-        currentChunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), ChunkLoadingEntity);
+        currentChunk = Chunk.GetChunk(new ChunkPosition(location), ChunkLoadingEntity);
 
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
         checkVoidDamage();
@@ -231,7 +231,7 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\" + location.dimension.ToString() + "\\"+(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension)).chunkX+"\\entities\\"+id+"."+GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\" + location.dimension.ToString() + "\\"+(new ChunkPosition(location)).chunkX+"\\entities\\"+id+"."+GetType().Name;
     }
 
     public virtual void Save()

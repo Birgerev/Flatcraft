@@ -6851,14 +6851,8 @@ MonoBehaviour:
     landscapeHeightWeight: 8.84
     landscapeHeightOverSeaLevel: -5.49
     stoneLayerNoiseValue: 25
-    biomeLacunarity: 0.01
-    biomePercistance: 6.3
-    biomeOctaves: 2
-    biomeDiminishBelow: 4.24
-    biomeDiminishLowWeight: -4.14
-    biomeDiminishAbove: 4.97
-    biomeDiminishHighWeight: 0.6
-    biomeAmplitude: 20.71
+    biomeMinimumChunkSize: 4
+    biomeMaximumChunkSize: 10
     name: forest
     biomeSpecificEntitySpawns: []
   - landscapeLacunarity: 1
@@ -6868,16 +6862,11 @@ MonoBehaviour:
     landscapeHeightWeight: 1.23
     landscapeHeightOverSeaLevel: -0.02
     stoneLayerNoiseValue: 5
-    biomeLacunarity: 0.01
-    biomePercistance: 6.3
-    biomeOctaves: 2
-    biomeDiminishBelow: 4.24
-    biomeDiminishLowWeight: -4.14
-    biomeDiminishAbove: 4.97
-    biomeDiminishHighWeight: 0.6
-    biomeAmplitude: 20.71
+    biomeMinimumChunkSize: 4
+    biomeMaximumChunkSize: 10
     name: desert
     biomeSpecificEntitySpawns: []
+  debugBiomes: []
   amountOfChunksLoading: 0
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}

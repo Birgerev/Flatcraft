@@ -281,7 +281,6 @@
         <e p="Scenes" t="Include">
           <e p="Debug" t="Include">
             <e p="DebugBiomeLandscape.cs" t="Include" />
-            <e p="DebugBiomeWave.cs" t="Include" />
           </e>
         </e>
         <e p="Sheep.cs" t="Include" />

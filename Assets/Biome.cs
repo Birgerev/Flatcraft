@@ -6,8 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public class Biome
 {
-    public static int averageBlocks = 1;
-
     [Space]
     [Header("Landscape")]
     public float landscapeLacunarity = 1f;
@@ -18,16 +16,9 @@ public class Biome
     public float landscapeHeightOverSeaLevel = 43;
     public float stoneLayerNoiseValue;
 
-    [Space]
-    [Header("Biome")]
-    public float biomeLacunarity = 1f;
-    public float biomePercistance = 1f;
-    public int biomeOctaves = 2;
-    public float biomeDiminishBelow = 20;
-    public float biomeDiminishLowWeight = 0.05f;
-    public float biomeDiminishAbove = 80;
-    public float biomeDiminishHighWeight = 0.05f;
-    public float biomeAmplitude = 10f;
+    [Space] [Header("Occourance Frequency")]
+    public int biomeMinimumChunkSize;
+    public int biomeMaximumChunkSize;
 
 
     [Space]
@@ -57,64 +48,61 @@ public class Biome
         return value;
     }
 
-    public LibNoise.Generator.Perlin getBiomeNoise()
+    public static float blendNoiseValues(Location loc, Biome biomeA, Biome biomeB, float weightA)
     {
-        int seed = 0;
-        if (WorldManager.world != null)
-            seed = WorldManager.world.seed;
-
-        if (WorldManager.instance != null)
-            seed += WorldManager.instance.biomes.IndexOf(this);
-
-        seed += 1000;
-
-        return new LibNoise.Generator.Perlin(1, biomeLacunarity, biomePercistance, biomeOctaves, seed, QualityMode.Low);
-    }
-
-    public float getBiomeValueAt(int x)
-    {
-        float value = 0;
-        value = ((float)getBiomeNoise().GetValue(x, 0) + 4);
-
-        if (value < biomeDiminishBelow)
-            value -= -(biomeDiminishBelow - value) * biomeDiminishLowWeight;
-
-        if (value > biomeDiminishAbove)
-            value -= (value - biomeDiminishAbove) * biomeDiminishHighWeight;
-
-        value *= biomeAmplitude;
-
-        return value;
-    }
-
-    public float getAverageBiomeValueAt(int x)
-    {
-        float value = 0;
-
-        for(int i = -Mathf.FloorToInt((float)(averageBlocks) / 2f); i <= averageBlocks - (Mathf.CeilToInt((float)(averageBlocks) / 2f)); i++)
-        {
-            value += getBiomeValueAt(i + x);
-        }
-
-        value /= averageBlocks;
-
-        return value;
-    }
-
-    public float blendNoiseValues(Biome secondBiome, Location loc)
-    {
-        float biomeNoiseA = getAverageBiomeValueAt(loc.x);
-        float biomeNoiseB = secondBiome.getAverageBiomeValueAt(loc.x);
-
-        float weightA = biomeNoiseA / (biomeNoiseA + biomeNoiseB);
         float weightB = 1 - weightA;
 
         weightA = Mathf.Clamp(weightA, 0, 1);
         weightB = Mathf.Clamp(weightB, 0, 1);
 
-        float landscapeNoiseA = getLandscapeNoiseAt(loc) * weightA;
-        float landscapeNoiseB = secondBiome.getLandscapeNoiseAt(loc) * weightB;
+        float landscapeNoiseA = biomeA.getLandscapeNoiseAt(loc) * weightA;
+        float landscapeNoiseB = biomeB.getLandscapeNoiseAt(loc) * weightB;
 
         return landscapeNoiseA + landscapeNoiseB;
+    }
+
+    public static Biome getBiomeAt(ChunkPosition cPos)
+    {
+        if (WorldManager.instance.chunkBiomes.ContainsKey(cPos))    //If biome value at this location already has been generated, use this value
+        {
+            return WorldManager.instance.chunkBiomes[cPos];
+        }
+        
+        //Otherwise, generate the value, save it for later use, and return it
+        generateBiomesForRegion(cPos);
+        return WorldManager.instance.chunkBiomes[cPos];
+    }
+    
+    public static void generateBiomesForRegion(ChunkPosition chunkPos)
+    {
+        Dimension dimension = chunkPos.dimension;    //The dimension of the region
+        int region;    //region position
+
+        if (chunkPos.chunkX >= 0)
+            region = chunkPos.chunkX / Chunk.AmountOfChunksInRegion;
+        else
+            region = (chunkPos.chunkX / Chunk.AmountOfChunksInRegion) - 1;
+                
+        int startChunk = region * Chunk.AmountOfChunksInRegion;    //first chunk of the region
+        int endChunk = startChunk + Chunk.AmountOfChunksInRegion;    //last chunk of the region
+
+        int currentChunk = startChunk;    //start generating biome values at the first chunk of the region
+        while (currentChunk < endChunk)    //Keep on iterating until every chunk in the region has a biome
+        {
+            System.Random r = new System.Random(currentChunk.GetHashCode() + dimension.GetHashCode() + WorldManager.world.seed);//Random, with a seed unique to the chunk x position, the dimension, and the world seed
+            Biome biome = WorldManager.instance.biomes[r.Next(0, WorldManager.instance.biomes.Count)];    //determine the biome that will be generated for the next few chunks at random
+            int biomeChunkSize = r.Next(biome.biomeMinimumChunkSize, biome.biomeMaximumChunkSize);    //how many chunks will this biome cover
+            int biomeBeginningChunk = currentChunk;    //where the biome starts
+
+            while(currentChunk <= biomeBeginningChunk + biomeChunkSize)    //Assign this biome to every one of these chunks
+            {
+                if (currentChunk >= endChunk)    //if chunk is outside of region, stop generating
+                    break;
+                
+                ChunkPosition i = new ChunkPosition(currentChunk, dimension);
+                WorldManager.instance.chunkBiomes[i] = biome;
+                currentChunk++;//just updated this loop, try playing the game
+            }
+        }
     }
 }

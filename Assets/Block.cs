@@ -201,7 +201,7 @@ public class Block : MonoBehaviour
             source.CheckBlockLightSource();
         }
         
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(loc.x, loc.dimension), false);
+        Chunk chunk = Chunk.GetChunk(new ChunkPosition(loc), false);
         if(chunk != null)
             chunk.lightSourceToUpdate.Add(loc);
     }
@@ -293,7 +293,7 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
-        Chunk chunk = Chunk.GetChunk(Chunk.GetChunkPosFromWorldPosition(location.x, location.dimension), false);
+        Chunk chunk = Chunk.GetChunk(new ChunkPosition(location), false);
         time_of_last_autosave = Time.time;
 
         chunk.SaveBlock(this);
