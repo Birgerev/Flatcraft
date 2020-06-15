@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Mathematics;
+using Random = System.Random;
 
 [BurstCompile]
 public class Block : MonoBehaviour
@@ -256,6 +258,15 @@ public class Block : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = (trigger);
     }
 
+    public Color GetRandomColourFromTexture()
+    {
+        Texture2D texture = getTexture().texture;
+        Color[] pixels = texture.GetPixels();
+        System.Random random = new System.Random();
+
+        return pixels[random.Next(pixels.Length)];
+    }
+
     public void Rotate()
     {
         bool rotated_x = false;
@@ -367,8 +378,21 @@ public class Block : MonoBehaviour
     {
         if (drop)
             Drop();
-
+        
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
+
+        System.Random r = new System.Random();
+        for (int i = 0; i < r.Next(2, 8); i++)    //SpawnParticles
+        {
+            Particle part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = location.getPosition() + new Vector2((float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f);
+            part.color = GetRandomColourFromTexture();
+            part.doGravity = true;
+            part.velocity = Vector2.zero;
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
 
         Chunk.setBlock(location, Material.Air);
     }
