@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,10 @@ public class FallingSand : Entity
 
     //Entity State
 
+    public void Awake()
+    {
+        GetComponent<Rigidbody2D>().simulated = false;    //wait till the block that spawned the sand dissapears to begin simulating physics
+    }
     public override void Start()
     {
         base.Start();
@@ -27,6 +32,14 @@ public class FallingSand : Entity
     {
         base.Update();
 
+        if (!GetComponent<Rigidbody2D>().simulated)    //once the block that spawned the fallingSand is gone, begin simulating physics
+            if(!Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0))
+            {
+                GetComponent<Rigidbody2D>().simulated = true;
+            }else print(Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0).gameObject.name);
+        
+        
+        
         if ((isOnGround || (isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0)) && age > 1f && !dead)
         {
             if (Chunk.getBlock(location) == null)
@@ -35,9 +48,8 @@ public class FallingSand : Entity
             {
                 new ItemStack(material, 1).Drop(location);
             }
-
+            
             Die();
-            return;
         }
     }
 
