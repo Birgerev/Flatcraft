@@ -511,57 +511,52 @@ public class Chunk : MonoBehaviour
         Material mat = block.GetMaterial();
         Biome biome = getBiome();
         System.Random r = new System.Random(Chunk.seedByLocation(loc));
-
-        if (biome.name == "forest")
+        Material[] flowerMaterials = new Material[] { Material.Red_Flower };
+        Material[] vegetationMaterials = new Material[] { Material.Tall_Grass};
+        
+        if ((mat == Material.Grass || mat == Material.Sand) && getBlock((loc + new Location(0, 1))) == null)
         {
-            if (mat == Material.Grass && getBlock((loc + new Location(0, 1))) == null)
-            {
-                //Vegetation
-                if (r.Next(0, 100) <= 30)
-                {
-                    Material[] vegetationMaterials = new Material[] { Material.Tall_Grass};
-
+            //Vegetation
+            if(biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" || biome.name == "plains")
+                if (r.Next(0, 100) <= 50)
                     Chunk.setBlock(loc + new Location(0, 1), vegetationMaterials[r.Next(0, vegetationMaterials.Length)], "", false, false);
-                }
-                //Flowers
+            
+            if(biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" || biome.name == "plains")
                 if (r.Next(0, 100) <= 10)
-                {
-                    Material[] flowerMaterials = new Material[] { Material.Red_Flower };
-
                     Chunk.setBlock(loc + new Location(0, 1), flowerMaterials[r.Next(0, flowerMaterials.Length)], "", false, false);
-                }
                 
-                //Trees
-                if (r.Next(0, 100) <= 10)
-                {
+            //Trees
+            if(biome.name == "forest" || biome.name == "forest_hills" || biome.name == "plains")
+                 if (r.Next(0, 100) <= 20)
+                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Oak_Tree|save=false", false, false);
+            
+            //Birch Trees
+            if(biome.name == "birch_forest")
+                if (r.Next(0, 100) <= 20)
+                    Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Birch_Tree|save=false", false, false);
+            
+            //Unlikely Trees
+            if(biome.name == "plains")
+                if (r.Next(0, 100) <= 3)
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Oak_Tree|save=false", false, false);
-                }
-
-                //Large Trees
-                if (r.Next(0, 100) <= 1)
-                {
+            
+            //Large Trees
+            if(biome.name == "plains")
+                if (r.Next(0, 100) <= 3)
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Large_Oak_Tree|save=false", false, false);
-                }
-            }
-        }
-        else if (biome.name == "desert")
-        {
-            if (mat == Material.Sand && getBlock((loc + new Location(0, 1))) == null)
-            {
-                //Dead Bushes
-                if (r.Next(0, 100) <= 10)
-                {
+            
+            //Dead Bushes
+            if (biome.name == "desert")
+                if (r.Next(0, 100) <= 8)
                     Chunk.setBlock(loc + new Location(0, 1), Material.Dead_Bush, "", false, false);
-                }
                 
-                //Cactie
+            //Cactie
+            if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
-                {
                     Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Cactus|save=false", false, false);
-                }
-            }
         }
-
+        
+        
         //Generate Ores
         if (mat == Material.Stone)
         {
@@ -875,7 +870,7 @@ public class Chunk : MonoBehaviour
             {
                 mat = Material.Sand;
             }
-            else if (biome.name == "forest")
+            else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" || biome.name == "plains")
             {
                 mat = Material.Grass;
             }

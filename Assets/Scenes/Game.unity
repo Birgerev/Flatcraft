@@ -6844,18 +6844,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   biomes:
-  - landscapeLacunarity: 1.12
-    landscapePercistance: 10.44
-    landscapeOctaves: 3
+  - name: forest
+    landscapeLacunarity: 1
+    landscapePercistance: 2.13
+    landscapeOctaves: 4
     landscapeSize: 0.05
-    landscapeHeightWeight: 8.84
-    landscapeHeightOverSeaLevel: -5.49
-    stoneLayerNoiseValue: 25
-    biomeMinimumChunkSize: 4
-    biomeMaximumChunkSize: 10
-    name: forest
+    landscapeHeightWeight: 2.16
+    landscapeHeightOverSeaLevel: -0.02
+    stoneLayerNoiseValue: 6.86
+    biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 5
     biomeSpecificEntitySpawns: []
-  - landscapeLacunarity: 1
+  - name: desert
+    landscapeLacunarity: 1
     landscapePercistance: 2.13
     landscapeOctaves: 4
     landscapeSize: 0.05
@@ -6864,9 +6865,40 @@ MonoBehaviour:
     stoneLayerNoiseValue: 5
     biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
-    name: desert
     biomeSpecificEntitySpawns: []
-  debugBiomes: []
+  - name: forest_hills
+    landscapeLacunarity: 1.05
+    landscapePercistance: 2.05
+    landscapeOctaves: 4
+    landscapeSize: 0.06
+    landscapeHeightWeight: 1.23
+    landscapeHeightOverSeaLevel: -0.08
+    stoneLayerNoiseValue: 4.63
+    biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
+    biomeSpecificEntitySpawns: []
+  - name: birch_forest
+    landscapeLacunarity: 1.05
+    landscapePercistance: 2.05
+    landscapeOctaves: 4
+    landscapeSize: 0.06
+    landscapeHeightWeight: 1.23
+    landscapeHeightOverSeaLevel: -0.08
+    stoneLayerNoiseValue: 4.63
+    biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
+    biomeSpecificEntitySpawns: []
+  - name: plains
+    landscapeLacunarity: 1
+    landscapePercistance: 1.86
+    landscapeOctaves: 4
+    landscapeSize: 0.05
+    landscapeHeightWeight: 2.16
+    landscapeHeightOverSeaLevel: -0.02
+    stoneLayerNoiseValue: 6.86
+    biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
+    biomeSpecificEntitySpawns: []
   amountOfChunksLoading: 0
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}
