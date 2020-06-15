@@ -267,9 +267,16 @@ public class Player : HumanEntity
         Save();
     }
 
+    public override void Damage(float damage)
+    {
+        base.Damage(damage);
+        
+        Sound.Play(location, "entity/Player/hurt", SoundType.Entities, 0.7f, 1.3f);    //Play hurt sound
+    }
+
     public override void Hit(float damage)
     {
-
+        
     }
 
     public void Sleep()
