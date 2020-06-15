@@ -79,12 +79,12 @@
 
     Bed_Bottom,
     Bed_Top,
+    Bed,
     
     Dead_Bush,
     Birch_Log,
     
     Mossy_Cobblestone,
-    Bed,
     
     Wheat_Seeds,
     Wheat,
