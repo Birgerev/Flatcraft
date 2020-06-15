@@ -526,7 +526,7 @@ public class Chunk : MonoBehaviour
                     Chunk.setBlock(loc + new Location(0, 1), flowerMaterials[r.Next(0, flowerMaterials.Length)], "", false, false);
                 
             //Trees
-            if(biome.name == "forest" || biome.name == "forest_hills" || biome.name == "plains")
+            if(biome.name == "forest" || biome.name == "forest_hills")
                  if (r.Next(0, 100) <= 20)
                      Chunk.setBlock(loc + new Location(0, 1), Material.Structure_Block, "structure=Oak_Tree|save=false", false, false);
             
@@ -869,6 +869,8 @@ public class Chunk : MonoBehaviour
             if (biome.name == "desert")
             {
                 mat = Material.Sand;
+                if(noiseValue > biome.stoneLayerNoiseValue - 2)
+                    mat = Material.Sandstone;
             }
             else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" || biome.name == "plains")
             {

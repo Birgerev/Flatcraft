@@ -6862,7 +6862,7 @@ MonoBehaviour:
     landscapeSize: 0.05
     landscapeHeightWeight: 1.23
     landscapeHeightOverSeaLevel: -0.02
-    stoneLayerNoiseValue: 5
+    stoneLayerNoiseValue: 7
     biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
     biomeSpecificEntitySpawns: []

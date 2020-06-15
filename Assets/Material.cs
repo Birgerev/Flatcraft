@@ -20,6 +20,7 @@
     Water,
     Lava,
     Sand,
+    Sandstone,
     Gravel,
     Oak_Planks,
     Stick,

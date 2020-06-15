@@ -50,6 +50,7 @@
           <e p="Red_Flower.cs" t="Include" />
           <e p="Redstone_Ore.cs" t="Include" />
           <e p="Sand.cs" t="Include" />
+          <e p="Sandstone.cs" t="Include" />
           <e p="Stairs.cs" t="Include" />
           <e p="Stone.cs" t="Include" />
           <e p="Structure_Block.cs" t="Include" />
