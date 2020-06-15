@@ -32,11 +32,8 @@ public class FallingSand : Entity
     {
         base.Update();
 
-        if (!GetComponent<Rigidbody2D>().simulated)    //once the block that spawned the fallingSand is gone, begin simulating physics
-            if(!Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0))
-            {
+        if (!GetComponent<Rigidbody2D>().simulated && !Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0))    //once the block that spawned the fallingSand is gone, begin simulating physics
                 GetComponent<Rigidbody2D>().simulated = true;
-            }else print(Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0).gameObject.name);
         
         
         
