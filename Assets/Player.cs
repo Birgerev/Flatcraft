@@ -231,7 +231,7 @@ public class Player : HumanEntity
         item.amount = 1;
         inventory.getSelectedItem().amount --;
 
-        item.Drop(location);
+        item.Drop(location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
     }
 
     public override void DropAllDrops()
