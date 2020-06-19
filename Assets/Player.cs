@@ -271,7 +271,7 @@ public class Player : HumanEntity
     {
         base.Damage(damage);
         
-        Sound.Play(location, "entity/Player/hurt", SoundType.Entities, 0.7f, 1.3f);    //Play hurt sound
+        Sound.Play(location, "entity/Player/hurt", SoundType.Entities, 0.85f, 1.15f);    //Play hurt sound
     }
 
     public override void Hit(float damage)
