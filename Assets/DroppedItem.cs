@@ -43,7 +43,7 @@ public class DroppedItem : Entity
 
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (!canPickup || age < 2)
+        if (!canPickup || age < 1.5f)
             return;
 
         if (col.GetComponent<DroppedItem>() != null)
