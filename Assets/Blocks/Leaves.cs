@@ -37,7 +37,7 @@ public class Leaves : Block
             {
                 if (Chunk.getBlock(new Location(location.x + x, location.y + y)) != null)
                 {
-                    if (Chunk.getBlock(new Location(location.x + x, location.y + y)).GetMaterial() == Material.Oak_Log)
+                    if (Chunk.getBlock(new Location(location.x + x, location.y + y)).GetType().IsSubclassOf(typeof(Log)))
                     {
                         foundSupport = true;
                         break;
