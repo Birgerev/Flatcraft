@@ -262,7 +262,7 @@ public class Block : MonoBehaviour
     {
         Texture2D texture = getTexture().texture;
         Color[] pixels = texture.GetPixels();
-        System.Random random = new System.Random();
+        System.Random random = new System.Random((DateTime.Now).GetHashCode());
 
         return pixels[random.Next(pixels.Length)];
     }
