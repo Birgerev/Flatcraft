@@ -146,7 +146,7 @@ public class LivingEntity : Entity
     {
         if (getVelocity().x != 0)
         {
-            flipRenderX = (getVelocity().x < 0);
+            facingLeft = (getVelocity().x < 0);
         }
     }
 
