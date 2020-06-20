@@ -316,6 +316,37 @@ public class Entity : MonoBehaviour
             isOnGround = false;
     }
 
+    public virtual void EnterLiquid(Liquid liquid)
+    {
+        isInLiquid = true;
+
+        if (getVelocity().y < -2)
+        {
+            System.Random r = new System.Random();
+            for (int i = 0; i < 8; i++) //Spawn landing partickes
+            {
+                Particle part = (Particle) Entity.Spawn("Particle");
+
+                part.transform.position = liquid.location.getPosition() + new Vector2(0, 0.5f);
+                part.color = liquid.GetRandomColourFromTexture();
+                part.doGravity = true;
+                part.velocity = new Vector2(
+                    (1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                    , 3f + (float) r.NextDouble());
+                part.maxAge = 1f + (float) r.NextDouble();
+                part.maxBounces = 10;
+            }
+
+            Debug.Log("Playing Sound");
+            Sound.Play(location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
+        }
+    }
+
+    public virtual void ExitLiquid(Liquid liquid)
+    {
+        isInLiquid = false;
+    }
+
     public static int CreateId()
     {
         return Random.Range(1, 99999);

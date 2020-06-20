@@ -105,4 +105,9 @@ public class Particle : Entity
             part.maxBounces = 10;
         }
     }
+
+    public override void EnterLiquid(Liquid liquid)
+    {
+        isInLiquid = true;
+    }
 }
