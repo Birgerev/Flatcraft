@@ -37,7 +37,7 @@ public class Player : HumanEntity
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
-        StartCoroutine(MoveToValidSpawnOnceLoaded());
+        ///StartCoroutine(MoveToValidSpawnOnceLoaded());
         
         base.Start();
     }

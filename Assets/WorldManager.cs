@@ -89,7 +89,8 @@ public class WorldManager : MonoBehaviour
         loadingProgress = 5f / steps;
 
 
-        Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).getPosition();    //Place player at ground
+        if(Player.localInstance.location.x == 0)    //Place player at ground first time player spawns
+            Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).getPosition();    
         
         StartCoroutine(SaveLoop());
     }
