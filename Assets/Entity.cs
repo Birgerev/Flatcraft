@@ -337,8 +337,7 @@ public class Entity : MonoBehaviour
                 part.maxAge = 1f + (float) r.NextDouble();
                 part.maxBounces = 10;
             }
-
-            Debug.Log("Playing Sound");
+            
             Sound.Play(location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
         }
     }
