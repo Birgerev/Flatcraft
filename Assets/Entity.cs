@@ -28,6 +28,8 @@ public class Entity : MonoBehaviour
     //Entity data tags
     [EntityDataTag(false)]
     public float age = 0;
+    [EntityDataTag(false)]
+    public bool facingLeft = false;
 
 
     //Entity State
@@ -36,7 +38,6 @@ public class Entity : MonoBehaviour
     public bool isOnGround;
     public bool isInLiquid = false;
     public bool isOnLadder = false;
-    public bool flipRenderX = false;
     public bool dead = false;
     public Vector2 lastFramePosition;
     public Location location
@@ -72,7 +73,7 @@ public class Entity : MonoBehaviour
         if (isInLiquid)
             isOnGround = false;
 
-        getRenderer().flipX = flipRenderX;
+        getRenderer().flipX = facingLeft;
 
         UpdateCachedPosition();
         currentChunk = Chunk.GetChunk(new ChunkPosition(location), ChunkLoadingEntity);
