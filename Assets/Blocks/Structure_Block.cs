@@ -17,7 +17,7 @@ public class Structure_Block : Block
             {
                 string structureId = data["structure"];
                 TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
-                TextAsset structure = structures[new System.Random(Chunk.seedByLocation(location)).Next(0, structures.Length)];
+                TextAsset structure = structures[new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
                 bool save = (data["save"] == "false") ? false : true;
 
                 Material replaceMaterial = Material.Air;

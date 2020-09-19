@@ -10,7 +10,7 @@ public class Chicken : PassiveEntity
     public override List<ItemStack> GetDrops()
     {
         List<ItemStack> result = new List<ItemStack>();
-        System.Random r = new System.Random(Chunk.seedByLocation(location));
+        System.Random r = new System.Random(SeedGenerator.SeedByLocation(location));
 
         result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
 

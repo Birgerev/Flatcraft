@@ -76,7 +76,10 @@ public class Entity : MonoBehaviour
         getRenderer().flipX = facingLeft;
 
         UpdateCachedPosition();
-        currentChunk = Chunk.GetChunk(new ChunkPosition(location), ChunkLoadingEntity);
+        currentChunk = Chunk.GetChunk(new ChunkPosition(location));
+        
+        if(ChunkLoadingEntity)
+            Chunk.CreateChunksAround(location, Chunk.RenderDistance);
 
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
         checkVoidDamage();

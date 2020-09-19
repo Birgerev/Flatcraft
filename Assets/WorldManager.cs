@@ -47,6 +47,7 @@ public class WorldManager : MonoBehaviour
 
     IEnumerator LoadWorld()
     {
+        SeedGenerator.Reset();
         Time.timeScale = 1;
         chunks.Clear();
 
@@ -63,12 +64,7 @@ public class WorldManager : MonoBehaviour
         loadingState = "Generating Spawn Chunk: 0";
         loadingProgress = 2f / steps;
         //Load Chunk [0]
-        mainChunk = Chunk.LoadChunk(new ChunkPosition(0, Dimension.Overworld));
-
-        for(int i = -Chunk.RenderDistance; i < Chunk.RenderDistance; i++)
-        {
-            Chunk.GetChunk(new ChunkPosition((int)((float)Player.localInstance.transform.position.x / (float)Chunk.Width) + i, Player.localInstance.location.dimension), true);
-        }
+        mainChunk = Chunk.CreateChunk(new ChunkPosition(0, Dimension.Overworld));
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {

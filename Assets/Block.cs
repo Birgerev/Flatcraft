@@ -111,19 +111,18 @@ public class Block : MonoBehaviour
 
     public float getRandomChance()
     {
-        return (float)new System.Random(Chunk.seedByLocation(location) + age).NextDouble();
+        return (float)new System.Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
     }
 
     IEnumerator autoTickLoop()
     {
         //Wait a random duration, to smooth out ticks across time
-        yield return new WaitForSeconds((float)new System.Random(Chunk.seedByLocation(location)).NextDouble() * (1f / Chunk.TickRate));
+        yield return new WaitForSeconds((float)new System.Random(SeedGenerator.SeedByLocation(location)).NextDouble() * (1f / Chunk.TickRate));
 
         while (true)
         {
             yield return new WaitForSeconds(1 / Chunk.TickRate);
-            if(GetChunk().isTickedChunk)
-                Tick(false);
+            Tick(false);
         }
     }
     
@@ -203,7 +202,7 @@ public class Block : MonoBehaviour
             source.CheckBlockLightSource();
         }
         
-        Chunk chunk = Chunk.GetChunk(new ChunkPosition(loc), false);
+        Chunk chunk = Chunk.GetChunk(new ChunkPosition(loc));
         if(chunk != null)
             chunk.lightSourceToUpdate.Add(loc);
     }
@@ -304,7 +303,7 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
-        Chunk chunk = Chunk.GetChunk(new ChunkPosition(location), false);
+        Chunk chunk = Chunk.GetChunk(new ChunkPosition(location));
         time_of_last_autosave = Time.time;
 
         chunk.SaveBlock(this);
@@ -447,7 +446,7 @@ public class Block : MonoBehaviour
         }
         else if(alternative_textures.Length > 0)
         {
-            int textureIndex = new System.Random(Chunk.seedByLocation(location)).Next(0, alternative_textures.Length);
+            int textureIndex = new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, alternative_textures.Length);
 
             return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
         }
