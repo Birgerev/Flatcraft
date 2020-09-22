@@ -12,12 +12,12 @@ public class Bed_Bottom : Bed_Block
     {
         base.FirstTick();
 
-        Block otherBlock = Chunk.getBlock(otherBlockLocation);
-        if (otherBlock == null)
+        Material otherMaterial = otherBlockLocation.GetMaterial();
+        if (otherMaterial == Material.Air)
         {
-            otherBlock = Chunk.setBlock(otherBlockLocation, otherBlockMaterial, "", true, true);
+            otherBlockLocation.SetMaterial(otherBlockMaterial);
         }
-        else if (otherBlock.GetMaterial() != otherBlockMaterial)
+        else if (otherMaterial != otherBlockMaterial)
         {
             Break(true);
         }

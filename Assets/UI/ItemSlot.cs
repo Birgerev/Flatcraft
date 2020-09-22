@@ -24,7 +24,7 @@ public class ItemSlot : MonoBehaviour
             return;
         }
 
-        if (Time.frameCount % 5 == 0 && canvasGroup.interactable)
+        if (Time.frameCount % 30 == 0 && canvasGroup.interactable)
         {
             UpdateSlot();
         }

@@ -6824,6 +6824,7 @@ GameObject:
   - component: {fileID: 296144444}
   - component: {fileID: 296144443}
   - component: {fileID: 296144445}
+  - component: {fileID: 296144446}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -6940,6 +6941,18 @@ MonoBehaviour:
     type: 2}
   entitiesGroup: {fileID: -433041381731868617, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
+--- !u!114 &296144446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296144442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36ae5994a68c4e248a6d66c85367f876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &305091285
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19519,6 +19532,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &935343593
 Canvas:
   m_ObjectHideFlags: 0
@@ -33732,7 +33746,7 @@ PrefabInstance:
     - target: {fileID: 5465031669268779061, guid: a5ca6ac48d040c64187188d5ab27ef10,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5465031669268779061, guid: a5ca6ac48d040c64187188d5ab27ef10,
         type: 3}

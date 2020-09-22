@@ -31,7 +31,7 @@ public class Item
 
     public virtual void InteractLeft(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(loc);
+        Block block = loc.GetBlock();
         
         if (block != null)
         {
@@ -41,7 +41,7 @@ public class Item
 
     public virtual void InteractRight(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(loc);
+        Block block = loc.GetBlock();
         
         if (firstFrameDown)
         {

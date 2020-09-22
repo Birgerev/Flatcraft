@@ -279,11 +279,13 @@
             </e>
           </e>
         </e>
+        <e p="SaveManager.cs" t="Include" />
         <e p="Scenes" t="Include">
           <e p="Debug" t="Include">
             <e p="DebugBiomeLandscape.cs" t="Include" />
           </e>
         </e>
+        <e p="SeedGenerator.cs" t="Include" />
         <e p="Sheep.cs" t="Include" />
         <e p="Sky.cs" t="Include" />
         <e p="SmeltingRecepie.cs" t="Include" />

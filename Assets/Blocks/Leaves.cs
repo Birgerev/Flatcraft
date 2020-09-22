@@ -6,7 +6,7 @@ public class Leaves : Block
 {
     public static string default_texture = "block_leaves";
     public override bool playerCollide { get; } = false;
-    public override bool autoTick { get; } = true;
+    public override float averageRandomTickDuration { get; } = 100;
 
     public override float breakTime { get; } = 0.3f;
 
@@ -17,13 +17,11 @@ public class Leaves : Block
         return new ItemStack();
     }
 
-    public override void Tick(bool spread)
+    public override void RandomTick()
     {
-        if (age > 1 && getRandomChance() < 0.05f / Chunk.TickRate)
-            TryDecay();
-
-
-        base.Tick(spread);
+        TryDecay();
+        
+        base.RandomTick();
     }
 
     public void TryDecay()
@@ -35,9 +33,9 @@ public class Leaves : Block
         {
             for (int y = -range; y < range; y++)
             {
-                if (Chunk.getBlock(new Location(location.x + x, location.y + y)) != null)
+                if ((new Location(location.x + x, location.y + y)).GetBlock() != null)
                 {
-                    if (Chunk.getBlock(new Location(location.x + x, location.y + y)).GetType().IsSubclassOf(typeof(Log)))
+                    if ((new Location(location.x + x, location.y + y)).GetBlock().GetType().IsSubclassOf(typeof(Log)))
                     {
                         foundSupport = true;
                         break;

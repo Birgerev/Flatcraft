@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Mathematics;
+using Debug = UnityEngine.Debug;
 using Random = System.Random;
 
 [BurstCompile]
@@ -18,10 +20,11 @@ public class Block : MonoBehaviour
     public virtual float change_texture_time { get; } = 0;
     
     public virtual bool playerCollide { get; } = true;
-    public virtual bool trigger { get; } = false;
+    public virtual bool triggerCollider { get; } = false;
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
     public virtual bool autoTick { get; } = false;
+    public virtual float averageRandomTickDuration { get; } = 0;
     public virtual float breakTime { get; } = 0.75f;
     public virtual bool rotate_x { get; } = false;
     public virtual bool rotate_y { get; } = false;
@@ -45,7 +48,7 @@ public class Block : MonoBehaviour
     private float time_of_last_autosave = 0;
     public virtual void Initialize()
     {
-        gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
+        //gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
 
         texture = (string)this.GetType().
@@ -57,11 +60,13 @@ public class Block : MonoBehaviour
         RenderNoLight();
 
         //Cache position for use in multithreading
-        location = Location.locationByPosition(transform.position, location.dimension);
+        location = Location.LocationByPosition(transform.position, location.dimension);
 
         if (autoTick || autosave)
             StartCoroutine(autoTickLoop());
-
+        if (averageRandomTickDuration != 0)
+            StartCoroutine(randomTickLoop());
+        
         Render();
     }
 
@@ -73,21 +78,26 @@ public class Block : MonoBehaviour
         }
     }
 
+    public virtual void RandomTick()
+    {
+        
+    }
+
     public virtual void GeneratingTick()
     {
         firstTick = false;
     }
 
-    public virtual void Tick(bool spread)
+    public virtual void Tick()
     {
-        if(age == 0 && spread)    //Block place sound
+        if(age == 0 && new ChunkPosition(location).GetChunk().isLoaded)    //Block place sound
         {
             Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
         }
 
         if (requiresGround)
         {
-            if (Chunk.getBlock(location - new Location(0, 1)) == null)
+            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
             {
                 Break();
             }
@@ -98,20 +108,35 @@ public class Block : MonoBehaviour
         RenderRotate();
 
 
-        if (Time.time - time_of_last_autosave > Chunk.AutosaveDuration && autosave && blockHealth == breakTime && age > 1)
+        if (Time.time - time_of_last_autosave > SaveManager.AutosaveDuration && autosave)
         {
             Autosave();
             return;
         }
 
         age++;
-        if (spread)
-            SpreadTick(location);
     }
 
     public float getRandomChance()
     {
         return (float)new System.Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
+    }
+
+    IEnumerator randomTickLoop()
+    {
+        Random r = new Random(SeedGenerator.SeedByLocation(location));
+        
+        while (true)
+        {
+            float nextTickDuration = 1;
+            while (r.NextDouble() > 1 / averageRandomTickDuration)
+            {
+                nextTickDuration += 1;
+            }
+            
+            yield return new WaitForSeconds(nextTickDuration);
+            this.RandomTick();
+        }
     }
 
     IEnumerator autoTickLoop()
@@ -122,24 +147,7 @@ public class Block : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1 / Chunk.TickRate);
-            Tick(false);
-        }
-    }
-    
-    public static void SpreadTick(Location loc)
-    {
-        List<Block> blocks = new List<Block>();
-
-        blocks.Add(Chunk.getBlock(loc + new Location(0, 1)));
-        blocks.Add(Chunk.getBlock(loc + new Location(0, -1)));
-        blocks.Add(Chunk.getBlock(loc + new Location(-1, 0)));
-        blocks.Add(Chunk.getBlock(loc + new Location(1, 0)));
-
-        foreach (Block block in blocks) {
-            if (block != null)
-            {
-                block.Tick(false);
-            }
+            this.Tick();
         }
     }
     
@@ -196,13 +204,13 @@ public class Block : MonoBehaviour
 
     public static void UpdateLightAround(Location loc)
     {
-        Block source = Chunk.getBlock(loc);
+        Block source = (loc).GetBlock();
         if(source != null)
         {
             source.CheckBlockLightSource();
         }
         
-        Chunk chunk = Chunk.GetChunk(new ChunkPosition(loc));
+        Chunk chunk = new ChunkPosition(loc).GetChunk();
         if(chunk != null)
             chunk.lightSourceToUpdate.Add(loc);
     }
@@ -238,7 +246,7 @@ public class Block : MonoBehaviour
             if (sourceLoc.dimension == loc.dimension)
             {
                 int sourceBrightness = GetLightSourceLevel(source);
-                int value = sourceBrightness - (int)(math.distance(sourceLoc.getPosition(), loc.getPosition()));
+                int value = sourceBrightness - (int)(math.distance(sourceLoc.GetPosition(), loc.GetPosition()));
 
                 if (value > brightestValue)
                 {
@@ -253,8 +261,8 @@ public class Block : MonoBehaviour
 
     public virtual void UpdateColliders()
     {
-        GetComponent<Collider2D>().enabled = (playerCollide || trigger);
-        GetComponent<Collider2D>().isTrigger = (trigger);
+        GetComponent<Collider2D>().enabled = (playerCollide || triggerCollider);
+        GetComponent<Collider2D>().isTrigger = (triggerCollider);
     }
 
     public Color GetRandomColourFromTexture()
@@ -303,10 +311,10 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
-        Chunk chunk = Chunk.GetChunk(new ChunkPosition(location));
+        Chunk chunk = new ChunkPosition(location).GetChunk();
         time_of_last_autosave = Time.time;
 
-        chunk.SaveBlock(this);
+        location.SetData(stringFromData(data));
     }
 
     public virtual void Hit(float time)
@@ -368,11 +376,6 @@ public class Block : MonoBehaviour
         Break(true);
     }
 
-    public Chunk GetChunk()
-    {
-        return transform.parent.GetComponent<Chunk>();
-    }
-
     public virtual void Break(bool drop)
     {
         if (drop)
@@ -385,7 +388,7 @@ public class Block : MonoBehaviour
         {
             Particle part = (Particle)Entity.Spawn("Particle");
 
-            part.transform.position = location.getPosition() + new Vector2((float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f);
+            part.transform.position = location.GetPosition() + new Vector2((float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f);
             part.color = GetRandomColourFromTexture();
             part.doGravity = true;
             part.velocity = Vector2.zero;
@@ -393,7 +396,8 @@ public class Block : MonoBehaviour
             part.maxBounces = 10;
         }
 
-        Chunk.setBlock(location, Material.Air);
+        location.SetMaterial(Material.Air);
+        location.Tick();
     }
 
     public virtual void Drop()

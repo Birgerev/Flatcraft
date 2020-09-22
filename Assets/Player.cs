@@ -113,9 +113,10 @@ public class Player : HumanEntity
             return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Location blockedMouseLocation = Location.locationByPosition(mousePosition, location.dimension);
+        Location blockedMouseLocation = Location.LocationByPosition(mousePosition, location.dimension);
+        Block mouseBlock = blockedMouseLocation.GetBlock();
+        
         mousePosition.z = 0;
-        Block crosshairBlock = Chunk.getBlock(blockedMouseLocation);
         bool isInRange = (Mathf.Abs(((Vector3)mousePosition - transform.position).magnitude) <= reach);
         bool isAboveEntity = false;
             
@@ -134,7 +135,7 @@ public class Player : HumanEntity
         }
 
 
-        crosshair.transform.position = blockedMouseLocation.getPosition();
+        crosshair.transform.position = blockedMouseLocation.GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
 
         
@@ -154,17 +155,24 @@ public class Player : HumanEntity
 
         if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)) || System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
         {
-            if (crosshairBlock == null || (crosshairBlock.GetMaterial() == Material.Water || crosshairBlock.GetMaterial() == Material.Lava))
+            if (mouseBlock == null || mouseBlock.GetMaterial() == Material.Water || mouseBlock.GetMaterial() == Material.Lava)
             {
                 if (Input.GetMouseButtonDown(1))
                 {
                     if (inventory.getSelectedItem().material != Material.Air &&
                         (inventory.getSelectedItem().amount > 0))
                     {
-                        if(System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-                            Chunk.setBlock(blockedMouseLocation, ((PlaceableItem)itemType).blockMaterial);
+                        if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
+                        {
+                            blockedMouseLocation.SetMaterial(((PlaceableItem) itemType).blockMaterial);
+                            blockedMouseLocation.Tick();
+                        }
+
                         if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
-                            Chunk.setBlock(blockedMouseLocation, inventory.getSelectedItem().material);
+                        {
+                            blockedMouseLocation.SetMaterial(inventory.getSelectedItem().material);
+                            blockedMouseLocation.Tick();
+                        }
                         
                         inventory.setItem(inventory.selectedSlot,
                             new ItemStack(inventory.getSelectedItem().material,
@@ -247,7 +255,7 @@ public class Player : HumanEntity
 
         for (int i = Chunk.Height; i > 0; i --)
         {
-            if(Chunk.getBlock(new Location((int)pos, i, curDimension)) != null && Chunk.getBlock(new Location((int)pos, i, curDimension)).playerCollide)
+            if(new Location((int)pos, i, curDimension).GetMaterial() != Material.Air)
             {
                 return new Location(pos, i+2, curDimension);
             }
@@ -262,7 +270,7 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
-        transform.position = ValidSpawn((int)spawnLocation.x).getPosition();
+        transform.position = ValidSpawn((int)spawnLocation.x).GetPosition();
         UpdateCachedPosition();
         Save();
     }
@@ -318,6 +326,6 @@ public class Player : HumanEntity
         }
 
         highestYlevelsinceground = 0;    //Reset falldamage
-        transform.position = ValidSpawn(spawnLocation.x).getPosition();
+        transform.position = ValidSpawn(spawnLocation.x).GetPosition();
     }
 }

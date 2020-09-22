@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,19 +8,18 @@ public class Structure_Block : Block
     public static string default_texture  = "block_structure";
     public override float breakTime { get; } = 10000000;
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         if (age == 0)   //prevent block from being ticked multiple times, since it would create an infinite loop
         {
-            base.Tick(spread);
-
+            base.Tick();
+            
             if (data.ContainsKey("structure"))
             {
                 string structureId = data["structure"];
                 TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
                 TextAsset structure = structures[new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
-                bool save = (data["save"] == "false") ? false : true;
-
+                
                 Material replaceMaterial = Material.Air;
                 string replaceData = "";
 
@@ -43,12 +43,10 @@ public class Structure_Block : Block
 
                     loc += location;
 
-                    Chunk.setBlock(loc, mat, data, save, false);
+                    loc.SetMaterial(mat);
                 }
-                Chunk.setBlock(location, replaceMaterial, replaceData, save, false);
-
+                location.SetMaterial(replaceMaterial).SetData(replaceData);
             }
-
         }
     }
 }

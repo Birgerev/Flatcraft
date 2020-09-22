@@ -39,10 +39,10 @@ public class Bed_Block : Block
         base.Interact();
     }
 
-    public override void Tick(bool spreadTick)
+    public override void Tick()
     {
         if (age > 0) { 
-            Block otherBlock = Chunk.getBlock(otherBlockLocation);
+            Block otherBlock = otherBlockLocation.GetBlock();
             if (otherBlock == null)
             {
                 Break(false);
@@ -53,7 +53,7 @@ public class Bed_Block : Block
             }
         }
 
-        base.Tick(spreadTick);
+        base.Tick();
     }
     
     public override ItemStack GetDrop()

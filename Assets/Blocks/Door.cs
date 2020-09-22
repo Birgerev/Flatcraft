@@ -38,7 +38,7 @@ public class Door : Block
     
     public override void Interact()
     {
-        Door otherDoor = (Door)Chunk.getBlock(otherBlockLocation);
+        Door otherDoor = (Door)otherBlockLocation.GetBlock();
         bool open = !GetOpenState();
         
         
@@ -52,7 +52,7 @@ public class Door : Block
     {
         data["open"] = open + "";
 
-        Tick(true);
+        Tick();
     }
 
     public bool GetOpenState()
@@ -69,16 +69,15 @@ public class Door : Block
 
     public override void Break()
     {
-        Block otherBlock = Chunk.getBlock(otherBlockLocation);
-        if (otherBlock != null && otherBlock.GetMaterial() == otherBlockMaterial)
+        if (otherBlockLocation.GetMaterial() == otherBlockMaterial)
         {
-            Chunk.setBlock(otherBlockLocation, Material.Air);
+            otherBlockLocation.SetMaterial(Material.Air);
         }
 
         base.Break();
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         bool open = false;
 
@@ -91,7 +90,7 @@ public class Door : Block
 
         Render();
 
-        base.Tick(spread);
+        base.Tick();
     }
 
     public override void UpdateColliders()

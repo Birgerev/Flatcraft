@@ -13,7 +13,7 @@ public class Wooden_Door_Bottom : Door
     
     public override void FirstTick()
     {
-        Chunk.setBlock(location + new Location(0, 1), Material.Wooden_Door_Top);
+       (location + new Location(0, 1)).SetMaterial(Material.Wooden_Door_Top);
 
         base.FirstTick();
     }

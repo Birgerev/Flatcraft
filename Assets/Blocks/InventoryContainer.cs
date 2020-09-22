@@ -20,11 +20,11 @@ public class InventoryContainer : Block
         else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         data["inventory"] = JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType));
 
-        base.Tick(spread);
+        base.Tick();
     }
 
     public override void Break(bool drop)

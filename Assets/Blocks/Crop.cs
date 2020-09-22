@@ -7,7 +7,7 @@ public class Crop : Block
     public override bool playerCollide { get; } = false;
 
     public override float breakTime { get; } = 0.05f;
-    public override bool autoTick { get; } = true;
+    public override float averageRandomTickDuration { get; } = 100;
     public override bool autosave { get; } = true;
     public override bool requiresGround { get; } = true;
     
@@ -18,24 +18,27 @@ public class Crop : Block
     public virtual Material result { get; } = Material.Air;
     
     
-    public override void Tick(bool spreadTick)
+    public override void Tick()
     {
-        CheckFarmland();
-        
-        if (getRandomChance() < 0.00096f / Chunk.TickRate)
-            Grow();
-        
         texture = crop_textures[GetStage()];
         Render();
         
-        base.Tick(spreadTick);
+        base.Tick();
+    }
+
+    public override void RandomTick()
+    {
+        Grow();
+        CheckFarmland();
+        
+        base.RandomTick();
     }
 
     public void CheckFarmland()
     {
-        Block blockBeneath = Chunk.getBlock(location - new Location(0, 1));
+        Material materialBeneath = (location - new Location(0, 1)).GetMaterial();
 
-        if (blockBeneath == null || (blockBeneath.GetMaterial() != Material.Farmland_Wet && blockBeneath.GetMaterial() != Material.Farmland_Dry))
+        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry)
         {
             Break();
         }

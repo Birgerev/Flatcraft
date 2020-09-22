@@ -11,6 +11,7 @@ public class Sound : MonoBehaviour
     public AudioMixerGroup blocksGroup;
     public AudioMixerGroup entitiesGroup;
 
+    public bool enabled = false;
 
     public void Start()
     {
@@ -57,7 +58,7 @@ public class Sound : MonoBehaviour
 
         source.outputAudioMixerGroup = group;
         source.clip = clip;
-        obj.transform.position = loc.getPosition();
+        obj.transform.position = loc.GetPosition();
         source.pitch = pitch;
 
 
