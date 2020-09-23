@@ -14,9 +14,9 @@ public class Structure_Block : Block
         {
             base.Tick();
             
-            if (data.ContainsKey("structure"))
+            if (data.HasData("structure"))
             {
-                string structureId = data["structure"];
+                string structureId = data.GetData("structure");
                 TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
                 TextAsset structure = structures[new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
                 
@@ -45,7 +45,7 @@ public class Structure_Block : Block
 
                     loc.SetMaterial(mat);
                 }
-                location.SetMaterial(replaceMaterial).SetData(replaceData);
+                location.SetMaterial(replaceMaterial).SetData(new BlockData(replaceData));
             }
         }
     }

@@ -50,7 +50,7 @@ public class Door : Block
 
     public void SetOpenState(bool open)
     {
-        data["open"] = open + "";
+        data.SetData("open", open.ToString());
 
         Tick();
     }
@@ -58,11 +58,8 @@ public class Door : Block
     public bool GetOpenState()
     {
         bool open = false;
-        
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+
+        open = (data.GetData("open") == "true");
         
         return open;
     }
@@ -81,10 +78,7 @@ public class Door : Block
     {
         bool open = false;
 
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+        open = (data.GetData("open") == "true");
 
         texture = open ? open_texture : closed_texture;
 
@@ -96,11 +90,8 @@ public class Door : Block
     public override void UpdateColliders()
     {
         bool open = false;
-
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+        
+        open = (data.GetData("open") == "true");
 
         GetComponent<Collider2D>().enabled = !open;
         GetComponent<Collider2D>().isTrigger = false;

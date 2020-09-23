@@ -11,6 +11,7 @@
         <e p="AnimalController.cs" t="Include" />
         <e p="Biome.cs" t="Include" />
         <e p="Block.cs" t="Include" />
+        <e p="BlockData.cs" t="Include" />
         <e p="Blocks" t="Include">
           <e p="Air.cs" t="Include" />
           <e p="Bed_Block.cs" t="Include" />

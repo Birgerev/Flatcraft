@@ -462,22 +462,22 @@ public class Chunk : MonoBehaviour
             //Trees
             if(biome.name == "forest" || biome.name == "forest_hills")
                  if (r.Next(0, 100) <= 20)
-                     (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Oak_Tree");
+                     (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Oak_Tree"));
             
             //Birch Trees
             if(biome.name == "birch_forest")
                 if (r.Next(0, 100) <= 20)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Birch_Tree");
+                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Birch_Tree"));
             
             //Unlikely Trees
             if(biome.name == "plains")
                 if (r.Next(0, 100) <= 3)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Oak_Tree");
+                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Oak_Tree"));
             
             //Large Trees
             if(biome.name == "plains")
                 if (r.Next(0, 100) <= 3)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Large_Oak_Tree");
+                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Large_Oak_Tree"));
             
             //Dead Bushes
             if (biome.name == "desert")
@@ -487,7 +487,7 @@ public class Chunk : MonoBehaviour
             //Cactie
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Cactus");
+                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Cactus"));
         }
         
         
@@ -496,27 +496,27 @@ public class Chunk : MonoBehaviour
         {
             if (r.NextDouble() < Chunk.OreDiamondChance && loc.y <= Chunk.OreDiamondHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Diamond");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Diamond"));
             }
             else if (r.NextDouble() < Chunk.OreRedstoneChance && loc.y <= Chunk.OreRedstoneHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Redstone");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Redstone"));
             }
             else if (r.NextDouble() < Chunk.OreLapisChance && loc.y <= Chunk.OreLapisHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Lapis");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Lapis"));
             }
             else if (r.NextDouble() < Chunk.OreGoldChance && loc.y <= Chunk.OreGoldHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Gold");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Gold"));
             }
             else if (r.NextDouble() < Chunk.OreIronChance && loc.y <= Chunk.OreIronHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Iron");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Iron"));
             }
             else if (r.NextDouble() < Chunk.OreCoalChance && loc.y <= Chunk.OreCoalHeight)
             {
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData("structure=Ore_Coal");
+                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Coal"));
             }
         }
     }

@@ -49,7 +49,7 @@ public class Crop : Block
         if (GetStage() >= GetAmountOfStages() - 1)
             return;
         
-        data["crop_stage"] = (GetStage() + 1).ToString();
+        data.SetData("crop_stage", (GetStage() + 1).ToString());
     }
 
     public int GetAmountOfStages()
@@ -59,10 +59,10 @@ public class Crop : Block
     
     public int GetStage()
     {
-        if (!data.ContainsKey("crop_stage"))
-            data["crop_stage"] = "0";
+        if (!data.HasData("crop_stage"))
+            data.SetData("crop_stage", "0");
         
-        return int.Parse(data["crop_stage"]);
+        return int.Parse(data.GetData("crop_stage"));
     }
     
     public override void Drop()

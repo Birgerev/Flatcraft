@@ -125,10 +125,8 @@ public class LivingEntity : Entity
             bool rotated_x = false;
             bool rotated_y = false;
 
-            if (blockInFront.data.ContainsKey("rotated_x"))
-                rotated_x = (blockInFront.data["rotated_x"] == "true");
-            if (blockInFront.data.ContainsKey("rotated_y"))
-                rotated_y = (blockInFront.data["rotated_y"] == "true");
+            rotated_x = (blockInFront.data.GetData("rotated_x") == "true");
+            rotated_y = (blockInFront.data.GetData("rotated_y") == "true");
             
             if (rotated_y == false && ((direction == -1 && rotated_x == false) || (direction == 1 &&  rotated_x == true)))    //if the stairs are rotated correctly
             {

@@ -36,7 +36,7 @@ public class Block : MonoBehaviour
 
     public virtual int glowLevel { get; } = 0;
 
-    public Dictionary<string, string> data = new Dictionary<string, string>();
+    public BlockData data = new BlockData();
 
     public float blockHealth = 0;
     private bool firstTick = true;
@@ -288,8 +288,8 @@ public class Block : MonoBehaviour
             rotated_x = (Player.localInstance.transform.position.x < location.x);
         }
 
-        data["rotated_x"] = rotated_x ? "true" : "false";
-        data["rotated_y"] = rotated_y ? "true" : "false";
+        data.SetData("rotated_x", rotated_x ? "true" : "false");
+        data.SetData("rotated_y", rotated_y ? "true" : "false");
         
         //Save new rotation
         Autosave();
@@ -300,10 +300,8 @@ public class Block : MonoBehaviour
         bool rotated_x = false;
         bool rotated_y = false;
 
-        if (data.ContainsKey("rotated_x"))
-            rotated_x = (data["rotated_x"] == "true");
-        if (data.ContainsKey("rotated_y"))
-            rotated_y = (data["rotated_y"] == "true");
+        rotated_x = (data.GetData("rotated_x") == "true");
+        rotated_y = (data.GetData("rotated_y") == "true");
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
@@ -314,7 +312,7 @@ public class Block : MonoBehaviour
         Chunk chunk = new ChunkPosition(location).GetChunk();
         time_of_last_autosave = Time.time;
 
-        location.SetData(stringFromData(data));
+        location.SetData(data);
     }
 
     public virtual void Hit(float time)
@@ -460,35 +458,6 @@ public class Block : MonoBehaviour
     public Material GetMaterial()
     {
         return (Material)System.Enum.Parse(typeof(Material), this.GetType().Name);
-    }
-
-    public static Dictionary<string, string> dataFromString(string dataString)
-    {
-        Dictionary<string, string> resultData = new Dictionary<string, string>();
-
-        foreach (string dataPiece in dataString.Split('|'))
-        {
-            if(dataPiece.Contains("="))
-                resultData.Add(dataPiece.Split('=')[0], dataPiece.Split('=')[1]);
-        }
-
-        return resultData;
-    }
-
-    public static string stringFromData(Dictionary<string, string> data)
-    {
-        string result = "";
-
-        bool first = true;
-        foreach (KeyValuePair<string, string> entry in data)
-        {
-            if (!first)
-                result += "|";
-            result += entry.Key + "=" + entry.Value; 
-            first = false;
-        }
-
-        return result;
     }
 }
 

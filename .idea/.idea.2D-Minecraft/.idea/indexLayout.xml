@@ -28,6 +28,7 @@
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Saves</Path>
+      <Path>Temp</Path>
       <Path>UserSettings</Path>
       <Path>obj</Path>
     </explicitExcludes>
