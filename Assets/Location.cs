@@ -96,6 +96,7 @@ public struct Location
     {
         List<Block> blocks = new List<Block>();
 
+        blocks.Add((this + new Location(0, 0)).GetBlock());
         blocks.Add((this + new Location(0, 1)).GetBlock());
         blocks.Add((this + new Location(0, -1)).GetBlock());
         blocks.Add((this + new Location(-1, 0)).GetBlock());
