@@ -57,6 +57,17 @@ public class Block : MonoBehaviour
         Initialize();
     }
     
+    public void ScheduleBlockBuildTick()
+    {
+        StartCoroutine(scheduleBlockBuildTick());
+    }
+
+    IEnumerator scheduleBlockBuildTick()
+    {
+        yield return new WaitForSeconds(0.02f);
+        BuildTick();
+    }
+    
     public virtual void Initialize()
     {
         //gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
@@ -74,10 +85,6 @@ public class Block : MonoBehaviour
         location = Location.LocationByPosition(transform.position, location.dimension);
         
         checkGround();
-        if (rotate_x || rotate_y)
-        {
-            RotateTowardsPlayer();
-        }
         
         if (autoTick || autosave)
             StartCoroutine(autoTickLoop());
@@ -89,6 +96,15 @@ public class Block : MonoBehaviour
 
     public virtual void RandomTick()
     {
+    }
+    
+    public virtual void BuildTick()
+    {
+        if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
+        {
+            print(data.GetSaveString() + " rotating " + GetMaterial());
+            RotateTowardsPlayer();
+        }
     }
 
     public virtual void GeneratingTick()
