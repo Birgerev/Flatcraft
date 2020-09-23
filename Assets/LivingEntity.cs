@@ -113,7 +113,7 @@ public class LivingEntity : Entity
         if (!isOnGround)    //Return if player isn't grounded
             return;
         
-        Block blockInFront = Chunk.getBlock(Location.locationByPosition((Vector2)transform.position + new Vector2(direction*0.7f, -0.5f), location.dimension));    //Get block in front of player acording to walk direction
+        Block blockInFront = Location.LocationByPosition((Vector2)transform.position + new Vector2(direction*0.7f, -0.5f), location.dimension).GetBlock();    //Get block in front of player acording to walk direction
 
         if (blockInFront == null)
         {
@@ -125,10 +125,8 @@ public class LivingEntity : Entity
             bool rotated_x = false;
             bool rotated_y = false;
 
-            if (blockInFront.data.ContainsKey("rotated_x"))
-                rotated_x = (blockInFront.data["rotated_x"] == "true");
-            if (blockInFront.data.ContainsKey("rotated_y"))
-                rotated_y = (blockInFront.data["rotated_y"] == "true");
+            rotated_x = (blockInFront.data.GetData("rotated_x") == "true");
+            rotated_y = (blockInFront.data.GetData("rotated_y") == "true");
             
             if (rotated_y == false && ((direction == -1 && rotated_x == false) || (direction == 1 &&  rotated_x == true)))    //if the stairs are rotated correctly
             {
@@ -198,9 +196,9 @@ public class LivingEntity : Entity
     {
         System.Random r = new System.Random();
         Block blockBeneath = null;
-        for (int y = 1; blockBeneath == null; y++)
+        for (int y = -1; blockBeneath == null && y > -3; y--)
         {
-            Block block = Chunk.getBlock(location - new Location(0, y));
+            Block block = (location + new Location(0, y)).GetBlock();
             if (block != null)
                 blockBeneath = block;
         }
@@ -210,7 +208,7 @@ public class LivingEntity : Entity
         {
             Particle part = (Particle)Entity.Spawn("Particle");
 
-            part.transform.position = blockBeneath.location.getPosition() + new Vector2(0,  0.6f);
+            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0,  0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
             part.doGravity = true;
             part.velocity = new Vector2(((float)r.NextDouble() - 0.5f) * 2, 1.5f);
@@ -228,7 +226,7 @@ public class LivingEntity : Entity
             Block blockBeneath = null;
             for (int y = 1; blockBeneath == null; y++)
             {
-                Block block = Chunk.getBlock(location - new Location(0, y));
+                Block block = (location - new Location(0, y)).GetBlock();
                 if (block != null)
                     blockBeneath = block;
             }
@@ -236,7 +234,7 @@ public class LivingEntity : Entity
 
             Particle part = (Particle) Entity.Spawn("Particle");
 
-            part.transform.position = blockBeneath.location.getPosition() + new Vector2(0, 0.6f);
+            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
             part.doGravity = true;
             part.velocity = -(getVelocity() * 0.2f);

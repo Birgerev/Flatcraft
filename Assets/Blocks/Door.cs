@@ -9,36 +9,30 @@ public class Door : Block
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
     
-    public override bool autosave { get; } = true;
     public override bool playerCollide { get; } = true;
 
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
 
-    public Location otherBlockLocation
-    {
-        get
-        {
-            return location + new Location(0, ((GetMaterial() == Material.Wooden_Door_Bottom) ? 1 : -1));
-        }
-    }
-    
-    public Material otherBlockMaterial
-    {
-        get
-        {
-            return (GetMaterial() == Material.Wooden_Door_Bottom) ? Material.Wooden_Door_Top : Material.Wooden_Door_Bottom;
-        }
-    }
-    
+    public Location otherBlockLocation => location + new Location(0, (GetMaterial() == Material.Wooden_Door_Bottom) ? 1 : -1);
+
+    public Material otherBlockMaterial => (GetMaterial() == Material.Wooden_Door_Bottom) ? Material.Wooden_Door_Top : Material.Wooden_Door_Bottom;
+
     public override ItemStack GetDrop()
     {
         return new ItemStack(Material.Wooden_Door_Bottom, 1);
     }
-    
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        
+        Tick();
+    }
+
     public override void Interact()
     {
-        Door otherDoor = (Door)Chunk.getBlock(otherBlockLocation);
+        Door otherDoor = (Door)otherBlockLocation.GetBlock();
         bool open = !GetOpenState();
         
         
@@ -50,58 +44,45 @@ public class Door : Block
 
     public void SetOpenState(bool open)
     {
-        data["open"] = open + "";
+        data.SetData("open", open ? "true" : "false");
 
-        Tick(true);
+        Tick();
+        Autosave();
     }
 
     public bool GetOpenState()
     {
-        bool open = false;
-        
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+        bool open = (data.GetData("open") == "true");
         
         return open;
     }
 
     public override void Break()
     {
-        Block otherBlock = Chunk.getBlock(otherBlockLocation);
-        if (otherBlock != null && otherBlock.GetMaterial() == otherBlockMaterial)
+        if (otherBlockLocation.GetMaterial() == otherBlockMaterial)
         {
-            Chunk.setBlock(otherBlockLocation, Material.Air);
+            otherBlockLocation.SetMaterial(Material.Air);
         }
 
         base.Break();
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        bool open = false;
-
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+        bool open = (data.GetData("open") == "true");
 
         texture = open ? open_texture : closed_texture;
 
         Render();
 
-        base.Tick(spread);
+        base.Tick();
     }
 
     public override void UpdateColliders()
     {
         bool open = false;
-
-        if (data.ContainsKey("open"))
-        {
-            open = bool.Parse(data["open"]);
-        }
+        
+        open = (data.GetData("open") == "true");
 
         GetComponent<Collider2D>().enabled = !open;
         GetComponent<Collider2D>().isTrigger = false;

@@ -40,7 +40,7 @@ public class WorldManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Chunk.AutosaveDuration);
+            yield return new WaitForSeconds(SaveManager.AutosaveDuration);
             world.SaveData();
         }
     }
@@ -64,7 +64,7 @@ public class WorldManager : MonoBehaviour
         loadingState = "Generating Spawn Chunk: 0";
         loadingProgress = 2f / steps;
         //Load Chunk [0]
-        mainChunk = Chunk.CreateChunk(new ChunkPosition(0, Dimension.Overworld));
+        mainChunk = new ChunkPosition(0, Dimension.Overworld).CreateChunk();
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {
@@ -86,7 +86,7 @@ public class WorldManager : MonoBehaviour
 
 
         if(Player.localInstance.location.x == 0)    //Place player at ground first time player spawns
-            Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).getPosition();    
+            Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).GetPosition();    
         
         StartCoroutine(SaveLoop());
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Ladder : Block
 {
     public override bool playerCollide { get; } = false;
-    public override bool trigger { get; } = true;
+    public override bool triggerCollider { get; } = true;
     
     public override float breakTime { get; } = 3f;
     

@@ -11,6 +11,7 @@
         <e p="AnimalController.cs" t="Include" />
         <e p="Biome.cs" t="Include" />
         <e p="Block.cs" t="Include" />
+        <e p="BlockData.cs" t="Include" />
         <e p="Blocks" t="Include">
           <e p="Air.cs" t="Include" />
           <e p="Bed_Block.cs" t="Include" />
@@ -279,11 +280,13 @@
             </e>
           </e>
         </e>
+        <e p="SaveManager.cs" t="Include" />
         <e p="Scenes" t="Include">
           <e p="Debug" t="Include">
             <e p="DebugBiomeLandscape.cs" t="Include" />
           </e>
         </e>
+        <e p="SeedGenerator.cs" t="Include" />
         <e p="Sheep.cs" t="Include" />
         <e p="Sky.cs" t="Include" />
         <e p="SmeltingRecepie.cs" t="Include" />
