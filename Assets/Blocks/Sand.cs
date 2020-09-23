@@ -12,7 +12,7 @@ public class Sand : Block
 
     public override void Tick()
     {
-        if (age > 0 && (location + new Location(0, -1)).GetMaterial() == Material.Air)
+        if ((location + new Location(0, -1)).GetMaterial() == Material.Air)
         {
             FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
             fs.transform.position = location.GetPosition();
