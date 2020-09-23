@@ -10,7 +10,7 @@ public class Player : HumanEntity
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
-    public static float blockHitsPerPerSecond = 4.5f;
+    public static float blockInteractionsPerPerSecond = 4.5f;
 
 
     //Entity Data Tags
@@ -28,7 +28,7 @@ public class Player : HumanEntity
     private float lastFrameScroll;
     private float lastHitTime;
     private bool inventoryOpenLastFrame = false;
-    private float lastBlockHit;
+    private float lastBlockInteraction;
 
     public override void Start()
     {
@@ -68,6 +68,9 @@ public class Player : HumanEntity
         lastFrameScroll = scroll;
 
         inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
+
+        //Crosshair
+        MouseInput();
     }
 
     private void performInput()
@@ -103,9 +106,6 @@ public class Player : HumanEntity
             if (Input.GetKeyDown(keyCode))
                 inventory.selectedSlot = System.Array.IndexOf<KeyCode>(numpadCodes, keyCode);
         }
-
-        //Crosshair
-        MouseInput();
     }
 
     private void MouseInput() {
@@ -143,7 +143,7 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        if (Time.time - lastBlockHit < 1 / blockHitsPerPerSecond)
+        if (Time.time - lastBlockInteraction < 1 / blockInteractionsPerPerSecond)
             return;
         
         
@@ -178,7 +178,7 @@ public class Player : HumanEntity
                             new ItemStack(inventory.getSelectedItem().material,
                                 inventory.getSelectedItem().amount - 1));
                         
-                        lastBlockHit = Time.time;
+                        lastBlockInteraction = Time.time;
                         return;
                     }
                 }
@@ -189,23 +189,23 @@ public class Player : HumanEntity
         if (Input.GetMouseButtonDown(1))
         {
             itemType.Interact(blockedMouseLocation, 1, true);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
         else if (Input.GetMouseButton(1))
         {
             itemType.Interact(blockedMouseLocation, 1, false);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
 
         if (Input.GetMouseButtonDown(0))
         {
             itemType.Interact(blockedMouseLocation, 0, true);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
         else if (Input.GetMouseButton(0))
         {
             itemType.Interact(blockedMouseLocation, 0, false);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
     }
 
