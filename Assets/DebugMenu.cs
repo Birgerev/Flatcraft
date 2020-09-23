@@ -49,7 +49,7 @@ public class DebugMenu : MonoBehaviour
         text_x.text = "x: " + player.transform.position.x;
         text_y.text = "y: " + player.transform.position.y;
         text_dimension.text = "dimension: " + player.location.dimension.ToString();
-        Biome biome = Chunk.GetChunk(new ChunkPosition(player.location)).getBiome();
+        Biome biome = new ChunkPosition(player.location).GetChunk().getBiome();
         if(biome != null)
             text_biome.text = "biome: " + biome.name;
 

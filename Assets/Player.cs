@@ -10,7 +10,7 @@ public class Player : HumanEntity
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
-    public static float blockHitsPerPerSecond = 4.5f;
+    public static float blockInteractionsPerPerSecond = 4.5f;
 
 
     //Entity Data Tags
@@ -27,8 +27,8 @@ public class Player : HumanEntity
     public GameObject crosshair;
     private float lastFrameScroll;
     private float lastHitTime;
-    private bool inventoryOpenLastFrame = false;
-    private float lastBlockHit;
+    private int framesSinceInventoryOpen = 0;
+    private float lastBlockInteraction;
 
     public override void Start()
     {
@@ -46,7 +46,7 @@ public class Player : HumanEntity
     {
         base.FixedUpdate();
 
-        performInput();
+        performMovementInput();
     }
 
     public override void Update()
@@ -67,17 +67,18 @@ public class Player : HumanEntity
 
         lastFrameScroll = scroll;
 
-        inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            framesSinceInventoryOpen = 0;
+        else
+            framesSinceInventoryOpen++;
+
+        //Crosshair
+        mouseInput();
+        performInput();
     }
 
-    private void performInput()
+    private void performMovementInput()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !inventoryOpenLastFrame)
-            inventory.Open(location);
-
-        if (Inventory.anyOpen)
-            return;
-
         //Movement
         if (Input.GetKey(KeyCode.A))
         {
@@ -91,6 +92,15 @@ public class Player : HumanEntity
         {
             Jump();
         }
+    }
+
+    private void performInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
+            inventory.Open(location);
+
+        if (Inventory.anyOpen)
+            return;
         
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
@@ -103,19 +113,17 @@ public class Player : HumanEntity
             if (Input.GetKeyDown(keyCode))
                 inventory.selectedSlot = System.Array.IndexOf<KeyCode>(numpadCodes, keyCode);
         }
-
-        //Crosshair
-        MouseInput();
     }
 
-    private void MouseInput() {
+    private void mouseInput() {
         if (WorldManager.instance.loadingProgress != 1)
             return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Location blockedMouseLocation = Location.locationByPosition(mousePosition, location.dimension);
+        Location blockedMouseLocation = Location.LocationByPosition(mousePosition, location.dimension);
+        Block mouseBlock = blockedMouseLocation.GetBlock();
+        
         mousePosition.z = 0;
-        Block crosshairBlock = Chunk.getBlock(blockedMouseLocation);
         bool isInRange = (Mathf.Abs(((Vector3)mousePosition - transform.position).magnitude) <= reach);
         bool isAboveEntity = false;
             
@@ -134,7 +142,7 @@ public class Player : HumanEntity
         }
 
 
-        crosshair.transform.position = blockedMouseLocation.getPosition();
+        crosshair.transform.position = blockedMouseLocation.GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (isAboveEntity ? "entity" : "full") : "empty"));
 
         
@@ -142,7 +150,7 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        if (Time.time - lastBlockHit < 1 / blockHitsPerPerSecond)
+        if (Time.time - lastBlockInteraction < 1 / blockInteractionsPerPerSecond)
             return;
         
         
@@ -154,23 +162,30 @@ public class Player : HumanEntity
 
         if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)) || System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
         {
-            if (crosshairBlock == null || (crosshairBlock.GetMaterial() == Material.Water || crosshairBlock.GetMaterial() == Material.Lava))
+            if (mouseBlock == null || mouseBlock.GetMaterial() == Material.Water || mouseBlock.GetMaterial() == Material.Lava)
             {
                 if (Input.GetMouseButtonDown(1))
                 {
                     if (inventory.getSelectedItem().material != Material.Air &&
                         (inventory.getSelectedItem().amount > 0))
                     {
-                        if(System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-                            Chunk.setBlock(blockedMouseLocation, ((PlaceableItem)itemType).blockMaterial);
+                        if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
+                        {
+                            blockedMouseLocation.SetMaterial(((PlaceableItem) itemType).blockMaterial);
+                            blockedMouseLocation.Tick();
+                        }
+
                         if (System.Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
-                            Chunk.setBlock(blockedMouseLocation, inventory.getSelectedItem().material);
+                        {
+                            blockedMouseLocation.SetMaterial(inventory.getSelectedItem().material);
+                            blockedMouseLocation.Tick();
+                        }
                         
                         inventory.setItem(inventory.selectedSlot,
                             new ItemStack(inventory.getSelectedItem().material,
                                 inventory.getSelectedItem().amount - 1));
                         
-                        lastBlockHit = Time.time;
+                        lastBlockInteraction = Time.time;
                         return;
                     }
                 }
@@ -181,23 +196,23 @@ public class Player : HumanEntity
         if (Input.GetMouseButtonDown(1))
         {
             itemType.Interact(blockedMouseLocation, 1, true);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
         else if (Input.GetMouseButton(1))
         {
             itemType.Interact(blockedMouseLocation, 1, false);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
 
         if (Input.GetMouseButtonDown(0))
         {
             itemType.Interact(blockedMouseLocation, 0, true);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
         else if (Input.GetMouseButton(0))
         {
             itemType.Interact(blockedMouseLocation, 0, false);
-            lastBlockHit = Time.time;
+            lastBlockInteraction = Time.time;
         }
     }
 
@@ -247,7 +262,7 @@ public class Player : HumanEntity
 
         for (int i = Chunk.Height; i > 0; i --)
         {
-            if(Chunk.getBlock(new Location((int)pos, i, curDimension)) != null && Chunk.getBlock(new Location((int)pos, i, curDimension)).playerCollide)
+            if(new Location((int)pos, i, curDimension).GetMaterial() != Material.Air)
             {
                 return new Location(pos, i+2, curDimension);
             }
@@ -262,7 +277,7 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
-        transform.position = ValidSpawn((int)spawnLocation.x).getPosition();
+        transform.position = ValidSpawn((int)spawnLocation.x).GetPosition();
         UpdateCachedPosition();
         Save();
     }
@@ -318,6 +333,6 @@ public class Player : HumanEntity
         }
 
         highestYlevelsinceground = 0;    //Reset falldamage
-        transform.position = ValidSpawn(spawnLocation.x).getPosition();
+        transform.position = ValidSpawn(spawnLocation.x).GetPosition();
     }
 }

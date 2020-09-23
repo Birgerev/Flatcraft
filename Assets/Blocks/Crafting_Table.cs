@@ -13,9 +13,9 @@ public class Crafting_Table : InventoryContainer
 
     public override System.Type inventoryType { get; } = typeof(CraftingInventory);
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        base.Tick(spread);
+        base.Tick();
 
         CheckCraftingRecepies();
     }

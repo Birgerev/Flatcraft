@@ -44,7 +44,7 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void CheckClose()
     {
-        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 2)
+        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 10)
             Close();
     }
 

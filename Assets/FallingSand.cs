@@ -32,15 +32,15 @@ public class FallingSand : Entity
     {
         base.Update();
 
-        if (!GetComponent<Rigidbody2D>().simulated && !Physics2D.OverlapBox(location.getPosition(), new Vector2(0.2f, 0.2f), 0))    //once the block that spawned the fallingSand is gone, begin simulating physics
+        if (!GetComponent<Rigidbody2D>().simulated && !Physics2D.OverlapBox(location.GetPosition(), new Vector2(0.2f, 0.2f), 0))    //once the block that spawned the fallingSand is gone, begin simulating physics
                 GetComponent<Rigidbody2D>().simulated = true;
         
         
         
         if ((isOnGround || (isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0)) && age > 1f && !dead)
         {
-            if (Chunk.getBlock(location) == null)
-                Chunk.setBlock(location, material);
+            if (location.GetMaterial() == Material.Air)
+                location.SetMaterial(material);
             else
             {
                 new ItemStack(material, 1).Drop(location);

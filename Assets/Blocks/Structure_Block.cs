@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,21 +8,20 @@ public class Structure_Block : Block
     public static string default_texture  = "block_structure";
     public override float breakTime { get; } = 10000000;
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         if (age == 0)   //prevent block from being ticked multiple times, since it would create an infinite loop
         {
-            base.Tick(spread);
-
-            if (data.ContainsKey("structure"))
+            base.Tick();
+            
+            if (data.HasData("structure"))
             {
-                string structureId = data["structure"];
+                string structureId = data.GetData("structure");
                 TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
-                TextAsset structure = structures[new System.Random(Chunk.seedByLocation(location)).Next(0, structures.Length)];
-                bool save = (data["save"] == "false") ? false : true;
-
+                TextAsset structure = structures[new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
+                
                 Material replaceMaterial = Material.Air;
-                string replaceData = "";
+                BlockData replaceData = new BlockData();
 
                 foreach (string blockText in structure.text.Split(new char[] { '\n', '\r' }))
                 {
@@ -32,7 +32,7 @@ public class Structure_Block : Block
                         int.Parse(blockText.Split('*')[1].Split(',')[0]),
                         int.Parse(blockText.Split('*')[1].Split(',')[1]),
                         location.dimension);
-                    string data = blockText.Split('*')[2];
+                    BlockData data = new BlockData(blockText.Split('*')[2]);
 
                     if (loc.x == 0 && loc.y == 0)
                     {
@@ -42,13 +42,11 @@ public class Structure_Block : Block
                     }
 
                     loc += location;
-
-                    Chunk.setBlock(loc, mat, data, save, false);
+                    
+                    loc.SetMaterial(mat).SetData(data);
                 }
-                Chunk.setBlock(location, replaceMaterial, replaceData, save, false);
-
+                location.SetMaterial(replaceMaterial).SetData(replaceData);
             }
-
         }
     }
 }

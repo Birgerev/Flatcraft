@@ -16,35 +16,27 @@ public class Fire : Block
         return new ItemStack();
     }
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
         if (getRandomChance() < 0.1f / Chunk.TickRate)
         {
-            bool spreadFire = (100 / Chunk.TickRate < 50 / Chunk.TickRate);
+            System.Random random = new System.Random();
+            Location spreadLocation = new Location();
 
-            if (spreadFire)
+            while (spreadLocation.Equals(new Location()))
             {
-                int r = Random.Range(0, 2);
-
-                if (r == 0 && Chunk.getBlock(location + new Location(-1, 0)) == null && Chunk.getBlock(location + new Location(-1, -1)) != null)
-                {
-                    Chunk.setBlock(location + new Location(-1, 0), Material.Fire);
-                }
-                if (r == 1 && Chunk.getBlock(location + new Location(1, 0)) == null && Chunk.getBlock(location + new Location(1, -1)) != null)
-                {
-                    Chunk.setBlock(location + new Location(1, 0), Material.Fire);
-                }
-                if (r == 2 && Chunk.getBlock(location + new Location(0, 2)) == null && Chunk.getBlock(location + new Location(0, 1)) != null)
-                {
-                    Chunk.setBlock(location + new Location(0, 2), Material.Fire);
-                }
-            }
-            else
-            {
-                Chunk.setBlock(location, Material.Air);
+                int x = random.Next(-1, 1);
+                int y = random.Next(-1, 1);
+                
+                if((location + new Location(x, y)).GetMaterial() == Material.Air && (location + new Location(x, y - 1)).GetMaterial() != Material.Air)
+                    (location + new Location(x, y)).SetMaterial(Material.Fire);
             }
         }
+        if (getRandomChance() < 0.1f / Chunk.TickRate)
+        {
+            location.SetMaterial(Material.Air);
+        }
 
-        base.Tick(spread);
+        base.Tick();
     }
 }
