@@ -307,7 +307,6 @@ public class Block : MonoBehaviour
     
     public virtual void Autosave()
     {
-        Chunk chunk = new ChunkPosition(location).GetChunk();
         time_of_last_autosave = Time.time;
 
         location.SetData(data);

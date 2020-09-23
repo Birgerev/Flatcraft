@@ -50,7 +50,7 @@ public struct Location
         {
             Chunk chunk = cPos.GetChunk();
 
-            chunk.CreateLocalBlock(this, mat, "");
+            chunk.CreateLocalBlock(this, mat, new BlockData());
         }
         
         return this;

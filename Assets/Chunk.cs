@@ -239,8 +239,8 @@ public class Chunk : MonoBehaviour
                     Location loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
                         int.Parse(line.Split('*')[0].Split(',')[1]));
                     Material mat = (Material) System.Enum.Parse(typeof(Material), line.Split('*')[1]);
-                    string data = line.Split('*')[2];
-
+                    BlockData data = new BlockData(line.Split('*')[2]);
+                    
                     CreateLocalBlock(loc, mat, data);
                 }
             }
@@ -536,7 +536,7 @@ public class Chunk : MonoBehaviour
         return local;
     }
 
-    public Block CreateLocalBlock(Location loc, Material mat, string data)
+    public Block CreateLocalBlock(Location loc, Material mat, BlockData data)
     {
         int2 pos = new int2(loc.GetPosition());
 
@@ -579,7 +579,7 @@ public class Chunk : MonoBehaviour
             else
                 blocks.Add(pos, block.GetComponent<Block>());
 
-            //block.GetComponent<Block>().data = Block.dataFromString(data);
+            block.GetComponent<Block>().data = data;
             block.GetComponent<Block>().location = loc;
             block.GetComponent<Block>().Initialize();
 
