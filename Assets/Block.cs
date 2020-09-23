@@ -233,7 +233,7 @@ public class Block : MonoBehaviour
         Block source = (loc).GetBlock();
         if(source != null)
         {
-            source.CheckBlockLightSource();
+            source.CheckBlockLightSource();    //TODO
         }
         
         Chunk chunk = new ChunkPosition(loc).GetChunk();
@@ -245,9 +245,15 @@ public class Block : MonoBehaviour
     {
         if (block == null)
             return 0;
-        
-        bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
-        return block.IsSunlightSource() ? (isDay ? 15 : 5) : block.glowLevel;
+
+        int blockLevel = block.glowLevel;
+        if (blockLevel == 0 && block.IsSunlightSource())
+        {
+            bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
+            blockLevel = (isDay ? 15 : 5);
+        }
+
+        return blockLevel;
     }
 
     public static int GetLightLevel(Location loc)
