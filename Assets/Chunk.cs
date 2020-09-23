@@ -110,9 +110,6 @@ public class Chunk : MonoBehaviour
             if (block == null || block.transform == null)
                 continue;
 
-            if (age == 0)
-                block.GeneratingTick();
-
             block.Tick();
         }
     }
@@ -275,6 +272,14 @@ public class Chunk : MonoBehaviour
                 {
                     yield return new WaitForSeconds(0.05f);
                 }
+            }
+            
+            //Generate Tick all block (decay all necessary grass etc)
+            List<Block> blocksToTick = new List<Block>(blocks.Values);
+            foreach(Block block in blocksToTick)
+            {
+                if(block != null)
+                    block.GeneratingTick();
             }
             
             //Generate Structures

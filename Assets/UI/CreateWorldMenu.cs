@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +20,6 @@ public class CreateWorldMenu : MonoBehaviour
     void Start()
     {
         world = new World();
-        GenerateSeedByName();
     }
 
     // Update is called once per frame
@@ -32,7 +32,11 @@ public class CreateWorldMenu : MonoBehaviour
         nameField.text = System.Text.RegularExpressions.Regex.Replace(nameField.text, "[^\\w\\._]", "");
 
         world.name = nameField.text;
-        world.seed = int.Parse(seedField.text);
+        if(seedField.text.Length > 0)
+            world.seed = int.Parse(seedField.text);
+        else
+            world.seed = 0;
+        
 
         bool worldExists = World.worldExists(world.name);
         bool nameEmpty = (nameField.text == "");
@@ -50,6 +54,12 @@ public class CreateWorldMenu : MonoBehaviour
     public void Create()
     {
         switchingMenus = true;
+
+        if (world.seed == 0)
+        {
+            world.seed = new System.Random().Next();
+        }
+        
         world.SaveData();
         WorldManager.world = world;
         SceneManager.LoadScene("Loading");
@@ -58,12 +68,5 @@ public class CreateWorldMenu : MonoBehaviour
     public void Cancel()
     {
         SceneManager.LoadScene("SingleplayerMenu");
-    }
-
-    public void GenerateSeedByName()
-    {
-        System.Random rnd = new System.Random(nameField.text.GetHashCode());
-
-        seedField.text = "" + rnd.Next(int.MinValue, int.MaxValue);
     }
 }

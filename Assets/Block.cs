@@ -39,7 +39,6 @@ public class Block : MonoBehaviour
     public BlockData data = new BlockData();
 
     public float blockHealth = 0;
-    private bool firstTick = true;
 
     public Location location;
     public int age = 0;
@@ -61,7 +60,13 @@ public class Block : MonoBehaviour
 
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position, location.dimension);
-
+        
+        checkGround();
+        if (rotate_x || rotate_y)
+        {
+            RotateTowardsPlayer();
+        }
+        
         if (autoTick || autosave)
             StartCoroutine(autoTickLoop());
         if (averageRandomTickDuration != 0)
@@ -70,22 +75,12 @@ public class Block : MonoBehaviour
         Render();
     }
 
-    public virtual void FirstTick()
-    {
-        if (rotate_x || rotate_y)
-        {
-            Rotate();
-        }
-    }
-
     public virtual void RandomTick()
     {
-        
     }
 
     public virtual void GeneratingTick()
     {
-        firstTick = false;
     }
 
     public virtual void Tick()
@@ -95,16 +90,8 @@ public class Block : MonoBehaviour
             Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
         }
 
-        if (requiresGround)
-        {
-            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
-            {
-                Break();
-            }
-        }
-
+        checkGround();
         UpdateColliders();
-
         RenderRotate();
 
 
@@ -115,6 +102,17 @@ public class Block : MonoBehaviour
         }
 
         age++;
+    }
+
+    private void checkGround()
+    {
+        if (requiresGround)
+        {
+            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
+            {
+                Break();
+            }
+        }
     }
 
     public float getRandomChance()
@@ -274,7 +272,7 @@ public class Block : MonoBehaviour
         return pixels[random.Next(pixels.Length)];
     }
 
-    public void Rotate()
+    public void RotateTowardsPlayer()
     {
         bool rotated_x = false;
         bool rotated_y = false;

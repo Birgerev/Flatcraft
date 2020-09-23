@@ -23,17 +23,14 @@ public class Grass : Block
         
         base.RandomTick();
     }
-    
-    public override void Tick()
+
+    public override void GeneratingTick()
     {
-        if (age == 0)
-        {
-            TryDecay();
-        }
-
-        base.Tick();
+        TryDecay();
+        
+        base.GeneratingTick();
     }
-
+    
     public void TryDecay()
     {
         Block blockAbove = (location + new Location(0, 1)).GetBlock();

@@ -11,10 +11,13 @@ public class Wooden_Door_Bottom : Door
 
     public static string default_texture = "block_wooden_door_bottom_close";
     
-    public override void FirstTick()
+    public override void Tick()
     {
-       (location + new Location(0, 1)).SetMaterial(Material.Wooden_Door_Top);
+        if (age == 0)
+        {
+            (location + new Location(0, 1)).SetMaterial(Material.Wooden_Door_Top);
+        }
 
-        base.FirstTick();
+        base.Tick();
     }
 }
