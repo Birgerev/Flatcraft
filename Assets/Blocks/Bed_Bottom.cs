@@ -8,18 +8,21 @@ public class Bed_Bottom : Bed_Block
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override void FirstTick()
+    public override void Tick()
     {
-        base.FirstTick();
+        base.Tick();
 
-        Block otherBlock = Chunk.getBlock(otherBlockLocation);
-        if (otherBlock == null)
+        if (age == 0)
         {
-            otherBlock = Chunk.setBlock(otherBlockLocation, otherBlockMaterial, "", true, true);
-        }
-        else if (otherBlock.GetMaterial() != otherBlockMaterial)
-        {
-            Break(true);
+            Material otherMaterial = otherBlockLocation.GetMaterial();
+            if (otherMaterial == Material.Air)
+            {
+                otherBlockLocation.SetMaterial(otherBlockMaterial);
+            }
+            else if (otherMaterial != otherBlockMaterial)
+            {
+                Break(true);
+            }
         }
     }
 }

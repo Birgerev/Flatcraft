@@ -31,17 +31,17 @@ public class Item
 
     public virtual void InteractLeft(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(loc);
+        Block block = loc.GetBlock();
         
         if (block != null)
         {
-            block.Hit(1 / Player.blockHitsPerPerSecond);
+            block.Hit(1 / Player.blockInteractionsPerPerSecond);
         }
     }
 
     public virtual void InteractRight(Location loc, bool firstFrameDown)
     {
-        Block block = Chunk.getBlock(loc);
+        Block block = loc.GetBlock();
         
         if (firstFrameDown)
         {

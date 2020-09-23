@@ -6,82 +6,84 @@ public class Liquid : Block
 {
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
-    public override bool trigger { get; } = true;
+    public override bool triggerCollider { get; } = true;
     public override bool autoTick { get; } = true;
 
-    private Block leftBlock;
-    private Block rightBlock;
-    private Block topBlock;
-    private Block bottomBlock;
+    private Location left;
+    private Location right;
+    private Location top;
+    private Location bottom;
 
-    public override void Tick(bool spread)
+    public override void Tick()
     {
-        if (!data.ContainsKey("liquid_level"))
-            data.Add("liquid_level", max_liquid_level.ToString());
+        if (!data.HasData("liquid_level"))
+            data.SetData("liquid_level", max_liquid_level.ToString());
 
-        if (leftBlock == null)
-            leftBlock = Chunk.getBlock(location + new Location(-1, 0));
-        if (rightBlock == null)
-            rightBlock = Chunk.getBlock(location + new Location(1, 0));
-        if (topBlock == null)
-            topBlock = Chunk.getBlock(location + new Location(0, 1));
-        if (bottomBlock == null)
-            bottomBlock = Chunk.getBlock(location + new Location(0, -1));
+        if (age == 0)
+        {
+            left = (location + new Location(-1, 0));
+            right = (location + new Location(1, 0));
+            top = (location + new Location(0, 1));
+            bottom = (location + new Location(0, -1));
+        }
 
-        if (age > 1 && (leftBlock == null || rightBlock == null || topBlock == null || bottomBlock == null))
-            Flow();
-        CheckSource();
+        //if (age > 1 && (left.GetMaterial() == Material.Air || right.GetMaterial() == Material.Air || top.GetMaterial() == Material.Air || bottom.GetMaterial() == Material.Air))
+        //    Flow();
+        //CheckSource();
+        
+        base.Tick();
     }
 
     public void CheckSource()
     {
-        if (data["liquid_level"] == max_liquid_level.ToString())
+        if (data.GetData("liquid_level") == max_liquid_level.ToString())
             return;
 
-        if (!data.ContainsKey("source_block") || !data.ContainsKey("liquid_level"))
+        if (!data.HasData("source_block") || !data.HasData("liquid_level"))
         {
-            Chunk.setBlock(location, Material.Air, "", true, false);
-            return;
-        }
-
-        Location source = new Location(int.Parse(data["source_block"].Split('.')[0]), (int.Parse(data["source_block"].Split('.')[1])));
-        Block sourceBlock = Chunk.getBlock(location + source);
-
-        if(sourceBlock == null || !sourceBlock.data.ContainsKey("liquid_level"))
-        {
-            Chunk.setBlock(location, Material.Air, "", true, false);
+            location.SetMaterial(Material.Air);
             return;
         }
-        if(sourceBlock.GetMaterial() != GetMaterial() || 
-            int.Parse(sourceBlock.data["liquid_level"]) <= 1 || 
-            int.Parse(data["liquid_level"]) < 1 ||
-            int.Parse(sourceBlock.data["liquid_level"]) < int.Parse(data["liquid_level"]))
+
+        Location source = new Location(int.Parse(data.GetData("source_block").Split('.')[0]), (int.Parse(data.GetData("source_block").Split('.')[1])));
+        Location sourceLocation = (location + source);
+
+        if(sourceLocation.GetMaterial() == Material.Air || sourceLocation.GetData().HasData("liquid_level"))
         {
-            Chunk.setBlock(location, Material.Air, "", true, false);
+            location.SetMaterial(Material.Air);
+            return;
+        }
+        if(sourceLocation.GetMaterial() != GetMaterial() || 
+           int.Parse(sourceLocation.GetData().GetData("liquid_level")) <= 1 || 
+           int.Parse(data.GetData("liquid_level")) < 1 ||
+           int.Parse(sourceLocation.GetData().GetData("liquid_level")) < int.Parse(data.GetData("liquid_level")))
+        {
+            location.SetMaterial(Material.Air);
         }
     }
 
     public void Flow()
     {
-        if (bottomBlock != null && bottomBlock.GetMaterial() == GetMaterial())
+        if (bottom.GetMaterial() == GetMaterial())
             return;
-        if (bottomBlock == null)
+        
+        if (bottom.GetMaterial() == Material.Air)
         {
-            Chunk.setBlock(location + new Location(0, -1), GetMaterial(), "source_block=0.1", true, true);
+           (location + new Location(0, -1)).SetMaterial(GetMaterial()).SetData(new BlockData("source_block=0.1"));
             return;
         }
 
-        int liquidLevel = int.Parse(data["liquid_level"]);
+        int liquidLevel = int.Parse(data.GetData("liquid_level"));
 
         if (liquidLevel > 1)
         {
-            if (leftBlock == null)
+            if (left.GetMaterial() == Material.Air)
             {
-                Chunk.setBlock(location + new Location(-1, 0), GetMaterial(), "source_block=1.0,liquid_level="+(liquidLevel-1), true, true);
+                (location + new Location(-1, 0)).SetMaterial(GetMaterial()).SetData(new BlockData("source_block=1.0,liquid_level="+(liquidLevel-1)));
             }
-            if (rightBlock == null)
+            if (right.GetMaterial() == Material.Air)
             {
-                Chunk.setBlock(location + new Location(1, 0), GetMaterial(), "source_block=-1.0,liquid_level=" + (liquidLevel - 1), true, true);
+                (location + new Location(1, 0)).SetMaterial(GetMaterial()).SetData(new BlockData("source_block=1.0,liquid_level="+(liquidLevel-1)));
             }
         }
     }
@@ -93,10 +95,10 @@ public class Liquid : Block
 
     public override Sprite getTexture()
     {
-        if (!data.ContainsKey("liquid_level"))
+        if (!data.HasData("liquid_level"))
             return Resources.LoadAll<Sprite>("Sprites/" + texture)[max_liquid_level-1];
 
-        return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(data["liquid_level"]) - 1];
+        return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(data.GetData("liquid_level")) - 1];
     }
 
     public virtual void OnTriggerEnter2D(Collider2D col)

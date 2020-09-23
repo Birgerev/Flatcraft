@@ -34,7 +34,6 @@ public class Entity : MonoBehaviour
 
     //Entity State
     public int id = 0;
-    public Chunk currentChunk;
     public bool isOnGround;
     public bool isInLiquid = false;
     public bool isOnLadder = false;
@@ -44,7 +43,7 @@ public class Entity : MonoBehaviour
     {
         get
         {
-            return Location.locationByPosition(_cachedposition, _dimension);
+            return Location.LocationByPosition(_cachedposition, _dimension);
         }
         set
         {
@@ -76,7 +75,9 @@ public class Entity : MonoBehaviour
         getRenderer().flipX = facingLeft;
 
         UpdateCachedPosition();
-        currentChunk = Chunk.GetChunk(new ChunkPosition(location), ChunkLoadingEntity);
+        
+        if(ChunkLoadingEntity)
+            Chunk.CreateChunksAround(location, Chunk.RenderDistance);
 
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
         checkVoidDamage();
@@ -95,14 +96,11 @@ public class Entity : MonoBehaviour
 
     public virtual bool isChunkLoaded()
     {
-        bool result = false;
+        bool result = new ChunkPosition(location).IsChunkLoaded();
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
             result = false;
-        else if (currentChunk != null)
-            result = (currentChunk.isLoaded);
-        else result = false;
         
         return result;
     }
@@ -114,11 +112,11 @@ public class Entity : MonoBehaviour
 
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
         {
-            Block block = Chunk.getBlock(location);
+            Block block = location.GetBlock();
 
             if (block != null)
             {
-                if (block.playerCollide && !block.trigger && !(block is Liquid))
+                if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
             }
         }
@@ -328,7 +326,7 @@ public class Entity : MonoBehaviour
             {
                 Particle part = (Particle) Entity.Spawn("Particle");
 
-                part.transform.position = liquid.location.getPosition() + new Vector2(0, 0.5f);
+                part.transform.position = liquid.location.GetPosition() + new Vector2(0, 0.5f);
                 part.color = liquid.GetRandomColourFromTexture();
                 part.doGravity = true;
                 part.velocity = new Vector2(

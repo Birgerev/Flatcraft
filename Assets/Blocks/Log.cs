@@ -15,14 +15,11 @@ public class Log : Block
     {
         base.Initialize();
         
-        if (data.ContainsKey("leaf_texture"))
+        bool leafTexture = (data.GetData("leaf_texture") == "true");
+        if (leafTexture)
         {
-            bool leaf_texture = (data["leaf_texture"] == "false") ? false : true;
-            if (leaf_texture)
-            {
-                texture = "block_logged_leaves";
-                Render();
-            }
+            texture = "block_logged_leaves";
+            Render();
         }
     }
 }

@@ -19,8 +19,8 @@ public class AnimalController : EntityController
     {
         base.Tick();
 
-        Block block = Chunk.getBlock(instance.location);
-        Block blockInFront = Chunk.getBlock(instance.location + new Location(walkingRight ? 1 : -1, 0));
+        Block block = instance.location.GetBlock();
+        Block blockInFront = (instance.location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
         if (isWalking)
         {
             instance.Walk(walkingRight ? 1 : -1);
