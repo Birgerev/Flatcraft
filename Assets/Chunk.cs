@@ -564,26 +564,26 @@ public class Chunk : MonoBehaviour
         if (mat != Material.Air)
         {
             //Place new block
-            GameObject block = null;
+            GameObject blockObject = null;
 
-            block = Instantiate(blockPrefab, transform, true);
+            blockObject = Instantiate(blockPrefab, transform, true);
 
             //Attach it to the object
-            block.AddComponent(type);
+            Block block = (Block)blockObject.AddComponent(type);
 
-            block.transform.position = loc.GetPosition();
+            blockObject.transform.position = loc.GetPosition();
 
             //Add the block to block list
             if (blocks.ContainsKey(pos))
-                blocks[pos] = block.GetComponent<Block>();
+                blocks[pos] = block;
             else
-                blocks.Add(pos, block.GetComponent<Block>());
+                blocks.Add(pos, block);
 
-            block.GetComponent<Block>().data = data;
-            block.GetComponent<Block>().location = loc;
-            block.GetComponent<Block>().Initialize();
+            block.data = data;
+            block.location = loc;
+            block.ScheduleBlockInitialization();
 
-            result = block.GetComponent<Block>();
+            result = blockObject.GetComponent<Block>();
         }
 
         if (isLoaded)
@@ -594,6 +594,7 @@ public class Chunk : MonoBehaviour
 
         return result;
     }
+    
     public Block getLocalBlock(Location loc)
     {
         if (!isBlockLocal(loc))

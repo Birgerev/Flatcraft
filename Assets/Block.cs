@@ -45,6 +45,18 @@ public class Block : MonoBehaviour
 
     private float time_of_last_hit = 0;
     private float time_of_last_autosave = 0;
+
+    public void ScheduleBlockInitialization()
+    {
+        StartCoroutine(scheduleBlockInitialization());
+    }
+
+    IEnumerator scheduleBlockInitialization()
+    {
+        yield return new WaitForSeconds(0.02f);
+        Initialize();
+    }
+    
     public virtual void Initialize()
     {
         //gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";

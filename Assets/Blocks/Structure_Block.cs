@@ -21,7 +21,7 @@ public class Structure_Block : Block
                 TextAsset structure = structures[new System.Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
                 
                 Material replaceMaterial = Material.Air;
-                string replaceData = "";
+                BlockData replaceData = new BlockData();
 
                 foreach (string blockText in structure.text.Split(new char[] { '\n', '\r' }))
                 {
@@ -32,7 +32,7 @@ public class Structure_Block : Block
                         int.Parse(blockText.Split('*')[1].Split(',')[0]),
                         int.Parse(blockText.Split('*')[1].Split(',')[1]),
                         location.dimension);
-                    string data = blockText.Split('*')[2];
+                    BlockData data = new BlockData(blockText.Split('*')[2]);
 
                     if (loc.x == 0 && loc.y == 0)
                     {
@@ -42,10 +42,10 @@ public class Structure_Block : Block
                     }
 
                     loc += location;
-
-                    loc.SetMaterial(mat);
+                    
+                    loc.SetMaterial(mat).SetData(data);
                 }
-                location.SetMaterial(replaceMaterial).SetData(new BlockData(replaceData));
+                location.SetMaterial(replaceMaterial).SetData(replaceData);
             }
         }
     }
