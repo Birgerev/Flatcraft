@@ -27,7 +27,7 @@ public class Player : HumanEntity
     public GameObject crosshair;
     private float lastFrameScroll;
     private float lastHitTime;
-    private bool inventoryOpenLastFrame = false;
+    private int framesSinceInventoryOpen = 0;
     private float lastBlockInteraction;
 
     public override void Start()
@@ -46,7 +46,7 @@ public class Player : HumanEntity
     {
         base.FixedUpdate();
 
-        performInput();
+        performMovementInput();
     }
 
     public override void Update()
@@ -67,20 +67,18 @@ public class Player : HumanEntity
 
         lastFrameScroll = scroll;
 
-        inventoryOpenLastFrame = InventoryMenuManager.instance.anyInventoryOpen();
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            framesSinceInventoryOpen = 0;
+        else
+            framesSinceInventoryOpen++;
 
         //Crosshair
-        MouseInput();
+        mouseInput();
+        performInput();
     }
 
-    private void performInput()
+    private void performMovementInput()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !inventoryOpenLastFrame)
-            inventory.Open(location);
-
-        if (Inventory.anyOpen)
-            return;
-
         //Movement
         if (Input.GetKey(KeyCode.A))
         {
@@ -94,6 +92,15 @@ public class Player : HumanEntity
         {
             Jump();
         }
+    }
+
+    private void performInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
+            inventory.Open(location);
+
+        if (Inventory.anyOpen)
+            return;
         
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
@@ -108,7 +115,7 @@ public class Player : HumanEntity
         }
     }
 
-    private void MouseInput() {
+    private void mouseInput() {
         if (WorldManager.instance.loadingProgress != 1)
             return;
 
