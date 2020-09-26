@@ -49,6 +49,20 @@ public class Player : HumanEntity
         performMovementInput();
     }
 
+    public override void UpdateAnimatorValues()
+    {
+        base.UpdateAnimatorValues();
+        
+        Animator anim = GetComponent<Animator>();
+        
+        anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
+        anim.SetBool("holding-item", inventory.getSelectedItem().material != Material.Air);
+        anim.SetBool("sneaking", sneaking);
+        anim.SetBool("grounded", isOnGround);
+        
+        getRenderer().transform.localScale = new Vector2((facingLeft) ? -1 : 1, 1);        //Mirror renderer if facing left
+    }
+    
     public override void Update()
     {
         base.Update();
