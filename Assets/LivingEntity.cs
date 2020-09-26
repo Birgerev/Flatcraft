@@ -15,7 +15,7 @@ public class LivingEntity : Entity
     private float sneakSpeed = 1.3f;
     private float swimUpSpeed = 2f;
     private float climbSpeed = 0.35f;
-    private float jumpVelocity = 6f;
+    private float jumpVelocity = 8f;
     private float groundFriction = 0.92f;
     private float airDrag = 0.92f;
     private float liquidDrag = 0.75f;
@@ -27,6 +27,8 @@ public class LivingEntity : Entity
     
 
     //Entity State
+    protected bool sprinting;
+    protected bool sneaking;
     protected float last_jump_time;
     protected float highestYlevelsinceground;
     protected EntityController controller;
@@ -57,7 +59,15 @@ public class LivingEntity : Entity
         UpdateAnimatorValues();
 
         if (Mathf.Abs(getVelocity().x) >= sneakSpeed && isOnGround)
-            spawnMovementParticles();
+        {
+            float chances;
+            if (sprinting)
+                chances = 0.2f;
+            else
+                chances = 0.02f;
+            
+            spawnMovementParticles(chances);
+        }
     }
 
     public virtual void UpdateAnimatorValues()
@@ -90,14 +100,22 @@ public class LivingEntity : Entity
     
     public virtual void Walk(int direction)
     {
-        if (getVelocity().x < walkSpeed && getVelocity().x > -walkSpeed)
+        float maxSpeed;
+        if (sprinting)
+            maxSpeed = sprintSpeed;
+        else if (sneaking)
+            maxSpeed = sneakSpeed;
+        else 
+            maxSpeed = walkSpeed;
+        
+        if (getVelocity().x < maxSpeed && getVelocity().x > -maxSpeed)
         {
             float targetXVelocity = 0;
 
             if (direction == -1)
-                targetXVelocity -= walkSpeed;
+                targetXVelocity -= maxSpeed;
             else if (direction == 1)
-                targetXVelocity += walkSpeed;
+                targetXVelocity += maxSpeed;
             else targetXVelocity = 0;
             
             GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.fixedDeltaTime), 0);
@@ -217,11 +235,11 @@ public class LivingEntity : Entity
         }
     }
     
-    private void spawnMovementParticles()
+    private void spawnMovementParticles(float chances)
     {
         System.Random r = new System.Random();
 
-        if (r.NextDouble() < 0.2f)
+        if (r.NextDouble() < chances)
         {
             Block blockBeneath = null;
             for (int y = 1; blockBeneath == null; y++)
