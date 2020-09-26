@@ -242,10 +242,10 @@ public class LivingEntity : Entity
         if (r.NextDouble() < chances)
         {
             Block blockBeneath = null;
-            for (int y = 1; blockBeneath == null; y++)
+            for (int y = 1; blockBeneath == null && y < 3; y++)
             {
                 Block block = (location - new Location(0, y)).GetBlock();
-                if (block != null)
+                if (block != null && block.playerCollide)
                     blockBeneath = block;
             }
 

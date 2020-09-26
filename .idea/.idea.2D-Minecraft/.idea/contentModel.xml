@@ -72,7 +72,6 @@
         <e p="Clouds.cs" t="Include" />
         <e p="CraftingInventory.cs" t="Include" />
         <e p="CraftingRecepie.cs" t="Include" />
-        <e p="DebugMenu.cs" t="Include" />
         <e p="Dimension.cs" t="Include" />
         <e p="DroppedItem.cs" t="Include" />
         <e p="Editor" t="Include">
@@ -298,6 +297,8 @@
           <e p="CraftingInventoryMenu.cs" t="Include" />
           <e p="CreateWorldMenu.cs" t="Include" />
           <e p="DeathMenu.cs" t="Include" />
+          <e p="DebugMenu.cs" t="Include" />
+          <e p="DeleteWorldMenu.cs" t="Include" />
           <e p="FurnaceInventoryMenu.cs" t="Include" />
           <e p="HotbarItemSlot.cs" t="Include" />
           <e p="InventoryMenu.cs" t="Include" />
