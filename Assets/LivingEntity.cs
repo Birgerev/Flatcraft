@@ -15,7 +15,7 @@ public class LivingEntity : Entity
     private float sneakSpeed = 1.3f;
     private float swimUpSpeed = 2f;
     private float climbSpeed = 0.35f;
-    private float jumpVelocity = 6f;
+    private float jumpVelocity = 8f;
     private float groundFriction = 0.92f;
     private float airDrag = 0.92f;
     private float liquidDrag = 0.75f;
