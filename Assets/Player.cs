@@ -102,6 +102,18 @@ public class Player : HumanEntity
         if (Inventory.anyOpen)
             return;
         
+        sneaking = Input.GetKey(KeyCode.LeftShift);
+        
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            sprinting = true;
+        }
+        if (Mathf.Abs(getVelocity().x) < 3f || sneaking)
+        {
+            sprinting = false;
+        }
+        
+        
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
             DropSelected();
