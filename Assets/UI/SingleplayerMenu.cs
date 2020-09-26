@@ -20,7 +20,7 @@ public class SingleplayerMenu : MonoBehaviour
     {
         worlds.Clear();
 
-        worlds = World.loadWorlds();
+        worlds = GetWorlds();
 
         foreach (World world in worlds)
         {
@@ -28,6 +28,11 @@ public class SingleplayerMenu : MonoBehaviour
 
             obj.transform.SetParent(list);
         }
+    }
+
+    public static List<World> GetWorlds()
+    {
+        return World.loadWorlds();
     }
 
     public void Cancel()
@@ -43,8 +48,8 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void Delete()
     {
-        worlds[selectedWorld].Delete();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        DeleteWorldMenu.selectedWorld = selectedWorld;
+        SceneManager.LoadScene("DeleteWorld");
     }
 
     public void Create()
