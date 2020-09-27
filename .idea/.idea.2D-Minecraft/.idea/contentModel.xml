@@ -177,6 +177,7 @@
         <e p="Particle.cs" t="Include" />
         <e p="PassiveEntity.cs" t="Include" />
         <e p="Player.cs" t="Include" />
+        <e p="PlayerHeldItemRenderer.cs" t="Include" />
         <e p="PlayerInventory.cs" t="Include" />
         <e p="Resources" t="Include">
           <e p="Recepies" t="Include">
