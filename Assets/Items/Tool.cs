@@ -13,7 +13,7 @@ public class Tool : Item
 
         if (block != null)
         {
-            block.Hit(1 / Player.blockInteractionsPerPerSecond, tool_type, tool_level);
+            block.Hit(1 / Player.interactionsPerPerSecond, tool_type, tool_level);
         }
     }
     

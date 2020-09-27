@@ -35,7 +35,7 @@ public class Item
         
         if (block != null)
         {
-            block.Hit(1 / Player.blockInteractionsPerPerSecond);
+            block.Hit(1 / Player.interactionsPerPerSecond);
         }
     }
 

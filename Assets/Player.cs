@@ -10,7 +10,7 @@ public class Player : HumanEntity
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
-    public static float blockInteractionsPerPerSecond = 4.5f;
+    public static float interactionsPerPerSecond = 4.5f;
 
 
     //Entity Data Tags
@@ -26,9 +26,8 @@ public class Player : HumanEntity
     public static Player localInstance;
     public GameObject crosshair;
     private float lastFrameScroll;
-    private float lastHitTime;
     private int framesSinceInventoryOpen = 0;
-    private float lastBlockInteraction;
+    private float lastBlockInteractionTime;
 
     public override void Start()
     {
@@ -154,17 +153,10 @@ public class Player : HumanEntity
         bool isAboveEntity = false;
             
 
-        //Hit Entities
-        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
-        if (hit.collider != null && hit.transform.GetComponent<Entity>() != null)
+        RaycastHit2D hitEntity = Physics2D.Raycast(mousePosition, Vector2.zero);
+        if (hitEntity.collider != null && hitEntity.transform.GetComponent<Entity>() != null)
         {
             isAboveEntity = true;
-
-            if (Input.GetMouseButtonDown(0) && Time.time > lastHitTime + 0.5f && isInRange)
-            {
-                hit.transform.GetComponent<Entity>().Hit(1);
-                lastHitTime = Time.time;
-            }
         }
 
 
@@ -176,8 +168,11 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        if (Time.time - lastBlockInteraction < 1 / blockInteractionsPerPerSecond)
-            return;
+        //Hit Entities
+        if (isAboveEntity && Input.GetMouseButtonDown(0))
+        {
+            hitEntity.transform.GetComponent<Entity>().Hit(1);
+        }
         
         
         Item itemType;
@@ -211,34 +206,36 @@ public class Player : HumanEntity
                             new ItemStack(inventory.getSelectedItem().material,
                                 inventory.getSelectedItem().amount - 1));
                         
-                        lastBlockInteraction = Time.time;
                         return;
                     }
                 }
             }
         }
 
+        
+        if (Time.time - lastBlockInteractionTime < (1f / interactionsPerPerSecond))
+            return;
 
         if (Input.GetMouseButtonDown(1))
         {
             itemType.Interact(blockedMouseLocation, 1, true);
-            lastBlockInteraction = Time.time;
+            lastBlockInteractionTime = Time.time;
         }
         else if (Input.GetMouseButton(1))
         {
             itemType.Interact(blockedMouseLocation, 1, false);
-            lastBlockInteraction = Time.time;
+            lastBlockInteractionTime = Time.time;
         }
 
         if (Input.GetMouseButtonDown(0))
         {
             itemType.Interact(blockedMouseLocation, 0, true);
-            lastBlockInteraction = Time.time;
+            lastBlockInteractionTime = Time.time;
         }
         else if (Input.GetMouseButton(0))
         {
             itemType.Interact(blockedMouseLocation, 0, false);
-            lastBlockInteraction = Time.time;
+            lastBlockInteractionTime = Time.time;
         }
     }
 
