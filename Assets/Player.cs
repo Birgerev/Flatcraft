@@ -116,7 +116,7 @@ public class Player : HumanEntity
         if (Inventory.anyOpen)
             return;
         
-        sneaking = Input.GetKey(KeyCode.LeftShift);
+        sneaking = (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S));
         
         if (Input.GetKey(KeyCode.LeftControl))
         {
