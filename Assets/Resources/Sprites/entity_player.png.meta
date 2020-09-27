@@ -26,6 +26,9 @@ TextureImporter:
   - first:
       213: -5065158601477154626
     second: entity_player_held_item
+  - first:
+      213: -1679096297131114224
+    second: entity_player_legs_sneak
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -290,6 +293,27 @@ TextureImporter:
       bones: []
       spriteID: eb890fb9611f4b9b0800000000000000
       internalID: -5065158601477154626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: entity_player_legs_sneak
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 3
+        width: 3
+        height: 2
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01183d160d6a2b8e0800000000000000
+      internalID: -1679096297131114224
       vertices: []
       indices: 
       edges: []

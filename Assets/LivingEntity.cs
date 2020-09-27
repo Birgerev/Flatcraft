@@ -78,7 +78,7 @@ public class LivingEntity : Entity
             return;
 
         if(anim.isInitialized)
-            anim.SetFloat("velocity-x", getVelocity().x);
+            anim.SetFloat("velocity-x", Mathf.Abs(getVelocity().x));
     }
 
     public virtual void ProcessMovement()
