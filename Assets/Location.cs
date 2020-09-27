@@ -51,7 +51,8 @@ public struct Location
             Chunk chunk = cPos.GetChunk();
             Block block = chunk.CreateLocalBlock(this, mat, new BlockData());
             
-            block.ScheduleBlockBuildTick();
+            if(block != null)
+                block.ScheduleBlockBuildTick();
         }
         
         return this;

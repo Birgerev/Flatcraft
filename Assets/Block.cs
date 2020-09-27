@@ -425,8 +425,7 @@ public class Block : MonoBehaviour
             part.maxBounces = 10;
         }
 
-        location.SetMaterial(Material.Air);
-        location.Tick();
+        location.SetMaterial(Material.Air).Tick();
     }
 
     public virtual void Drop()
