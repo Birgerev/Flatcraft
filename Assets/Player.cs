@@ -44,7 +44,8 @@ public class Player : HumanEntity
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-
+        
+        RenderSpriteParts();
         performMovementInput();
     }
 
@@ -61,7 +62,17 @@ public class Player : HumanEntity
         
         getRenderer().transform.localScale = new Vector2((facingLeft) ? -1 : 1, 1);        //Mirror renderer if facing left
     }
-    
+
+    private void RenderSpriteParts()
+    {
+        for (int i = 0; i < getRenderer().transform.childCount; i++)
+        {
+            SpriteRenderer spritePart = getRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
+            spritePart.color = getRenderer().color;
+        }
+    }
+
+
     public override void Update()
     {
         base.Update();
@@ -84,7 +95,7 @@ public class Player : HumanEntity
             framesSinceInventoryOpen = 0;
         else
             framesSinceInventoryOpen++;
-
+        
         //Crosshair
         mouseInput();
         performInput();
