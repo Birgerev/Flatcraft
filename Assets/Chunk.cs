@@ -227,6 +227,10 @@ public class Chunk : MonoBehaviour
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
 
+        //pregenerate chunk biomes
+        Biome.getBiomeAt(chunkPosition);
+        
+        
         if (chunkPosition.HasBeenGenerated())
         {
             //Load blocks

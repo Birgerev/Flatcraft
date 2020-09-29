@@ -101,8 +101,11 @@ public class Biome
                     break;
                 
                 ChunkPosition i = new ChunkPosition(currentChunk, dimension);
-                WorldManager.instance.chunkBiomes[i] = biome;
-                currentChunk++;//just updated this loop, try playing the game
+                if (WorldManager.instance.chunkBiomes.ContainsKey(i))
+                    WorldManager.instance.chunkBiomes.Remove(i);
+                    
+                WorldManager.instance.chunkBiomes.Add(i, biome);
+                currentChunk++;
             }
         }
     }
