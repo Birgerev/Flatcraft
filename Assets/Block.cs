@@ -13,7 +13,7 @@ using Random = System.Random;
 public class Block : MonoBehaviour
 {
     public static Dictionary<Block, int> lightSources = new Dictionary<Block, int>();
-    public static HashSet<Block> sunlightSources = new HashSet<Block>();
+    public static Dictionary<int, Location> sunlightSources = new Dictionary<int, Location>();
 
     public string texture;
     public virtual string[] alternative_textures { get; } = { };
@@ -179,31 +179,30 @@ public class Block : MonoBehaviour
     
     public static void UpdateSunlightSourceAt(int x, Dimension dimension)
     {
-        Block topBlock = Chunk.getTopmostBlock(x, dimension);
-        bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
+        Block topBlock = Chunk.getTopmostBlock(x, dimension, false);
         if (topBlock == null)
             return;
 
         //remove all sunlight sources in the same column
-        foreach(Block source in sunlightSources.ToList())
+        if (sunlightSources.ContainsKey(x))
         {
-            if (source.location.x == x && source.location.dimension == dimension)
-            {
-                sunlightSources.Remove(source);
-                lightSources.Remove(source);
-                UpdateLightAround(source.location);
-            }
+            Location oldColumnSunlightSource = sunlightSources[x];
+            sunlightSources.Remove(x);
+            lightSources.Remove(oldColumnSunlightSource.GetBlock());
+            UpdateLightAround(oldColumnSunlightSource);
         }
 
+        bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
+        
         //Add the new position
-        sunlightSources.Add(topBlock);
         lightSources.Add(topBlock, isDay ? 15 : 5);
+        sunlightSources[topBlock.location.x] = topBlock.location;
         UpdateLightAround(topBlock.location);
     }
 
     public bool IsSunlightSource()
     {
-        return sunlightSources.Contains(this);
+        return sunlightSources.ContainsKey(location.x);
     }
 
     public bool CheckBlockLightSource()
@@ -227,14 +226,9 @@ public class Block : MonoBehaviour
         float brightnessColorValue = (float)lightLevel / 15f;
         GetComponent<SpriteRenderer>().color = new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
     }
-
     public static void UpdateLightAround(Location loc)
     {
         Block source = (loc).GetBlock();
-        if(source != null)
-        {
-            source.CheckBlockLightSource();    //TODO
-        }
         
         Chunk chunk = new ChunkPosition(loc).GetChunk();
         if(chunk != null)
@@ -252,23 +246,40 @@ public class Block : MonoBehaviour
             bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
             blockLevel = (isDay ? 15 : 5);
         }
-
+        
         return blockLevel;
     }
 
     public static int GetLightLevel(Location loc)
     {
         //Messy layout due to multithreading
+        
         if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
             return 0;
         
         List<Block> sources;
+        Dictionary<int, Location> sunlightSourcesClone;
         lock (lightSources)
         {
             //clone actual list to avoid threading errors
             sources = new Dictionary<Block, int>(lightSources).Keys.ToList();
         }
+        lock (sunlightSources)
+        {
+            //clone actual list to avoid threading errors
+            sunlightSourcesClone = new Dictionary<int, Location>(sunlightSources);
+        }
 
+        if (sunlightSourcesClone.ContainsKey(loc.x))
+        {
+            //If current location y level is above sunlight source, return sunlight light level
+            if (loc.y >= sunlightSourcesClone[loc.x].y)
+            {
+                bool isDay = (WorldManager.world.time % WorldManager.dayLength) < (WorldManager.dayLength / 2);
+                return isDay ? 15 : 5;
+            }
+        }
+        
         Location brightestSourceLoc = new Location(0, 0);
         int brightestValue = 0;
         

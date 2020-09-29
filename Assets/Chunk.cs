@@ -187,7 +187,7 @@ public class Chunk : MonoBehaviour
         if (r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
         {
             int x = r.Next(0, Width) + chunkPosition.worldX;
-            int y = getTopmostBlock(x, chunkPosition.dimension).location.y + 1;
+            int y = getTopmostBlock(x, chunkPosition.dimension, true).location.y + 1;
             List<string> entities = mobSpawns;
             entities.AddRange(getBiome().biomeSpecificEntitySpawns);
             string entityType = entities[r.Next(0, entities.Count)];
@@ -728,22 +728,27 @@ public class Chunk : MonoBehaviour
         return entities.ToArray();
     }
 
-    public static Block getTopmostBlock(int x, Dimension dimension)
+    public static Block getTopmostBlock(int x, Dimension dimension, bool mustBeSolid)
     {
         Chunk chunk = new ChunkPosition(new Location(x, 0, dimension)).GetChunk();
         if (chunk == null)
             return null;
 
-        return chunk.getLocalTopmostBlock(x);
+        return chunk.getLocalTopmostBlock(x, mustBeSolid);
     }
 
-    public Block getLocalTopmostBlock(int x)
+    public Block getLocalTopmostBlock(int x, bool mustBeSolid)
     {
         for(int y = Height; y > 0; y--)
         {
-            if(getLocalBlock(new Location(x, y, chunkPosition.dimension)) != null)
+            Block block = getLocalBlock(new Location(x, y, chunkPosition.dimension));
+            
+            if(block != null)
             {
-                return getLocalBlock(new Location(x, y, chunkPosition.dimension));
+                if(mustBeSolid && !block.playerCollide)
+                    continue;
+                
+                return block;
             }
         }
         return null;
