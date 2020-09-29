@@ -14,7 +14,7 @@
             fs.transform.position = location.GetPosition();
             fs.material = GetMaterial();
 
-            location.SetMaterial(Material.Air);
+            location.SetMaterial(Material.Air).Tick();
         }
 
         base.Tick();
