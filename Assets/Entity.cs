@@ -53,6 +53,7 @@ public class Entity : MonoBehaviour
     }
     private Vector2 _cachedposition;
     private Dimension _dimension;
+    private bool hasInitializedLight = false;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -69,12 +70,21 @@ public class Entity : MonoBehaviour
     {
         age += Time.deltaTime;
 
+        if (age > 0.3f && !hasInitializedLight)
+        {
+            UpdateEntityLightLevel();
+            hasInitializedLight = true;
+        }
+        
         if (isInLiquid)
             isOnGround = false;
 
         getRenderer().flipX = facingLeft;
-
+        
         UpdateCachedPosition();
+
+        if(location.GetPosition() != Location.LocationByPosition(lastFramePosition, location.dimension).GetPosition())
+            UpdateEntityLightLevel();
         
         if(ChunkLoadingEntity)
             Chunk.CreateChunksAround(location, Chunk.RenderDistance);
@@ -122,6 +132,16 @@ public class Entity : MonoBehaviour
         }
     }
 
+    private void UpdateEntityLightLevel()
+    {
+        int lightLevel = Block.GetLightLevel(location);
+        float lightLevelFactor = ((float)lightLevel) / 15f;
+        
+        Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
+
+        getRenderer().color = color;
+    }
+    
     private void checkVoidDamage()
     {
         if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
