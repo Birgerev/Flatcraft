@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Sheep : PassiveEntity
 {
@@ -10,8 +9,8 @@ public class Sheep : PassiveEntity
     public override List<ItemStack> GetDrops()
     {
         //Drop a random amount of a certain item
-        List<ItemStack> result = new List<ItemStack>();
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(location));
+        var result = new List<ItemStack>();
+        var r = new Random(SeedGenerator.SeedByLocation(location));
 
         result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 3 + 1)));
 
@@ -22,5 +21,4 @@ public class Sheep : PassiveEntity
     {
         return new AnimalController(this);
     }
-
 }

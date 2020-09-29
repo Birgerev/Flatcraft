@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
-[System.Serializable]
+[Serializable]
 public class PlayerInventory : Inventory
 {
-    public int selectedSlot = 0;
     public int baseInventorySize = 36;
+    public int selectedSlot;
 
     public PlayerInventory()
     {
@@ -20,36 +18,27 @@ public class PlayerInventory : Inventory
 
     public ItemStack[] getHotbar()
     {
-        ItemStack[] hotbar = new ItemStack[9];
+        var hotbar = new ItemStack[9];
 
-        for (int i = 0; i < 9; i++)
-        {
-            hotbar[i] = getItem(i);
-        }
+        for (var i = 0; i < 9; i++) hotbar[i] = getItem(i);
 
         return hotbar;
     }
 
     public ItemStack[] getArmor()
     {
-        ItemStack[] armor = new ItemStack[4];
+        var armor = new ItemStack[4];
 
-        for (int i = 36; i <= 39; i++)
-        {
-            armor[i] = getItem(i);
-        }
+        for (var i = 36; i <= 39; i++) armor[i] = getItem(i);
 
         return armor;
     }
 
     public ItemStack[] getCraftingTable()
     {
-        ItemStack[] table = new ItemStack[4];
+        var table = new ItemStack[4];
 
-        for (int i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot()+4; i++)
-        {
-            table[i-40] = getItem(i);
-        }
+        for (var i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot() + 4; i++) table[i - 40] = getItem(i);
 
         return table;
     }
@@ -67,7 +56,7 @@ public class PlayerInventory : Inventory
 
     public override void UpdateMenuStatus()
     {
-        PlayerInventoryMenu inventory = InventoryMenuManager.instance.playerInventoryMenu;
+        var inventory = InventoryMenuManager.instance.playerInventoryMenu;
         inventory.active = open;
 
         InventoryMenu.playerInventory = this;
@@ -75,8 +64,8 @@ public class PlayerInventory : Inventory
 
     public override void Close()
     {
-        int i = 0;
-        foreach (ItemStack index in getCraftingTable())
+        var i = 0;
+        foreach (var index in getCraftingTable())
         {
             index.Drop(holder, true);
 

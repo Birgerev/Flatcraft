@@ -1,18 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerInventoryMenu : InventoryMenu
+﻿public class PlayerInventoryMenu : InventoryMenu
 {
-    public override bool wholePlayerInventory { get; } = true;
     private CraftingRecepie curRecepie;
+    public override bool wholePlayerInventory { get; } = true;
 
     public override void FillSlots()
     {
-        if (active)
-        {
-            CheckCraftingRecepies();
-        }
+        if (active) CheckCraftingRecepies();
 
         base.FillSlots();
     }
@@ -46,20 +39,18 @@ public class PlayerInventoryMenu : InventoryMenu
     {
         if (playerInventory.getItem(playerInventory.getCraftingResultSlot()).material == Material.Air)
             return;
-        if (playerInventory.getItem(playerInventory.getCraftingResultSlot()).material != pointerSlot.item.material && pointerSlot.item.material != Material.Air)
+        if (playerInventory.getItem(playerInventory.getCraftingResultSlot()).material != pointerSlot.item.material &&
+            pointerSlot.item.material != Material.Air)
             return;
 
         pointerSlot.item.material = playerInventory.getItem(playerInventory.getCraftingResultSlot()).material;
         pointerSlot.item.amount += playerInventory.getItem(playerInventory.getCraftingResultSlot()).amount;
         playerInventory.setItem(playerInventory.getCraftingResultSlot(), new ItemStack());
 
-        foreach (ItemStack craftingItem in playerInventory.getCraftingTable())
-        {
+        foreach (var craftingItem in playerInventory.getCraftingTable())
             if (craftingItem.amount > 0)
                 craftingItem.amount--;
-        }
 
         CheckCraftingRecepies();
     }
-
 }

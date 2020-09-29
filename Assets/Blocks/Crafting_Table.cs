@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 public class Crafting_Table : InventoryContainer
 {
@@ -11,7 +9,7 @@ public class Crafting_Table : InventoryContainer
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override System.Type inventoryType { get; } = typeof(CraftingInventory);
+    public override Type inventoryType { get; } = typeof(CraftingInventory);
 
     public override void Tick()
     {
@@ -22,7 +20,7 @@ public class Crafting_Table : InventoryContainer
 
     public void CheckCraftingRecepies()
     {
-        CraftingRecepie curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().getCraftingTable());
+        var curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().getCraftingTable());
 
         if (curRecepie == null)
         {
@@ -35,13 +33,13 @@ public class Crafting_Table : InventoryContainer
 
     public override void Interact()
     {
-        CraftingInventory newInv = new CraftingInventory();
+        var newInv = new CraftingInventory();
         inventory = newInv;
         newInv.Open(location);
     }
 
     private CraftingInventory getInventory()
     {
-        return ((CraftingInventory)inventory);
+        return (CraftingInventory) inventory;
     }
 }

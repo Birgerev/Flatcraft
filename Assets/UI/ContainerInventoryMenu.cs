@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
-using UnityEngine;
+﻿using UnityEngine.UI;
 
 public class ContainerInventoryMenu : InventoryMenu
 {
-    public Text inventoryTitle;
-
     public Inventory inventory;
+    public Text inventoryTitle;
 
 
     public override void SetTitle()
@@ -20,10 +16,8 @@ public class ContainerInventoryMenu : InventoryMenu
     {
         if (index < playerInventory.baseInventorySize)
             return base.getItem(index);
-        else if (index < playerInventory.baseInventorySize + inventory.size)
-        {
+        if (index < playerInventory.baseInventorySize + inventory.size)
             return inventory.getItem(index - playerInventory.baseInventorySize);
-        }
 
         return new ItemStack();
     }
@@ -38,12 +32,8 @@ public class ContainerInventoryMenu : InventoryMenu
     {
         base.FillSlots();
         if (active)
-        {
-            for (int i = playerInventory.baseInventorySize; i < playerInventory.baseInventorySize + inventory.size; i++)
-            {
-                if(getSlotObject(i) != null)
+            for (var i = playerInventory.baseInventorySize; i < playerInventory.baseInventorySize + inventory.size; i++)
+                if (getSlotObject(i) != null)
                     getSlotObject(i).item = getItem(i);
-            }
-        }
     }
 }

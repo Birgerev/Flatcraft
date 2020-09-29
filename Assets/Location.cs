@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
-using System.Runtime.InteropServices;
+using UnityEngine;
 
 public struct Location
 {
@@ -15,7 +14,7 @@ public struct Location
     {
         this.x = x;
         this.y = y;
-        this.dimension = Dimension.Overworld;
+        dimension = Dimension.Overworld;
     }
 
     public Location(int x, int y, Dimension dimension)
@@ -29,64 +28,60 @@ public struct Location
     {
         return new Location(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), dimension);
     }
-    
+
     public Vector2 GetPosition()
     {
         return new Vector2(x, y);
     }
 
-    
+
     public Location SetMaterial(Material mat)
     {
-        if (SaveManager.blockChanges.ContainsKey(this))
-        {
-            SaveManager.blockChanges.Remove(this);
-        }
-    
-        SaveManager.blockChanges.Add(this, mat.ToString() + "*");    //Add block change to list, without old data, as it should be reset whenever the block is replaced
+        if (SaveManager.blockChanges.ContainsKey(this)) SaveManager.blockChanges.Remove(this);
 
-        ChunkPosition cPos = new ChunkPosition(this);
+        SaveManager.blockChanges.Add(this,
+            mat + "*"); //Add block change to list, without old data, as it should be reset whenever the block is replaced
+
+        var cPos = new ChunkPosition(this);
         if (cPos.IsChunkLoaded())
         {
-            Chunk chunk = cPos.GetChunk();
-            Block block = chunk.CreateLocalBlock(this, mat, new BlockData());
-            
-            if(block != null)
+            var chunk = cPos.GetChunk();
+            var block = chunk.CreateLocalBlock(this, mat, new BlockData());
+
+            if (block != null)
                 block.ScheduleBlockBuildTick();
         }
-        
+
         return this;
     }
 
     public Location SetData(BlockData data)
     {
-        string oldMaterial = GetMaterial().ToString();    //Get current material, and later apply it to our new block change entry
+        var oldMaterial =
+            GetMaterial().ToString(); //Get current material, and later apply it to our new block change entry
 
         if (SaveManager.blockChanges.ContainsKey(this))
         {
-            string blockChangeLine = SaveManager.blockChanges[this];    //Get old material from save data
+            var blockChangeLine = SaveManager.blockChanges[this]; //Get old material from save data
             oldMaterial = blockChangeLine.Split('*')[0];
             SaveManager.blockChanges.Remove(this);
         }
-        
+
         SaveManager.blockChanges.Add(this, oldMaterial + "*" + data.GetSaveString());
 
-        Block block = GetBlock();
-        if (block != null)
-        {
-            block.data = data;
-        }
-        
+        var block = GetBlock();
+        if (block != null) block.data = data;
+
         return this;
     }
 
     public Block GetBlock()
     {
-        ChunkPosition cPos = new ChunkPosition(this);
-        Chunk chunk = cPos.GetChunk();
+        var cPos = new ChunkPosition(this);
+        var chunk = cPos.GetChunk();
         if (chunk != null)
         {
-            Block block = chunk.getLocalBlock(this);
+            var block = chunk.getLocalBlock(this);
 
             return block;
         }
@@ -96,7 +91,7 @@ public struct Location
 
     public void Tick()
     {
-        List<Block> blocks = new List<Block>();
+        var blocks = new List<Block>();
 
         blocks.Add((this + new Location(0, 0)).GetBlock());
         blocks.Add((this + new Location(0, 1)).GetBlock());
@@ -104,12 +99,9 @@ public struct Location
         blocks.Add((this + new Location(-1, 0)).GetBlock());
         blocks.Add((this + new Location(1, 0)).GetBlock());
 
-        foreach (Block blockToTick in blocks) {
+        foreach (var blockToTick in blocks)
             if (blockToTick != null)
-            {
                 blockToTick.Tick();
-            }
-        }
     }
 
     public Material GetMaterial()
@@ -117,37 +109,34 @@ public struct Location
         //Get Material from block changes
         if (SaveManager.blockChanges.ContainsKey(this))
         {
-            string blockChangeLine = SaveManager.blockChanges[this];
-            return (Material) System.Enum.Parse(typeof(Material), blockChangeLine.Split('*')[0]);
+            var blockChangeLine = SaveManager.blockChanges[this];
+            return (Material) Enum.Parse(typeof(Material), blockChangeLine.Split('*')[0]);
         }
-        
-        ChunkPosition cPos = new ChunkPosition(this);
-        
+
+        var cPos = new ChunkPosition(this);
+
         //Get material from loaded chunk
         if (cPos.IsChunkLoaded())
         {
-            Block block = cPos.GetChunk().getLocalBlock(this);
+            var block = cPos.GetChunk().getLocalBlock(this);
 
             if (block == null)
                 return Material.Air;
-            else
-                return block.GetMaterial();
+            return block.GetMaterial();
         }
-        
+
         //Get material from saved chunk data
         if (!cPos.HasBeenSaved())
             return Material.Air;
-        string chunkPath = WorldManager.world.getPath() + "\\region\\" + cPos.dimension + "\\" + cPos.chunkX;   
-        foreach (string line in File.ReadAllLines(chunkPath + "\\blocks"))
+        var chunkPath = WorldManager.world.getPath() + "\\region\\" + cPos.dimension + "\\" + cPos.chunkX;
+        foreach (var line in File.ReadAllLines(chunkPath + "\\blocks"))
         {
-            Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
-            Material lineMaterial = (Material) System.Enum.Parse(typeof(Material), line.Split('*')[1]);
-            string lineData = line.Split('*')[2];
+            var lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
+                int.Parse(line.Split('*')[0].Split(',')[1]));
+            var lineMaterial = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
+            var lineData = line.Split('*')[2];
 
-            if (lineLoc.Equals(this))
-            {
-                return lineMaterial;
-            }
+            if (lineLoc.Equals(this)) return lineMaterial;
         }
 
         return Material.Air;
@@ -158,37 +147,34 @@ public struct Location
         //Get data from block changes
         if (SaveManager.blockChanges.ContainsKey(this))
         {
-            string blockChangeLine = SaveManager.blockChanges[this];
+            var blockChangeLine = SaveManager.blockChanges[this];
             return new BlockData(blockChangeLine.Split('*')[1]);
         }
-        
-        ChunkPosition cPos = new ChunkPosition(this);
+
+        var cPos = new ChunkPosition(this);
 
         //Get data from loaded chunk
         if (cPos.IsChunkLoaded())
         {
-            Block block = cPos.GetChunk().getLocalBlock(this);
+            var block = cPos.GetChunk().getLocalBlock(this);
 
             if (block == null)
                 return new BlockData();
-            else
-                return block.data;
+            return block.data;
         }
-        
+
         //Get data from saved chunk data
         if (!cPos.HasBeenSaved())
             return new BlockData();
-        string chunkPath = WorldManager.world.getPath() + "\\region\\" + cPos.dimension + "\\" + cPos.chunkX;   
-        foreach (string line in File.ReadAllLines(chunkPath + "\\blocks"))
+        var chunkPath = WorldManager.world.getPath() + "\\region\\" + cPos.dimension + "\\" + cPos.chunkX;
+        foreach (var line in File.ReadAllLines(chunkPath + "\\blocks"))
         {
-            Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]), int.Parse(line.Split('*')[0].Split(',')[1]));
-            Material lineMaterial = (Material) System.Enum.Parse(typeof(Material), line.Split('*')[1]);
-            BlockData lineData = new BlockData(line.Split('*')[2]);
+            var lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
+                int.Parse(line.Split('*')[0].Split(',')[1]));
+            var lineMaterial = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
+            var lineData = new BlockData(line.Split('*')[2]);
 
-            if (lineLoc.Equals(this))
-            {
-                return lineData;
-            }
+            if (lineLoc.Equals(this)) return lineData;
         }
 
         return new BlockData();
@@ -198,6 +184,7 @@ public struct Location
     {
         return new Location(a.x + b.x, a.y + b.y, a.dimension);
     }
+
     public static Location operator -(Location a, Location b)
     {
         return new Location(a.x - b.x, a.y - b.y, a.dimension);

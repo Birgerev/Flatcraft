@@ -1,16 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class Chicken : PassiveEntity
 {
     //Entity Properties
     public override float maxHealth { get; } = 4;
-    
+
     public override List<ItemStack> GetDrops()
     {
-        List<ItemStack> result = new List<ItemStack>();
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(location));
+        var result = new List<ItemStack>();
+        var r = new Random(SeedGenerator.SeedByLocation(location));
 
         result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
 
@@ -20,8 +20,8 @@ public class Chicken : PassiveEntity
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        
-        
+
+
         if (!isOnGround && getVelocity().y < -1)
             setVelocity(new Vector2(getVelocity().x, -1));
     }
@@ -34,5 +34,4 @@ public class Chicken : PassiveEntity
     {
         return new AnimalController(this);
     }
-
 }

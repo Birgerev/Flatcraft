@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 public class InventoryContainer : Block
 {
     public Inventory inventory;
     public override bool autosave { get; } = true;
-    public virtual System.Type inventoryType { get; } = typeof(Inventory);
+    public virtual Type inventoryType { get; } = typeof(Inventory);
     public override bool autoTick { get; } = true;
 
     public override void Initialize()
@@ -14,15 +13,13 @@ public class InventoryContainer : Block
         base.Initialize();
 
         if (data.GetData("inventory") != "")
-        {
-            inventory = (Inventory)JsonUtility.FromJson(data.GetData("inventory"), inventoryType);
-        }
-        else inventory = (Inventory)System.Activator.CreateInstance(inventoryType);
+            inventory = (Inventory) JsonUtility.FromJson(data.GetData("inventory"), inventoryType);
+        else inventory = (Inventory) Activator.CreateInstance(inventoryType);
     }
 
     public override void Tick()
     {
-        data.SetData("inventory", JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType)));
+        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
 
         base.Tick();
     }
@@ -36,13 +33,10 @@ public class InventoryContainer : Block
 
     public override void Autosave()
     {
-        data.SetData("inventory", JsonUtility.ToJson(System.Convert.ChangeType(inventory, inventoryType)));
+        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
 
-        if (inventory == null || inventory.open)
-        {
-            return;
-        }
-        
+        if (inventory == null || inventory.open) return;
+
         base.Autosave();
     }
 

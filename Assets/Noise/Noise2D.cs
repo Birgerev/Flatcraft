@@ -5,13 +5,58 @@ using UnityEngine;
 namespace LibNoise
 {
     /// <summary>
-    /// Provides a two-dimensional noise map.
+    ///     Provides a two-dimensional noise map.
     /// </summary>
-	/// <remarks>This covers most of the functionality from LibNoise's noiseutils library, but 
-	/// the method calls might not be the same. See the tutorials project if you're wondering
-	/// which calls are equivalent.</remarks>
+    /// <remarks>
+    ///     This covers most of the functionality from LibNoise's noiseutils library, but
+    ///     the method calls might not be the same. See the tutorials project if you're wondering
+    ///     which calls are equivalent.
+    /// </remarks>
     public class Noise2D : IDisposable
     {
+        #region Indexers
+
+        /// <summary>
+        ///     Gets or sets a value in the noise map by its position.
+        /// </summary>
+        /// <param name="x">The position on the x-axis.</param>
+        /// <param name="y">The position on the y-axis.</param>
+        /// <param name="isCropped">Indicates whether to select the cropped (default) or uncropped noise map data.</param>
+        /// <returns>The corresponding value.</returns>
+        public float this[int x, int y, bool isCropped = true]
+        {
+            get
+            {
+                if (isCropped)
+                {
+                    if (x < 0 && x >= Width) throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= Height) throw new ArgumentOutOfRangeException("Invalid y position");
+                    return _data[x, y];
+                }
+
+                if (x < 0 && x >= _ucWidth) throw new ArgumentOutOfRangeException("Invalid x position");
+                if (y < 0 && y >= _ucHeight) throw new ArgumentOutOfRangeException("Invalid y position");
+                return _ucData[x, y];
+            }
+            set
+            {
+                if (isCropped)
+                {
+                    if (x < 0 && x >= Width) throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= Height) throw new ArgumentOutOfRangeException("Invalid y position");
+                    _data[x, y] = value;
+                }
+                else
+                {
+                    if (x < 0 && x >= _ucWidth) throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= _ucHeight) throw new ArgumentOutOfRangeException("Invalid y position");
+                    _ucData[x, y] = value;
+                }
+            }
+        }
+
+        #endregion
+
         #region Constants
 
         public static readonly double South = -90.0;
@@ -29,41 +74,36 @@ namespace LibNoise
 
         #region Fields
 
-        private int _width;
-        private int _height;
         private float[,] _data;
         private readonly int _ucWidth;
         private readonly int _ucHeight;
-        private int _ucBorder = 1; // Border size of extra noise for uncropped data.
+        private readonly int _ucBorder = 1; // Border size of extra noise for uncropped data.
 
         private readonly float[,] _ucData;
-            // Uncropped data. This has a border of extra noise data used for calculating normal map edges.
-
-        private float _borderValue = float.NaN;
-        private ModuleBase _generator;
+        // Uncropped data. This has a border of extra noise data used for calculating normal map edges.
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of Noise2D.
+        ///     Initializes a new instance of Noise2D.
         /// </summary>
         protected Noise2D()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of Noise2D.
+        ///     Initializes a new instance of Noise2D.
         /// </summary>
         /// <param name="size">The width and height of the noise map.</param>
         public Noise2D(int size)
-            : this(size, size, null)
+            : this(size, size)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of Noise2D.
+        ///     Initializes a new instance of Noise2D.
         /// </summary>
         /// <param name="size">The width and height of the noise map.</param>
         /// <param name="generator">The generator module.</param>
@@ -73,16 +113,16 @@ namespace LibNoise
         }
 
         /// <summary>
-        /// Initializes a new instance of Noise2D.
+        ///     Initializes a new instance of Noise2D.
         /// </summary>
         /// <param name="width">The width of the noise map.</param>
         /// <param name="height">The height of the noise map.</param>
         /// <param name="generator">The generator module.</param>
         public Noise2D(int width, int height, ModuleBase generator = null)
         {
-            _generator = generator;
-            _width = width;
-            _height = height;
+            Generator = generator;
+            Width = width;
+            Height = height;
             _data = new float[width, height];
             _ucWidth = width + _ucBorder * 2;
             _ucHeight = height + _ucBorder * 2;
@@ -91,114 +131,34 @@ namespace LibNoise
 
         #endregion
 
-        #region Indexers
-
-        /// <summary>
-        /// Gets or sets a value in the noise map by its position.
-        /// </summary>
-        /// <param name="x">The position on the x-axis.</param>
-        /// <param name="y">The position on the y-axis.</param>
-        /// <param name="isCropped">Indicates whether to select the cropped (default) or uncropped noise map data.</param>
-        /// <returns>The corresponding value.</returns>
-        public float this[int x, int y, bool isCropped = true]
-        {
-            get
-            {
-                if (isCropped)
-                {
-                    if (x < 0 && x >= _width)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid x position");
-                    }
-                    if (y < 0 && y >= _height)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid y position");
-                    }
-                    return _data[x, y];
-                }
-                if (x < 0 && x >= _ucWidth)
-                {
-                    throw new ArgumentOutOfRangeException("Invalid x position");
-                }
-                if (y < 0 && y >= _ucHeight)
-                {
-                    throw new ArgumentOutOfRangeException("Invalid y position");
-                }
-                return _ucData[x, y];
-            }
-            set
-            {
-                if (isCropped)
-                {
-                    if (x < 0 && x >= _width)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid x position");
-                    }
-                    if (y < 0 && y >= _height)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid y position");
-                    }
-                    _data[x, y] = value;
-                }
-                else
-                {
-                    if (x < 0 && x >= _ucWidth)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid x position");
-                    }
-                    if (y < 0 && y >= _ucHeight)
-                    {
-                        throw new ArgumentOutOfRangeException("Invalid y position");
-                    }
-                    _ucData[x, y] = value;
-                }
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
-        /// Gets or sets the constant value at the noise maps borders.
+        ///     Gets or sets the constant value at the noise maps borders.
         /// </summary>
-        public float Border
-        {
-            get { return _borderValue; }
-            set { _borderValue = value; }
-        }
+        public float Border { get; set; } = float.NaN;
 
         /// <summary>
-        /// Gets or sets the generator module.
+        ///     Gets or sets the generator module.
         /// </summary>
-        public ModuleBase Generator
-        {
-            get { return _generator; }
-            set { _generator = value; }
-        }
+        public ModuleBase Generator { get; set; }
 
         /// <summary>
-        /// Gets the height of the noise map.
+        ///     Gets the height of the noise map.
         /// </summary>
-        public int Height
-        {
-            get { return _height; }
-        }
+        public int Height { get; private set; }
 
         /// <summary>
-        /// Gets the width of the noise map.
+        ///     Gets the width of the noise map.
         /// </summary>
-        public int Width
-        {
-            get { return _width; }
-        }
+        public int Width { get; private set; }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Gets normalized noise map data with all values in the set of {0..1}.
+        ///     Gets normalized noise map data with all values in the set of {0..1}.
         /// </summary>
         /// <param name="isCropped">Indicates whether to select the cropped (default) or uncropped noise map data.</param>
         /// <param name="xCrop">This value crops off data from the right of the noise map data.</param>
@@ -210,7 +170,7 @@ namespace LibNoise
         }
 
         /// <summary>
-        /// Gets noise map data.
+        ///     Gets noise map data.
         /// </summary>
         /// <param name="isCropped">Indicates whether to select the cropped (default) or uncropped noise map data.</param>
         /// <param name="xCrop">This value crops off data from the right of the noise map data.</param>
@@ -223,8 +183,8 @@ namespace LibNoise
             float[,] data;
             if (isCropped)
             {
-                width = _width;
-                height = _height;
+                width = Width;
+                height = Height;
                 data = _data;
             }
             else
@@ -233,56 +193,48 @@ namespace LibNoise
                 height = _ucHeight;
                 data = _ucData;
             }
+
             width -= xCrop;
             height -= yCrop;
             var result = new float[width, height];
             for (var x = 0; x < width; x++)
+            for (var y = 0; y < height; y++)
             {
-                for (var y = 0; y < height; y++)
-                {
-                    float sample;
-                    if (isNormalized)
-                    {
-                        sample = (data[x, y] + 1) / 2;
-                    }
-                    else
-                    {
-                        sample = data[x, y];
-                    }
-                    result[x, y] = sample;
-                }
+                float sample;
+                if (isNormalized)
+                    sample = (data[x, y] + 1) / 2;
+                else
+                    sample = data[x, y];
+                result[x, y] = sample;
             }
+
             return result;
         }
 
         /// <summary>
-        /// Clears the noise map.
+        ///     Clears the noise map.
         /// </summary>
         /// <param name="value">The constant value to clear the noise map with.</param>
         public void Clear(float value = 0f)
         {
-            for (var x = 0; x < _width; x++)
-            {
-                for (var y = 0; y < _height; y++)
-                {
-                    _data[x, y] = value;
-                }
-            }
+            for (var x = 0; x < Width; x++)
+            for (var y = 0; y < Height; y++)
+                _data[x, y] = value;
         }
 
         /// <summary>
-        /// Generates a planar projection of a point in the noise map.
+        ///     Generates a planar projection of a point in the noise map.
         /// </summary>
         /// <param name="x">The position on the x-axis.</param>
         /// <param name="y">The position on the y-axis.</param>
         /// <returns>The corresponding noise map value.</returns>
         private double GeneratePlanar(double x, double y)
         {
-            return _generator.GetValue(x, 0.0, y);
+            return Generator.GetValue(x, 0.0, y);
         }
 
         /// <summary>
-        /// Generates a non-seamless planar projection of the noise map.
+        ///     Generates a non-seamless planar projection of the noise map.
         /// </summary>
         /// <param name="left">The clip region to the left.</param>
         /// <param name="right">The clip region to the right.</param>
@@ -292,17 +244,12 @@ namespace LibNoise
         public void GeneratePlanar(double left, double right, double top, double bottom, bool isSeamless = true)
         {
             if (right <= left || bottom <= top)
-            {
                 throw new ArgumentException("Invalid right/left or bottom/top combination");
-            }
-            if (_generator == null)
-            {
-                throw new ArgumentNullException("Generator is null");
-            }
+            if (Generator == null) throw new ArgumentNullException("Generator is null");
             var xe = right - left;
             var ze = bottom - top;
-            var xd = xe / ((double) _width - _ucBorder);
-            var zd = ze / ((double) _height - _ucBorder);
+            var xd = xe / ((double) Width - _ucBorder);
+            var zd = ze / ((double) Height - _ucBorder);
             var xc = left;
             for (var x = 0; x < _ucWidth; x++)
             {
@@ -320,26 +267,26 @@ namespace LibNoise
                         var sev = GeneratePlanar(xc + xe, zc);
                         var nwv = GeneratePlanar(xc, zc + ze);
                         var nev = GeneratePlanar(xc + xe, zc + ze);
-                        var xb = 1.0 - ((xc - left) / xe);
-                        var zb = 1.0 - ((zc - top) / ze);
+                        var xb = 1.0 - (xc - left) / xe;
+                        var zb = 1.0 - (zc - top) / ze;
                         var z0 = Utils.InterpolateLinear(swv, sev, xb);
                         var z1 = Utils.InterpolateLinear(nwv, nev, xb);
                         fv = (float) Utils.InterpolateLinear(z0, z1, zb);
                     }
+
                     _ucData[x, y] = fv;
-                    if (x >= _ucBorder && y >= _ucBorder && x < _width + _ucBorder &&
-                        y < _height + _ucBorder)
-                    {
+                    if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
+                        y < Height + _ucBorder)
                         _data[x - _ucBorder, y - _ucBorder] = fv; // Cropped data
-                    }
                     zc += zd;
                 }
+
                 xc += xd;
             }
         }
 
         /// <summary>
-        /// Generates a cylindrical projection of a point in the noise map.
+        ///     Generates a cylindrical projection of a point in the noise map.
         /// </summary>
         /// <param name="angle">The angle of the point.</param>
         /// <param name="height">The height of the point.</param>
@@ -349,11 +296,11 @@ namespace LibNoise
             var x = Math.Cos(angle * Mathf.Deg2Rad);
             var y = height;
             var z = Math.Sin(angle * Mathf.Deg2Rad);
-            return _generator.GetValue(x, y, z);
+            return Generator.GetValue(x, y, z);
         }
 
         /// <summary>
-        /// Generates a cylindrical projection of the noise map.
+        ///     Generates a cylindrical projection of the noise map.
         /// </summary>
         /// <param name="angleMin">The maximum angle of the clip region.</param>
         /// <param name="angleMax">The minimum angle of the clip region.</param>
@@ -362,17 +309,12 @@ namespace LibNoise
         public void GenerateCylindrical(double angleMin, double angleMax, double heightMin, double heightMax)
         {
             if (angleMax <= angleMin || heightMax <= heightMin)
-            {
                 throw new ArgumentException("Invalid angle or height parameters");
-            }
-            if (_generator == null)
-            {
-                throw new ArgumentNullException("Generator is null");
-            }
+            if (Generator == null) throw new ArgumentNullException("Generator is null");
             var ae = angleMax - angleMin;
             var he = heightMax - heightMin;
-            var xd = ae / ((double) _width - _ucBorder);
-            var yd = he / ((double) _height - _ucBorder);
+            var xd = ae / ((double) Width - _ucBorder);
+            var yd = he / ((double) Height - _ucBorder);
             var ca = angleMin;
             for (var x = 0; x < _ucWidth; x++)
             {
@@ -380,20 +322,19 @@ namespace LibNoise
                 for (var y = 0; y < _ucHeight; y++)
                 {
                     _ucData[x, y] = (float) GenerateCylindrical(ca, ch);
-                    if (x >= _ucBorder && y >= _ucBorder && x < _width + _ucBorder &&
-                        y < _height + _ucBorder)
-                    {
+                    if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
+                        y < Height + _ucBorder)
                         _data[x - _ucBorder, y - _ucBorder] = (float) GenerateCylindrical(ca, ch);
-                            // Cropped data
-                    }
+                    // Cropped data
                     ch += yd;
                 }
+
                 ca += xd;
             }
         }
 
         /// <summary>
-        /// Generates a spherical projection of a point in the noise map.
+        ///     Generates a spherical projection of a point in the noise map.
         /// </summary>
         /// <param name="lat">The latitude of the point.</param>
         /// <param name="lon">The longitude of the point.</param>
@@ -401,12 +342,12 @@ namespace LibNoise
         private double GenerateSpherical(double lat, double lon)
         {
             var r = Math.Cos(Mathf.Deg2Rad * lat);
-            return _generator.GetValue(r * Math.Cos(Mathf.Deg2Rad * lon), Math.Sin(Mathf.Deg2Rad * lat),
+            return Generator.GetValue(r * Math.Cos(Mathf.Deg2Rad * lon), Math.Sin(Mathf.Deg2Rad * lat),
                 r * Math.Sin(Mathf.Deg2Rad * lon));
         }
 
         /// <summary>
-        /// Generates a spherical projection of the noise map.
+        ///     Generates a spherical projection of the noise map.
         /// </summary>
         /// <param name="south">The clip region to the south.</param>
         /// <param name="north">The clip region to the north.</param>
@@ -415,17 +356,12 @@ namespace LibNoise
         public void GenerateSpherical(double south, double north, double west, double east)
         {
             if (east <= west || north <= south)
-            {
                 throw new ArgumentException("Invalid east/west or north/south combination");
-            }
-            if (_generator == null)
-            {
-                throw new ArgumentNullException("Generator is null");
-            }
+            if (Generator == null) throw new ArgumentNullException("Generator is null");
             var loe = east - west;
             var lae = north - south;
-            var xd = loe / ((double) _width - _ucBorder);
-            var yd = lae / ((double) _height - _ucBorder);
+            var xd = loe / ((double) Width - _ucBorder);
+            var yd = lae / ((double) Height - _ucBorder);
             var clo = west;
             for (var x = 0; x < _ucWidth; x++)
             {
@@ -433,20 +369,19 @@ namespace LibNoise
                 for (var y = 0; y < _ucHeight; y++)
                 {
                     _ucData[x, y] = (float) GenerateSpherical(cla, clo);
-                    if (x >= _ucBorder && y >= _ucBorder && x < _width + _ucBorder &&
-                        y < _height + _ucBorder)
-                    {
+                    if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
+                        y < Height + _ucBorder)
                         _data[x - _ucBorder, y - _ucBorder] = (float) GenerateSpherical(cla, clo);
-                            // Cropped data
-                    }
+                    // Cropped data
                     cla += yd;
                 }
+
                 clo += xd;
             }
         }
 
         /// <summary>
-        /// Creates a grayscale texture map for the current content of the noise map.
+        ///     Creates a grayscale texture map for the current content of the noise map.
         /// </summary>
         /// <returns>The created texture map.</returns>
         public Texture2D GetTexture()
@@ -455,31 +390,26 @@ namespace LibNoise
         }
 
         /// <summary>
-        /// Creates a texture map for the current content of the noise map.
+        ///     Creates a texture map for the current content of the noise map.
         /// </summary>
         /// <param name="gradient">The gradient to color the texture map with.</param>
         /// <returns>The created texture map.</returns>
         public Texture2D GetTexture(Gradient gradient)
         {
-            var texture = new Texture2D(_width, _height);
-            var pixels = new Color[_width * _height];
-            for (var x = 0; x < _width; x++)
+            var texture = new Texture2D(Width, Height);
+            var pixels = new Color[Width * Height];
+            for (var x = 0; x < Width; x++)
+            for (var y = 0; y < Height; y++)
             {
-                for (var y = 0; y < _height; y++)
-                {
-                    float sample;
-                    if (!float.IsNaN(_borderValue) &&
-                        (x == 0 || x == _width - _ucBorder || y == 0 || y == _height - _ucBorder))
-                    {
-                        sample = _borderValue;
-                    }
-                    else
-                    {
-                        sample = _data[x, y];
-                    }
-                    pixels[x + y * _width] = gradient.Evaluate((sample + 1) / 2);
-                }
+                float sample;
+                if (!float.IsNaN(Border) &&
+                    (x == 0 || x == Width - _ucBorder || y == 0 || y == Height - _ucBorder))
+                    sample = Border;
+                else
+                    sample = _data[x, y];
+                pixels[x + y * Width] = gradient.Evaluate((sample + 1) / 2);
             }
+
             texture.SetPixels(pixels);
             texture.wrapMode = TextureWrapMode.Clamp;
             texture.Apply();
@@ -487,41 +417,38 @@ namespace LibNoise
         }
 
         /// <summary>
-        /// Creates a normal map for the current content of the noise map.
+        ///     Creates a normal map for the current content of the noise map.
         /// </summary>
         /// <param name="intensity">The scaling of the normal map values.</param>
         /// <returns>The created normal map.</returns>
         public Texture2D GetNormalMap(float intensity)
         {
-            var texture = new Texture2D(_width, _height);
-            var pixels = new Color[_width * _height];
+            var texture = new Texture2D(Width, Height);
+            var pixels = new Color[Width * Height];
             for (var x = 0; x < _ucWidth; x++)
+            for (var y = 0; y < _ucHeight; y++)
             {
-                for (var y = 0; y < _ucHeight; y++)
-                {
-                    var xPos = (_ucData[Mathf.Max(0, x - _ucBorder), y] -
-                                _ucData[Mathf.Min(x + _ucBorder, _height + _ucBorder), y]) / 2;
-                    var yPos = (_ucData[x, Mathf.Max(0, y - _ucBorder)] -
-                                _ucData[x, Mathf.Min(y + _ucBorder, _width + _ucBorder)]) / 2;
-                    var normalX = new Vector3(xPos * intensity, 0, 1);
-                    var normalY = new Vector3(0, yPos * intensity, 1);
-                    // Get normal vector
-                    var normalVector = normalX + normalY;
-                    normalVector.Normalize();
-                    // Get color vector
-                    var colorVector = Vector3.zero;
-                    colorVector.x = (normalVector.x + 1) / 2;
-                    colorVector.y = (normalVector.y + 1) / 2;
-                    colorVector.z = (normalVector.z + 1) / 2;
-                    // Start at (x + _ucBorder, y + _ucBorder) so that resulting normal map aligns with cropped data
-                    if (x >= _ucBorder && y >= _ucBorder && x < _width + _ucBorder &&
-                        y < _height + _ucBorder)
-                    {
-                        pixels[(x - _ucBorder) + (y - _ucBorder) * _width] = new Color(colorVector.x,
-                            colorVector.y, colorVector.z);
-                    }
-                }
+                var xPos = (_ucData[Mathf.Max(0, x - _ucBorder), y] -
+                            _ucData[Mathf.Min(x + _ucBorder, Height + _ucBorder), y]) / 2;
+                var yPos = (_ucData[x, Mathf.Max(0, y - _ucBorder)] -
+                            _ucData[x, Mathf.Min(y + _ucBorder, Width + _ucBorder)]) / 2;
+                var normalX = new Vector3(xPos * intensity, 0, 1);
+                var normalY = new Vector3(0, yPos * intensity, 1);
+                // Get normal vector
+                var normalVector = normalX + normalY;
+                normalVector.Normalize();
+                // Get color vector
+                var colorVector = Vector3.zero;
+                colorVector.x = (normalVector.x + 1) / 2;
+                colorVector.y = (normalVector.y + 1) / 2;
+                colorVector.z = (normalVector.z + 1) / 2;
+                // Start at (x + _ucBorder, y + _ucBorder) so that resulting normal map aligns with cropped data
+                if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
+                    y < Height + _ucBorder)
+                    pixels[x - _ucBorder + (y - _ucBorder) * Width] = new Color(colorVector.x,
+                        colorVector.y, colorVector.z);
             }
+
             texture.SetPixels(pixels);
             texture.wrapMode = TextureWrapMode.Clamp;
             texture.Apply();
@@ -532,41 +459,31 @@ namespace LibNoise
 
         #region IDisposable Members
 
-        [XmlIgnore]
-#if !XBOX360 && !ZUNE
-        [NonSerialized]
-#endif
-            private bool _disposed;
-
         /// <summary>
-        /// Gets a value whether the object is disposed.
+        ///     Gets a value whether the object is disposed.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return _disposed; }
-        }
+        [field: XmlIgnore]
+        [field: NonSerialized]
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// Immediately releases the unmanaged resources used by this object.
+        ///     Immediately releases the unmanaged resources used by this object.
         /// </summary>
         public void Dispose()
         {
-            if (!_disposed)
-            {
-                _disposed = Disposing();
-            }
+            if (!IsDisposed) IsDisposed = Disposing();
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Immediately releases the unmanaged resources used by this object.
+        ///     Immediately releases the unmanaged resources used by this object.
         /// </summary>
         /// <returns>True if the object is completely disposed.</returns>
         protected virtual bool Disposing()
         {
             _data = null;
-            _width = 0;
-            _height = 0;
+            Width = 0;
+            Height = 0;
             return true;
         }
 

@@ -1,22 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine;
 
 public class UIHeart : MonoBehaviour
 {
+    public Sprite empty;
     public Sprite full;
     public Sprite half;
-    public Sprite empty;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         float health;
 
@@ -30,10 +27,10 @@ public class UIHeart : MonoBehaviour
 
         GetComponent<Image>().sprite = full;
 
-        if ((int)health / 2 <= heartIndex)
+        if ((int) health / 2 <= heartIndex)
             GetComponent<Image>().sprite = empty;
 
-        if ((int)health % 2 == 1 && (int)health / 2 == heartIndex)
+        if ((int) health % 2 == 1 && (int) health / 2 == heartIndex)
             GetComponent<Image>().sprite = half;
     }
 }

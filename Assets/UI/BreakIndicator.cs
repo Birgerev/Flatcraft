@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BreakIndicator : MonoBehaviour
 {
     public static BreakIndicator instance;
 
-    private float lastTimeChanged = 0f;
+    private float lastTimeChanged;
 
     private void Start()
     {
@@ -14,17 +12,16 @@ public class BreakIndicator : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Time.time > lastTimeChanged + 0.5f) {
-            Hide();
-            return;
-        }
-        if((Location.LocationByPosition(transform.position, Player.localInstance.location.dimension)).GetBlock() == null)
+        if (Time.time > lastTimeChanged + 0.5f)
         {
             Hide();
             return;
         }
+
+        if (Location.LocationByPosition(transform.position, Player.localInstance.location.dimension).GetBlock() ==
+            null) Hide();
     }
 
     public void Hide()
@@ -35,10 +32,10 @@ public class BreakIndicator : MonoBehaviour
 
     public void UpdateState(int index, Location loc)
     {
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
+        var sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
 
         Sprite sprite = null;
-        if(index < sprites.Length && index >= 0)
+        if (index < sprites.Length && index >= 0)
             sprite = sprites[index];
 
         transform.position = loc.GetPosition();

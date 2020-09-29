@@ -1,52 +1,41 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 public class CraftingRecepie
 {
-    private static CraftingRecepie[] _cachedRecepies = null;
-
-    public ItemStack result;
+    private static CraftingRecepie[] _cachedRecepies;
     public Dictionary<Vector2Int, Material> recepieShape = new Dictionary<Vector2Int, Material>();
 
-    public CraftingRecepie()
-    {
-
-    }
+    public ItemStack result;
 
     public static CraftingRecepie[] allRecepies()
     {
         if (_cachedRecepies == null)
         {
-            TextAsset[] files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
-            List<CraftingRecepie> recepies = new List<CraftingRecepie>();
+            var files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
+            var recepies = new List<CraftingRecepie>();
 
-            foreach (TextAsset file in files)
-            {
-                recepies.Add(FileToRecepie(file));
-            }
+            foreach (var file in files) recepies.Add(FileToRecepie(file));
 
-            _cachedRecepies = recepies.ToArray();    //Cache results
-            
+            _cachedRecepies = recepies.ToArray(); //Cache results
+
             return recepies.ToArray();
         }
-        else
-        {
-            return _cachedRecepies;
-        }
+
+        return _cachedRecepies;
     }
 
     public bool Compare(ItemStack[] items)
     {
-        Dictionary<Vector2Int, Material> shape = new Dictionary<Vector2Int, Material>();
+        var shape = new Dictionary<Vector2Int, Material>();
 
         //Get shape by item list
         if (items.Length == 4)
-        {
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
-                Vector2Int curPos = Vector2Int.zero;
+                var curPos = Vector2Int.zero;
                 switch (i)
                 {
                     case 0:
@@ -62,18 +51,15 @@ public class CraftingRecepie
                         curPos = new Vector2Int(1, 0);
                         break;
                 }
-                if (items[i].material != Material.Air)
-                {
-                    shape.Add(curPos, items[i].material);
-                }
+
+                if (items[i].material != Material.Air) shape.Add(curPos, items[i].material);
             }
-        }
         else if (items.Length == 9)
-        {
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                Vector2Int curPos = Vector2Int.zero;
-                switch (i) {
+                var curPos = Vector2Int.zero;
+                switch (i)
+                {
                     case 0:
                         curPos = new Vector2Int(0, 2);
                         break;
@@ -104,55 +90,47 @@ public class CraftingRecepie
                         break;
                 }
 
-                if (items[i] != null && items[i].material != Material.Air)
-                {
-                    shape.Add(curPos, items[i].material);
-                }
+                if (items[i] != null && items[i].material != Material.Air) shape.Add(curPos, items[i].material);
             }
-        } else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
-        
-        //Find How much the recepie is Offsetted by
-        int lowest_x = 2;
-        int lowest_y = 2;
+        else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
 
-        foreach (KeyValuePair<Vector2Int, Material> shapeItem in shape)
+        //Find How much the recepie is Offsetted by
+        var lowest_x = 2;
+        var lowest_y = 2;
+
+        foreach (var shapeItem in shape)
         {
-            if(shapeItem.Key.x < lowest_x)
-            {
-                lowest_x = shapeItem.Key.x;
-            }
-            if (shapeItem.Key.y < lowest_y)
-            {
-                lowest_y = shapeItem.Key.y;
-            }
+            if (shapeItem.Key.x < lowest_x) lowest_x = shapeItem.Key.x;
+            if (shapeItem.Key.y < lowest_y) lowest_y = shapeItem.Key.y;
         }
 
-        Vector2Int[] keys = shape.Keys.ToArray<Vector2Int>();
-        Dictionary<Vector2Int, Material> shapeCopy = new Dictionary <Vector2Int, Material> (shape);
+        var keys = shape.Keys.ToArray();
+        var shapeCopy = new Dictionary<Vector2Int, Material>(shape);
         shape.Clear();
 
         //Move To Lowest Slots
-        foreach (Vector2Int key in keys)
+        foreach (var key in keys)
         {
-            Material mat = shapeCopy[key];
+            var mat = shapeCopy[key];
 
             shape.Add(key - new Vector2Int(lowest_x, lowest_y), mat);
         }
 
         //Compare both Dictionaries
-        bool anyDifferences = false;
+        var anyDifferences = false;
 
         if (recepieShape.Count != shape.Count)
             anyDifferences = true;
 
-        foreach (KeyValuePair<Vector2Int, Material> recepieItem in recepieShape)
+        foreach (var recepieItem in recepieShape)
         {
-            if(!shape.ContainsKey(recepieItem.Key))
+            if (!shape.ContainsKey(recepieItem.Key))
             {
                 anyDifferences = true;
                 break;
             }
-            if(shape[recepieItem.Key] != recepieItem.Value)
+
+            if (shape[recepieItem.Key] != recepieItem.Value)
             {
                 anyDifferences = true;
                 break;
@@ -164,40 +142,37 @@ public class CraftingRecepie
 
     public static CraftingRecepie FindRecepieByItems(ItemStack[] items)
     {
-        foreach (CraftingRecepie recepie in allRecepies())
-        {
+        foreach (var recepie in allRecepies())
             if (recepie.Compare(items))
-            {
                 return recepie;
-            }
-        }
         return null;
     }
 
     public static CraftingRecepie FileToRecepie(TextAsset file)
     {
-        CraftingRecepie recepie = new CraftingRecepie();
+        var recepie = new CraftingRecepie();
 
         try
         {
-            string[] lines = file.text.Split('\n');
+            var lines = file.text.Split('\n');
 
             recepie.result = new ItemStack(
-                (Material)System.Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
+                (Material) Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
                 int.Parse(lines[0].Split('*')[1]), lines[0].Split('*')[2]);
 
-            for (int i = 1; i < lines.Length; i++)
+            for (var i = 1; i < lines.Length; i++)
             {
-                Material mat = (Material)System.Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
-                Vector2Int pos = new Vector2Int(
+                var mat = (Material) Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
+                var pos = new Vector2Int(
                     int.Parse(lines[i].Split('*')[1].Split(',')[0]),
                     int.Parse(lines[i].Split('*')[1].Split(',')[1]));
 
                 recepie.recepieShape.Add(pos, mat);
             }
-        }catch(System.Exception e)
+        }
+        catch (Exception e)
         {
-            Debug.LogError("faulty crafting recepie \""+file.name+"\", error: "+e.StackTrace);
+            Debug.LogError("faulty crafting recepie \"" + file.name + "\", error: " + e.StackTrace);
         }
 
         return recepie;

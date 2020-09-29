@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PassiveEntity : LivingEntity
 {
@@ -8,6 +6,6 @@ public class PassiveEntity : LivingEntity
     {
         base.Hit(damage);
 
-        Particle.Spawn_Number(transform.position + new Vector3(1, 2), (int)damage, Color.green);
+        Particle.Spawn_Number(transform.position + new Vector3(1, 2), (int) damage, Color.green);
     }
 }

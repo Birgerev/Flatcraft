@@ -4,24 +4,14 @@ using UnityEngine;
 namespace LibNoise
 {
     /// <summary>
-    /// Provides a series of gradient presets
+    ///     Provides a series of gradient presets
     /// </summary>
     public static class GradientPresets
     {
-        #region Fields
-
-        private static readonly Gradient _empty;
-        private static readonly Gradient _grayscale;
-        private static readonly Gradient _rgb;
-        private static readonly Gradient _rgba;
-        private static readonly Gradient _terrain;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of Gradient.
+        ///     Initializes a new instance of Gradient.
         /// </summary>
         static GradientPresets()
         {
@@ -50,7 +40,8 @@ namespace LibNoise
             };
 
             // RGBA gradient alpha keys
-            var rgbaAlphaKeys = new List<GradientAlphaKey> {new GradientAlphaKey(0, 2 / 3f), new GradientAlphaKey(1, 1)};
+            var rgbaAlphaKeys = new List<GradientAlphaKey>
+                {new GradientAlphaKey(0, 2 / 3f), new GradientAlphaKey(1, 1)};
 
             // Terrain gradient color keys
             var terrainColorKeys = new List<GradientColorKey>
@@ -68,64 +59,53 @@ namespace LibNoise
             // Generic gradient alpha keys
             var alphaKeys = new List<GradientAlphaKey> {new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)};
 
-            _empty = new Gradient();
+            Empty = new Gradient();
 
-            _rgb = new Gradient();
-            _rgb.SetKeys(rgbColorKeys.ToArray(), alphaKeys.ToArray());
+            RGB = new Gradient();
+            RGB.SetKeys(rgbColorKeys.ToArray(), alphaKeys.ToArray());
 
-            _rgba = new Gradient();
-            _rgba.SetKeys(rgbaColorKeys.ToArray(), rgbaAlphaKeys.ToArray());
+            RGBA = new Gradient();
+            RGBA.SetKeys(rgbaColorKeys.ToArray(), rgbaAlphaKeys.ToArray());
 
-            _grayscale = new Gradient();
-            _grayscale.SetKeys(grayscaleColorKeys.ToArray(), alphaKeys.ToArray());
+            Grayscale = new Gradient();
+            Grayscale.SetKeys(grayscaleColorKeys.ToArray(), alphaKeys.ToArray());
 
-            _terrain = new Gradient();
-            _terrain.SetKeys(terrainColorKeys.ToArray(), alphaKeys.ToArray());
+            Terrain = new Gradient();
+            Terrain.SetKeys(terrainColorKeys.ToArray(), alphaKeys.ToArray());
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets the empty instance of Gradient.
+        ///     Gets the empty instance of Gradient.
         /// </summary>
-        public static Gradient Empty
-        {
-            get { return _empty; }
-        }
+        public static Gradient Empty { get; }
 
         /// <summary>
-        /// Gets the grayscale instance of Gradient.
+        ///     Gets the grayscale instance of Gradient.
         /// </summary>
-        public static Gradient Grayscale
-        {
-            get { return _grayscale; }
-        }
+        public static Gradient Grayscale { get; }
 
         /// <summary>
-        /// Gets the RGB instance of Gradient.
+        ///     Gets the RGB instance of Gradient.
         /// </summary>
-        public static Gradient RGB
-        {
-            get { return _rgb; }
-        }
+        public static Gradient RGB { get; }
 
         /// <summary>
-        /// Gets the RGBA instance of Gradient.
+        ///     Gets the RGBA instance of Gradient.
         /// </summary>
-        public static Gradient RGBA
-        {
-            get { return _rgba; }
-        }
+        public static Gradient RGBA { get; }
 
         /// <summary>
-        /// Gets the terrain instance of Gradient.
+        ///     Gets the terrain instance of Gradient.
         /// </summary>
-        public static Gradient Terrain
-        {
-            get { return _terrain; }
-        }
+        public static Gradient Terrain { get; }
 
         #endregion
     }

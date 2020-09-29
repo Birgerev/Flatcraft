@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.UI;
+﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemSlot : MonoBehaviour
 {
     public Text amountText;
-    public Image texture;
+
+    private CanvasGroup canvasGroup;
     public GameObject durabilityBar;
     public Image durabilityBarFiller;
 
     public ItemStack item;
-
-    private CanvasGroup canvasGroup;
+    public Image texture;
 
     // Start is called before the first frame update
     private void Update()
@@ -24,10 +22,7 @@ public class ItemSlot : MonoBehaviour
             return;
         }
 
-        if (Time.frameCount % 30 == 0 && canvasGroup.interactable)
-        {
-            UpdateSlot();
-        }
+        if (Time.frameCount % 30 == 0 && canvasGroup.interactable) UpdateSlot();
     }
 
 
@@ -44,7 +39,6 @@ public class ItemSlot : MonoBehaviour
         }
         else if (item.amount == 1)
         {
-
             amountText.text = "";
         }
         else
@@ -53,7 +47,7 @@ public class ItemSlot : MonoBehaviour
         }
 
         texture.sprite = item.getSprite();
-    
+
         if (item.getMaxDurability() == -1)
         {
             durabilityBar.SetActive(false);
@@ -63,16 +57,16 @@ public class ItemSlot : MonoBehaviour
         {
             durabilityBar.SetActive(true);
             durabilityBarFiller.gameObject.SetActive(true);
-            durabilityBarFiller.fillAmount = (float)item.durablity / (float)item.getMaxDurability();
+            durabilityBarFiller.fillAmount = item.durablity / (float) item.getMaxDurability();
         }
     }
 
     public virtual void Click()
     {
-        InventoryMenu menu = GetComponentInParent<InventoryMenu>();
-        int slot =  menu.getSlotObjects().ToList().IndexOf(this);
-        
-        GetComponentInParent<InventoryMenu>().OnClickSlot(slot, (Input.GetMouseButtonUp(0)) ? 0 : 1);
+        var menu = GetComponentInParent<InventoryMenu>();
+        var slot = menu.getSlotObjects().ToList().IndexOf(this);
+
+        GetComponentInParent<InventoryMenu>().OnClickSlot(slot, Input.GetMouseButtonUp(0) ? 0 : 1);
         UpdateSlot();
     }
 }

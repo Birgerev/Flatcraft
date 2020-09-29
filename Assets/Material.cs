@@ -80,20 +80,20 @@
     Bed_Bottom,
     Bed_Top,
     Bed,
-    
+
     Dead_Bush,
     Birch_Log,
-    
+
     Mossy_Cobblestone,
-    
+
     Wheat_Seeds,
     Wheat,
-    
+
     Farmland_Dry,
     Farmland_Wet,
-    
+
     Wheat_Crop,
-    
+
     Ladder,
-    Obsidian,
+    Obsidian
 }

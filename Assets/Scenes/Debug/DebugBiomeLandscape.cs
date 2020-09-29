@@ -1,53 +1,50 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DebugBiomeLandscape : MonoBehaviour
 {
-    [Space]
-    public Biome biome;
+    [Space] public Biome biome;
 
-    [Space]
-    public int previewWidth;
     public float previewUpdateFrequency;
+
+    [Space] public int previewWidth;
+
     public bool showSeaLevel;
     public bool showStoneLayer;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         StartCoroutine(UpdateLoop());
     }
 
-    IEnumerator UpdateLoop()
+    private IEnumerator UpdateLoop()
     {
         while (true)
         {
-            Texture2D tex = new Texture2D(previewWidth, Chunk.Height);
-            
-            for(int x = 0; x < previewWidth; x++)
+            var tex = new Texture2D(previewWidth, Chunk.Height);
+
+            for (var x = 0; x < previewWidth; x++)
+            for (var y = 0; y < Chunk.Height; y++)
             {
-                for (int y = 0; y < Chunk.Height; y++)
+                var noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
+                if (noiseValue > 0.1f)
                 {
-                    float noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
-                    if (noiseValue > 0.1f)
-                    {
-                        bool isStone = (noiseValue > biome.stoneLayerNoiseValue);
-                        
-                        tex.SetPixel(x, y, (showStoneLayer && isStone ) ? Color.black : Color.gray);
-                    }
+                    var isStone = noiseValue > biome.stoneLayerNoiseValue;
+
+                    tex.SetPixel(x, y, showStoneLayer && isStone ? Color.black : Color.gray);
                 }
             }
-            
-            if(showSeaLevel)
-                for (int x = 0; x < previewWidth; x++)
+
+            if (showSeaLevel)
+                for (var x = 0; x < previewWidth; x++)
                     tex.SetPixel(x, Chunk.SeaLevel, Color.red);
-            
+
             tex.Apply();
-            
-            Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
+
+            var sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
             GetComponent<SpriteRenderer>().sprite = sprite;
-            
+
             yield return new WaitForSeconds(previewUpdateFrequency);
         }
     }

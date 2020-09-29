@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 public class Grass : Block
 {
@@ -20,39 +18,33 @@ public class Grass : Block
     {
         TrySpread();
         TryDecay();
-        
+
         base.RandomTick();
     }
 
     public override void GeneratingTick()
     {
         TryDecay();
-        
+
         base.GeneratingTick();
     }
-    
+
     public void TryDecay()
     {
-        Block blockAbove = (location + new Location(0, 1)).GetBlock();
+        var blockAbove = (location + new Location(0, 1)).GetBlock();
         if (blockAbove != null)
-        {
             //Turn to dirt if covered
             if (blockAbove.playerCollide)
-            {
                 location.SetMaterial(Material.Dirt);
-            }
-        }
     }
 
     public void TrySpread()
     {
-        System.Random r = new System.Random();
-            
-        Location targetLoc = location + new Location((r.NextDouble() > 0.5f) ? 1 : -1, r.Next(-1, 1));
-        Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
+        var r = new Random();
+
+        var targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1));
+        var blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
         if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.playerCollide))
-        {
             targetLoc.SetMaterial(Material.Grass);
-        }
     }
 }

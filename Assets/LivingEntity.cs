@@ -1,37 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using Random = System.Random;
 
 public class LivingEntity : Entity
 {
     //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
-    public virtual float maxHealth { get; } = 20;
-    
-    [Header("Movement Properties")]
-    private float acceleration = 4f;
-    private float walkSpeed = 4.3f;
-    private float sprintSpeed = 5.6f;
-    private float sneakSpeed = 1.3f;
-    private float swimUpSpeed = 2f;
-    private float climbSpeed = 0.35f;
-    private float jumpVelocity = 8f;
-    private float groundFriction = 0.92f;
-    private float airDrag = 0.92f;
-    private float liquidDrag = 0.75f;
-    private float ladderFriction = 0.95f;
+
+    [Header("Movement Properties")] private readonly float acceleration = 4f;
+
+    private readonly float airDrag = 0.92f;
+    private readonly float climbSpeed = 0.35f;
+    protected EntityController controller;
+    private readonly float groundFriction = 0.92f;
 
     //Entity Data Tags
-    [EntityDataTag(false)]
-    public float health;
-    
+    [EntityDataTag(false)] public float health;
+
+    protected float highestYlevelsinceground;
+    private readonly float jumpVelocity = 8f;
+    private readonly float ladderFriction = 0.95f;
+    protected float last_jump_time;
+    private readonly float liquidDrag = 0.75f;
+    protected bool sneaking;
+    private readonly float sneakSpeed = 1.3f;
+
 
     //Entity State
     protected bool sprinting;
-    protected bool sneaking;
-    protected float last_jump_time;
-    protected float highestYlevelsinceground;
-    protected EntityController controller;
+    private readonly float sprintSpeed = 5.6f;
+    private readonly float swimUpSpeed = 2f;
+    private readonly float walkSpeed = 4.3f;
+    public virtual float maxHealth { get; } = 20;
 
     public override void Start()
     {
@@ -65,19 +66,19 @@ public class LivingEntity : Entity
                 chances = 0.2f;
             else
                 chances = 0.02f;
-            
+
             spawnMovementParticles(chances);
         }
     }
 
     public virtual void UpdateAnimatorValues()
     {
-        Animator anim = GetComponent<Animator>();
+        var anim = GetComponent<Animator>();
 
         if (anim == null)
             return;
 
-        if(anim.isInitialized)
+        if (anim.isInitialized)
             anim.SetFloat("velocity-x", Mathf.Abs(getVelocity().x));
     }
 
@@ -97,7 +98,7 @@ public class LivingEntity : Entity
         if (!isInLiquid && !isOnLadder && isOnGround)
             setVelocity(getVelocity() * groundFriction);
     }
-    
+
     public virtual void Walk(int direction)
     {
         float maxSpeed;
@@ -105,9 +106,9 @@ public class LivingEntity : Entity
             maxSpeed = sprintSpeed;
         else if (sneaking)
             maxSpeed = sneakSpeed;
-        else 
+        else
             maxSpeed = walkSpeed;
-        
+
         if (getVelocity().x < maxSpeed && getVelocity().x > -maxSpeed)
         {
             float targetXVelocity = 0;
@@ -117,8 +118,9 @@ public class LivingEntity : Entity
             else if (direction == 1)
                 targetXVelocity += maxSpeed;
             else targetXVelocity = 0;
-            
-            GetComponent<Rigidbody2D>().velocity += new Vector2(targetXVelocity * (acceleration * Time.fixedDeltaTime), 0);
+
+            GetComponent<Rigidbody2D>().velocity +=
+                new Vector2(targetXVelocity * (acceleration * Time.fixedDeltaTime), 0);
         }
 
         StairCheck(direction);
@@ -126,30 +128,28 @@ public class LivingEntity : Entity
 
     public void StairCheck(int direction)
     {
-        if ((Vector2)transform.position != lastFramePosition)    //Return if player has moved since last frame
+        if ((Vector2) transform.position != lastFramePosition) //Return if player has moved since last frame
             return;
-        if (!isOnGround)    //Return if player isn't grounded
+        if (!isOnGround) //Return if player isn't grounded
             return;
-        
-        Block blockInFront = Location.LocationByPosition((Vector2)transform.position + new Vector2(direction*0.7f, -0.5f), location.dimension).GetBlock();    //Get block in front of player acording to walk direction
 
-        if (blockInFront == null)
-        {
-            return;
-        }
-        
-        if (System.Type.GetType(blockInFront.GetMaterial().ToString()).IsSubclassOf(typeof(Stairs)))
-        {
-            bool rotated_x = false;
-            bool rotated_y = false;
+        var blockInFront = Location
+            .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), location.dimension)
+            .GetBlock(); //Get block in front of player acording to walk direction
 
-            rotated_x = (blockInFront.data.GetData("rotated_x") == "true");
-            rotated_y = (blockInFront.data.GetData("rotated_y") == "true");
-            
-            if (rotated_y == false && ((direction == -1 && rotated_x == false) || (direction == 1 &&  rotated_x == true)))    //if the stairs are rotated correctly
-            {
+        if (blockInFront == null) return;
+
+        if (Type.GetType(blockInFront.GetMaterial().ToString()).IsSubclassOf(typeof(Stairs)))
+        {
+            var rotated_x = false;
+            var rotated_y = false;
+
+            rotated_x = blockInFront.data.GetData("rotated_x") == "true";
+            rotated_y = blockInFront.data.GetData("rotated_y") == "true";
+
+            if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x)
+            ) //if the stairs are rotated correctly
                 transform.position += new Vector3(0, 1);
-            }
         }
     }
 
@@ -160,10 +160,7 @@ public class LivingEntity : Entity
 
     public virtual void CalculateFlip()
     {
-        if (getVelocity().x != 0)
-        {
-            facingLeft = (getVelocity().x < 0);
-        }
+        if (getVelocity().x != 0) facingLeft = getVelocity().x < 0;
     }
 
     public virtual void Jump()
@@ -177,15 +174,9 @@ public class LivingEntity : Entity
             last_jump_time = Time.time;
         }
 
-        if (isInLiquid && getVelocity().y < swimUpSpeed)
-        {
-            setVelocity(getVelocity() + new Vector2(0, swimUpSpeed));
-        }
-        
-        if (isOnLadder)
-        {
-            setVelocity(getVelocity() + new Vector2(0, climbSpeed));
-        }
+        if (isInLiquid && getVelocity().y < swimUpSpeed) setVelocity(getVelocity() + new Vector2(0, swimUpSpeed));
+
+        if (isOnLadder) setVelocity(getVelocity() + new Vector2(0, climbSpeed));
     }
 
 
@@ -193,10 +184,10 @@ public class LivingEntity : Entity
     {
         if (isOnGround && !isInLiquid)
         {
-            float damage = (highestYlevelsinceground - transform.position.y) - 3;
+            var damage = highestYlevelsinceground - transform.position.y - 3;
             if (damage >= 1)
             {
-                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f);    //Play entity land sound
+                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
 
                 spawnFallDamageParticles();
 
@@ -212,45 +203,45 @@ public class LivingEntity : Entity
 
     private void spawnFallDamageParticles()
     {
-        System.Random r = new System.Random();
+        var r = new Random();
         Block blockBeneath = null;
-        for (int y = -1; blockBeneath == null && y > -3; y--)
+        for (var y = -1; blockBeneath == null && y > -3; y--)
         {
-            Block block = (location + new Location(0, y)).GetBlock();
+            var block = (location + new Location(0, y)).GetBlock();
             if (block != null)
                 blockBeneath = block;
         }
-                
-        int particleAmount = r.Next(4, 8);
-        for (int i = 0; i < particleAmount; i++)    //Spawn landing partickes
-        {
-            Particle part = (Particle)Entity.Spawn("Particle");
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0,  0.6f);
+        var particleAmount = r.Next(4, 8);
+        for (var i = 0; i < particleAmount; i++) //Spawn landing partickes
+        {
+            var part = (Particle) Spawn("Particle");
+
+            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
             part.doGravity = true;
-            part.velocity = new Vector2(((float)r.NextDouble() - 0.5f) * 2, 1.5f);
-            part.maxAge = 1f + (float)r.NextDouble();
+            part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
+            part.maxAge = 1f + (float) r.NextDouble();
             part.maxBounces = 10;
         }
     }
-    
+
     private void spawnMovementParticles(float chances)
     {
-        System.Random r = new System.Random();
+        var r = new Random();
 
         if (r.NextDouble() < chances)
         {
             Block blockBeneath = null;
-            for (int y = 1; blockBeneath == null && y < 3; y++)
+            for (var y = 1; blockBeneath == null && y < 3; y++)
             {
-                Block block = (location - new Location(0, y)).GetBlock();
+                var block = (location - new Location(0, y)).GetBlock();
                 if (block != null && block.playerCollide)
                     blockBeneath = block;
             }
 
 
-            Particle part = (Particle) Entity.Spawn("Particle");
+            var part = (Particle) Spawn("Particle");
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
@@ -296,12 +287,12 @@ public class LivingEntity : Entity
     {
         direction.Normalize();
 
-        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x*3f, 4f);
+        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 3f, 4f);
     }
 
-    IEnumerator TurnRedByDamage()
+    private IEnumerator TurnRedByDamage()
     {
-        Color baseColor = getRenderer().color;
+        var baseColor = getRenderer().color;
 
         getRenderer().color = damageColor;
         yield return new WaitForSeconds(0.15f);

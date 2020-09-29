@@ -1,30 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Sky : MonoBehaviour
 {
     public static float sunlightIntensity;
+    public GameObject Moon;
 
     public GameObject playerLockedY;
     public GameObject skySpinner;
     public GameObject Sun;
-    public GameObject Moon;
 
     private float timeOfDay;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        timeOfDay = (WorldManager.world.time % WorldManager.dayLength) / WorldManager.dayLength;
+        timeOfDay = WorldManager.world.time % WorldManager.dayLength / WorldManager.dayLength;
 
-        Vector3 cameraPosition = CameraController.instance.transform.position;
+        var cameraPosition = CameraController.instance.transform.position;
 
         playerLockedY.transform.position = new Vector3(transform.position.x, cameraPosition.y);
 
@@ -40,9 +37,9 @@ public class Sky : MonoBehaviour
         GetComponent<Animator>().SetFloat("time", timeOfDay);
     }
 
-    void lightLevels()
+    private void lightLevels()
     {
-        float intensity = (timeOfDay > 0.55f && timeOfDay < 0.95f) ? 0.1f : 1;
+        var intensity = timeOfDay > 0.55f && timeOfDay < 0.95f ? 0.1f : 1;
 
         sunlightIntensity = intensity;
     }

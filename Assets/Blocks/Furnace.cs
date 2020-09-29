@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 public class Furnace : InventoryContainer
 {
@@ -12,7 +10,7 @@ public class Furnace : InventoryContainer
     public override Tool_Level propperToolLevel { get; } = Tool_Level.Wooden;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
-    public override System.Type inventoryType { get; } = typeof(FurnaceInventory);
+    public override Type inventoryType { get; } = typeof(FurnaceInventory);
 
     public override void Tick()
     {
@@ -24,39 +22,34 @@ public class Furnace : InventoryContainer
 
         CheckFuels();
         SmeltTick();
-        
+
         base.Tick();
     }
 
     public void CheckFuels()
     {
         if (getInventory().fuelLeft <= 0)
-        {
             if (getInventory().getItem(getInventory().getFuelSlot()) != null)
-            {
                 if (SmeltingRecepie.Fuels.ContainsKey(getInventory().getItem(getInventory().getFuelSlot()).material))
-                {
                     if (GetRecepie() != null)
                     {
-                        getInventory().fuelLeft = SmeltingRecepie.Fuels[(getInventory().getItem(getInventory().getFuelSlot()).material)];
+                        getInventory().fuelLeft =
+                            SmeltingRecepie.Fuels[getInventory().getItem(getInventory().getFuelSlot()).material];
                         getInventory().highestFuel = getInventory().fuelLeft;
                         getInventory().getItem(getInventory().getFuelSlot()).amount--;
                     }
-                }
-            }
-        }
     }
 
     public void SmeltTick()
     {
-        SmeltingRecepie curRecepie = GetRecepie();
+        var curRecepie = GetRecepie();
 
         if (getInventory().fuelLeft <= 0)
             getInventory().highestFuel = 0;
 
         if (curRecepie != null && getInventory().getItem(getInventory().getIngredientSlot()).amount > 0 &&
-                (getInventory().getItem(getInventory().getResultSlot()).material == curRecepie.result.material ||
-getInventory().getItem(getInventory().getResultSlot()).material == Material.Air))
+            (getInventory().getItem(getInventory().getResultSlot()).material == curRecepie.result.material ||
+             getInventory().getItem(getInventory().getResultSlot()).material == Material.Air))
         {
             //subtract fuel
             if (getInventory().fuelLeft > 0)
@@ -84,7 +77,7 @@ getInventory().getItem(getInventory().getResultSlot()).material == Material.Air)
     public void FillSmeltingResult()
     {
         //Called once smelting is done 
-        SmeltingRecepie curRecepie = GetRecepie();
+        var curRecepie = GetRecepie();
 
         getInventory().getItem(getInventory().getResultSlot()).material = curRecepie.result.material;
         getInventory().getItem(getInventory().getResultSlot()).amount += curRecepie.result.amount;
@@ -98,11 +91,12 @@ getInventory().getItem(getInventory().getResultSlot()).material == Material.Air)
         if (getInventory().getItem(getInventory().getIngredientSlot()).amount <= 0)
             return null;
         //Get recepie based on contents of ingredient slot
-        return SmeltingRecepie.FindRecepieByIngredient(getInventory().getItem(getInventory().getIngredientSlot()).material);
+        return SmeltingRecepie.FindRecepieByIngredient(getInventory().getItem(getInventory().getIngredientSlot())
+            .material);
     }
 
     private FurnaceInventory getInventory()
     {
-        return ((FurnaceInventory)inventory);
+        return (FurnaceInventory) inventory;
     }
 }

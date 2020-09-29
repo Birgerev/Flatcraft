@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
-[System.Serializable]
+[Serializable]
 public class FurnaceInventory : Inventory
 {
-    public float highestFuel = 0;
-    public float fuelLeft = 0;
-    public int smeltingProgress = 0;
-    
+    public float fuelLeft;
+    public float highestFuel;
+    public int smeltingProgress;
+
     public FurnaceInventory()
     {
         initialize(3, "Furnace");
     }
-    
+
     public int getFuelSlot()
     {
         return 0;
@@ -31,7 +29,7 @@ public class FurnaceInventory : Inventory
 
     public override void UpdateMenuStatus()
     {
-        FurnaceInventoryMenu inventory = InventoryMenuManager.instance.furnaceInventoryMenu;
+        var inventory = InventoryMenuManager.instance.furnaceInventoryMenu;
         inventory.active = open;
         inventory.inventory = this;
     }

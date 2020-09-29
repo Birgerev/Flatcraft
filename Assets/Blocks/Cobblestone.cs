@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Cobblestone : Block
+﻿public class Cobblestone : Block
 {
     public static string default_texture = "block_cobblestone";
     public override float breakTime { get; } = 6;

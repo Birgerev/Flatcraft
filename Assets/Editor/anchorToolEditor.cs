@@ -1,15 +1,14 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(anchorTool))]
-class anchorToolEditor : Editor
+internal class anchorToolEditor : Editor
 {
-    void OnSceneGUI()
+    private void OnSceneGUI()
     {
         if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
         {
-            anchorTool myTarget = (anchorTool)target;
+            var myTarget = (anchorTool) target;
             myTarget.StopDrag();
         }
     }

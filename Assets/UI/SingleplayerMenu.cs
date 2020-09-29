@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SingleplayerMenu : MonoBehaviour
 {
-    public List<World> worlds = new List<World>();
     public Transform list;
-    public GameObject worldPrefab;
     public int selectedWorld = -1;
+    public GameObject worldPrefab;
+    public List<World> worlds = new List<World>();
 
 
     private void Start()
@@ -22,9 +21,9 @@ public class SingleplayerMenu : MonoBehaviour
 
         worlds = GetWorlds();
 
-        foreach (World world in worlds)
+        foreach (var world in worlds)
         {
-            GameObject obj = Instantiate(worldPrefab);
+            var obj = Instantiate(worldPrefab);
 
             obj.transform.SetParent(list);
         }

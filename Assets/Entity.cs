@@ -1,66 +1,67 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
 using System.IO;
-using Random = UnityEngine.Random;
+using System.Linq;
+using UnityEngine;
+using Random = System.Random;
 
-[System.Serializable]
+[Serializable]
 public class Entity : MonoBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
-    public static int entityCount { get { return entities.Count; } }
-    public static int livingEntityCount { get {
-            int i = 0;
-            foreach (Entity entity in entities)
-            {
+
+    public static int MaxLivingAmount = 6;
+    private Vector2 _cachedposition;
+    private Dimension _dimension;
+
+    //Entity data tags
+    [EntityDataTag(false)] public float age;
+
+
+    public Dictionary<string, string> data = new Dictionary<string, string>();
+    public bool dead;
+
+    [EntityDataTag(false)] public bool facingLeft;
+
+    private bool hasInitializedLight;
+
+
+    //Entity State
+    public int id;
+    public bool isInLiquid;
+    public bool isOnGround;
+    public bool isOnLadder;
+    public Vector2 lastFramePosition;
+    public static int entityCount => entities.Count;
+
+    public static int livingEntityCount
+    {
+        get
+        {
+            var i = 0;
+            foreach (var entity in entities)
                 if (entity is LivingEntity)
                     i++;
-            }
-            return i; } }
-     
-    public static int MaxLivingAmount = 6;
+            return i;
+        }
+    }
 
     //Entity properties
     public virtual bool ChunkLoadingEntity { get; } = false;
 
-    //Entity data tags
-    [EntityDataTag(false)]
-    public float age = 0;
-    [EntityDataTag(false)]
-    public bool facingLeft = false;
-
-
-    //Entity State
-    public int id = 0;
-    public bool isOnGround;
-    public bool isInLiquid = false;
-    public bool isOnLadder = false;
-    public bool dead = false;
-    public Vector2 lastFramePosition;
     public Location location
     {
-        get
-        {
-            return Location.LocationByPosition(_cachedposition, _dimension);
-        }
+        get => Location.LocationByPosition(_cachedposition, _dimension);
         set
         {
             transform.position = new Vector3(value.x, value.y);
             _dimension = value.dimension;
         }
     }
-    private Vector2 _cachedposition;
-    private Dimension _dimension;
-    private bool hasInitializedLight = false;
-
-
-    public Dictionary<string, string> data = new Dictionary<string, string>();
 
     public virtual void Start()
     {
-        gameObject.name = "Entity ["+this.GetType().Name+"]";
+        gameObject.name = "Entity [" + GetType().Name + "]";
         entities.Add(this);
 
         Load();
@@ -75,18 +76,18 @@ public class Entity : MonoBehaviour
             UpdateEntityLightLevel();
             hasInitializedLight = true;
         }
-        
+
         if (isInLiquid)
             isOnGround = false;
 
         getRenderer().flipX = facingLeft;
-        
+
         UpdateCachedPosition();
 
-        if(location.GetPosition() != Location.LocationByPosition(lastFramePosition, location.dimension).GetPosition())
+        if (location.GetPosition() != Location.LocationByPosition(lastFramePosition, location.dimension).GetPosition())
             UpdateEntityLightLevel();
-        
-        if(ChunkLoadingEntity)
+
+        if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(location, Chunk.RenderDistance);
 
         GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
@@ -106,12 +107,12 @@ public class Entity : MonoBehaviour
 
     public virtual bool isChunkLoaded()
     {
-        bool result = new ChunkPosition(location).IsChunkLoaded();
+        var result = new ChunkPosition(location).IsChunkLoaded();
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
             result = false;
-        
+
         return result;
     }
 
@@ -120,39 +121,33 @@ public class Entity : MonoBehaviour
         if (!isChunkLoaded())
             return;
 
-        if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
+        if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
         {
-            Block block = location.GetBlock();
+            var block = location.GetBlock();
 
             if (block != null)
-            {
                 if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
-            }
         }
     }
 
     private void UpdateEntityLightLevel()
     {
-        int lightLevel = Block.GetLightLevel(location);
-        float lightLevelFactor = ((float)lightLevel) / 15f;
-        
-        Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
+        var lightLevel = Block.GetLightLevel(location);
+        var lightLevelFactor = lightLevel / 15f;
+
+        var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         getRenderer().color = color;
     }
-    
+
     private void checkVoidDamage()
     {
-        if (Time.frameCount % (int)(0.75f / Time.deltaTime) == 1)
-        {
+        if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
             if (transform.position.y < 0)
-            {
                 TakeVoidDamage(1);
-            }
-        }
     }
-    
+
     public virtual void TakeVoidDamage(float damage)
     {
         Damage(damage);
@@ -165,29 +160,27 @@ public class Entity : MonoBehaviour
 
     public virtual List<ItemStack> GetDrops()
     {
-        List<ItemStack> result = new List<ItemStack>();
+        var result = new List<ItemStack>();
 
         return result;
     }
 
     public virtual void DropAllDrops()
     {
-        int i = 0;
-        foreach (ItemStack item in GetDrops())
-        {
+        var i = 0;
+        foreach (var item in GetDrops())
             if (item.material != Material.Air && item.amount > 0)
             {
-                System.Random random = new System.Random((transform.position + "" + i).GetHashCode());
-                Vector2 maxVelocity = new Vector2(2, 2);
-                Location dropPosition = location + new Location(0, 2);
+                var random = new Random((transform.position + "" + i).GetHashCode());
+                var maxVelocity = new Vector2(2, 2);
+                var dropPosition = location + new Location(0, 2);
 
                 item.Drop(dropPosition,
-                    new Vector2((float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
-                    (float)random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
+                    new Vector2((float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
+                        (float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
 
                 i++;
             }
-        }
     }
 
     public virtual void Die()
@@ -229,20 +222,20 @@ public class Entity : MonoBehaviour
 
     public virtual List<string> GetSaveStrings()
     {
-        List<string> result = new List<string>();
+        var result = new List<string>();
 
         result.Add("location=" + JsonUtility.ToJson(location));
 
-        IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+        var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
-        foreach (System.Reflection.FieldInfo field in fields)
+        foreach (var field in fields)
         {
-            bool json = ((EntityDataTag)System.Attribute.GetCustomAttributes(field)[0]).json;
+            var json = ((EntityDataTag) Attribute.GetCustomAttributes(field)[0]).json;
 
             if (json)
                 result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
             else
-                result.Add(field.Name + "=" + field.GetValue(this).ToString());
+                result.Add(field.Name + "=" + field.GetValue(this));
         }
 
         return result;
@@ -250,21 +243,19 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\" + location.dimension.ToString() + "\\"+(new ChunkPosition(location)).chunkX+"\\entities\\"+id+"."+GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\" + location.dimension + "\\" +
+               new ChunkPosition(location).chunkX + "\\entities\\" + id + "." + GetType().Name;
     }
 
     public virtual void Save()
     {
         DeleteOldSavePath();
 
-        string path = SavePath();
+        var path = SavePath();
 
-        if (!File.Exists(path))
-        {
-            File.Create(path).Close();
-        }
+        if (!File.Exists(path)) File.Create(path).Close();
 
-        List<string> lines = new List<string>();
+        var lines = new List<string>();
 
         lines = GetSaveStrings();
 
@@ -273,19 +264,15 @@ public class Entity : MonoBehaviour
 
     public virtual void DeleteOldSavePath()
     {
-        string[] chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\"+location.dimension.ToString());
-            
-        foreach (string chunk in chunks)
-        {
-            string[] entities = Directory.GetFiles(chunk + "\\entities\\");
+        var chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\" + location.dimension);
 
-            foreach (string entity in entities)
-            {
+        foreach (var chunk in chunks)
+        {
+            var entities = Directory.GetFiles(chunk + "\\entities\\");
+
+            foreach (var entity in entities)
                 if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
-                {
                     File.Delete(entity);
-                }
-            }
         }
     }
 
@@ -299,7 +286,7 @@ public class Entity : MonoBehaviour
         if (!File.Exists(SavePath()))
             return;
 
-        Dictionary<string, string> lines = dataFromStrings(File.ReadAllLines(SavePath()));
+        var lines = dataFromStrings(File.ReadAllLines(SavePath()));
 
         if (lines.Count <= 1)
             return;
@@ -307,29 +294,30 @@ public class Entity : MonoBehaviour
         location = JsonUtility.FromJson<Location>(lines["location"]);
 
 
-        IEnumerable<System.Reflection.FieldInfo> fields = this.GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+        var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
-        foreach (System.Reflection.FieldInfo field in fields)
+        foreach (var field in fields)
         {
-            bool json = ((EntityDataTag)System.Attribute.GetCustomAttributes(field)[0]).json;
-            System.Type type = field.FieldType;
+            var json = ((EntityDataTag) Attribute.GetCustomAttributes(field)[0]).json;
+            var type = field.FieldType;
 
-            if(json)
+            if (json)
                 field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
-            else if(type == typeof(string))
+            else if (type == typeof(string))
                 field.SetValue(this, lines[field.Name]);
             else
-                field.SetValue(this, System.Convert.ChangeType(lines[field.Name], type));
+                field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
         }
     }
 
-    void OnCollisionStay2D(Collision2D col)
+    private void OnCollisionStay2D(Collision2D col)
     {
-        if(col.transform.position.y+1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
+        if (col.transform.position.y + 1f < transform.position.y &&
+            Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 
-    void OnCollisionExit2D(Collision2D col)
+    private void OnCollisionExit2D(Collision2D col)
     {
         if (col.transform.position.y + 1f < transform.position.y)
             isOnGround = false;
@@ -341,10 +329,10 @@ public class Entity : MonoBehaviour
 
         if (getVelocity().y < -2)
         {
-            System.Random r = new System.Random();
-            for (int i = 0; i < 8; i++) //Spawn landing partickes
+            var r = new Random();
+            for (var i = 0; i < 8; i++) //Spawn landing partickes
             {
-                Particle part = (Particle) Entity.Spawn("Particle");
+                var part = (Particle) Spawn("Particle");
 
                 part.transform.position = liquid.location.GetPosition() + new Vector2(0, 0.5f);
                 part.color = liquid.GetRandomColourFromTexture();
@@ -355,7 +343,7 @@ public class Entity : MonoBehaviour
                 part.maxAge = 1f + (float) r.NextDouble();
                 part.maxBounces = 10;
             }
-            
+
             Sound.Play(location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
         }
     }
@@ -367,19 +355,19 @@ public class Entity : MonoBehaviour
 
     public static int CreateId()
     {
-        return Random.Range(1, 99999);
+        return UnityEngine.Random.Range(1, 99999);
     }
 
     public static Entity Spawn(string type)
     {
-        if(Resources.Load("Entities/" + type) == null)
+        if (Resources.Load("Entities/" + type) == null)
         {
             Debug.LogError("No Entity with the type '" + type + "' was found");
             return null;
         }
 
-        GameObject obj = Instantiate((GameObject)Resources.Load("Entities/"+ type));
-        Entity result = obj.GetComponent<Entity>();
+        var obj = Instantiate((GameObject) Resources.Load("Entities/" + type));
+        var result = obj.GetComponent<Entity>();
 
         result.id = CreateId();
 
@@ -388,20 +376,18 @@ public class Entity : MonoBehaviour
 
     public static Dictionary<string, string> dataFromStrings(string[] dataStrings)
     {
-        Dictionary<string, string> resultData = new Dictionary<string, string>();
+        var resultData = new Dictionary<string, string>();
 
-        foreach (string line in dataStrings)
-        {
+        foreach (var line in dataStrings)
             if (line.Contains("="))
                 resultData.Add(line.Split('=')[0], line.Split('=')[1]);
-        }
 
         return resultData;
     }
 }
 
-[System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
-public class EntityDataTag : System.Attribute
+[AttributeUsage(AttributeTargets.All)]
+public class EntityDataTag : Attribute
 {
     public bool json;
 

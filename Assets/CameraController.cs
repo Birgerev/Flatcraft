@@ -1,49 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public const float normalFov = 20f;
+    public const float zoomedFov = 16f;
     public static CameraController instance;
+    public static float targetFov = 20f;
 
     //Camera target variables
     public float dampTime = 0.15f;
-    public float zoomDampTime = 2f;
-    private Vector3 velocity = Vector3.zero;
-    private float vel = 0f;
-    public static float targetFov = 20f;
-    public Transform target;
-
-    public const float normalFov = 20f;
-    public const float zoomedFov = 16f;
-
-    private float startZ = -0.1f;
+    public float maxOffset = 0.5f;
 
     //Camera shake variables
     public float maxRoll = 10;
-    public float maxOffset = 0.5f;
-    public float shake = 0;
-    public float shakedropoffPerFrame = 0.8f;
-    public float shakeforce = 1.5f;
-
-    public float roll;
     public float offsetX;
     public float offsetY;
 
-    int seed = 0;
+    public float roll;
+
+    private int seed;
+    public float shake;
+    public float shakedropoffPerFrame = 0.8f;
+    public float shakeforce = 1.5f;
+
+    private float startZ = -0.1f;
+    public Transform target;
+    private float vel;
+    private Vector3 velocity = Vector3.zero;
+    public float zoomDampTime = 2f;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         instance = this;
 
-        if (startZ == -0.1f)
-        {
-            startZ = transform.position.z;
-        }
+        if (startZ == -0.1f) startZ = transform.position.z;
     }
 
-    void ShakeCalc()
+    private void ShakeCalc()
     {
         //Seeds needs to use fractal numbers
         roll = maxRoll * shake * Mathf.PerlinNoise(seed + 0.4f, seed + 0.4f);
@@ -59,7 +53,7 @@ public class CameraController : MonoBehaviour
 
 
     // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (Player.localInstance == null)
             return;
@@ -68,8 +62,8 @@ public class CameraController : MonoBehaviour
 
         //Smoothly target player
         transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, dampTime);
-        
-        float currentFov = GetComponent<Camera>().orthographicSize;
+
+        var currentFov = GetComponent<Camera>().orthographicSize;
 
 
         GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(currentFov, targetFov, ref vel, zoomDampTime);
@@ -77,7 +71,7 @@ public class CameraController : MonoBehaviour
 
         ShakeCalc();
 
-        Vector3 pos = transform.position;
+        var pos = transform.position;
         float angle = 0;
 
         pos += new Vector3(offsetX, offsetY);

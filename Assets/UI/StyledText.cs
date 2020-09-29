@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine;
 
 public class StyledText : MonoBehaviour
 {
@@ -10,17 +8,16 @@ public class StyledText : MonoBehaviour
     public Vector3 shadowTextOffset;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(shadowText == null)
+        if (shadowText == null)
         {
-            GameObject obj = Instantiate(gameObject);
+            var obj = Instantiate(gameObject);
 
             obj.transform.SetParent(transform);
             obj.transform.localScale = new Vector3(1, 1, 1);

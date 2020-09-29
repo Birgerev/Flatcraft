@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Oak_Plank_Stairs : Stairs
+﻿public class Oak_Plank_Stairs : Stairs
 {
     public static string default_texture = "block_oak_plank_stairs";
     public override float breakTime { get; } = 3f;

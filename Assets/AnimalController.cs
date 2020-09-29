@@ -1,35 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = System.Random;
 
 public class AnimalController : EntityController
 {
-    public bool isWalking = false;
-    public bool walkingRight = false;
-
     public static float idleStateChangeChance = 0.2f;
     public static float walkingStateChangeChance = 0.4f;
+    public bool isWalking;
+    public bool walkingRight;
 
     public AnimalController(LivingEntity instance) : base(instance)
     {
-
     }
 
     public override void Tick()
     {
         base.Tick();
 
-        Block block = instance.location.GetBlock();
-        Block blockInFront = (instance.location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
+        var block = instance.location.GetBlock();
+        var blockInFront = (instance.location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
         if (isWalking)
         {
             instance.Walk(walkingRight ? 1 : -1);
 
             //Jump when there is a block in front of entity
-            if (blockInFront != null && blockInFront.playerCollide)
-            {
-                instance.Jump();
-            }
+            if (blockInFront != null && blockInFront.playerCollide) instance.Jump();
         }
 
         //Swim in water
@@ -38,9 +32,9 @@ public class AnimalController : EntityController
 
 
         //Change States
-        System.Random r = new System.Random((instance.location.ToString() + " "+instance.age).GetHashCode());
-        
-        if(r.NextDouble() < (isWalking ? walkingStateChangeChance : idleStateChangeChance) / (1.0f / Time.deltaTime))
+        var r = new Random((instance.location + " " + instance.age).GetHashCode());
+
+        if (r.NextDouble() < (isWalking ? walkingStateChangeChance : idleStateChangeChance) / (1.0f / Time.deltaTime))
         {
             isWalking = !isWalking;
             walkingRight = r.Next(0, 2) == 0;

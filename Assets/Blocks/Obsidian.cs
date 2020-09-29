@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class Obsidian : Block
 {
     public static string default_texture = "block_obsidian";

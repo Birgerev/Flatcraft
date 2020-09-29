@@ -1,46 +1,45 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
-using UnityEngine.UI;
+﻿using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = System.Random;
 
 public class CreateWorldMenu : MonoBehaviour
 {
+    public Button CreateButton;
+    public Text errorText;
     public InputField nameField;
     public InputField seedField;
-    public Text errorText;
-    public Button CreateButton;
+
+    private bool switchingMenus;
 
     public World world;
-    
-    private bool switchingMenus = false;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         world = new World();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (switchingMenus)
             return;
 
         //Filter non allowed characters
-        nameField.text = System.Text.RegularExpressions.Regex.Replace(nameField.text, "[^\\w\\._]", "");
+        nameField.text = Regex.Replace(nameField.text, "[^\\w\\._]", "");
 
         world.name = nameField.text;
-        if(seedField.text.Length > 0)
+        if (seedField.text.Length > 0)
             world.seed = int.Parse(seedField.text);
         else
             world.seed = 0;
-        
 
-        bool worldExists = World.worldExists(world.name);
-        bool nameEmpty = (nameField.text == "");
-        bool error = (worldExists || nameEmpty);
+
+        var worldExists = World.worldExists(world.name);
+        var nameEmpty = nameField.text == "";
+        var error = worldExists || nameEmpty;
 
         if (worldExists)
             errorText.text = "World name is already taken!";
@@ -55,11 +54,8 @@ public class CreateWorldMenu : MonoBehaviour
     {
         switchingMenus = true;
 
-        if (world.seed == 0)
-        {
-            world.seed = new System.Random().Next();
-        }
-        
+        if (world.seed == 0) world.seed = new Random().Next();
+
         world.SaveData();
         WorldManager.world = world;
         SceneManager.LoadScene("Loading");

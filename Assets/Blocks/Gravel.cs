@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Gravel : Block
+﻿public class Gravel : Block
 {
     public static string default_texture = "block_gravel";
     public override float breakTime { get; } = 0.75f;
@@ -14,7 +10,7 @@ public class Gravel : Block
     {
         if (age > 0 && (location + new Location(0, -1)).GetMaterial() == Material.Air)
         {
-            FallingSand fs = (FallingSand)Entity.Spawn("FallingSand");
+            var fs = (FallingSand) Entity.Spawn("FallingSand");
             fs.transform.position = location.GetPosition();
             fs.material = GetMaterial();
 

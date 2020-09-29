@@ -1,27 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine;
 
 public class InventoryMenu : MonoBehaviour
 {
     public static PlayerInventory playerInventory;
 
-    public Transform slotList;
+    public bool active;
+
+    private int inventoryAge;
     public Text playerInventoryTitle;
     public PointerSlot pointerSlot;
 
-    public bool active = false;
+    public Transform slotList;
 
     public virtual bool wholePlayerInventory { get; } = false;
-
-    private int inventoryAge;
 
     public virtual void Update()
     {
         if (Player.localInstance != null)
             playerInventory = Player.localInstance.inventory;
-        
+
         if (playerInventory == null)
             return;
 
@@ -31,9 +29,9 @@ public class InventoryMenu : MonoBehaviour
 
         CheckClose();
 
-        GetComponent<CanvasGroup>().alpha = (active) ? 1 : 0;
-        GetComponent<CanvasGroup>().interactable = (active);
-        GetComponent<CanvasGroup>().blocksRaycasts = (active);
+        GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
+        GetComponent<CanvasGroup>().interactable = active;
+        GetComponent<CanvasGroup>().blocksRaycasts = active;
 
         playerInventory = Player.localInstance.inventory;
 
@@ -62,18 +60,15 @@ public class InventoryMenu : MonoBehaviour
     {
         if (active)
         {
-            int size = (wholePlayerInventory) ? playerInventory.size : playerInventory.baseInventorySize;
+            var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
 
-            for (int i = 0; i < size; i++)
-            {
-                getSlotObject(i).item = getItem(i);
-            }
+            for (var i = 0; i < size; i++) getSlotObject(i).item = getItem(i);
         }
     }
 
     public virtual ItemSlot getSlotObject(int index)
     {
-        if(index < slotList.childCount)
+        if (index < slotList.childCount)
             return getSlotObjects()[index];
         return null;
     }
@@ -91,61 +86,48 @@ public class InventoryMenu : MonoBehaviour
     public virtual void OnClickSlot(int slotIndex, int clickType)
     {
         if (clickType == 0)
-        {
             OnRightClickSlot(slotIndex);
-        }
         else
-        {
             OnLeftClickSlot(slotIndex);
-        }
 
         pointerSlot.UpdateSlot();
     }
 
     public virtual void OnLeftClickSlot(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
 
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.amount > 0)      //Left Click to leave one item
+            && pointerItem.amount > 0) //Left Click to leave one item
         {
             SlotAction_LeaveOne(slotIndex);
 
             return;
         }
-        if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) &&
-            (slotItem.amount > 0))      //Left click to halve
-        {
-            SlotAction_Halve(slotIndex);
 
-            return;
-        }
+        if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) &&
+            slotItem.amount > 0) //Left click to halve
+            SlotAction_Halve(slotIndex);
     }
 
     public virtual void OnRightClickSlot(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
-        
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
+
         //Right click to swap
         if (pointerItem.material == Material.Air || pointerItem.material != slotItem.material)
-        {
             SlotAction_Swap(slotIndex);
-            return;
-        }
         else
-        {       //Right click to add pointer to slot
+            //Right click to add pointer to slot
             SlotAction_MergeSlot(slotIndex);
-
-            return;
-        }
     }
 
     public virtual void SlotAction_LeaveOne(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
 
         slotItem.material = pointerItem.material;
         slotItem.amount++;
@@ -154,13 +136,13 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void SlotAction_Halve(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
 
         pointerItem.material = slotItem.material;
 
-        int pointerAmount = Mathf.CeilToInt((float)slotItem.amount / 2f);
-        int slotAmount = Mathf.FloorToInt((float)slotItem.amount / 2f);
+        var pointerAmount = Mathf.CeilToInt(slotItem.amount / 2f);
+        var slotAmount = Mathf.FloorToInt(slotItem.amount / 2f);
 
         pointerItem.amount = pointerAmount;
         slotItem.amount = slotAmount;
@@ -168,12 +150,11 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void SlotAction_Swap(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
 
-        ItemStack slotItemClone = slotItem.Clone();
-        ItemStack pointerItemClone = pointerItem.Clone();
-
+        var slotItemClone = slotItem.Clone();
+        var pointerItemClone = pointerItem.Clone();
 
 
         slotItem.material = pointerItemClone.material;
@@ -189,8 +170,8 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void SlotAction_MergeSlot(int slotIndex)
     {
-        ItemStack slotItem = getItem(slotIndex);
-        ItemStack pointerItem = pointerSlot.item;
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
 
         slotItem.amount += pointerItem.amount;
         pointerItem.amount = 0;

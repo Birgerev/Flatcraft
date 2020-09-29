@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Bed_Bottom : Bed_Block
+﻿public class Bed_Bottom : Bed_Block
 {
     public static string default_texture = "block_bed_bottom";
 
@@ -14,15 +10,10 @@ public class Bed_Bottom : Bed_Block
 
         if (age == 0)
         {
-            Material otherMaterial = otherBlockLocation.GetMaterial();
+            var otherMaterial = otherBlockLocation.GetMaterial();
             if (otherMaterial == Material.Air)
-            {
                 otherBlockLocation.SetMaterial(otherBlockMaterial);
-            }
-            else if (otherMaterial != otherBlockMaterial)
-            {
-                Break(true);
-            }
+            else if (otherMaterial != otherBlockMaterial) Break(true);
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Mossy_Cobblestone : Block
+﻿public class Mossy_Cobblestone : Block
 {
     public static string default_texture = "block_mossy_cobblestone";
     public override float breakTime { get; } = 6;

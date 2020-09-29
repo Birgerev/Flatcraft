@@ -1,20 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DroppedItem : Entity
 {
-    //Entity Properties
-
-    //Entity Data Tags
-    [EntityDataTag(true)]
-    public ItemStack item = new ItemStack();
-    [EntityDataTag(false)]
-    public bool canPickup = true;
+    [EntityDataTag(false)] public bool canPickup = true;
 
 
     //Entity State
     private float cosIndex;
+    //Entity Properties
+
+    //Entity Data Tags
+    [EntityDataTag(true)] public ItemStack item = new ItemStack();
 
     // Start is called before the first frame update
     public override void Start()
@@ -34,7 +30,7 @@ public class DroppedItem : Entity
         getRenderer().sprite = item.getSprite();
 
         //Bobbing
-        getRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) *0.1f);
+        getRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
         cosIndex += 2f * Time.deltaTime;
 
         if (isOnGround)
@@ -47,7 +43,6 @@ public class DroppedItem : Entity
             return;
 
         if (col.GetComponent<DroppedItem>() != null)
-        {
             if (col.GetComponent<DroppedItem>().item.material == item.material)
             {
                 if (age < col.GetComponent<DroppedItem>().age)
@@ -60,15 +55,13 @@ public class DroppedItem : Entity
                 col.GetComponent<DroppedItem>().Die();
                 return;
             }
-        }
+
         if (col.GetComponent<Player>() != null)
-        {
             if (col.GetComponent<Player>().inventory.AddItem(item))
             {
                 canPickup = false;
                 Die();
             }
-        }
     }
 
     public override void Hit(float damage)

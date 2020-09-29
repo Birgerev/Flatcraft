@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Bed_Block : Block
+﻿public class Bed_Block : Block
 {
     public override bool rotate_x { get; } = true;
     public override bool playerCollide { get; } = false;
@@ -12,9 +8,9 @@ public class Bed_Block : Block
     public Location otherBlockLocation
     {
         get
-        { 
+        {
             //other block position is based on whether this block is a bottom or top piece
-            int otherBlockXRelative = (GetMaterial() == Material.Bed_Bottom) ? -1 : 1;
+            var otherBlockXRelative = GetMaterial() == Material.Bed_Bottom ? -1 : 1;
             //if block is flipped, invert side of other block
             if (data.GetData("rotated_x") == "true")
                 otherBlockXRelative *= -1;
@@ -22,13 +18,8 @@ public class Bed_Block : Block
             return location + new Location(otherBlockXRelative, 0);
         }
     }
-    public Material otherBlockMaterial
-    {
-        get
-        {
-            return (GetMaterial() == Material.Bed_Bottom) ? Material.Bed_Top : Material.Bed_Bottom;
-        }
-    }
+
+    public Material otherBlockMaterial => GetMaterial() == Material.Bed_Bottom ? Material.Bed_Top : Material.Bed_Bottom;
 
     public override void Interact()
     {
@@ -40,21 +31,17 @@ public class Bed_Block : Block
 
     public override void Tick()
     {
-        if (age > 0) { 
-            Block otherBlock = otherBlockLocation.GetBlock();
+        if (age > 0)
+        {
+            var otherBlock = otherBlockLocation.GetBlock();
             if (otherBlock == null)
-            {
                 Break(false);
-            }
-            else if (otherBlock.GetMaterial() != otherBlockMaterial)
-            {
-                Break(false);
-            }
+            else if (otherBlock.GetMaterial() != otherBlockMaterial) Break(false);
         }
 
         base.Tick();
     }
-    
+
     public override ItemStack GetDrop()
     {
         return new ItemStack(Material.Bed, 1);

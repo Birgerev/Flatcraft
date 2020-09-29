@@ -1,28 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Clouds : MonoBehaviour
 {
     public GameObject cloud;
+    private readonly float cloudChance = 50;
 
-    private float cloudDistance = 30;
-    private float cloudSpeed = 0.5f;
-    private float cloudChance = 50;
-    private float cloudHeight = 128;
-    private float cloudSpawnInterval = 7.9f;
+    private readonly float cloudDistance = 30;
+    private readonly float cloudHeight = 128;
+    private readonly float cloudSpawnInterval = 7.9f;
+    private readonly float cloudSpeed = 0.5f;
 
 
-    private float nextSpawnTime = 0;
+    private float nextSpawnTime;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (Player.localInstance == null)
             return;
@@ -30,28 +27,25 @@ public class Clouds : MonoBehaviour
 
         if (Time.time > nextSpawnTime)
         {
-            if (Random.Range(0f, 100f) < cloudChance)
-            {
-                CreateCloud();
-            }
+            if (Random.Range(0f, 100f) < cloudChance) CreateCloud();
             nextSpawnTime = Time.time + cloudSpawnInterval;
         }
 
 
-        for(int i = 0; i < transform.childCount; i++)
+        for (var i = 0; i < transform.childCount; i++)
         {
             //Clear cloud
             if (transform.GetChild(i).position.x > playerPos.x + cloudDistance * 2)
                 Destroy(transform.GetChild(i).gameObject);
 
             //Move
-            transform.GetChild(i).position += new Vector3(cloudSpeed * Time.fixedDeltaTime, 0); 
+            transform.GetChild(i).position += new Vector3(cloudSpeed * Time.fixedDeltaTime, 0);
         }
     }
 
     public void CreateCloud()
     {
-        GameObject obj = Instantiate(cloud);
+        var obj = Instantiate(cloud);
 
         obj.transform.SetParent(transform);
         obj.transform.position = new Vector2(Player.localInstance.transform.position.x - cloudDistance, cloudHeight);

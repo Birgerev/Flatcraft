@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DeleteWorldMenu : MonoBehaviour
 {
     public static int selectedWorld = -1;
-    public List<World> worlds = new List<World>();
     public Text deleteText;
+    public List<World> worlds = new List<World>();
 
     public void Start()
     {
@@ -22,7 +20,7 @@ public class DeleteWorldMenu : MonoBehaviour
     {
         SceneManager.LoadScene("SingleplayerMenu");
     }
-    
+
     public void Delete()
     {
         worlds[selectedWorld].Delete();

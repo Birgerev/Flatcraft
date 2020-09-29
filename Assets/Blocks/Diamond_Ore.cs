@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Diamond_Ore : Block
+﻿public class Diamond_Ore : Block
 {
     public static string default_texture = "block_diamond_ore_0";
-    public override string[] alternative_textures { get; } = { "block_diamond_ore_0", "block_diamond_ore_1" };
+    public override string[] alternative_textures { get; } = {"block_diamond_ore_0", "block_diamond_ore_1"};
 
     public override float breakTime { get; } = 6;
 

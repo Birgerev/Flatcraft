@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 public class Chest : InventoryContainer
 {
@@ -11,7 +9,7 @@ public class Chest : InventoryContainer
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override System.Type inventoryType { get; } = typeof(Inventory);
+    public override Type inventoryType { get; } = typeof(Inventory);
 
     public override void Tick()
     {
@@ -27,6 +25,6 @@ public class Chest : InventoryContainer
 
     private Inventory getInventory()
     {
-        return ((Inventory)inventory);
+        return inventory;
     }
 }

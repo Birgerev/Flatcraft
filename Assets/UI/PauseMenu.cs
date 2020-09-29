@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    public static bool active = false;
+    public static bool active;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         active = false;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(WorldManager.instance.loadingProgress != 1)
+        if (WorldManager.instance.loadingProgress != 1)
         {
             active = false;
             return;
@@ -25,17 +23,17 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             active = !active;
-            Time.timeScale = (active) ? 0 : 1;
+            Time.timeScale = active ? 0 : 1;
         }
 
-        GetComponent<CanvasGroup>().alpha = (active) ? 1 : 0;
-        GetComponent<CanvasGroup>().interactable = (active);
-        GetComponent<CanvasGroup>().blocksRaycasts = (active);
+        GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
+        GetComponent<CanvasGroup>().interactable = active;
+        GetComponent<CanvasGroup>().blocksRaycasts = active;
     }
 
     public void BackToGame()
     {
-        Time.timeScale =  1;
+        Time.timeScale = 1;
         active = false;
     }
 

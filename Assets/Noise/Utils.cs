@@ -15,7 +15,7 @@ namespace LibNoise
             private const int GeneratorNoiseZ = 263;
             private const int GeneratorSeed = 1013;
             private const int GeneratorShift = 13;
-        #else
+#else
         private const int GeneratorNoiseX = 1619;
         private const int GeneratorNoiseY = 31337;
         private const int GeneratorNoiseZ = 6971;
@@ -176,9 +176,9 @@ namespace LibNoise
             {
                 case QualityMode.Low:
                 {
-                    xs = (x - x0);
-                    ys = (y - y0);
-                    zs = (z - z0);
+                    xs = x - x0;
+                    ys = y - y0;
+                    zs = z - z0;
                     break;
                 }
                 case QualityMode.Medium:
@@ -196,6 +196,7 @@ namespace LibNoise
                     break;
                 }
             }
+
             var n0 = GradientNoise3D(x, y, z, x0, y0, z0, seed);
             var n1 = GradientNoise3D(x, y, z, x1, y0, z0, seed);
             var ix0 = InterpolateLinear(n0, n1, xs);
@@ -215,32 +216,33 @@ namespace LibNoise
 
         internal static double GradientCoherentNoise2D(double x, double y, long seed, QualityMode quality)
         {
-            var x0 = x > 0.0 ? (int)x : (int)x - 1;
+            var x0 = x > 0.0 ? (int) x : (int) x - 1;
             var x1 = x0 + 1;
-            var y0 = y > 0.0 ? (int)y : (int)y - 1;
+            var y0 = y > 0.0 ? (int) y : (int) y - 1;
             var y1 = y0 + 1;
             double xs = 0, ys = 0;
             switch (quality)
             {
                 case QualityMode.Low:
-                    {
-                        xs = (x - x0);
-                        ys = (y - y0);
-                        break;
-                    }
+                {
+                    xs = x - x0;
+                    ys = y - y0;
+                    break;
+                }
                 case QualityMode.Medium:
-                    {
-                        xs = MapCubicSCurve(x - x0);
-                        ys = MapCubicSCurve(y - y0);
-                        break;
-                    }
+                {
+                    xs = MapCubicSCurve(x - x0);
+                    ys = MapCubicSCurve(y - y0);
+                    break;
+                }
                 case QualityMode.High:
-                    {
-                        xs = MapQuinticSCurve(x - x0);
-                        ys = MapQuinticSCurve(y - y0);
-                        break;
-                    }
+                {
+                    xs = MapQuinticSCurve(x - x0);
+                    ys = MapQuinticSCurve(y - y0);
+                    break;
+                }
             }
+
             var n0 = GradientNoise2D(x, y, x0, y0, seed);
             var n1 = GradientNoise2D(x, y, x1, y0, seed);
             var ix0 = InterpolateLinear(n0, n1, xs);
@@ -262,34 +264,34 @@ namespace LibNoise
         {
             var i = (GeneratorNoiseX * ix + GeneratorNoiseY * iy + GeneratorNoiseZ * iz +
                      GeneratorSeed * seed) & 0xffffffff;
-            i ^= (i >> GeneratorShift);
+            i ^= i >> GeneratorShift;
             i &= 0xff;
-            var xvg = Randoms[(i << 2)];
+            var xvg = Randoms[i << 2];
             var yvg = Randoms[(i << 2) + 1];
             var zvg = Randoms[(i << 2) + 2];
-            var xvp = (fx - ix);
-            var yvp = (fy - iy);
-            var zvp = (fz - iz);
-            return ((xvg * xvp) + (yvg * yvp) + (zvg * zvp)) * 2.12;
+            var xvp = fx - ix;
+            var yvp = fy - iy;
+            var zvp = fz - iz;
+            return (xvg * xvp + yvg * yvp + zvg * zvp) * 2.12;
         }
 
         internal static double GradientNoise2D(double fx, double fy, int ix, int iy, long seed)
         {
             var i = (GeneratorNoiseX * ix + GeneratorNoiseY * iy +
                      GeneratorSeed * seed) & 0xffffffff;
-            i ^= (i >> GeneratorShift);
+            i ^= i >> GeneratorShift;
             i &= 0xff;
-            var xvg = Randoms[(i << 2)];
+            var xvg = Randoms[i << 2];
             var yvg = Randoms[(i << 2) + 1];
-            var xvp = (fx - ix);
-            var yvp = (fy - iy);
-            return ((xvg * xvp) + (yvg * yvp)) * 2.12;
+            var xvp = fx - ix;
+            var yvp = fy - iy;
+            return (xvg * xvp + yvg * yvp) * 2.12;
         }
 
         internal static double InterpolateCubic(double a, double b, double c, double d, double position)
         {
-            var p = (d - c) - (a - b);
-            var q = (a - b) - p;
+            var p = d - c - (a - b);
+            var q = a - b - p;
             var r = c - a;
             var s = b;
             return p * position * position * position + q * position * position + r * position + s;
@@ -297,25 +299,19 @@ namespace LibNoise
 
         internal static double InterpolateLinear(double a, double b, double position)
         {
-            return ((1.0 - position) * a) + (position * b);
+            return (1.0 - position) * a + position * b;
         }
 
         internal static double MakeInt32Range(double value)
         {
-            if (value >= 1073741824.0)
-            {
-                return (2.0 * Math.IEEERemainder(value, 1073741824.0)) - 1073741824.0;
-            }
-            if (value <= -1073741824.0)
-            {
-                return (2.0 * Math.IEEERemainder(value, 1073741824.0)) + 1073741824.0;
-            }
+            if (value >= 1073741824.0) return 2.0 * Math.IEEERemainder(value, 1073741824.0) - 1073741824.0;
+            if (value <= -1073741824.0) return 2.0 * Math.IEEERemainder(value, 1073741824.0) + 1073741824.0;
             return value;
         }
 
         internal static double MapCubicSCurve(double value)
         {
-            return (value * value * (3.0 - 2.0 * value));
+            return value * value * (3.0 - 2.0 * value);
         }
 
         internal static double MapQuinticSCurve(double value)
@@ -323,12 +319,12 @@ namespace LibNoise
             var a3 = value * value * value;
             var a4 = a3 * value;
             var a5 = a4 * value;
-            return (6.0 * a5) - (15.0 * a4) + (10.0 * a3);
+            return 6.0 * a5 - 15.0 * a4 + 10.0 * a3;
         }
 
         internal static double ValueNoise3D(int x, int y, int z, int seed)
         {
-            return 1.0 - (ValueNoise3DInt(x, y, z, seed) / 1073741824.0);
+            return 1.0 - ValueNoise3DInt(x, y, z, seed) / 1073741824.0;
         }
 
         internal static long ValueNoise3DInt(int x, int y, int z, int seed)

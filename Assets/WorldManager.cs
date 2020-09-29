@@ -1,31 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WorldManager : MonoBehaviour
 {
     public static World world;
     public static WorldManager instance;
 
+    public static float dayLength = 60 * 20;
+    public int amountOfChunksLoading;
+
     public List<Biome> biomes = new List<Biome>();
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
-    public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
-    public int amountOfChunksLoading = 0;
-
     public GameObject chunkPrefab;
-    public GameObject player;
+
+    public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
+    public float loadingProgress;
 
     public string loadingState = "";
-    public float loadingProgress = 0;
 
     public Chunk mainChunk;
-
-    public static float dayLength = 60 * 20;
+    public GameObject player;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         instance = this;
         StartCoroutine(LoadWorld());
@@ -36,7 +36,7 @@ public class WorldManager : MonoBehaviour
         world.time += Time.deltaTime;
     }
 
-    IEnumerator SaveLoop()
+    private IEnumerator SaveLoop()
     {
         while (true)
         {
@@ -45,7 +45,7 @@ public class WorldManager : MonoBehaviour
         }
     }
 
-    IEnumerator LoadWorld()
+    private IEnumerator LoadWorld()
     {
         SeedGenerator.Reset();
         Time.timeScale = 1;
@@ -68,15 +68,15 @@ public class WorldManager : MonoBehaviour
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {
-            loadingState = "Generating Chunks: "+ amountOfChunksLoading;
+            loadingState = "Generating Chunks: " + amountOfChunksLoading;
             yield return new WaitForSeconds(0.5f);
         }
 
         loadingState = "Waiting For Light";
         loadingProgress = 3f / steps;
-        
+
         yield return new WaitForSeconds(1f);
-        
+
         loadingState = "Done!";
         loadingProgress = 4f / steps;
 
@@ -85,14 +85,15 @@ public class WorldManager : MonoBehaviour
         loadingProgress = 5f / steps;
 
 
-        if(Player.localInstance.location.x == 0)    //Place player at ground first time player spawns
-            Player.localInstance.transform.position = Player.localInstance.ValidSpawn(Player.localInstance.location.x).GetPosition();    
-        
+        if (Player.localInstance.location.x == 0) //Place player at ground first time player spawns
+            Player.localInstance.transform.position =
+                Player.localInstance.ValidSpawn(Player.localInstance.location.x).GetPosition();
+
         StartCoroutine(SaveLoop());
     }
 
     public void Spawn()
     {
-        GameObject obj = Instantiate(player);
+        var obj = Instantiate(player);
     }
 }

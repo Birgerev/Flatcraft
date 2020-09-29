@@ -1,24 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
 public class DeathMenu : MonoBehaviour
 {
-    public static bool active = false;
+    public static bool active;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        GetComponent<CanvasGroup>().alpha = (active) ? 1 : 0;
-        GetComponent<CanvasGroup>().interactable = (active);
-        GetComponent<CanvasGroup>().blocksRaycasts = (active);
+        GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
+        GetComponent<CanvasGroup>().interactable = active;
+        GetComponent<CanvasGroup>().blocksRaycasts = active;
     }
 
     public void BackToMenu()

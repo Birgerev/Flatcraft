@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 
 public class Sound : MonoBehaviour
 {
     public static Sound instance;
+    public AudioMixerGroup blocksGroup;
+
+    public bool enabled;
+    public AudioMixerGroup entitiesGroup;
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup weatherGroup;
-    public AudioMixerGroup blocksGroup;
-    public AudioMixerGroup entitiesGroup;
-
-    public bool enabled = false;
 
     public void Start()
     {
@@ -26,17 +24,17 @@ public class Sound : MonoBehaviour
 
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch)
     {
-        GameObject obj = new GameObject("sound "+sound);
-        AudioSource source = obj.AddComponent<AudioSource>();
+        var obj = new GameObject("sound " + sound);
+        var source = obj.AddComponent<AudioSource>();
 
-        AudioClip clip = Resources.Load<AudioClip>("Sounds/" + sound);
+        var clip = Resources.Load<AudioClip>("Sounds/" + sound);
 
-        if(clip == null)
+        if (clip == null)
         {
-            Debug.LogError("Sound clip not found: "+sound);
+            Debug.LogError("Sound clip not found: " + sound);
             return;
         }
-        
+
         AudioMixerGroup group = null;
         switch (type)
         {
@@ -54,7 +52,7 @@ public class Sound : MonoBehaviour
                 break;
         }
 
-        float pitch = Random.Range(minPitch, maxPitch);
+        var pitch = Random.Range(minPitch, maxPitch);
 
         source.outputAudioMixerGroup = group;
         source.clip = clip;
@@ -64,7 +62,7 @@ public class Sound : MonoBehaviour
 
         source.Play();
 
-        Destroy(obj, clip.length+1);
+        Destroy(obj, clip.length + 1);
     }
 }
 

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Torch : Block
+﻿public class Torch : Block
 {
     public static string default_texture = "block_torch";
     public override bool playerCollide { get; } = false;
