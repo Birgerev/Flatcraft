@@ -95,4 +95,5 @@
     Wheat_Crop,
     
     Ladder,
+    Obsidian,
 }
