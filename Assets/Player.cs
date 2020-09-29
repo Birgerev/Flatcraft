@@ -290,18 +290,16 @@ public class Player : HumanEntity
         inventory.Clear();
     }
 
-    public Location ValidSpawn(int pos)
+    public Location ValidSpawn(int x)
     {
-        Dimension curDimension = location.dimension;
+        Block topmostBlock = Chunk.getTopmostBlock(x, location.dimension, false);
 
-        for (int i = Chunk.Height; i > 0; i --)
+        if (topmostBlock == null)
         {
-            if(new Location((int)pos, i, curDimension).GetMaterial() != Material.Air)
-            {
-                return new Location(pos, i+2, curDimension);
-            }
+            return new Location(x, 80, location.dimension);
         }
-        return new Location(pos, 80, curDimension);
+        
+        return topmostBlock.location + new Location(0, 2);
     }
 
     public override void Die()
