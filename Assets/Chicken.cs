@@ -10,7 +10,7 @@ public class Chicken : PassiveEntity
     public override List<ItemStack> GetDrops()
     {
         var result = new List<ItemStack>();
-        var r = new Random(SeedGenerator.SeedByLocation(location));
+        var r = new Random(SeedGenerator.SeedByLocation(Location));
 
         result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
 
@@ -22,8 +22,8 @@ public class Chicken : PassiveEntity
         base.FixedUpdate();
 
 
-        if (!isOnGround && getVelocity().y < -1)
-            setVelocity(new Vector2(getVelocity().x, -1));
+        if (!isOnGround && GetVelocity().y < -1)
+            SetVelocity(new Vector2(GetVelocity().x, -1));
     }
 
     public override void TakeFallDamage(float damage)

@@ -20,7 +20,7 @@ public class BreakIndicator : MonoBehaviour
             return;
         }
 
-        if (Location.LocationByPosition(transform.position, Player.localInstance.location.dimension).GetBlock() ==
+        if (Location.LocationByPosition(transform.position, Player.localInstance.Location.dimension).GetBlock() ==
             null) Hide();
     }
 

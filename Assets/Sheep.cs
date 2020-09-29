@@ -10,7 +10,7 @@ public class Sheep : PassiveEntity
     {
         //Drop a random amount of a certain item
         var result = new List<ItemStack>();
-        var r = new Random(SeedGenerator.SeedByLocation(location));
+        var r = new Random(SeedGenerator.SeedByLocation(Location));
 
         result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 3 + 1)));
 

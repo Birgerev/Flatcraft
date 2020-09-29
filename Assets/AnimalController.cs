@@ -16,8 +16,8 @@ public class AnimalController : EntityController
     {
         base.Tick();
 
-        var block = instance.location.GetBlock();
-        var blockInFront = (instance.location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
+        var block = instance.Location.GetBlock();
+        var blockInFront = (instance.Location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
         if (isWalking)
         {
             instance.Walk(walkingRight ? 1 : -1);
@@ -32,7 +32,7 @@ public class AnimalController : EntityController
 
 
         //Change States
-        var r = new Random((instance.location + " " + instance.age).GetHashCode());
+        var r = new Random((instance.Location + " " + instance.age).GetHashCode());
 
         if (r.NextDouble() < (isWalking ? walkingStateChangeChance : idleStateChangeChance) / (1.0f / Time.deltaTime))
         {

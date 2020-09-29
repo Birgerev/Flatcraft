@@ -59,7 +59,7 @@ public class LivingEntity : Entity
         CalculateFlip();
         UpdateAnimatorValues();
 
-        if (Mathf.Abs(getVelocity().x) >= sneakSpeed && isOnGround)
+        if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
         {
             float chances;
             if (sprinting)
@@ -79,7 +79,7 @@ public class LivingEntity : Entity
             return;
 
         if (anim.isInitialized)
-            anim.SetFloat("velocity-x", Mathf.Abs(getVelocity().x));
+            anim.SetFloat("velocity-x", Mathf.Abs(GetVelocity().x));
     }
 
     public virtual void ProcessMovement()
@@ -90,13 +90,13 @@ public class LivingEntity : Entity
     public virtual void ApplyFriction()
     {
         if (isInLiquid)
-            setVelocity(getVelocity() * liquidDrag);
+            SetVelocity(GetVelocity() * liquidDrag);
         if (isOnLadder)
-            setVelocity(getVelocity() * ladderFriction);
+            SetVelocity(GetVelocity() * ladderFriction);
         if (!isInLiquid && !isOnLadder && !isOnGround)
-            setVelocity(new Vector3(getVelocity().x * airDrag, getVelocity().y));
+            SetVelocity(new Vector3(GetVelocity().x * airDrag, GetVelocity().y));
         if (!isInLiquid && !isOnLadder && isOnGround)
-            setVelocity(getVelocity() * groundFriction);
+            SetVelocity(GetVelocity() * groundFriction);
     }
 
     public virtual void Walk(int direction)
@@ -109,7 +109,7 @@ public class LivingEntity : Entity
         else
             maxSpeed = walkSpeed;
 
-        if (getVelocity().x < maxSpeed && getVelocity().x > -maxSpeed)
+        if (GetVelocity().x < maxSpeed && GetVelocity().x > -maxSpeed)
         {
             float targetXVelocity = 0;
 
@@ -134,7 +134,7 @@ public class LivingEntity : Entity
             return;
 
         var blockInFront = Location
-            .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), location.dimension)
+            .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), Location.dimension)
             .GetBlock(); //Get block in front of player acording to walk direction
 
         if (blockInFront == null) return;
@@ -160,7 +160,7 @@ public class LivingEntity : Entity
 
     public virtual void CalculateFlip()
     {
-        if (getVelocity().x != 0) facingLeft = getVelocity().x < 0;
+        if (GetVelocity().x != 0) facingLeft = GetVelocity().x < 0;
     }
 
     public virtual void Jump()
@@ -170,13 +170,13 @@ public class LivingEntity : Entity
             if (Time.time - last_jump_time < 0.7f)
                 return;
 
-            setVelocity(getVelocity() + new Vector2(0, jumpVelocity));
+            SetVelocity(GetVelocity() + new Vector2(0, jumpVelocity));
             last_jump_time = Time.time;
         }
 
-        if (isInLiquid && getVelocity().y < swimUpSpeed) setVelocity(getVelocity() + new Vector2(0, swimUpSpeed));
+        if (isInLiquid && GetVelocity().y < swimUpSpeed) SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
 
-        if (isOnLadder) setVelocity(getVelocity() + new Vector2(0, climbSpeed));
+        if (isOnLadder) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
 
@@ -187,7 +187,7 @@ public class LivingEntity : Entity
             var damage = highestYlevelsinceground - transform.position.y - 3;
             if (damage >= 1)
             {
-                Sound.Play(location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
+                Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
 
                 spawnFallDamageParticles();
 
@@ -207,7 +207,7 @@ public class LivingEntity : Entity
         Block blockBeneath = null;
         for (var y = -1; blockBeneath == null && y > -3; y--)
         {
-            var block = (location + new Location(0, y)).GetBlock();
+            var block = (Location + new Location(0, y)).GetBlock();
             if (block != null)
                 blockBeneath = block;
         }
@@ -235,7 +235,7 @@ public class LivingEntity : Entity
             Block blockBeneath = null;
             for (var y = 1; blockBeneath == null && y < 3; y++)
             {
-                var block = (location - new Location(0, y)).GetBlock();
+                var block = (Location - new Location(0, y)).GetBlock();
                 if (block != null && block.playerCollide)
                     blockBeneath = block;
             }
@@ -246,7 +246,7 @@ public class LivingEntity : Entity
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
             part.doGravity = true;
-            part.velocity = -(getVelocity() * 0.2f);
+            part.velocity = -(GetVelocity() * 0.2f);
             part.maxAge = (float) r.NextDouble();
             part.maxBounces = 10;
         }
@@ -266,7 +266,7 @@ public class LivingEntity : Entity
 
     public override void Damage(float damage)
     {
-        Sound.Play(location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
+        Sound.Play(Location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
 
         health -= damage;
 
@@ -292,10 +292,10 @@ public class LivingEntity : Entity
 
     private IEnumerator TurnRedByDamage()
     {
-        var baseColor = getRenderer().color;
+        var baseColor = GetRenderer().color;
 
-        getRenderer().color = damageColor;
+        GetRenderer().color = damageColor;
         yield return new WaitForSeconds(0.15f);
-        getRenderer().color = baseColor;
+        GetRenderer().color = baseColor;
     }
 }

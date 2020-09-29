@@ -102,7 +102,7 @@ public struct ChunkPosition
         if (Player.localInstance == null)
             playerLocation = new Location(0, 0);
         else
-            playerLocation = Player.localInstance.location;
+            playerLocation = Player.localInstance.Location;
 
         float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - playerLocation.x);
 

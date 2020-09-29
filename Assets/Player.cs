@@ -61,15 +61,15 @@ public class Player : HumanEntity
         anim.SetBool("sneaking", sneaking);
         anim.SetBool("grounded", isOnGround);
 
-        getRenderer().transform.localScale = new Vector2(facingLeft ? -1 : 1, 1); //Mirror renderer if facing left
+        GetRenderer().transform.localScale = new Vector2(facingLeft ? -1 : 1, 1); //Mirror renderer if facing left
     }
 
     private void RenderSpriteParts()
     {
-        for (var i = 0; i < getRenderer().transform.childCount; i++)
+        for (var i = 0; i < GetRenderer().transform.childCount; i++)
         {
-            var spritePart = getRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
-            spritePart.color = getRenderer().color;
+            var spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
+            spritePart.color = GetRenderer().color;
         }
     }
 
@@ -113,7 +113,7 @@ public class Player : HumanEntity
     private void performInput()
     {
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
-            inventory.Open(location);
+            inventory.Open(Location);
 
         if (Inventory.anyOpen)
             return;
@@ -121,7 +121,7 @@ public class Player : HumanEntity
         sneaking = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S);
 
         if (Input.GetKey(KeyCode.LeftControl)) sprinting = true;
-        if (Mathf.Abs(getVelocity().x) < 3f || sneaking) sprinting = false;
+        if (Mathf.Abs(GetVelocity().x) < 3f || sneaking) sprinting = false;
 
 
         //Inventory Managment
@@ -144,7 +144,7 @@ public class Player : HumanEntity
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var blockedMouseLocation = Location.LocationByPosition(mousePosition, location.dimension);
+        var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
         var mouseBlock = blockedMouseLocation.GetBlock();
 
         mousePosition.z = 0;
@@ -232,11 +232,11 @@ public class Player : HumanEntity
 
     public void DoToolDurability()
     {
-        if (inventory.getSelectedItem().getMaxDurability() != -1)
+        if (inventory.getSelectedItem().GetMaxDurability() != -1)
         {
-            inventory.getSelectedItem().durablity--;
+            inventory.getSelectedItem().durability--;
 
-            if (inventory.getSelectedItem().durablity < 0)
+            if (inventory.getSelectedItem().durability < 0)
                 inventory.setItem(inventory.selectedSlot, new ItemStack());
         }
     }
@@ -260,7 +260,7 @@ public class Player : HumanEntity
         item.amount = 1;
         inventory.getSelectedItem().amount--;
 
-        item.Drop(location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        item.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
     }
 
     public override void DropAllDrops()
@@ -272,9 +272,9 @@ public class Player : HumanEntity
 
     public Location ValidSpawn(int x)
     {
-        var topmostBlock = Chunk.getTopmostBlock(x, location.dimension, false);
+        var topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, false);
 
-        if (topmostBlock == null) return new Location(x, 80, location.dimension);
+        if (topmostBlock == null) return new Location(x, 80, Location.dimension);
 
         return topmostBlock.location + new Location(0, 2);
     }
@@ -295,7 +295,7 @@ public class Player : HumanEntity
     {
         base.Damage(damage);
 
-        Sound.Play(location, "entity/Player/hurt", SoundType.Entities, 0.85f, 1.15f); //Play hurt sound
+        Sound.Play(Location, "entity/Player/hurt", SoundType.Entities, 0.85f, 1.15f); //Play hurt sound
     }
 
     public override void Hit(float damage)
@@ -330,7 +330,7 @@ public class Player : HumanEntity
     private IEnumerator MoveToValidSpawnOnceLoaded()
     {
         yield return new WaitForSeconds(2f);
-        while (!isChunkLoaded()) yield return new WaitForSeconds(2f);
+        while (!IsChunkLoaded()) yield return new WaitForSeconds(2f);
 
         highestYlevelsinceground = 0; //Reset falldamage
         transform.position = ValidSpawn(spawnLocation.x).GetPosition();

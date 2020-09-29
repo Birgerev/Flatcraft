@@ -22,7 +22,7 @@ public class FallingSand : Entity
         if (material == Material.Air)
             Die();
 
-        getRenderer().sprite = new ItemStack(material).getSprite();
+        GetRenderer().sprite = new ItemStack(material).GetSprite();
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
@@ -31,17 +31,17 @@ public class FallingSand : Entity
         base.Update();
 
         if (!GetComponent<Rigidbody2D>().simulated &&
-            !Physics2D.OverlapBox(location.GetPosition(), new Vector2(0.2f, 0.2f), 0)
+            !Physics2D.OverlapBox(Location.GetPosition(), new Vector2(0.2f, 0.2f), 0)
         ) //once the block that spawned the fallingSand is gone, begin simulating physics
             GetComponent<Rigidbody2D>().simulated = true;
 
 
         if ((isOnGround || isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0) && age > 1f && !dead)
         {
-            if (location.GetMaterial() == Material.Air)
-                location.SetMaterial(material);
+            if (Location.GetMaterial() == Material.Air)
+                Location.SetMaterial(material);
             else
-                new ItemStack(material, 1).Drop(location);
+                new ItemStack(material, 1).Drop(Location);
 
             Die();
         }

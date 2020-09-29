@@ -27,10 +27,10 @@ public class DroppedItem : Entity
     public override void Update()
     {
         base.Update();
-        getRenderer().sprite = item.getSprite();
+        GetRenderer().sprite = item.GetSprite();
 
         //Bobbing
-        getRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
+        GetRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
         cosIndex += 2f * Time.deltaTime;
 
         if (isOnGround)

@@ -11,8 +11,8 @@ public class Particle : Entity
 
     public Color color
     {
-        get => getRenderer().color;
-        set => getRenderer().color = value;
+        get => GetRenderer().color;
+        set => GetRenderer().color = value;
     }
 
     public Vector2 velocity

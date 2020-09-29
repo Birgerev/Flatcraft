@@ -41,13 +41,13 @@ public class DebugMenu : MonoBehaviour
     {
         text_fps.text = "fps: " + (int) (1.0f / deltaTime);
 
-        text_entityCount.text = "entity count: " + Entity.entityCount + ",  living: " + Entity.livingEntityCount;
+        text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;
 
         var player = Player.localInstance;
         text_x.text = "x: " + player.transform.position.x;
         text_y.text = "y: " + player.transform.position.y;
-        text_dimension.text = "dimension: " + player.location.dimension;
-        var biome = new ChunkPosition(player.location).GetChunk().getBiome();
+        text_dimension.text = "dimension: " + player.Location.dimension;
+        var biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
         if (biome != null)
             text_biome.text = "biome: " + biome.name;
 

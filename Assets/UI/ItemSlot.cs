@@ -46,9 +46,9 @@ public class ItemSlot : MonoBehaviour
             amountText.text = item.amount.ToString();
         }
 
-        texture.sprite = item.getSprite();
+        texture.sprite = item.GetSprite();
 
-        if (item.getMaxDurability() == -1)
+        if (item.GetMaxDurability() == -1)
         {
             durabilityBar.SetActive(false);
             durabilityBarFiller.gameObject.SetActive(false);
@@ -57,7 +57,7 @@ public class ItemSlot : MonoBehaviour
         {
             durabilityBar.SetActive(true);
             durabilityBarFiller.gameObject.SetActive(true);
-            durabilityBarFiller.fillAmount = item.durablity / (float) item.getMaxDurability();
+            durabilityBarFiller.fillAmount = item.durability / (float) item.GetMaxDurability();
         }
     }
 

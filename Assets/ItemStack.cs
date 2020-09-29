@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 [Serializable]
@@ -8,7 +9,7 @@ public class ItemStack
 {
     public int amount;
     public string data;
-    public int durablity;
+    public int durability;
     public Material material;
 
     public ItemStack()
@@ -21,14 +22,14 @@ public class ItemStack
     {
         this.material = material;
         amount = 1;
-        durablity = getMaxDurability();
+        durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount)
     {
         this.material = material;
         this.amount = amount;
-        durablity = getMaxDurability();
+        durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data)
@@ -36,18 +37,18 @@ public class ItemStack
         this.material = material;
         this.amount = amount;
         this.data = data;
-        durablity = getMaxDurability();
+        durability = GetMaxDurability();
     }
 
-    public ItemStack(Material material, int amount, string data, int durablity)
+    public ItemStack(Material material, int amount, string data, int durability)
     {
         this.material = material;
         this.amount = amount;
         this.data = data;
-        this.durablity = durablity;
+        this.durability = durability;
     }
 
-    public Sprite getSprite()
+    public Sprite GetSprite()
     {
         var type = Type.GetType(material.ToString());
         if (type == null)
@@ -59,7 +60,7 @@ public class ItemStack
         return Resources.Load<Sprite>("Sprites/" + texture);
     }
 
-    public int getMaxDurability()
+    public int GetMaxDurability()
     {
         if (material == Material.Air)
             return -1;

@@ -27,7 +27,7 @@ public class Biome
     public string name = "";
     public float stoneLayerNoiseValue;
 
-    public Perlin getLandscapeNoise()
+    public Perlin GetLandscapeNoise()
     {
         var seed = 0;
         if (WorldManager.world != null)
@@ -39,43 +39,43 @@ public class Biome
         return new Perlin(1, landscapeLacunarity, landscapePercistance, landscapeOctaves, seed, QualityMode.Low);
     }
 
-    public float getLandscapeNoiseAt(Location loc)
+    public float GetLandscapeNoiseAt(Location loc)
     {
         float value = 100;
         if (loc.y > Chunk.SeaLevel - 20)
         {
-            value = (float) getLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
+            value = (float) GetLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
             value -= landscapeHeightWeight * (loc.y + landscapeHeightOverSeaLevel - Chunk.SeaLevel);
         }
 
         return value;
     }
 
-    public static float blendNoiseValues(Location loc, Biome biomeA, Biome biomeB, float weightA)
+    public static float BlendNoiseValues(Location loc, Biome biomeA, Biome biomeB, float weightA)
     {
         var weightB = 1 - weightA;
 
         weightA = Mathf.Clamp(weightA, 0, 1);
         weightB = Mathf.Clamp(weightB, 0, 1);
 
-        var landscapeNoiseA = biomeA.getLandscapeNoiseAt(loc) * weightA;
-        var landscapeNoiseB = biomeB.getLandscapeNoiseAt(loc) * weightB;
+        var landscapeNoiseA = biomeA.GetLandscapeNoiseAt(loc) * weightA;
+        var landscapeNoiseB = biomeB.GetLandscapeNoiseAt(loc) * weightB;
 
         return landscapeNoiseA + landscapeNoiseB;
     }
 
-    public static Biome getBiomeAt(ChunkPosition cPos)
+    public static Biome GetBiomeAt(ChunkPosition cPos)
     {
         if (WorldManager.instance.chunkBiomes.ContainsKey(cPos)
         ) //If biome value at this location already has been generated, use this value
             return WorldManager.instance.chunkBiomes[cPos];
 
         //Otherwise, generate the value, save it for later use, and return it
-        generateBiomesForRegion(cPos);
+        GenerateBiomesForRegion(cPos);
         return WorldManager.instance.chunkBiomes[cPos];
     }
 
-    public static void generateBiomesForRegion(ChunkPosition chunkPos)
+    public static void GenerateBiomesForRegion(ChunkPosition chunkPos)
     {
         var dimension = chunkPos.dimension; //The dimension of the region
         int region; //region position

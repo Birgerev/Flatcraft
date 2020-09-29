@@ -160,12 +160,12 @@ public class InventoryMenu : MonoBehaviour
         slotItem.material = pointerItemClone.material;
         slotItem.amount = pointerItemClone.amount;
         slotItem.data = pointerItemClone.data;
-        slotItem.durablity = pointerItemClone.durablity;
+        slotItem.durability = pointerItemClone.durability;
 
         pointerItem.material = slotItemClone.material;
         pointerItem.amount = slotItemClone.amount;
         pointerItem.data = slotItemClone.data;
-        pointerItem.durablity = slotItemClone.durablity;
+        pointerItem.durability = slotItemClone.durability;
     }
 
     public virtual void SlotAction_MergeSlot(int slotIndex)

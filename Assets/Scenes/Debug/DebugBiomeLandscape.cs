@@ -27,7 +27,7 @@ public class DebugBiomeLandscape : MonoBehaviour
             for (var x = 0; x < previewWidth; x++)
             for (var y = 0; y < Chunk.Height; y++)
             {
-                var noiseValue = biome.getLandscapeNoiseAt(new Location(x, y));
+                var noiseValue = biome.GetLandscapeNoiseAt(new Location(x, y));
                 if (noiseValue > 0.1f)
                 {
                     var isStone = noiseValue > biome.stoneLayerNoiseValue;

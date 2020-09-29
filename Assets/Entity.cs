@@ -32,9 +32,9 @@ public class Entity : MonoBehaviour
     public bool isOnGround;
     public bool isOnLadder;
     public Vector2 lastFramePosition;
-    public static int entityCount => entities.Count;
+    public static int EntityCount => entities.Count;
 
-    public static int livingEntityCount
+    public static int LivingEntityCount
     {
         get
         {
@@ -49,7 +49,7 @@ public class Entity : MonoBehaviour
     //Entity properties
     public virtual bool ChunkLoadingEntity { get; } = false;
 
-    public Location location
+    public Location Location
     {
         get => Location.LocationByPosition(_cachedposition, _dimension);
         set
@@ -80,19 +80,19 @@ public class Entity : MonoBehaviour
         if (isInLiquid)
             isOnGround = false;
 
-        getRenderer().flipX = facingLeft;
+        GetRenderer().flipX = facingLeft;
 
         UpdateCachedPosition();
 
-        if (location.GetPosition() != Location.LocationByPosition(lastFramePosition, location.dimension).GetPosition())
+        if (Location.GetPosition() != Location.LocationByPosition(lastFramePosition, Location.dimension).GetPosition())
             UpdateEntityLightLevel();
 
         if (ChunkLoadingEntity)
-            Chunk.CreateChunksAround(location, Chunk.RenderDistance);
+            Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
 
-        GetComponent<Rigidbody2D>().simulated = isChunkLoaded();
-        checkVoidDamage();
-        checkSuffocation();
+        GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+        CheckVoidDamage();
+        CheckSuffocation();
     }
 
     public void LateUpdate()
@@ -105,9 +105,9 @@ public class Entity : MonoBehaviour
         _cachedposition = transform.position;
     }
 
-    public virtual bool isChunkLoaded()
+    public virtual bool IsChunkLoaded()
     {
-        var result = new ChunkPosition(location).IsChunkLoaded();
+        var result = new ChunkPosition(Location).IsChunkLoaded();
 
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
@@ -116,14 +116,14 @@ public class Entity : MonoBehaviour
         return result;
     }
 
-    private void checkSuffocation()
+    private void CheckSuffocation()
     {
-        if (!isChunkLoaded())
+        if (!IsChunkLoaded())
             return;
 
         if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
         {
-            var block = location.GetBlock();
+            var block = Location.GetBlock();
 
             if (block != null)
                 if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
@@ -133,15 +133,15 @@ public class Entity : MonoBehaviour
 
     private void UpdateEntityLightLevel()
     {
-        var lightLevel = Block.GetLightLevel(location);
+        var lightLevel = Block.GetLightLevel(Location);
         var lightLevelFactor = lightLevel / 15f;
 
         var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
-        getRenderer().color = color;
+        GetRenderer().color = color;
     }
 
-    private void checkVoidDamage()
+    private void CheckVoidDamage()
     {
         if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
             if (transform.position.y < 0)
@@ -173,7 +173,7 @@ public class Entity : MonoBehaviour
             {
                 var random = new Random((transform.position + "" + i).GetHashCode());
                 var maxVelocity = new Vector2(2, 2);
-                var dropPosition = location + new Location(0, 2);
+                var dropPosition = Location + new Location(0, 2);
 
                 item.Drop(dropPosition,
                     new Vector2((float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
@@ -210,12 +210,12 @@ public class Entity : MonoBehaviour
         Damage(damage);
     }
 
-    public virtual void setVelocity(Vector2 velocity)
+    public virtual void SetVelocity(Vector2 velocity)
     {
         GetComponent<Rigidbody2D>().velocity = velocity;
     }
 
-    public virtual Vector2 getVelocity()
+    public virtual Vector2 GetVelocity()
     {
         return GetComponent<Rigidbody2D>().velocity;
     }
@@ -224,7 +224,7 @@ public class Entity : MonoBehaviour
     {
         var result = new List<string>();
 
-        result.Add("location=" + JsonUtility.ToJson(location));
+        result.Add("location=" + JsonUtility.ToJson(Location));
 
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
@@ -243,8 +243,8 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\" + location.dimension + "\\" +
-               new ChunkPosition(location).chunkX + "\\entities\\" + id + "." + GetType().Name;
+        return WorldManager.world.getPath() + "\\region\\" + Location.dimension + "\\" +
+               new ChunkPosition(Location).chunkX + "\\entities\\" + id + "." + GetType().Name;
     }
 
     public virtual void Save()
@@ -264,19 +264,19 @@ public class Entity : MonoBehaviour
 
     public virtual void DeleteOldSavePath()
     {
-        var chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\" + location.dimension);
+        var chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\" + Location.dimension);
 
         foreach (var chunk in chunks)
         {
-            var entities = Directory.GetFiles(chunk + "\\entities\\");
+            var entitySaveList = Directory.GetFiles(chunk + "\\entities\\");
 
-            foreach (var entity in entities)
+            foreach (var entity in entitySaveList)
                 if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
                     File.Delete(entity);
         }
     }
 
-    public virtual SpriteRenderer getRenderer()
+    public virtual SpriteRenderer GetRenderer()
     {
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
     }
@@ -286,12 +286,12 @@ public class Entity : MonoBehaviour
         if (!File.Exists(SavePath()))
             return;
 
-        var lines = dataFromStrings(File.ReadAllLines(SavePath()));
+        var lines = DataFromStrings(File.ReadAllLines(SavePath()));
 
         if (lines.Count <= 1)
             return;
 
-        location = JsonUtility.FromJson<Location>(lines["location"]);
+        Location = JsonUtility.FromJson<Location>(lines["location"]);
 
 
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
@@ -327,7 +327,7 @@ public class Entity : MonoBehaviour
     {
         isInLiquid = true;
 
-        if (getVelocity().y < -2)
+        if (GetVelocity().y < -2)
         {
             var r = new Random();
             for (var i = 0; i < 8; i++) //Spawn landing partickes
@@ -344,7 +344,7 @@ public class Entity : MonoBehaviour
                 part.maxBounces = 10;
             }
 
-            Sound.Play(location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
+            Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
         }
     }
 
@@ -374,7 +374,7 @@ public class Entity : MonoBehaviour
         return result;
     }
 
-    public static Dictionary<string, string> dataFromStrings(string[] dataStrings)
+    public static Dictionary<string, string> DataFromStrings(string[] dataStrings)
     {
         var resultData = new Dictionary<string, string>();
 
@@ -389,10 +389,10 @@ public class Entity : MonoBehaviour
 [AttributeUsage(AttributeTargets.All)]
 public class EntityDataTag : Attribute
 {
-    public bool json;
+    public readonly bool json;
 
-    public EntityDataTag(bool Json)
+    public EntityDataTag(bool json)
     {
-        json = Json;
+        this.json = json;
     }
 }

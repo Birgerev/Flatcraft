@@ -171,7 +171,7 @@ public class Block : MonoBehaviour
 
     public static void UpdateSunlightSourceAt(int x, Dimension dimension)
     {
-        var topBlock = Chunk.getTopmostBlock(x, dimension, false);
+        var topBlock = Chunk.GetTopmostBlock(x, dimension, false);
         if (topBlock == null)
             return;
 

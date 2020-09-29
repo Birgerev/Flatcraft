@@ -51,7 +51,7 @@ public class Chunk : MonoBehaviour
     public const int SeaLevel = 62;
 
     private static readonly float mobSpawningChance = 0.01f;
-    private static readonly List<string> mobSpawns = new List<string> {"Chicken", "Sheep"};
+    private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep"};
     public int age;
 
     public GameObject blockPrefab;
@@ -106,12 +106,12 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public void TickAllBlocks()
+    private void TickAllBlocks()
     {
         //Tick Blocks
-        var blocks = transform.GetComponentsInChildren<Block>();
+        var blockList = transform.GetComponentsInChildren<Block>();
 
-        foreach (var block in blocks)
+        foreach (var block in blockList)
         {
             if (block == null || block.transform == null)
                 continue;
@@ -169,7 +169,7 @@ public class Chunk : MonoBehaviour
             if (age < 5) TrySpawnMobs();
 
             age++;
-            yield return new WaitForSeconds(1 / TickRate);
+            yield return new WaitForSeconds(1f / TickRate);
         }
     }
 
@@ -183,26 +183,26 @@ public class Chunk : MonoBehaviour
         return new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).GetChunk();
     }
 
-    public void TrySpawnMobs()
+    private void TrySpawnMobs()
     {
         var r = new Random();
 
-        if (r.NextDouble() < mobSpawningChance / TickRate && Entity.livingEntityCount < Entity.MaxLivingAmount)
-        {
-            var x = r.Next(0, Width) + chunkPosition.worldX;
-            var y = getTopmostBlock(x, chunkPosition.dimension, true).location.y + 1;
-            var entities = mobSpawns;
-            entities.AddRange(getBiome().biomeSpecificEntitySpawns);
-            var entityType = entities[r.Next(0, entities.Count)];
+        if (!(r.NextDouble() < mobSpawningChance / TickRate) || Entity.LivingEntityCount >= Entity.MaxLivingAmount) 
+            return;
+        
+        var x = r.Next(0, Width) + chunkPosition.worldX;
+        var y = GetTopmostBlock(x, chunkPosition.dimension, true).location.y + 1;
+        var entities = MobSpawnTypes;
+        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
+        var entityType = entities[r.Next(0, entities.Count)];
 
-            var entity = Entity.Spawn(entityType);
-            entity.location = new Location(x, y, chunkPosition.dimension);
-        }
+        var entity = Entity.Spawn(entityType);
+        entity.Location = new Location(x, y, chunkPosition.dimension);
     }
 
     private Dictionary<Location, Material> GenerateChunkTerrain()
     {
-        var blocks = new Dictionary<Location, Material>();
+        var blockList = new Dictionary<Location, Material>();
 
         for (var y = 0; y <= Height; y++)
         for (var x = 0; x < Width; x++)
@@ -210,10 +210,10 @@ public class Chunk : MonoBehaviour
             var loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
             var mat = GenerateTerrainBlock(loc);
 
-            if (mat != Material.Air) blocks.Add(loc, mat);
+            if (mat != Material.Air) blockList.Add(loc, mat);
         }
 
-        return blocks;
+        return blockList;
     }
 
     private IEnumerator GenerateChunk()
@@ -225,8 +225,8 @@ public class Chunk : MonoBehaviour
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
 
-        //pregenerate chunk biomes
-        Biome.getBiomeAt(chunkPosition);
+        //pre-generate chunk biomes
+        Biome.GetBiomeAt(chunkPosition);
 
 
         if (chunkPosition.HasBeenGenerated())
@@ -356,8 +356,7 @@ public class Chunk : MonoBehaviour
                 while (lightThread.IsAlive) yield return new WaitForSeconds(0.1f);
 
                 //Render
-                foreach (var entry in new List<KeyValuePair<Block, int>>(lightToRender)
-                ) //Not using dictionaries, since it doesn't work multithreaded
+                foreach (var entry in new List<KeyValuePair<Block, int>>(lightToRender))    //Not using dictionaries, since it doesn't work multi-threaded
                 {
                     if (entry.Key == null)
                         continue;
@@ -427,7 +426,7 @@ public class Chunk : MonoBehaviour
             return;
 
         var mat = block.GetMaterial();
-        var biome = getBiome();
+        var biome = GetBiome();
         var r = new Random(SeedGenerator.SeedByLocation(loc));
         Material[] flowerMaterials = {Material.Red_Flower};
         Material[] vegetationMaterials = {Material.Tall_Grass};
@@ -506,7 +505,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public bool isBlockLocal(Location loc)
+    private bool IsBlockLocal(Location loc)
     {
         var local = new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension;
 
@@ -524,7 +523,7 @@ public class Chunk : MonoBehaviour
         if (!type.IsSubclassOf(typeof(Block)))
             return null;
 
-        if (!isBlockLocal(loc))
+        if (!IsBlockLocal(loc))
         {
             Debug.LogWarning("Tried setting local block outside of chunk (" + loc.x + ", " + loc.y +
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension +
@@ -533,9 +532,9 @@ public class Chunk : MonoBehaviour
         }
 
         //remove old block
-        if (getLocalBlock(loc) != null)
+        if (GetLocalBlock(loc) != null)
         {
-            Destroy(getLocalBlock(loc).gameObject);
+            Destroy(GetLocalBlock(loc).gameObject);
             blocks.Remove(pos);
         }
 
@@ -568,24 +567,23 @@ public class Chunk : MonoBehaviour
 
         if (isLoaded)
         {
-            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.location.dimension);
+            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.Location.dimension);
             Block.UpdateLightAround(loc);
         }
 
         return result;
     }
 
-    public Block getLocalBlock(Location loc)
+    public Block GetLocalBlock(Location loc)
     {
-        if (!isBlockLocal(loc))
+        if (!IsBlockLocal(loc))
         {
             Debug.LogWarning("Tried getting local block outside of chunk (" + loc.x + ", " + loc.y +
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
             return null;
         }
 
-        Block block = null;
-
+        Block block;
         blocks.TryGetValue(new int2(loc.x, loc.y), out block);
 
         return block;
@@ -598,24 +596,24 @@ public class Chunk : MonoBehaviour
 
         float noiseValue;
 
-        var biome = getBiome();
-        var rightBiome = Biome.getBiomeAt(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension));
-        var leftBiome = Biome.getBiomeAt(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension));
+        var biome = GetBiome();
+        var rightBiome = Biome.GetBiomeAt(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension));
+        var leftBiome = Biome.GetBiomeAt(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension));
         float primaryBiomeWeight;
 
         if (biome != rightBiome)
         {
-            primaryBiomeWeight = 0.5f - Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2;
-            noiseValue = Biome.blendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
+            primaryBiomeWeight = 0.5f - (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2f;
+            noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
         }
         else if (biome != leftBiome)
         {
-            primaryBiomeWeight = 0.5f + Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2;
-            noiseValue = Biome.blendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
+            primaryBiomeWeight = 0.5f + (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2f;
+            noiseValue = Biome.BlendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
         }
         else
         {
-            noiseValue = biome.getLandscapeNoiseAt(loc);
+            noiseValue = biome.GetLandscapeNoiseAt(loc);
         }
 
         //-Terrain Generation-//
@@ -686,27 +684,27 @@ public class Chunk : MonoBehaviour
         var entities = new List<Entity>();
 
         foreach (var e in Entity.entities)
-            if (e.location.x >= chunkPosition.worldX &&
-                e.location.x <= chunkPosition.worldX + Width)
+            if (e.Location.x >= chunkPosition.worldX &&
+                e.Location.x <= chunkPosition.worldX + Width)
                 entities.Add(e);
 
         return entities.ToArray();
     }
 
-    public static Block getTopmostBlock(int x, Dimension dimension, bool mustBeSolid)
+    public static Block GetTopmostBlock(int x, Dimension dimension, bool mustBeSolid)
     {
         var chunk = new ChunkPosition(new Location(x, 0, dimension)).GetChunk();
         if (chunk == null)
             return null;
 
-        return chunk.getLocalTopmostBlock(x, mustBeSolid);
+        return chunk.GetLocalTopmostBlock(x, mustBeSolid);
     }
 
-    public Block getLocalTopmostBlock(int x, bool mustBeSolid)
+    public Block GetLocalTopmostBlock(int x, bool mustBeSolid)
     {
         for (var y = Height; y > 0; y--)
         {
-            var block = getLocalBlock(new Location(x, y, chunkPosition.dimension));
+            var block = GetLocalBlock(new Location(x, y, chunkPosition.dimension));
 
             if (block != null)
             {
@@ -720,8 +718,8 @@ public class Chunk : MonoBehaviour
         return null;
     }
 
-    public Biome getBiome()
+    public Biome GetBiome()
     {
-        return Biome.getBiomeAt(chunkPosition);
+        return Biome.GetBiomeAt(chunkPosition);
     }
 }

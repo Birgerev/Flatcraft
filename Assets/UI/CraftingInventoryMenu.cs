@@ -24,8 +24,8 @@
             .getItem(((CraftingInventory) inventory).getCraftingResultSlot()).amount;
         pointerSlot.item.data = ((CraftingInventory) inventory)
             .getItem(((CraftingInventory) inventory).getCraftingResultSlot()).data;
-        pointerSlot.item.durablity = ((CraftingInventory) inventory)
-            .getItem(((CraftingInventory) inventory).getCraftingResultSlot()).durablity;
+        pointerSlot.item.durability = ((CraftingInventory) inventory)
+            .getItem(((CraftingInventory) inventory).getCraftingResultSlot()).durability;
 
         //Clear Crafting slot
         ((CraftingInventory) inventory).setItem(((CraftingInventory) inventory).getCraftingResultSlot(),

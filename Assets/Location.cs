@@ -5,9 +5,9 @@ using UnityEngine;
 
 public struct Location
 {
-    public int x;
-    public int y;
-    public Dimension dimension;
+    public readonly int x;
+    public readonly int y;
+    public readonly Dimension dimension;
 
 
     public Location(int x, int y)
@@ -43,14 +43,14 @@ public struct Location
             mat + "*"); //Add block change to list, without old data, as it should be reset whenever the block is replaced
 
         var cPos = new ChunkPosition(this);
-        if (cPos.IsChunkLoaded())
-        {
-            var chunk = cPos.GetChunk();
-            var block = chunk.CreateLocalBlock(this, mat, new BlockData());
+        
+        if (!cPos.IsChunkLoaded()) return this;
+        
+        var chunk = cPos.GetChunk();
+        var block = chunk.CreateLocalBlock(this, mat, new BlockData());
 
-            if (block != null)
-                block.ScheduleBlockBuildTick();
-        }
+        if (block != null)
+            block.ScheduleBlockBuildTick();
 
         return this;
     }
@@ -81,7 +81,7 @@ public struct Location
         var chunk = cPos.GetChunk();
         if (chunk != null)
         {
-            var block = chunk.getLocalBlock(this);
+            var block = chunk.GetLocalBlock(this);
 
             return block;
         }
@@ -91,13 +91,15 @@ public struct Location
 
     public void Tick()
     {
-        var blocks = new List<Block>();
+        var blocks = new List<Block>
+        {
+            (this + new Location(0, 0)).GetBlock(),
+            (this + new Location(0, 1)).GetBlock(),
+            (this + new Location(0, -1)).GetBlock(),
+            (this + new Location(-1, 0)).GetBlock(),
+            (this + new Location(1, 0)).GetBlock()
+        };
 
-        blocks.Add((this + new Location(0, 0)).GetBlock());
-        blocks.Add((this + new Location(0, 1)).GetBlock());
-        blocks.Add((this + new Location(0, -1)).GetBlock());
-        blocks.Add((this + new Location(-1, 0)).GetBlock());
-        blocks.Add((this + new Location(1, 0)).GetBlock());
 
         foreach (var blockToTick in blocks)
             if (blockToTick != null)
@@ -118,7 +120,7 @@ public struct Location
         //Get material from loaded chunk
         if (cPos.IsChunkLoaded())
         {
-            var block = cPos.GetChunk().getLocalBlock(this);
+            var block = cPos.GetChunk().GetLocalBlock(this);
 
             if (block == null)
                 return Material.Air;
@@ -156,10 +158,11 @@ public struct Location
         //Get data from loaded chunk
         if (cPos.IsChunkLoaded())
         {
-            var block = cPos.GetChunk().getLocalBlock(this);
+            var block = cPos.GetChunk().GetLocalBlock(this);
 
             if (block == null)
                 return new BlockData();
+            
             return block.data;
         }
 
