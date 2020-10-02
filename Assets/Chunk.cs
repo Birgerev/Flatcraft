@@ -30,10 +30,10 @@ public class Chunk : MonoBehaviour
 
     [Header("Ore Generation Settings")] private const int OreCoalHeight = 128;
 
-    private const double OreCoalChance = 0.008f;
+    private const double OreCoalChance = 0.004f;
 
     private const int OreIronHeight = 64;
-    private const double OreIronChance = 0.005f;
+    private const double OreIronChance = 0.003f;
 
     private const int OreGoldHeight = 32;
     private const double OreGoldChance = 0.0015f;
@@ -42,10 +42,10 @@ public class Chunk : MonoBehaviour
     private const double OreLapisChance = 0.0015f;
 
     private const int OreRedstoneHeight = 16;
-    private const double OreRedstoneChance = 0.0015f;
+    private const double OreRedstoneChance = 0.0001f;
 
     private const int OreDiamondHeight = 16;
-    private const double OreDiamondChance = 0.0015f;
+    private const double OreDiamondChance = 0.0005f;
 
     private const int LavaHeight = 10;
     public const int SeaLevel = 62;
