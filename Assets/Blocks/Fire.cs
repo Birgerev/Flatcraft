@@ -8,19 +8,26 @@ public class Fire : Block
 
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.01f;
+    public override float averageRandomTickDuration { get; } = 10;
+
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;    //TODO new fire sound
 
     public override ItemStack GetDrop()
     {
         return new ItemStack();
     }
 
-    public override void Tick()
+    public override void RandomTick()
     {
-        if (getRandomChance() < 0.1f / Chunk.TickRate)
+        var random = new Random();
+        bool spread = (random.NextDouble() < 0.5d);
+
+
+        if (spread)
         {
-            var random = new Random();
             var spreadLocation = new Location();
 
+            int attempts = 0;
             while (spreadLocation.Equals(new Location()))
             {
                 var x = random.Next(-1, 1);
@@ -29,11 +36,23 @@ public class Fire : Block
                 if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
                     (location + new Location(x, y - 1)).GetMaterial() != Material.Air)
                     (location + new Location(x, y)).SetMaterial(Material.Fire);
+
+                if (attempts > 20)
+                    return;
             }
+
+            spreadLocation.SetMaterial(Material.Fire).Tick();
+        }
+        else
+        {
+            location.SetMaterial(Material.Air);
         }
 
-        if (getRandomChance() < 0.1f / Chunk.TickRate) location.SetMaterial(Material.Air);
+        base.RandomTick();
+    }
 
+    public override void Tick()
+    {
         base.Tick();
     }
 }
