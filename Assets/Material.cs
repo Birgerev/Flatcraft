@@ -96,5 +96,6 @@
 
     Ladder,
     Obsidian,
-    Flint
+    Flint,
+    Flint_And_Steel
 }

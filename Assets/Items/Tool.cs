@@ -14,6 +14,9 @@
     {
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
             loc.SetMaterial(Material.Farmland_Dry);
+        
+        if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.Air)
+            loc.SetMaterial(Material.Fire);
 
         base.InteractRight(loc, firstFrameDown);
     }
@@ -26,7 +29,8 @@ public enum Tool_Type
     Axe,
     Shovel,
     Hoe,
-    Sword
+    Sword,
+    FlintAndSteel,
 }
 
 public enum Tool_Level
