@@ -29,6 +29,7 @@ public class Block : MonoBehaviour
     public virtual float change_texture_time { get; } = 0;
 
     public virtual bool playerCollide { get; } = true;
+    public virtual bool isFlammable { get; } = false;
     public virtual bool triggerCollider { get; } = false;
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
@@ -90,6 +91,9 @@ public class Block : MonoBehaviour
         if (averageRandomTickDuration != 0)
             StartCoroutine(randomTickLoop());
 
+        if (change_texture_time != 0)
+            StartCoroutine(animatedTextureRenderLoop());
+
         Render();
     }
 
@@ -142,6 +146,15 @@ public class Block : MonoBehaviour
         return (float) new Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
     }
 
+    private IEnumerator animatedTextureRenderLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(change_texture_time);
+            Render();
+        }
+    }
+    
     private IEnumerator randomTickLoop()
     {
         var r = new Random(SeedGenerator.SeedByLocation(location));
@@ -263,14 +276,6 @@ public class Block : MonoBehaviour
             sunlightSourcesClone = new Dictionary<int, Location>(sunlightSources);
         }
 
-        if (sunlightSourcesClone.ContainsKey(loc.x))
-            //If current location y level is above sunlight source, return sunlight light level
-            if (loc.y >= sunlightSourcesClone[loc.x].y)
-            {
-                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-                return isDay ? 15 : 5;
-            }
-
         var brightestSourceLoc = new Location(0, 0);
         var brightestValue = 0;
 
@@ -289,6 +294,18 @@ public class Block : MonoBehaviour
                 }
             }
         }
+        
+        
+
+        if (sunlightSourcesClone.ContainsKey(loc.x))
+            //If current location y level is above sunlight source, return sunlight light level
+            if (loc.y > sunlightSourcesClone[loc.x].y)
+            {
+                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
+                var sunlightLevel = isDay ? 15 : 5;
+                if (brightestValue < sunlightLevel)
+                    brightestValue = sunlightLevel;
+            }
 
         return brightestValue;
     }

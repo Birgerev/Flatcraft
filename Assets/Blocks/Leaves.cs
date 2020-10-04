@@ -5,6 +5,7 @@
     public override float averageRandomTickDuration { get; } = 100;
 
     public override float breakTime { get; } = 0.3f;
+    public override bool isFlammable { get; } = true;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 

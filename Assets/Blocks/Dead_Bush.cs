@@ -8,6 +8,7 @@
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.3f;
     public override bool requiresGround { get; } = true;
+    public override bool isFlammable { get; } = true;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
