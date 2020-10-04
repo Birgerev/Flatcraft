@@ -30,22 +30,22 @@ public class Chunk : MonoBehaviour
 
     [Header("Ore Generation Settings")] private const int OreCoalHeight = 128;
 
-    private const double OreCoalChance = 0.008f;
+    private const double OreCoalChance = 0.004f;
 
     private const int OreIronHeight = 64;
-    private const double OreIronChance = 0.005f;
+    private const double OreIronChance = 0.002f;
 
     private const int OreGoldHeight = 32;
-    private const double OreGoldChance = 0.0015f;
+    private const double OreGoldChance = 0.001f;
 
     private const int OreLapisHeight = 32;
-    private const double OreLapisChance = 0.0015f;
+    private const double OreLapisChance = 0.001f;
 
     private const int OreRedstoneHeight = 16;
-    private const double OreRedstoneChance = 0.0015f;
+    private const double OreRedstoneChance = 0.002f;
 
     private const int OreDiamondHeight = 16;
-    private const double OreDiamondChance = 0.0015f;
+    private const double OreDiamondChance = 0.0004f;
 
     private const int LavaHeight = 10;
     public const int SeaLevel = 62;
@@ -257,7 +257,8 @@ public class Chunk : MonoBehaviour
             var terrainThread = new Thread(() => { terrainBlocks = GenerateChunkTerrain(); });
             terrainThread.Start();
 
-            while (terrainThread.IsAlive) yield return new WaitForSeconds(0.5f);
+            while (terrainThread.IsAlive) 
+                yield return new WaitForSeconds(0.5f);
 
             var i = 0;
             foreach (var terrainBlock in terrainBlocks)
