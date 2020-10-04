@@ -23,7 +23,7 @@ public class SeedGenerator : MonoBehaviour
         var seed = new Random(
                 (WorldManager.world.seed + ", " + loc.x + ", " + loc.y + ", " + loc.dimension).GetHashCode())
             .Next(int.MinValue, int.MaxValue);
-        cachedRandomSeeds[loc] = seed;
+        cachedRandomSeeds.Add(loc, seed);
 
         return seed;
     }
