@@ -9,7 +9,7 @@ public class Fire : Block
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
-    public override float averageRandomTickDuration { get; } = 10;
+    public override float averageRandomTickDuration { get; } = 5;
     public override int glowLevel { get; } = 15;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;    //TODO new fire sound
@@ -21,8 +21,8 @@ public class Fire : Block
 
     public override void RandomTick()
     {
-        var random = new Random();
-        bool spread = (random.NextDouble() < 0.5d);
+        var random = new System.Random();
+        bool spread = (random.NextDouble() < 0.8d);
 
 
         if (spread)
@@ -32,11 +32,12 @@ public class Fire : Block
             int attempts = 0;
             while (spreadLocation.Equals(new Location()))
             {
-                var x = random.Next(-1, 1);
-                var y = random.Next(-1, 1);
+                var x = random.Next(-1, 1 + 1);    //+1 because upper bound is exclusive
+                var y = random.Next(-2, 2 + 1);
 
                 if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
-                    (location + new Location(x, y - 1)).GetMaterial() != Material.Air)
+                    (location + new Location(x, y - 1)).GetMaterial() != Material.Air &&
+                    (location + new Location(x, y - 1)).GetBlock().isFlammable)
                     (location + new Location(x, y)).SetMaterial(Material.Fire);
 
                 if (attempts > 20)
@@ -48,7 +49,9 @@ public class Fire : Block
         }
         else
         {
-            location.SetMaterial(Material.Air);
+            location.SetMaterial(Material.Air).Tick();
+            if((location + new Location(0, -1)).GetBlock().isFlammable)
+                (location + new Location(0, -1)).SetMaterial(Material.Air).Tick();
         }
 
         base.RandomTick();

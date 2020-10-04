@@ -29,6 +29,7 @@ public class Block : MonoBehaviour
     public virtual float change_texture_time { get; } = 0;
 
     public virtual bool playerCollide { get; } = true;
+    public virtual bool isFlammable { get; } = false;
     public virtual bool triggerCollider { get; } = false;
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
