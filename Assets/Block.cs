@@ -191,8 +191,10 @@ public class Block : MonoBehaviour
         if (sunlightSources.ContainsKey(x))
         {
             var oldColumnSunlightSource = sunlightSources[x];
+            var oldColumnSunlightSourceBlock = oldColumnSunlightSource.GetBlock();
             sunlightSources.Remove(x);
-            lightSources.Remove(oldColumnSunlightSource.GetBlock());
+            if(oldColumnSunlightSourceBlock != null)
+                lightSources.Remove(oldColumnSunlightSourceBlock);
             UpdateLightAround(oldColumnSunlightSource);
         }
 
@@ -218,9 +220,7 @@ public class Block : MonoBehaviour
 
     public void RenderNoLight()
     {
-        float brightnessColorValue = 0;
-        GetComponent<SpriteRenderer>().color =
-            new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
+        RenderBlockLight(0);
     }
 
     public void RenderBlockLight(int lightLevel)

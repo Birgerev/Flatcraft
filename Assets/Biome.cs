@@ -66,8 +66,7 @@ public class Biome
 
     public static Biome GetBiomeAt(ChunkPosition cPos)
     {
-        if (WorldManager.instance.chunkBiomes.ContainsKey(cPos)
-        ) //If biome value at this location already has been generated, use this value
+        if (WorldManager.instance.chunkBiomes.ContainsKey(cPos)) //If biome value at this location already has been generated, use this value
             return WorldManager.instance.chunkBiomes[cPos];
 
         //Otherwise, generate the value, save it for later use, and return it
