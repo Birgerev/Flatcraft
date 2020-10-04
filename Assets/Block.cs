@@ -275,14 +275,6 @@ public class Block : MonoBehaviour
             sunlightSourcesClone = new Dictionary<int, Location>(sunlightSources);
         }
 
-        if (sunlightSourcesClone.ContainsKey(loc.x))
-            //If current location y level is above sunlight source, return sunlight light level
-            if (loc.y >= sunlightSourcesClone[loc.x].y)
-            {
-                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-                return isDay ? 15 : 5;
-            }
-
         var brightestSourceLoc = new Location(0, 0);
         var brightestValue = 0;
 
