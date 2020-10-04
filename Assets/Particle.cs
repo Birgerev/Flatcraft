@@ -43,16 +43,18 @@ public class Particle : Entity
         if (bounces > maxBounces) Destroy(gameObject);
     }
 
-    // Update is called once per frame
     public override void Save()
     {
     }
 
-    // Update is called once per frame
     public override void Load()
     {
     }
 
+    public override void UpdateEntityLightLevel()
+    {
+    }
+    
     public static void Spawn_SmallSmoke(Vector2 position, Color color)
     {
         var rand = new Random();

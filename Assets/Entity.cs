@@ -131,7 +131,7 @@ public class Entity : MonoBehaviour
         }
     }
 
-    private void UpdateEntityLightLevel()
+    public virtual void UpdateEntityLightLevel()
     {
         var lightLevel = Block.GetLightLevel(Location);
         var lightLevelFactor = lightLevel / 15f;
