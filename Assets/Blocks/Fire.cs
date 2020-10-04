@@ -4,10 +4,11 @@ public class Fire : Block
 {
     public static string default_texture = "block_fire_0";
     public override string[] alternative_textures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
-    public override float change_texture_time { get; } = 1;
+    public override float change_texture_time { get; } = 0.3f;
 
     public override bool playerCollide { get; } = false;
     public override float breakTime { get; } = 0.01f;
+    public override bool requiresGround { get; } = true;
     public override float averageRandomTickDuration { get; } = 10;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;    //TODO new fire sound

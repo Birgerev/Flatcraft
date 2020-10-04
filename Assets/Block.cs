@@ -90,6 +90,9 @@ public class Block : MonoBehaviour
         if (averageRandomTickDuration != 0)
             StartCoroutine(randomTickLoop());
 
+        if (change_texture_time != 0)
+            StartCoroutine(animatedTextureRenderLoop());
+
         Render();
     }
 
@@ -142,6 +145,15 @@ public class Block : MonoBehaviour
         return (float) new Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
     }
 
+    private IEnumerator animatedTextureRenderLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(change_texture_time);
+            Render();
+        }
+    }
+    
     private IEnumerator randomTickLoop()
     {
         var r = new Random(SeedGenerator.SeedByLocation(location));
