@@ -10,6 +10,7 @@ public class Fire : Block
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
     public override float averageRandomTickDuration { get; } = 10;
+    public override int glowLevel { get; } = 15;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;    //TODO new fire sound
 
