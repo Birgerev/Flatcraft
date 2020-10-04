@@ -95,5 +95,6 @@
     Wheat_Crop,
 
     Ladder,
-    Obsidian
+    Obsidian,
+    Flint
 }

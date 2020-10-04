@@ -96,6 +96,7 @@
           <e p="Diamond_Pickaxe.cs" t="Include" />
           <e p="Diamond_Shovel.cs" t="Include" />
           <e p="Diamond_Sword.cs" t="Include" />
+          <e p="Flint.cs" t="Include" />
           <e p="Food.cs" t="Include" />
           <e p="Golden_Axe.cs" t="Include" />
           <e p="Golden_Hoe.cs" t="Include" />
