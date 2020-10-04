@@ -208,9 +208,7 @@ public class Block : MonoBehaviour
 
     public void RenderNoLight()
     {
-        float brightnessColorValue = 0;
-        GetComponent<SpriteRenderer>().color =
-            new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
+        RenderBlockLight(0);
     }
 
     public void RenderBlockLight(int lightLevel)
