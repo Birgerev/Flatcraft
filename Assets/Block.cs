@@ -301,6 +301,18 @@ public class Block : MonoBehaviour
                 }
             }
         }
+        
+        
+
+        if (sunlightSourcesClone.ContainsKey(loc.x))
+            //If current location y level is above sunlight source, return sunlight light level
+            if (loc.y > sunlightSourcesClone[loc.x].y)
+            {
+                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
+                var sunlightLevel = isDay ? 15 : 5;
+                if (brightestValue < sunlightLevel)
+                    brightestValue = sunlightLevel;
+            }
 
         return brightestValue;
     }
