@@ -39,6 +39,7 @@ public class Fire : Block
 
                 if (attempts > 20)
                     return;
+                attempts++;
             }
 
             spreadLocation.SetMaterial(Material.Fire).Tick();
