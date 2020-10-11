@@ -106,7 +106,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    private void TickAllBlocks()
+    private void GeneratingTickAllBlocks()
     {
         //Tick Blocks
         var blockList = transform.GetComponentsInChildren<Block>();
@@ -116,7 +116,7 @@ public class Chunk : MonoBehaviour
             if (block == null || block.transform == null)
                 continue;
 
-            block.Tick();
+            block.GeneratingTick();
         }
     }
 
@@ -268,13 +268,7 @@ public class Chunk : MonoBehaviour
                 i++;
                 if (i % 10 == 1) yield return new WaitForSeconds(0.05f);
             }
-
-            //Generate Tick all block (decay all necessary grass etc)
-            var blocksToTick = new List<Block>(blocks.Values);
-            foreach (var block in blocksToTick)
-                if (block != null)
-                    block.GeneratingTick();
-
+            
             //Generate Structures
             for (var y = 0; y <= Height; y++)
             {
@@ -286,15 +280,15 @@ public class Chunk : MonoBehaviour
                     yield return new WaitForSeconds(0.05f);
             }
 
+            //Generate Tick all block (decay all necessary grass etc)
+            GeneratingTickAllBlocks();
+
             //Mark chunk as Generated
             var chunkDataPath = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
                                 chunkPosition.chunkX + "\\chunk";
             var chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
             chunkDataLines.Add("hasBeenGenerated=true");
             File.WriteAllLines(chunkDataPath, chunkDataLines);
-
-
-            TickAllBlocks();
         }
 
         StartCoroutine(Tick());

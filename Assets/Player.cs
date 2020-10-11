@@ -187,12 +187,14 @@ public class Player : HumanEntity
                             .IsSubclassOf(typeof(PlaceableItem)))
                         {
                             blockedMouseLocation.SetMaterial(((PlaceableItem) itemType).blockMaterial);
+                            blockedMouseLocation.GetBlock().ScheduleBlockBuildTick();
                             blockedMouseLocation.Tick();
                         }
 
                         if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
                         {
                             blockedMouseLocation.SetMaterial(inventory.getSelectedItem().material);
+                            blockedMouseLocation.GetBlock().ScheduleBlockBuildTick();
                             blockedMouseLocation.Tick();
                         }
 
