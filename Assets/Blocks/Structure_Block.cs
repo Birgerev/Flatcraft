@@ -7,6 +7,13 @@ public class Structure_Block : Block
     public static string default_texture = "block_structure";
     public override float breakTime { get; } = 10000000;
 
+    public override void GeneratingTick()
+    {
+        Tick();
+        
+        base.GeneratingTick();
+    }
+    
     public override void Tick()
     {
         if (age == 0) //prevent block from being ticked multiple times, since it would create an infinite loop

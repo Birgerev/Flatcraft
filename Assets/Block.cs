@@ -68,6 +68,17 @@ public class Block : MonoBehaviour
         BuildTick();
     }
 
+    public void ScheduleBlockTick()
+    {
+        StartCoroutine(scheduleBlockTick());
+    }
+
+    private IEnumerator scheduleBlockTick()
+    {
+        yield return new WaitForSeconds(0.03f);
+        Tick();
+    }
+
     public virtual void Initialize()
     {
         //gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
