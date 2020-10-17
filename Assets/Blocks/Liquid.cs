@@ -41,7 +41,7 @@ public class Liquid : Block
             data.SetData("liquid_level", max_liquid_level.ToString());
 
         if(CheckSource())
-            Flow();
+            CheckFlow();
         
         base.Tick();
     }
@@ -69,20 +69,16 @@ public class Liquid : Block
         return true;
     }
 
-    public void Flow()
+    public void CheckFlow()
     {
         Location down = (location + new Location(0, -1));
-        Material downMat = (location + new Location(0, -1)).GetMaterial();
+        Material downMat = down.GetMaterial();
+        
+        if (TryFlow(new Location(0, -1), max_liquid_level))
+            return;
         
         if (downMat == GetMaterial())
             return;
-        
-        if (downMat == Material.Air)
-        {
-            down.SetMaterial(GetMaterial()).SetData(new BlockData("liquid_level=" + max_liquid_level.ToString()));
-            ((Liquid)down.GetBlock()).ScheduleLiquidTick();
-            return;
-        }
         
         var liquidLevel = int.Parse(data.GetData("liquid_level"));
         
@@ -115,18 +111,34 @@ public class Liquid : Block
                 }
             }
 
-            if (flowLeft && left.GetMaterial() == Material.Air)
-            {
-                left.SetMaterial(GetMaterial()).SetData(new BlockData("liquid_level=" + (liquidLevel - 1)));
-                ((Liquid)left.GetBlock()).ScheduleLiquidTick();
-            }
-            if (flowRight && right.GetMaterial() == Material.Air)
-            {
-                right.SetMaterial(GetMaterial()).SetData(new BlockData("liquid_level=" + (liquidLevel - 1)));
-                ((Liquid)right.GetBlock()).ScheduleLiquidTick();
-            }
+            if (flowLeft)            
+                TryFlow(new Location(-1, 0), liquidLevel - 1);
+
+            if (flowRight)            
+                TryFlow(new Location(1, 0), liquidLevel - 1);
         }
     }
+    
+    public bool TryFlow(Location relativeLocation, int liquidLevel)
+    {
+        Location loc = location + relativeLocation;
+        
+        if (loc.GetMaterial() == Material.Air)                //Flow if no block is in the way
+        {
+            loc.SetMaterial(GetMaterial()).SetData(new BlockData("liquid_level=" + liquidLevel));
+            ((Liquid) loc.GetBlock()).ScheduleLiquidTick();
+            return true;
+        }
+        
+        if(loc.GetMaterial() != GetMaterial() 
+           && loc.GetBlock() is Liquid)        //Trigger a liquid encounter if target block is a liquid, but not the same as this block
+        {
+            LiquidEncounterFlow(relativeLocation);
+        }
+
+        return false;
+    }
+    
     public bool IsLiquidSourceBlock()
     {
         return data.GetData("source_block") == "true";
@@ -135,7 +147,13 @@ public class Liquid : Block
     public void MakeIntoLiquidSourceBlock()
     {
         data.SetData("source_block", "true");
+        data.SetData("liquid_level", max_liquid_level.ToString());
         Autosave();
+    }
+    
+    public virtual void LiquidEncounterFlow(Location relativeLocation)
+    {
+        
     }
     
     public Location FindSourceBlock()
@@ -194,7 +212,7 @@ public class Liquid : Block
                     var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetData("liquid_level"));
                     var currentLiquidLevel = int.Parse(data.GetData("liquid_level"));
 
-                    if (possibleSourceLiquidLevel < currentLiquidLevel)         //Make sure the source is of a lower liquid level
+                    if (possibleSourceLiquidLevel < currentLiquidLevel || possibleSourceLiquidLevel == max_liquid_level) //Make sure the source is of a lower liquid level, or a full block (result of liquid flowing down)
                     {
                         sourceResults.Add(possibleSource);
                     }
