@@ -100,7 +100,7 @@ public struct Location
 
         foreach (var blockToTick in blocks)
             if (blockToTick != null)
-                blockToTick.Tick();
+                blockToTick.ScheduleBlockTick();
     }
 
     public Material GetMaterial()
