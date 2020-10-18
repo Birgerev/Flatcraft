@@ -65,7 +65,7 @@ public class Chunk : MonoBehaviour
     public bool isLoading;
     public bool isSpawnChunk;
 
-    public HashSet<Location> lightSourceToUpdate = new HashSet<Location>();
+    public HashSet<Location> lightSourcesToUpdate = new HashSet<Location>();
     private Perlin patchNoise;
 
     private void Start()
@@ -298,7 +298,7 @@ public class Chunk : MonoBehaviour
         WorldManager.instance.amountOfChunksLoading--;
 
         StartCoroutine(GenerateSunlightLoop());
-        StartCoroutine(GenerateLight());
+        GenerateLight();
         StartCoroutine(ProcessLightLoop());
     }
 
@@ -326,23 +326,30 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    private IEnumerator GenerateLight()
+    public void GenerateLight()
     {
         //Update Light Sources (not sunlight again)
         foreach (var block in GetComponentsInChildren<Block>())
+        {
             if (block.glowLevel > 0)
+            {
+                if (!Block.lightSources.ContainsKey(block))
+                    Block.lightSources.Add(block, block.glowLevel);
                 Block.UpdateLightAround(block.location);
-        yield return new WaitForSecondsRealtime(0.05f);
+            }
+        }
     }
 
     private IEnumerator ProcessLightLoop()
     {
+        yield return new WaitForSecondsRealtime(0.5f);
+        
         while (true)
         {
-            if (lightSourceToUpdate.Count > 0)
+            if (lightSourcesToUpdate.Count > 0)
             {
-                var oldLightCopy = new List<Location>(lightSourceToUpdate);
-                lightSourceToUpdate.Clear();
+                var oldLightCopy = new List<Location>(lightSourcesToUpdate);
+                lightSourcesToUpdate.Clear();
                 List<KeyValuePair<Block, int>> lightToRender = null;
 
                 var lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLightCopy); });
@@ -355,7 +362,7 @@ public class Chunk : MonoBehaviour
                 {
                     if (entry.Key == null)
                         continue;
-
+                    
                     entry.Key.RenderBlockLight(entry.Value);
                 }
             }
@@ -366,25 +373,25 @@ public class Chunk : MonoBehaviour
 
     private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
     {
+        var distinctLocationsToProcess = lightToProcess.Distinct();
         var lightToRender = new List<KeyValuePair<Block, int>>();
 
-        if (lightToProcess.Count == 0)
-            return lightToRender;
-
         //Process
-        foreach (var loc in lightToProcess)
+        foreach (var loc in distinctLocationsToProcess)
             for (var x = loc.x - 15; x < loc.x + 15; x++)
-            for (var y = loc.y - 15; y < loc.y + 15 && y > 0 && y < Height; y++)
-            {
-                var blockLoc = new Location(x, y, loc.dimension);
+                for (var y = loc.y - 15; y < loc.y + 15; y++)
+                {
+                    if(y < 0 || y >= Height)
+                        continue;
+                    
+                    var blockLoc = new Location(x, y, loc.dimension);
+                    var block = blockLoc.GetBlock();
 
-                var block = blockLoc.GetBlock();
+                    if (block == null)
+                        continue;
 
-                if (block == null)
-                    continue;
-
-                var result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
-                lightToRender.Add(result);
+                    var result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
+                    lightToRender.Add(result);
             }
 
         //Remove Copies

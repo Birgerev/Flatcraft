@@ -81,7 +81,6 @@ public class Block : MonoBehaviour
 
     public virtual void Initialize()
     {
-        //gameObject.name = "block [" + transform.position.x + "," + transform.position.y + "]";
         blockHealth = breakTime;
 
         texture = (string) GetType().GetField("default_texture", BindingFlags.Public | BindingFlags.Static)
@@ -96,6 +95,12 @@ public class Block : MonoBehaviour
         location = Location.LocationByPosition(transform.position, location.dimension);
 
         checkGround();
+
+        if (glowLevel > 0)
+        {
+            lightSources[this] = glowLevel;
+            new ChunkPosition(location).GetChunk().lightSourcesToUpdate.Add(location);
+        }
 
         if (autoTick || autosave)
             StartCoroutine(autoTickLoop());
@@ -244,11 +249,9 @@ public class Block : MonoBehaviour
 
     public static void UpdateLightAround(Location loc)
     {
-        var source = loc.GetBlock();
-
         var chunk = new ChunkPosition(loc).GetChunk();
         if (chunk != null)
-            chunk.lightSourceToUpdate.Add(loc);
+            chunk.lightSourcesToUpdate.Add(loc);
     }
 
     public static int GetLightSourceLevel(Block block)
@@ -269,9 +272,6 @@ public class Block : MonoBehaviour
     public static int GetLightLevel(Location loc)
     {
         //Messy layout due to multithreading
-
-        if (lightSources.Count <= 0 && sunlightSources.Count <= 0)
-            return 0;
 
         List<Block> sources;
         Dictionary<int, Location> sunlightSourcesClone;
@@ -305,8 +305,6 @@ public class Block : MonoBehaviour
                 }
             }
         }
-        
-        
 
         if (sunlightSourcesClone.ContainsKey(loc.x))
             //If current location y level is above sunlight source, return sunlight light level
