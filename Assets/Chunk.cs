@@ -235,7 +235,10 @@ public class Chunk : MonoBehaviour
             var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
                        chunkPosition.chunkX + "\\blocks";
             if (File.Exists(path))
-                foreach (var line in File.ReadAllLines(path))
+            {
+                var lines = File.ReadAllLines(path);
+                var i = 0;
+                foreach (var line in lines)
                 {
                     var loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
                         int.Parse(line.Split('*')[0].Split(',')[1]));
@@ -243,7 +246,10 @@ public class Chunk : MonoBehaviour
                     var data = new BlockData(line.Split('*')[2]);
 
                     CreateLocalBlock(loc, mat, data);
+                    i++;
+                    if (i % 10 == 1) yield return new WaitForSeconds(0.05f);
                 }
+            }
 
             //Loading Entities
             LoadAllEntities();
@@ -258,7 +264,7 @@ public class Chunk : MonoBehaviour
             terrainThread.Start();
 
             while (terrainThread.IsAlive) 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
 
             var i = 0;
             foreach (var terrainBlock in terrainBlocks)
