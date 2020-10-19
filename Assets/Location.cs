@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public struct Location
@@ -39,8 +40,7 @@ public struct Location
     {
         if (SaveManager.blockChanges.ContainsKey(this)) SaveManager.blockChanges.Remove(this);
 
-        SaveManager.blockChanges.Add(this,
-            mat + "*"); //Add block change to list, without old data, as it should be reset whenever the block is replaced
+        SaveManager.blockChanges.Add(this, mat + "*"); //Add block change to list, without old data, as it should be reset whenever the block is replaced
 
         var cPos = new ChunkPosition(this);
         
