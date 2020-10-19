@@ -146,7 +146,7 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             var timePassedOutsideRenderDistance = 0f;
-            while (!chunkPosition.isInRenderDistance())
+            while (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))        //Is outside one chunk of the render distance, begin self destruction
             {
                 yield return new WaitForSeconds(1f);
                 timePassedOutsideRenderDistance += 1f;
