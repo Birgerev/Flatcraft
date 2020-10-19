@@ -59,7 +59,7 @@ public class WorldManager : MonoBehaviour
 
         Spawn();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
 
         loadingState = "Generating Spawn Chunk: 0";
         loadingProgress = 2f / steps;
