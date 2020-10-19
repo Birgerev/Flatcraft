@@ -93,9 +93,7 @@ public class Block : MonoBehaviour
 
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position, location.dimension);
-
-        checkGround();
-
+        
         if (glowLevel > 0)
         {
             lightSources[this] = glowLevel;
