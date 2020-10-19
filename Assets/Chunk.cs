@@ -472,7 +472,7 @@ public class Chunk : MonoBehaviour
 
             //Large Trees
             if (biome.name == "plains")
-                if (r.Next(0, 100) <= 3)
+                if (r.Next(0, 100) <= 1)
                     (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
                         .SetData(new BlockData("structure=Large_Oak_Tree"));
 
