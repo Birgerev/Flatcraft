@@ -4,11 +4,12 @@ using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+[Serializable]
 public struct Location
 {
-    public readonly int x;
-    public readonly int y;
-    public readonly Dimension dimension;
+    public int x;
+    public int y;
+    public Dimension dimension;
 
 
     public Location(int x, int y)

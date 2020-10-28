@@ -83,12 +83,7 @@ public class WorldManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         loadingProgress = 5f / steps;
-
-
-        if (Player.localInstance.Location.x == 0) //Place player at ground first time player spawns
-            Player.localInstance.transform.position =
-                Player.localInstance.ValidSpawn(Player.localInstance.Location.x).GetPosition();
-
+        
         StartCoroutine(SaveLoop());
     }
 

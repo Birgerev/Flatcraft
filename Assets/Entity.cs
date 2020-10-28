@@ -223,9 +223,6 @@ public class Entity : MonoBehaviour
     public virtual List<string> GetSaveStrings()
     {
         var result = new List<string>();
-
-        result.Add("location=" + JsonUtility.ToJson(Location));
-
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
         foreach (var field in fields)
@@ -283,7 +280,7 @@ public class Entity : MonoBehaviour
 
     public virtual void Load()
     {
-        if (!File.Exists(SavePath()))
+        if (!HasBeenSaved())
             return;
 
         var lines = DataFromStrings(File.ReadAllLines(SavePath()));
@@ -292,8 +289,6 @@ public class Entity : MonoBehaviour
             return;
 
         Location = JsonUtility.FromJson<Location>(lines["location"]);
-
-
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
         foreach (var field in fields)
@@ -308,6 +303,11 @@ public class Entity : MonoBehaviour
             else
                 field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
         }
+    }
+
+    public bool HasBeenSaved()
+    {
+        return File.Exists(SavePath());
     }
 
     private void OnCollisionStay2D(Collision2D col)

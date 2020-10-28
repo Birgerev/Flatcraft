@@ -37,8 +37,9 @@ public class Player : HumanEntity
         hunger = maxHunger;
         inventory = new PlayerInventory();
 
-        ///StartCoroutine(MoveToValidSpawnOnceLoaded());
-
+        if (!HasBeenSaved())
+            StartCoroutine(ValidSpawnOnceChunkLoaded(0));
+            
         base.Start();
     }
 
@@ -274,7 +275,7 @@ public class Player : HumanEntity
 
     public Location ValidSpawn(int x)
     {
-        var topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, false);
+        var topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, true);
 
         if (topmostBlock == null) return new Location(x, 80, Location.dimension);
 
@@ -329,12 +330,11 @@ public class Player : HumanEntity
         return resultData;
     }
 
-    private IEnumerator MoveToValidSpawnOnceLoaded()
+    private IEnumerator ValidSpawnOnceChunkLoaded(int x)
     {
-        yield return new WaitForSeconds(2f);
         while (!IsChunkLoaded()) yield return new WaitForSeconds(2f);
 
         highestYlevelsinceground = 0; //Reset falldamage
-        transform.position = ValidSpawn(spawnLocation.x).GetPosition();
+        Location = ValidSpawn(x);
     }
 }
