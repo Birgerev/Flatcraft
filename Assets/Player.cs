@@ -38,7 +38,7 @@ public class Player : HumanEntity
         inventory = new PlayerInventory();
 
         if (!HasBeenSaved())
-            StartCoroutine(ValidSpawnOnceChunkLoaded(0));
+            StartCoroutine(ValidSpawnOnceChunkLoaded(0, true));
             
         base.Start();
     }
@@ -289,7 +289,7 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
-        transform.position = ValidSpawn(spawnLocation.x).GetPosition();
+        Location = spawnLocation;
         UpdateCachedPosition();
         Save();
     }
@@ -330,11 +330,14 @@ public class Player : HumanEntity
         return resultData;
     }
 
-    private IEnumerator ValidSpawnOnceChunkLoaded(int x)
+    private IEnumerator ValidSpawnOnceChunkLoaded(int x, bool saveSpawnLocation)
     {
-        while (!IsChunkLoaded()) yield return new WaitForSeconds(2f);
+        while (!IsChunkLoaded()) yield return new WaitForSeconds(0.1f);
 
         highestYlevelsinceground = 0; //Reset falldamage
-        Location = ValidSpawn(x);
+        var validLoc = ValidSpawn(x);
+        Location = validLoc;
+        if (saveSpawnLocation)
+            spawnLocation = validLoc;
     }
 }

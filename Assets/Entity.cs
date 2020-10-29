@@ -236,6 +236,7 @@ public class Entity : MonoBehaviour
     public virtual List<string> GetSaveStrings()
     {
         var result = new List<string>();
+        result.Add("location=" + JsonUtility.ToJson(Location));
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
         foreach (var field in fields)
