@@ -54,8 +54,9 @@ public class LivingEntity : Entity
     public override void Update()
     {
         base.Update();
-
-        controller.Tick();
+        
+        if(controller != null)
+            controller.Tick();
         CalculateFlip();
         UpdateAnimatorValues();
 
