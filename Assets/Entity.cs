@@ -93,6 +93,7 @@ public class Entity : MonoBehaviour
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         CheckVoidDamage();
         CheckSuffocation();
+        CheckLavaDamage();
     }
 
     public void LateUpdate()
@@ -121,7 +122,7 @@ public class Entity : MonoBehaviour
         if (!IsChunkLoaded())
             return;
 
-        if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
+        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
         {
             var block = Location.GetBlock();
 
@@ -143,9 +144,9 @@ public class Entity : MonoBehaviour
 
     private void CheckVoidDamage()
     {
-        if (Time.frameCount % (int) (0.75f / Time.deltaTime) == 1)
+        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
             if (transform.position.y < 0)
-                TakeVoidDamage(1);
+                TakeVoidDamage(2);
     }
 
     public virtual void TakeVoidDamage(float damage)
@@ -153,6 +154,18 @@ public class Entity : MonoBehaviour
         Damage(damage);
     }
 
+    private void CheckLavaDamage()
+    {
+        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+            if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
+                TakeLavaDamage(4);
+    }
+
+    public virtual void TakeLavaDamage(float damage)
+    {
+        Damage(damage);
+    }
+    
     public virtual void TakeSuffocationDamage(float damage)
     {
         Damage(damage);
