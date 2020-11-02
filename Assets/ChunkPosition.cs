@@ -93,16 +93,14 @@ public struct ChunkPosition
 
     public bool IsWithinDistanceOfPlayer(int range)
     {
+        Location playerLocation = new Location(0, 0);
+        if (Player.localInstance != null)
+            playerLocation = Player.localInstance.Location;
+
+        if (dimension != playerLocation.dimension)
+            return false;
         if (chunkX == 0)
             return true;
-
-        Location playerLocation;
-
-
-        if (Player.localInstance == null)
-            playerLocation = new Location(0, 0);
-        else
-            playerLocation = Player.localInstance.Location;
 
         float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - playerLocation.x);
 
