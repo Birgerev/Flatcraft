@@ -173,16 +173,6 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public Chunk GetRightChunk()
-    {
-        return new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).GetChunk();
-    }
-
-    public Chunk GetLeftChunk()
-    {
-        return new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).GetChunk();
-    }
-
     private void TrySpawnMobs()
     {
         var r = new Random();
