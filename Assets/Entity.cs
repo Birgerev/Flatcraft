@@ -16,6 +16,7 @@ public class Entity : MonoBehaviour
 
     //Entity data tags
     [EntityDataTag(false)] public float age;
+    [EntityDataTag(false)] public float fireTime;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
@@ -91,6 +92,14 @@ public class Entity : MonoBehaviour
             Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+
+        if (IsBurning())
+        {
+            ReduceFireTime();
+            WaterRemoveFireTime();
+        }
+
+        CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
@@ -106,6 +115,11 @@ public class Entity : MonoBehaviour
         _cachedposition = transform.position;
     }
 
+    public virtual bool IsBurning()
+    {
+        return (fireTime > 0);
+    }
+
     public virtual bool IsChunkLoaded()
     {
         var result = new ChunkPosition(Location).IsChunkLoaded();
@@ -115,6 +129,17 @@ public class Entity : MonoBehaviour
             result = false;
 
         return result;
+    }
+
+    private void WaterRemoveFireTime()
+    {
+        if(isInLiquid && Location.GetMaterial() == Material.Water)
+            fireTime = 0;
+    }
+
+    private void ReduceFireTime()
+    {
+        fireTime -= Time.deltaTime;
     }
 
     private void CheckSuffocation()
@@ -140,6 +165,18 @@ public class Entity : MonoBehaviour
         var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         GetRenderer().color = color;
+    }
+    
+    private void CheckFireDamage()
+    {
+        if(IsBurning())
+            if (Time.frameCount % (int)(0.5f / Time.deltaTime) == 1)
+                TakeFireDamage(4);
+    }
+
+    public virtual void TakeFireDamage(float damage)
+    {
+        Damage(damage);
     }
 
     private void CheckVoidDamage()
