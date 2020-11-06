@@ -17,6 +17,7 @@ public class LivingEntity : Entity
 
     //Entity Data Tags
     [EntityDataTag(false)] public float health;
+    [EntityDataTag(false)] public float air;
 
     protected float highestYlevelsinceground;
     private readonly float jumpVelocity = 8f;
@@ -37,6 +38,7 @@ public class LivingEntity : Entity
     public override void Start()
     {
         health = maxHealth;
+        air = 10;
 
         base.Start();
 
@@ -70,7 +72,36 @@ public class LivingEntity : Entity
 
             spawnMovementParticles(chances);
         }
+
+        TickWaterDrowning();
     }
+
+    private void TickWaterDrowning()
+    {
+        if (Time.frameCount % (int)(1f / Time.deltaTime) == 1)
+        {
+            var block = (Location + new Location(0, 1)).GetBlock();
+
+            if (block != null)
+                if (isInLiquid && block.GetMaterial() == Material.Water)
+                {
+                    air--;
+                    if(air <= 0)
+                    {
+                        TakeDrowningDamage(1);
+                        return;
+                    }
+                }
+
+            air = 10;
+        }
+    }
+
+    public virtual void TakeDrowningDamage(float damage)
+    {
+        Damage(damage);
+    }
+
 
     public virtual void UpdateAnimatorValues()
     {
