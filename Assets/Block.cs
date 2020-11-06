@@ -407,7 +407,8 @@ public class Block : MonoBehaviour
 
     private IEnumerator repairBlockDamageOnceViable()
     {
-        while (Time.time - time_of_last_hit < 1) yield return new WaitForSeconds(0.2f);
+        while (Time.time - time_of_last_hit < 1)
+            yield return new WaitForSeconds(0.2f);
 
         blockHealth = breakTime;
     }
