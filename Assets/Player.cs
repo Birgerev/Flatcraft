@@ -166,7 +166,8 @@ public class Player : HumanEntity
             return;
 
         //Hit Entities
-        if (isAboveEntity && Input.GetMouseButtonDown(0)) hitEntity.transform.GetComponent<Entity>().Hit(1);
+        if (isAboveEntity && Input.GetMouseButtonDown(0)) 
+            HitEntity(hitEntity);
 
 
         Item itemType;
@@ -242,6 +243,25 @@ public class Player : HumanEntity
             if (inventory.getSelectedItem().durability < 0)
                 inventory.setItem(inventory.selectedSlot, new ItemStack());
         }
+    }
+
+    public virtual void HitEntity(Entity entity)
+    {
+        bool criticalHit = true;
+        float damage = 1;
+
+        if (GetVelocity().y < 0)
+            criticalHit = true;
+
+        //TODO Get weapon damage
+
+        if (criticalHit)
+        {
+            damage *= 1.5f;
+            entity.PlayCriticalDamageEffect();
+        }
+
+        entity.transform.GetComponent<Entity>().Hit(damage);
     }
 
     public override List<ItemStack> GetDrops()
