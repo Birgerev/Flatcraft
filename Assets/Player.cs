@@ -166,8 +166,11 @@ public class Player : HumanEntity
             return;
 
         //Hit Entities
-        if (isAboveEntity && Input.GetMouseButtonDown(0)) 
-            HitEntity(hitEntity);
+        if (isAboveEntity && Input.GetMouseButtonDown(0))
+        {
+            HitEntity(hitEntity.transform.GetComponent<Entity>());
+            return;
+        }
 
 
         Item itemType;
@@ -248,12 +251,10 @@ public class Player : HumanEntity
     public virtual void HitEntity(Entity entity)
     {
         bool criticalHit = true;
-        float damage = 1;
+        float damage = inventory.getSelectedItem().GetItemEntityDamage();
 
         if (GetVelocity().y < 0)
             criticalHit = true;
-
-        //TODO Get weapon damage
 
         if (criticalHit)
         {
