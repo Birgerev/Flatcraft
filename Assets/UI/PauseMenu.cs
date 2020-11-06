@@ -16,12 +16,14 @@ public class PauseMenu : MonoBehaviour
     {
         if (WorldManager.instance.loadingProgress != 1)
         {
+            Cursor.visible = false;
             active = false;
             return;
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Cursor.visible = active;
             active = !active;
             Time.timeScale = active ? 0 : 1;
         }

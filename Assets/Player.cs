@@ -36,6 +36,7 @@ public class Player : HumanEntity
 
         hunger = maxHunger;
         inventory = new PlayerInventory();
+        Cursor.visible = false;
 
         if (!HasBeenSaved())
             StartCoroutine(ValidSpawnOnceChunkLoaded(0, true));
