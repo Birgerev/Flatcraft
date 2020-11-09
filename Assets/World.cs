@@ -11,6 +11,7 @@ public class World
     public string name;
     public int seed;
     public float time;
+    public int versionId;
 
     public World(string name, int seed)
     {
@@ -43,6 +44,7 @@ public class World
 
         world.seed = int.Parse(worldData["seed"]);
         world.time = float.Parse(worldData["time"]);
+        world.versionId = int.Parse(worldData["versionId"]);
 
         return world;
     }
@@ -85,6 +87,7 @@ public class World
 
         data.Add("seed=" + seed);
         data.Add("time=" + time);
+        data.Add("versionId=" + versionId);
 
         File.WriteAllLines(getPath() + "\\level.dat", data);
     }
