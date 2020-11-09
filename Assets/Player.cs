@@ -138,6 +138,30 @@ public class Player : HumanEntity
             if (Input.GetKeyDown(keyCode))
                 inventory.selectedSlot = Array.IndexOf(numpadCodes, keyCode);
     }
+    
+    public Location GetBlockedMouseLocation()
+    {
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
+
+        return blockedMouseLocation;
+    }
+
+    public Block GetMouseBlock()
+    {
+
+    }
+
+    public Entity GetMouseEntity()
+    {
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var hitEntity = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+        if (hitEntity.collider == null || hitEntity.transform.GetComponent<Entity>() == null)
+            return null;
+
+        return hitEntity.transform.GetComponent<Entity>();
+    }
 
     private void mouseInput()
     {
@@ -145,95 +169,90 @@ public class Player : HumanEntity
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
-        var mouseBlock = blockedMouseLocation.GetBlock();
-
-        mousePosition.z = 0;
         var isInRange = Mathf.Abs((mousePosition - transform.position).magnitude) <= reach;
-        var isAboveEntity = false;
+
+        var entity = GetMouseEntity();
+        var block = GetMouseBlock();
 
 
-        var hitEntity = Physics2D.Raycast(mousePosition, Vector2.zero);
-        if (hitEntity.collider != null && hitEntity.transform.GetComponent<Entity>() != null) isAboveEntity = true;
-
-
-        crosshair.transform.position = blockedMouseLocation.GetPosition();
+        crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite =
-            Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? isAboveEntity ? "entity" : "full" : "empty"));
+            Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? entity != null ? "entity" : "full" : "empty"));
 
 
         if (!isInRange)
             return;
 
         //Hit Entities
-        if (isAboveEntity && Input.GetMouseButtonDown(0))
-        {
-            HitEntity(hitEntity.transform.GetComponent<Entity>());
-            return;
-        }
-
-
-        Item itemType;
-        if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item))
-        ) //if the selected item derives from "Item", create in instance of item, else create basic "Item", without any subclasses
-            itemType = (Item) Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
-        else
-            itemType = (Item) Activator.CreateInstance(typeof(Item));
-
-        if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)) || Type
-            .GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-            if (mouseBlock == null || mouseBlock.GetMaterial() == Material.Water ||
-                mouseBlock.GetMaterial() == Material.Lava)
-                if (Input.GetMouseButtonDown(1))
-                    if (inventory.getSelectedItem().material != Material.Air &&
-                        inventory.getSelectedItem().amount > 0)
-                    {
-                        if (Type.GetType(inventory.getSelectedItem().material.ToString())
-                            .IsSubclassOf(typeof(PlaceableItem)))
-                        {
-                            blockedMouseLocation.SetMaterial(((PlaceableItem) itemType).blockMaterial);
-                            blockedMouseLocation.GetBlock().ScheduleBlockBuildTick();
-                            blockedMouseLocation.Tick();
-                        }
-
-                        if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Block)))
-                        {
-                            blockedMouseLocation.SetMaterial(inventory.getSelectedItem().material);
-                            blockedMouseLocation.GetBlock().ScheduleBlockBuildTick();
-                            blockedMouseLocation.Tick();
-                        }
-
-                        inventory.setItem(inventory.selectedSlot,
-                            new ItemStack(inventory.getSelectedItem().material,
-                                inventory.getSelectedItem().amount - 1));
-
-                        return;
-                    }
-
-
-        if (Time.time - lastBlockInteractionTime < 1f / interactionsPerPerSecond)
-            return;
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            itemType.Interact(blockedMouseLocation, 1, true);
-            lastBlockInteractionTime = Time.time;
-        }
-        else if (Input.GetMouseButton(1))
-        {
-            itemType.Interact(blockedMouseLocation, 1, false);
-            lastBlockInteractionTime = Time.time;
-        }
-
         if (Input.GetMouseButtonDown(0))
         {
-            itemType.Interact(blockedMouseLocation, 0, true);
-            lastBlockInteractionTime = Time.time;
+            if (entity != null)
+            {
+                HitEntity(entity.transform.GetComponent<Entity>());
+                return;
+            }
+
         }
-        else if (Input.GetMouseButton(0))
+
+        //Place blocks
+        if (Input.GetMouseButtonDown(1))
         {
-            itemType.Interact(blockedMouseLocation, 0, false);
-            lastBlockInteractionTime = Time.time;
+            if (block == null || block.GetMaterial() == Material.Water || block.GetMaterial() == Material.Lava)
+            {
+                ItemStack item = inventory.getSelectedItem().Clone();
+                Material mat;
+
+                if (inventory.getSelectedItem().material == Material.Air || inventory.getSelectedItem().amount <= 0)
+                    return;
+
+                if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
+                {
+                    mat = item.material;
+                }
+                else if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
+                {
+                    mat = ((PlaceableItem)Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
+                }
+                else return;
+
+                GetBlockedMouseLocation().SetMaterial(inventory.getSelectedItem().material);
+                GetBlockedMouseLocation().GetBlock().ScheduleBlockBuildTick();
+                GetBlockedMouseLocation().Tick();
+
+                inventory.setItem(inventory.selectedSlot, new ItemStack(item.material, item.amount - 1));
+            }
+        }
+
+        if (Time.time - lastBlockInteractionTime >= 1f / interactionsPerPerSecond)
+        {
+            Item itemType; //if the selected item derives from "Item", create in instance of item, else create basic "Item", without any subclasses
+            if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
+                itemType = (Item)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
+            else
+                itemType = (Item)Activator.CreateInstance(typeof(Item));
+
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                itemType.Interact(GetBlockedMouseLocation(), 1, true);
+                lastBlockInteractionTime = Time.time;
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                itemType.Interact(GetBlockedMouseLocation(), 1, false);
+                lastBlockInteractionTime = Time.time;
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                itemType.Interact(GetBlockedMouseLocation(), 0, true);
+                lastBlockInteractionTime = Time.time;
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                itemType.Interact(GetBlockedMouseLocation(), 0, false);
+                lastBlockInteractionTime = Time.time;
+            }
         }
     }
 
