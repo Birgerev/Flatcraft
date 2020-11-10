@@ -247,10 +247,10 @@ public class Player : HumanEntity
 
     public virtual void HitEntity(Entity entity)
     {
-        bool criticalHit = true;
-        float damage = 1;
-
-        if (GetVelocity().y < 0)
+        bool criticalHit = false;
+        float damage = inventory.getSelectedItem().GetItemEntityDamage();
+        
+        if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
         //TODO Get weapon damage
