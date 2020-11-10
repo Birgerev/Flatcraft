@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class DebugMenu : MonoBehaviour
@@ -6,6 +7,7 @@ public class DebugMenu : MonoBehaviour
     public static bool active;
 
     private float deltaTime;
+    public Text text_title;
     public Text text_biome;
     public Text text_dimension;
     public Text text_entityCount;
@@ -15,6 +17,7 @@ public class DebugMenu : MonoBehaviour
     public Text text_time;
     public Text text_x;
     public Text text_y;
+    public Text text_blockInfo;
 
     // Update is called once per frame
     private void Update()
@@ -39,6 +42,7 @@ public class DebugMenu : MonoBehaviour
 
     private void updateText()
     {
+        text_title.text = "Flatcraft " + VersionController.GetVersionName();
         text_fps.text = "fps: " + (int) (1.0f / deltaTime);
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;
@@ -54,5 +58,15 @@ public class DebugMenu : MonoBehaviour
         text_seed.text = "seed: " + WorldManager.world.seed;
         text_time.text = "time: " + (int) WorldManager.world.time + ", (day " +
                          (int) (WorldManager.world.time / WorldManager.dayLength) + ")";
+
+        var block = player.GetMouseBlock();
+        var material = Material.Air;
+        var data = "{}";
+        if(block != null)
+        {
+            material = block.GetMaterial();
+            data = block.data.GetSaveString();
+        }
+        text_blockInfo.text = "Material." + material.ToString() + " " + data;
     }
 }

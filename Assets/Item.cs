@@ -9,6 +9,7 @@ public class Item
 
     public string texture;
     public virtual int maxDurabulity { get; } = -1;
+    public virtual float entityDamage { get; } = 1;
 
 
     private void Start()

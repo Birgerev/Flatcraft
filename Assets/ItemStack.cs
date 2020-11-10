@@ -75,6 +75,21 @@ public class ItemStack
         return ((Item) item).maxDurabulity;
     }
 
+    public float GetItemEntityDamage()
+    {
+        if (material == Material.Air)
+            return 1;
+
+        var type = Type.GetType(material.ToString());
+
+        if (type == null || !type.IsSubclassOf(typeof(Item)))
+            return 1;
+
+        var item = Activator.CreateInstance(type);
+
+        return ((Item)item).entityDamage;
+    }
+
     public void Drop(Location location)
     {
         Drop(location, false);

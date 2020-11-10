@@ -88,12 +88,20 @@ public class Chunk : MonoBehaviour
         if (isSpawnChunk)
             return;
 
-        WorldManager.instance.chunks.Remove(chunkPosition);
+        UnloadEntities();
 
+        WorldManager.instance.chunks.Remove(chunkPosition);
         if (isLoading)
             WorldManager.instance.amountOfChunksLoading--;
 
         Destroy(gameObject);
+    }
+    public void UnloadEntities()
+    {
+        foreach(Entity entity in GetEntities())
+        {
+            entity.Unload();
+        }
     }
 
     public static void CreateChunksAround(Location loc, int distance)
@@ -166,7 +174,7 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             //Update neighbor chunks
-            if (age < 5) TrySpawnMobs();
+            TrySpawnMobs();
 
             age++;
             yield return new WaitForSeconds(1f / TickRate);

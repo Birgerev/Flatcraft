@@ -55,6 +55,7 @@ public class CreateWorldMenu : MonoBehaviour
         switchingMenus = true;
 
         if (world.seed == 0) world.seed = new Random().Next();
+        world.versionId = VersionController.CurrentVersionId;
 
         world.SaveData();
         WorldManager.world = world;
