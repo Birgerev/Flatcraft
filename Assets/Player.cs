@@ -36,6 +36,7 @@ public class Player : HumanEntity
 
         hunger = maxHunger;
         inventory = new PlayerInventory();
+        Cursor.visible = false;
 
         if (!HasBeenSaved())
             StartCoroutine(ValidSpawnOnceChunkLoaded(0, true));
@@ -99,8 +100,8 @@ public class Player : HumanEntity
             framesSinceInventoryOpen++;
 
         //Crosshair
-        mouseInput();
-        performInput();
+        MouseInput();
+        PerformInput();
     }
 
     private void performMovementInput()
@@ -111,7 +112,7 @@ public class Player : HumanEntity
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space)) Jump();
     }
 
-    private void performInput()
+    private void PerformInput()
     {
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             inventory.Open(Location);
@@ -143,13 +144,13 @@ public class Player : HumanEntity
     {
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
-
+        
         return blockedMouseLocation;
     }
 
     public Block GetMouseBlock()
     {
-
+        return GetBlockedMouseLocation().GetBlock();
     }
 
     public Entity GetMouseEntity()
@@ -163,21 +164,20 @@ public class Player : HumanEntity
         return hitEntity.transform.GetComponent<Entity>();
     }
 
-    private void mouseInput()
+    private void MouseInput()
     {
         if (WorldManager.instance.loadingProgress != 1)
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
         var isInRange = Mathf.Abs((mousePosition - transform.position).magnitude) <= reach;
 
         var entity = GetMouseEntity();
         var block = GetMouseBlock();
 
-
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
-        crosshair.GetComponent<SpriteRenderer>().sprite =
-            Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? entity != null ? "entity" : "full" : "empty"));
+        crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
 
 
         if (!isInRange)
@@ -215,7 +215,7 @@ public class Player : HumanEntity
                 }
                 else return;
 
-                GetBlockedMouseLocation().SetMaterial(inventory.getSelectedItem().material);
+                GetBlockedMouseLocation().SetMaterial(mat);
                 GetBlockedMouseLocation().GetBlock().ScheduleBlockBuildTick();
                 GetBlockedMouseLocation().Tick();
 
@@ -269,10 +269,10 @@ public class Player : HumanEntity
 
     public virtual void HitEntity(Entity entity)
     {
-        bool criticalHit = true;
+        bool criticalHit = false;
         float damage = inventory.getSelectedItem().GetItemEntityDamage();
-
-        if (GetVelocity().y < 0)
+        
+        if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
         if (criticalHit)

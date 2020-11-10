@@ -5,6 +5,11 @@ public class MainMenu : MonoBehaviour
 {
     public static string discordURL = "https://discord.gg/EbmpduX";
 
+    public void Start()
+    {
+        Cursor.visible = true;
+    }
+
     public void Singleplayer()
     {
         SceneManager.LoadScene("SingleplayerMenu");

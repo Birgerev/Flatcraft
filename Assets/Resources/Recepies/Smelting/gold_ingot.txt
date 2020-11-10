@@ -1,0 +1,2 @@
+Gold_Ingot*1*
+Gold_Ore
