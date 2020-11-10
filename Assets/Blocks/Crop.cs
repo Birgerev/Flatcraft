@@ -5,6 +5,7 @@ public class Crop : Block
     public override bool playerCollide { get; } = false;
 
     public override float breakTime { get; } = 0.05f;
+    public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 100;
     public override bool autosave { get; } = true;
     public override bool requiresGround { get; } = true;
