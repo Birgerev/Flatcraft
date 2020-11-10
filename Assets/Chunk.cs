@@ -166,7 +166,7 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             //Update neighbor chunks
-            if (age < 5) TrySpawnMobs();
+            TrySpawnMobs();
 
             age++;
             yield return new WaitForSeconds(1f / TickRate);
