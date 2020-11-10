@@ -1,13 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System.IO;
+using UnityEngine.Assertions.Comparers;
+using Random = UnityEngine.Random;
 
 public class Splashtext : MonoBehaviour
 {
-    public Text splashtextElement;
     public string splashtext;
+    public float sizeBounceSpeed;
+    public float sizeMultiplier;
+
+    private float sizeIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -18,9 +24,16 @@ public class Splashtext : MonoBehaviour
         UpdateText();
     }
 
+    private void Update()
+    {
+        sizeIndex += Time.deltaTime * sizeBounceSpeed;
+        float size = 1 - Math.Abs(((float)Math.Cos(sizeIndex)) * sizeMultiplier);
+        transform.localScale = new Vector3(size, size, 1);
+    }
+
     // Update text element
     void UpdateText()
     {
-        splashtextElement.text = splashtext;
+        GetComponent<Text>().text = splashtext;
     }
 }

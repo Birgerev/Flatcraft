@@ -232,6 +232,7 @@
               <e p="iron_ingot.txt" t="Include" />
             </e>
           </e>
+          <e p="splashtexts.txt" t="Include" />
           <e p="Structure" t="Include">
             <e p="Birch_Tree" t="Include">
               <e p="Birch_Tree_01.txt" t="Include" />
@@ -318,6 +319,7 @@
           <e p="PlayerInventoryMenu.cs" t="Include" />
           <e p="PointerSlot.cs" t="Include" />
           <e p="SingleplayerMenu.cs" t="Include" />
+          <e p="Splashtext.cs" t="Include" />
           <e p="StyledText.cs" t="Include" />
           <e p="UIButtonSound.cs" t="Include" />
           <e p="UIHeart.cs" t="Include" />
