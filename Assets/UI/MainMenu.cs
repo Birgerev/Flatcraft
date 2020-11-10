@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     public static string discordURL = "https://discord.gg/EbmpduX";
+    public Text versionText;
 
     public void Start()
     {
         Cursor.visible = true;
+        versionText.text = "Flatcraft " + VersionController.GetVersionName();
     }
 
     public void Singleplayer()
