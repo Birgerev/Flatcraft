@@ -36,6 +36,7 @@ public class Player : HumanEntity
 
         hunger = maxHunger;
         inventory = new PlayerInventory();
+        Cursor.visible = false;
 
         if (!HasBeenSaved())
             StartCoroutine(ValidSpawnOnceChunkLoaded(0, true));
@@ -268,10 +269,10 @@ public class Player : HumanEntity
 
     public virtual void HitEntity(Entity entity)
     {
-        bool criticalHit = true;
+        bool criticalHit = false;
         float damage = inventory.getSelectedItem().GetItemEntityDamage();
-
-        if (GetVelocity().y < 0)
+        
+        if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
         if (criticalHit)

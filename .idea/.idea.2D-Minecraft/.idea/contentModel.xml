@@ -99,6 +99,7 @@
           <e p="Flint.cs" t="Include" />
           <e p="Flint_And_Steel.cs" t="Include" />
           <e p="Food.cs" t="Include" />
+          <e p="Gold_Ingot.cs" t="Include" />
           <e p="Golden_Axe.cs" t="Include" />
           <e p="Golden_Hoe.cs" t="Include" />
           <e p="Golden_Pickaxe.cs" t="Include" />
@@ -227,6 +228,7 @@
             </e>
             <e p="Smelting" t="Include">
               <e p="cooked_chicken.txt" t="Include" />
+              <e p="gold_ingot.txt" t="Include" />
               <e p="iron_ingot.txt" t="Include" />
             </e>
           </e>
