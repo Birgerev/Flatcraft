@@ -149,7 +149,7 @@ public class Player : HumanEntity
 
     public Block GetMouseBlock()
     {
-
+        return GetBlockedMouseLocation().GetBlock();
     }
 
     public Entity GetMouseEntity()
