@@ -169,15 +169,14 @@ public class Player : HumanEntity
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
         var isInRange = Mathf.Abs((mousePosition - transform.position).magnitude) <= reach;
 
         var entity = GetMouseEntity();
         var block = GetMouseBlock();
 
-
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
-        crosshair.GetComponent<SpriteRenderer>().sprite =
-            Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? entity != null ? "entity" : "full" : "empty"));
+        crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
 
 
         if (!isInRange)
