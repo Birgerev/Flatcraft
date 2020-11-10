@@ -214,7 +214,7 @@ public class Player : HumanEntity
                 }
                 else return;
 
-                GetBlockedMouseLocation().SetMaterial(inventory.getSelectedItem().material);
+                GetBlockedMouseLocation().SetMaterial(mat);
                 GetBlockedMouseLocation().GetBlock().ScheduleBlockBuildTick();
                 GetBlockedMouseLocation().Tick();
 
