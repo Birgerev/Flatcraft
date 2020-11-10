@@ -36,10 +36,11 @@ public class FallingSand : Entity
             GetComponent<Rigidbody2D>().simulated = true;
 
 
-        if ((isOnGround || isInLiquid && GetComponent<Rigidbody2D>().velocity.y == 0) && age > 1f && !dead)
+        if ((isOnGround || isInLiquid) && GetComponent<Rigidbody2D>().velocity.y == 0 && age > 1f && !dead)
         {
-            if (Location.GetMaterial() == Material.Air)
-                Location.SetMaterial(material);
+            Block overlapingBlock = Location.GetBlock();
+            if (overlapingBlock == null || overlapingBlock is Liquid)
+                Location.SetMaterial(material).Tick();
             else
                 new ItemStack(material, 1).Drop(Location);
 

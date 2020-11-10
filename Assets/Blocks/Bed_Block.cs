@@ -4,6 +4,7 @@
     public override bool playerCollide { get; } = false;
 
     public override float breakTime { get; } = 0.65f;
+    public override bool isFlammable { get; } = true;
 
     public Location otherBlockLocation
     {

@@ -199,7 +199,6 @@ public class Entity : MonoBehaviour
     public virtual void Die()
     {
         DropAllDrops();
-
         DeleteOldSavePath();
 
         dead = true;
@@ -292,6 +291,14 @@ public class Entity : MonoBehaviour
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
     }
 
+    public virtual void Unload()
+    {
+        Save();
+
+        entities.Remove(this);
+        Destroy(gameObject, 0.2f);
+    }
+
     public virtual void Load()
     {
         if (!HasBeenSaved())
@@ -335,6 +342,24 @@ public class Entity : MonoBehaviour
     {
         if (col.transform.position.y + 1f < transform.position.y)
             isOnGround = false;
+    }
+
+    public void PlayCriticalDamageEffect()
+    {
+        var r = new Random();
+        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        {
+            var part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.color = new Color(0.854f, 0.788f, 0.694f);
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 4f + (float)r.NextDouble());
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
     }
 
     public virtual void EnterLiquid(Liquid liquid)
