@@ -99,8 +99,8 @@ public class Player : HumanEntity
             framesSinceInventoryOpen++;
 
         //Crosshair
-        mouseInput();
-        performInput();
+        MouseInput();
+        PerformInput();
     }
 
     private void performMovementInput()
@@ -111,7 +111,7 @@ public class Player : HumanEntity
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space)) Jump();
     }
 
-    private void performInput()
+    private void PerformInput()
     {
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             inventory.Open(Location);
@@ -143,7 +143,7 @@ public class Player : HumanEntity
     {
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
-
+        
         return blockedMouseLocation;
     }
 
@@ -163,7 +163,7 @@ public class Player : HumanEntity
         return hitEntity.transform.GetComponent<Entity>();
     }
 
-    private void mouseInput()
+    private void MouseInput()
     {
         if (WorldManager.instance.loadingProgress != 1)
             return;
