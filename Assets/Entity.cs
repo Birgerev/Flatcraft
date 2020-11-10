@@ -199,7 +199,6 @@ public class Entity : MonoBehaviour
     public virtual void Die()
     {
         DropAllDrops();
-
         DeleteOldSavePath();
 
         dead = true;
@@ -290,6 +289,14 @@ public class Entity : MonoBehaviour
     public virtual SpriteRenderer GetRenderer()
     {
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
+    }
+
+    public virtual void Unload()
+    {
+        Save();
+
+        entities.Remove(this);
+        Destroy(gameObject, 0.2f);
     }
 
     public virtual void Load()
