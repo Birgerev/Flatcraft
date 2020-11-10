@@ -7,6 +7,7 @@ public class DebugMenu : MonoBehaviour
     public static bool active;
 
     private float deltaTime;
+    public Text text_title;
     public Text text_biome;
     public Text text_dimension;
     public Text text_entityCount;
@@ -41,6 +42,7 @@ public class DebugMenu : MonoBehaviour
 
     private void updateText()
     {
+        text_title.text = "Flatcraft " + VersionController.GetVersionName();
         text_fps.text = "fps: " + (int) (1.0f / deltaTime);
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;

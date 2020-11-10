@@ -324,6 +324,7 @@
           <e p="UIHunger.cs" t="Include" />
           <e p="WorldButton.cs" t="Include" />
         </e>
+        <e p="VersionController.cs" t="Include" />
         <e p="World.cs" t="Include" />
         <e p="WorldManager.cs" t="Include" />
       </e>
