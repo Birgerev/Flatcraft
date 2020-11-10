@@ -344,6 +344,24 @@ public class Entity : MonoBehaviour
             isOnGround = false;
     }
 
+    public void PlayCriticalDamageEffect()
+    {
+        var r = new Random();
+        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        {
+            var part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.color = new Color(0.854f, 0.788f, 0.694f);
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 4f + (float)r.NextDouble());
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
+    }
+
     public virtual void EnterLiquid(Liquid liquid)
     {
         isInLiquid = true;
