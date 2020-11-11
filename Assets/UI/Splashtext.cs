@@ -18,7 +18,7 @@ public class Splashtext : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string[] splashtexts = File.ReadAllLines(Application.dataPath + "\\Resources\\splashtexts.txt");
+        string[] splashtexts = (Resources.Load("splashtexts") as TextAsset).text.Split('\n');
         splashtext = splashtexts[Random.Range(0, splashtexts.Length)];
 
         UpdateText();
