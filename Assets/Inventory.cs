@@ -63,7 +63,7 @@ public class Inventory
     public bool AddItem(ItemStack item)
     {
         foreach (var invItem in items)
-            if (invItem.material == item.material && invItem.data == item.data)
+            if (invItem.material == item.material)
             {
                 invItem.amount += item.amount;
                 return true;
