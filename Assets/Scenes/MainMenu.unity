@@ -726,7 +726,6 @@ MonoBehaviour:
   splashtext: 
   sizeBounceSpeed: 6
   sizeMultiplier: 0.04
-  sizeIndex: 0
 --- !u!1 &28056368
 GameObject:
   m_ObjectHideFlags: 0
@@ -27168,7 +27167,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_Text
-      value: Birger Evansson 2019
+      value: Birger Evansson 2020
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -27228,7 +27227,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -228
+      value: -317.1682
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -27238,7 +27237,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 438
+      value: 616.3364
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
