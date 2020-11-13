@@ -5,7 +5,8 @@ using UnityEngine;
 public class VersionController : MonoBehaviour
 {
     public static int CurrentVersionId = 0;
-    public static List<string> versionNames = new List<string> { "Indev 9" };
+    public static List<string> versionNames = new List<string> { 
+        "Indev 9", "Indev 10" };
     
     public static string GetVersionName()
     {
