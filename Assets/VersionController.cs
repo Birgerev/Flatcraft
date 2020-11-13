@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class VersionController : MonoBehaviour
 {
-    public static int CurrentVersionId = 0;
+    public static int CurrentVersionId
+    {
+        get
+        {
+            return versionNames.Count - 1;
+        }
+    }
     public static List<string> versionNames = new List<string> { 
         "Indev 9", "Indev 10" };
     
