@@ -174,7 +174,7 @@ public class InventoryMenu : MonoBehaviour
         var pointerItem = pointerSlot.item;
 
         int maxAmountOfItemsToMerge = Inventory.MaxStackSize - slotItem.amount;
-        int amountOfItemsFromPointerToMerge = Mathf.Max(pointerItem.amount, maxAmountOfItemsToMerge);
+        int amountOfItemsFromPointerToMerge = Mathf.Clamp(pointerItem.amount, 0, maxAmountOfItemsToMerge);
 
         slotItem.amount += amountOfItemsFromPointerToMerge;
         pointerItem.amount -= amountOfItemsFromPointerToMerge;
