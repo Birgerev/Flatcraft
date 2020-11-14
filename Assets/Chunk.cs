@@ -257,8 +257,6 @@ public class Chunk : MonoBehaviour
                     i++;
                     if (i % 10 == 1) yield return new WaitForSeconds(0.05f);
                 }
-                
-                print("loaded");
             }
 
             //Loading Entities
