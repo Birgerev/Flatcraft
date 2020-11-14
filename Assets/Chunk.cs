@@ -246,8 +246,10 @@ public class Chunk : MonoBehaviour
                 var i = 0;
                 foreach (var line in lines)
                 {
-                    var loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
-                        int.Parse(line.Split('*')[0].Split(',')[1]));
+                    var loc = new Location(
+                        int.Parse(line.Split('*')[0].Split(',')[0]),
+                        int.Parse(line.Split('*')[0].Split(',')[1]),
+                        chunkPosition.dimension);
                     var mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
                     var data = new BlockData(line.Split('*')[2]);
 
@@ -255,6 +257,8 @@ public class Chunk : MonoBehaviour
                     i++;
                     if (i % 10 == 1) yield return new WaitForSeconds(0.05f);
                 }
+                
+                print("loaded");
             }
 
             //Loading Entities
@@ -521,12 +525,7 @@ public class Chunk : MonoBehaviour
 
     private bool IsBlockLocal(Location loc)
     {
-        var local = new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension;
-
-        if (loc.y < 0 || loc.y > Height || loc.dimension != chunkPosition.dimension)
-            local = false;
-
-        return local;
+        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y <= Height);
     }
 
     public Block CreateLocalBlock(Location loc, Material mat, BlockData data)
