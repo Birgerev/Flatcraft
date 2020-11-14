@@ -97,5 +97,6 @@
     Ladder,
     Obsidian,
     Flint,
-    Flint_And_Steel
+    Flint_And_Steel,
+    Portal_Frame
 }
