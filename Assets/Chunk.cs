@@ -76,7 +76,7 @@ public class Chunk : MonoBehaviour
 
         StartCoroutine(SelfDestructionChecker());
 
-        gameObject.name = "Chunk [" + chunkPosition.chunkX + "]";
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
 
