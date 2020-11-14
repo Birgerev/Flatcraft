@@ -50,14 +50,23 @@ public struct ChunkPosition
         return false;
     }
 
-    public bool IsChunkLoaded()
+    public bool IsChunkCreated()
     {
         return WorldManager.instance.chunks.ContainsKey(this);
     }
+    
+    public bool IsChunkLoaded()
+    {
+        if (!IsChunkCreated())
+            return false;
+        
+        return GetChunk().isLoaded;
+    }
+
 
     public Chunk CreateChunk()
     {
-        if (IsChunkLoaded())
+        if (IsChunkCreated())
             return null;
 
         var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);

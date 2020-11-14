@@ -45,7 +45,8 @@ public struct Location
 
         var cPos = new ChunkPosition(this);
         
-        if (!cPos.IsChunkLoaded()) return this;
+        if (!cPos.IsChunkCreated()) 
+            return this;
         
         var chunk = cPos.GetChunk();
         var block = chunk.CreateLocalBlock(this, mat, new BlockData());
@@ -116,7 +117,7 @@ public struct Location
         var cPos = new ChunkPosition(this);
 
         //Get material from loaded chunk
-        if (cPos.IsChunkLoaded())
+        if (cPos.IsChunkCreated())
         {
             var block = cPos.GetChunk().GetLocalBlock(this);
 
@@ -154,7 +155,7 @@ public struct Location
         var cPos = new ChunkPosition(this);
 
         //Get data from loaded chunk
-        if (cPos.IsChunkLoaded())
+        if (cPos.IsChunkCreated())
         {
             var block = cPos.GetChunk().GetLocalBlock(this);
 

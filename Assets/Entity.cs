@@ -88,9 +88,10 @@ public class Entity : MonoBehaviour
             UpdateEntityLightLevel();
 
         if (ChunkLoadingEntity)
-            Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
-
+            Chunk.CreateChunksAround(new ChunkPosition(Location), Chunk.RenderDistance);
+        
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
@@ -113,7 +114,7 @@ public class Entity : MonoBehaviour
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
             result = false;
-
+        
         return result;
     }
 
