@@ -70,22 +70,13 @@ public class Entity : MonoBehaviour
     public virtual void Update()
     {
         age += Time.deltaTime;
-
-        if (age > 0.3f && !hasInitializedLight)
-        {
-            UpdateEntityLightLevel();
-            hasInitializedLight = true;
-        }
-
+        
         if (isInLiquid)
             isOnGround = false;
 
         GetRenderer().flipX = facingLeft;
 
         UpdateCachedPosition();
-
-        if (Location.GetPosition() != Location.LocationByPosition(lastFramePosition, Location.dimension).GetPosition())
-            UpdateEntityLightLevel();
 
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
@@ -130,16 +121,6 @@ public class Entity : MonoBehaviour
                 if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
-    }
-
-    public virtual void UpdateEntityLightLevel()
-    {
-        var lightLevel = Block.GetLightLevel(Location);
-        var lightLevelFactor = lightLevel / 15f;
-
-        var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
-
-        GetRenderer().color = color;
     }
 
     private void CheckVoidDamage()

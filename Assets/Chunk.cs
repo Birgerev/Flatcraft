@@ -55,8 +55,10 @@ public class Chunk : MonoBehaviour
     public int age;
 
     public GameObject blockPrefab;
+    public GameObject backgroundBlockPrefab;
 
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
+    public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
     private Perlin caveNoise;
 
@@ -295,6 +297,7 @@ public class Chunk : MonoBehaviour
             File.WriteAllLines(chunkDataPath, chunkDataLines);
         }
 
+        GenerateBackgroundBlocks();
         StartCoroutine(Tick());
 
         isLoading = false;
@@ -306,6 +309,55 @@ public class Chunk : MonoBehaviour
         StartCoroutine(ProcessLightLoop());
     }
 
+    private void GenerateBackgroundBlocks()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            UpdateBackgroundBlockColumn(chunkPosition.worldX + x);
+        }
+    }
+
+    public void UpdateBackgroundBlockColumn(int x)
+    {
+        Material lastViableMaterial = Material.Air;
+        for (int y = Height; y >= 0; y--)
+        {
+            Location loc = new Location(x, y, chunkPosition.dimension);
+            Material mat = loc.GetMaterial();
+
+            if (backgroundBlocks.ContainsKey(new int2(loc.x, loc.y)))
+            {
+                Destroy(backgroundBlocks[new int2(loc.x, loc.y)].gameObject);
+                backgroundBlocks.Remove(new int2(loc.x, loc.y));
+            }
+
+            if (BackgroundBlock.viableMaterials.Contains(mat))
+            {
+                lastViableMaterial = mat;
+            }
+
+            bool placeBackground = false;
+
+            if (lastViableMaterial != Material.Air)
+            {
+                if (mat == Material.Air)
+                    placeBackground = true;
+                else if(loc.GetBlock() != null && !loc.GetBlock().playerCollide)
+                    placeBackground = true;
+            }
+            
+            if(placeBackground)
+            {
+                GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
+                BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
+                    
+                blockObject.transform.position = loc.GetPosition();
+                backgroundBlock.material = lastViableMaterial;
+                backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
+            }
+        }
+    }
+    
     private IEnumerator GenerateSunlightLoop()
     {
         var lastUpdateTime = "none";
@@ -543,6 +595,9 @@ public class Chunk : MonoBehaviour
             Destroy(GetLocalBlock(loc).gameObject);
             blocks.Remove(pos);
         }
+
+        if(isLoaded)
+            UpdateBackgroundBlockColumn(loc.x);
 
         Block result = null;
 

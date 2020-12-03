@@ -11,8 +11,6 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public static Dictionary<Block, int> lightSources = new Dictionary<Block, int>();
-    public static Dictionary<int, Location> sunlightSources = new Dictionary<int, Location>();
     public int age;
 
     public float blockHealth;
@@ -89,14 +87,12 @@ public class Block : MonoBehaviour
 
         UpdateColliders();
 
-        RenderNoLight();
-
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position, location.dimension);
         
         if (glowLevel > 0)
         {
-            lightSources[this] = glowLevel;
+            LightObject.lightSources[this] = glowLevel;
             new ChunkPosition(location).GetChunk().lightSourcesToUpdate.Add(location);
         }
 
@@ -196,125 +192,9 @@ public class Block : MonoBehaviour
         }
     }
 
-    public static void UpdateSunlightSourceAt(int x, Dimension dimension)
-    {
-        var topBlock = Chunk.GetTopmostBlock(x, dimension, false);
-        if (topBlock == null)
-            return;
-
-        //remove all sunlight sources in the same column
-        if (sunlightSources.ContainsKey(x))
-        {
-            var oldColumnSunlightSource = sunlightSources[x];
-            var oldColumnSunlightSourceBlock = oldColumnSunlightSource.GetBlock();
-            sunlightSources.Remove(x);
-            if(oldColumnSunlightSourceBlock != null)
-                lightSources.Remove(oldColumnSunlightSourceBlock);
-            UpdateLightAround(oldColumnSunlightSource);
-        }
-
-        var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-
-        //Add the new position
-        lightSources.Add(topBlock, isDay ? 15 : 5);
-        sunlightSources[topBlock.location.x] = topBlock.location;
-        UpdateLightAround(topBlock.location);
-    }
-
     public bool IsSunlightSource()
     {
-        return sunlightSources.ContainsKey(location.x);
-    }
-
-    public bool CheckBlockLightSource()
-    {
-        if (glowLevel > 0) lightSources[this] = glowLevel;
-
-        return GetLightSourceLevel(this) > 0;
-    }
-
-    public void RenderNoLight()
-    {
-        RenderBlockLight(0);
-    }
-
-    public void RenderBlockLight(int lightLevel)
-    {
-        var brightnessColorValue = lightLevel / 15f;
-        GetComponent<SpriteRenderer>().color =
-            new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
-    }
-
-    public static void UpdateLightAround(Location loc)
-    {
-        var chunk = new ChunkPosition(loc).GetChunk();
-        if (chunk != null)
-            chunk.lightSourcesToUpdate.Add(loc);
-    }
-
-    public static int GetLightSourceLevel(Block block)
-    {
-        if (block == null)
-            return 0;
-
-        var blockLevel = block.glowLevel;
-        if (blockLevel == 0 && block.IsSunlightSource())
-        {
-            var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-            blockLevel = isDay ? 15 : 5;
-        }
-
-        return blockLevel;
-    }
-
-    public static int GetLightLevel(Location loc)
-    {
-        //Messy layout due to multithreading
-
-        List<Block> sources;
-        Dictionary<int, Location> sunlightSourcesClone;
-        lock (lightSources)
-        {
-            //clone actual list to avoid threading errors
-            sources = new Dictionary<Block, int>(lightSources).Keys.ToList();
-        }
-
-        lock (sunlightSources)
-        {
-            //clone actual list to avoid threading errors
-            sunlightSourcesClone = new Dictionary<int, Location>(sunlightSources);
-        }
-
-        var brightestSourceLoc = new Location(0, 0);
-        var brightestValue = 0;
-
-        foreach (var source in sources)
-        {
-            var sourceLoc = source.location;
-            if (sourceLoc.dimension == loc.dimension)
-            {
-                var sourceBrightness = GetLightSourceLevel(source);
-                var value = sourceBrightness - (int) math.distance(sourceLoc.GetPosition(), loc.GetPosition());
-
-                if (value > brightestValue)
-                {
-                    brightestValue = value;
-                    brightestSourceLoc = sourceLoc;
-                }
-            }
-        }
-
-        if (sunlightSourcesClone.ContainsKey(loc.x))
-            //If current location y level is above sunlight source, return sunlight light level
-            if (loc.y > sunlightSourcesClone[loc.x].y)
-            {
-                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-                var sunlightLevel = isDay ? 15 : 5;
-                if (brightestValue < sunlightLevel)
-                    brightestValue = sunlightLevel;
-            }
-
-        return brightestValue;
+        return LightObject.sunlightSources.ContainsKey(location.x);
     }
 
     public virtual void UpdateColliders()
