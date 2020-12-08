@@ -303,10 +303,12 @@ public class Chunk : MonoBehaviour
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
-
-        StartCoroutine(GenerateSunlightLoop());
-        GenerateLight();
-        StartCoroutine(ProcessLightLoop());
+        
+        yield return new WaitForSeconds(2f);
+        LightManager.instance.UpdateChunkLight(chunkPosition);
+        //StartCoroutine(GenerateSunlightLoop());
+        //GenerateLight();
+        //StartCoroutine(ProcessLightLoop());
     }
 
     private void GenerateBackgroundBlocks()
@@ -360,7 +362,7 @@ public class Chunk : MonoBehaviour
     
     private IEnumerator GenerateSunlightLoop()
     {
-        var lastUpdateTime = "none";
+        /*var lastUpdateTime = "none";
 
         while (true)
         {
@@ -377,13 +379,14 @@ public class Chunk : MonoBehaviour
 
                 lastUpdateTime = currentTime;
             }
+        }*/
 
-            yield return new WaitForSecondsRealtime(10f);
-        }
+        yield return new WaitForSecondsRealtime(10f);
     }
 
     public void GenerateLight()
     {
+        /*
         //Update Light Sources (not sunlight again)
         foreach (var block in GetComponentsInChildren<Block>())
         {
@@ -393,13 +396,13 @@ public class Chunk : MonoBehaviour
                     Block.lightSources.Add(block, block.glowLevel);
                 Block.UpdateLightAround(block.location);
             }
-        }
+        }*/
     }
 
     private IEnumerator ProcessLightLoop()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-        
+        /*
         while (true)
         {
             if (lightSourcesToUpdate.Count > 0)
@@ -425,17 +428,19 @@ public class Chunk : MonoBehaviour
 
             yield return new WaitForSecondsRealtime(0.2f);
         }
+        */
     }
 
     private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
     {
         var distinctLocationsToProcess = lightToProcess.Distinct();
         var lightToRender = new List<KeyValuePair<Block, int>>();
-
+        
+        /*
         //Process
         foreach (var loc in distinctLocationsToProcess)
-            for (var x = loc.x - 15; x < loc.x + 15; x++)
-                for (var y = loc.y - 15; y < loc.y + 15; y++)
+            for (var x = loc.x - LightManager.maxLightLevel; x < loc.x + LightManager.maxLightLevel; x++)
+                for (var y = loc.y - LightManager.maxLightLevel; y < loc.y + LightManager.maxLightLevel; y++)
                 {
                     if(y < 0 || y >= Height)
                         continue;
@@ -451,7 +456,7 @@ public class Chunk : MonoBehaviour
             }
 
         //Remove Copies
-        lightToRender = lightToRender.Distinct().ToList();
+        lightToRender = lightToRender.Distinct().ToList();*/
 
         return lightToRender;
     }
@@ -628,8 +633,7 @@ public class Chunk : MonoBehaviour
 
         if (isLoaded)
         {
-            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.Location.dimension);
-            Block.UpdateLightAround(loc);
+            LightManager.instance.UpdateBlockLight(loc);
         }
 
         return result;

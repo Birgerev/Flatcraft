@@ -92,8 +92,8 @@ public class Block : MonoBehaviour
         
         if (glowLevel > 0)
         {
-            LightObject.lightSources[this] = glowLevel;
-            new ChunkPosition(location).GetChunk().lightSourcesToUpdate.Add(location);
+            GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
+            lightSource.transform.localPosition = Vector3.zero; 
         }
 
         if (autoTick || autosave)
@@ -192,14 +192,9 @@ public class Block : MonoBehaviour
         }
     }
 
-    public bool IsSunlightSource()
-    {
-        return LightObject.sunlightSources.ContainsKey(location.x);
-    }
-
     public virtual void UpdateColliders()
     {
-        GetComponent<Collider2D>().enabled = playerCollide || triggerCollider;
+        gameObject.layer = LayerMask.NameToLayer(playerCollide ? "Block" : "NoCollisionBlock");
         GetComponent<Collider2D>().isTrigger = triggerCollider;
     }
 
