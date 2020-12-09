@@ -1,0 +1,13 @@
+Mossy_Cobblestone*0,-4*
+Mossy_Cobblestone*-1,-4*
+Mossy_Cobblestone*1,-4*
+Cobblestone*-2,-4*
+Cobblestone*-2,-3*
+Cobblestone*-2,-2*
+Cobblestone*-2,-1*
+Cobblestone*-2,0*
+Cobblestone*2,-4*
+Cobblestone*2,-3*
+Cobblestone*2,-2*
+Cobblestone*2,-1*
+Cobblestone*2,0*
