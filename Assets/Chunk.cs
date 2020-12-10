@@ -633,10 +633,17 @@ public class Chunk : MonoBehaviour
 
         if (isLoaded)
         {
-            LightManager.instance.UpdateBlockLight(loc);
+            StartCoroutine(scheduleBlockLightUpdate(loc));
         }
 
         return result;
+    }
+
+    IEnumerator scheduleBlockLightUpdate(Location loc)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        LightManager.instance.UpdateBlockLight(loc);
     }
 
     public Block GetLocalBlock(Location loc)
