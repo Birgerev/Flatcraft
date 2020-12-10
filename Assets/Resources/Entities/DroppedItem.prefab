@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6261376197120414375}
   - component: {fileID: 1832627839344930596}
-  m_Layer: 10
+  - component: {fileID: 1544559455209921183}
+  m_Layer: 15
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +73,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -82,6 +83,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1544559455209921183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56132381965150924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda8be18fda7c4f429cdf2d798b40cba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8828333479264981030
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +108,7 @@ GameObject:
   - component: {fileID: 3560120173737735801}
   - component: {fileID: 5156497674860302383}
   - component: {fileID: 6352510269757822397}
-  m_Layer: 10
+  m_Layer: 15
   m_Name: DroppedItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,20 +143,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   age: 0
-  id: 0
-  currentChunk: {fileID: 0}
-  isOnGround: 0
-  isInLiquid: 0
-  isOnLadder: 0
-  flipRenderX: 0
   dead: 0
+  facingLeft: 0
+  id: 0
+  isInLiquid: 0
+  isOnGround: 0
+  isOnLadder: 0
   lastFramePosition: {x: 0, y: 0}
+  canPickup: 1
   item:
-    material: 0
     amount: 0
     data: 
-    durablity: 0
-  canPickup: 1
+    durability: 0
+    material: 0
 --- !u!61 &3560120173737735801
 BoxCollider2D:
   m_ObjectHideFlags: 0
