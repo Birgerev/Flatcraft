@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8466682603583594592}
   - component: {fileID: 8466682603583594599}
   - component: {fileID: 8466682603583594597}
-  m_Layer: 13
+  m_Layer: 14
   m_Name: Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,17 +94,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   age: 0
-  id: 0
-  currentChunk: {fileID: 0}
-  isOnGround: 0
-  isInLiquid: 0
-  isOnLadder: 0
-  flipRenderX: 0
   dead: 0
+  facingLeft: 0
+  id: 0
+  isInLiquid: 0
+  isOnGround: 0
+  isOnLadder: 0
   lastFramePosition: {x: 0, y: 0}
-  maxBounces: 3
-  maxAge: 5
   doGravity: 1
+  maxAge: 5
+  maxBounces: 3
 --- !u!1 &8817448794502047748
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2348263347211368238}
   - component: {fileID: 947058316184454317}
-  m_Layer: 11
+  m_Layer: 14
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
