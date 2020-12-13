@@ -65,6 +65,7 @@ public class Entity : MonoBehaviour
         entities.Add(this);
 
         Load();
+        UpdateLight();
     }
 
     public virtual void Update()
@@ -80,6 +81,8 @@ public class Entity : MonoBehaviour
 
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
+
+        CheckLightUpdate();
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         CheckVoidDamage();
@@ -106,6 +109,19 @@ public class Entity : MonoBehaviour
             result = false;
 
         return result;
+    }
+
+    private void CheckLightUpdate()
+    {
+        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
+            UpdateLight();
+    }
+    private void UpdateLight()
+    {
+        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
+
+        if (lightObj != null)
+            LightManager.UpdateLightObject(lightObj);
     }
 
     private void CheckSuffocation()

@@ -130,7 +130,9 @@
           <e p="Wooden_Sword.cs" t="Include" />
         </e>
         <e p="ItemStack.cs" t="Include" />
+        <e p="LightManager.cs" t="Include" />
         <e p="LightObject.cs" t="Include" />
+        <e p="LightSource.cs" t="Include" />
         <e p="LivingEntity.cs" t="Include" />
         <e p="Location.cs" t="Include" />
         <e p="Material.cs" t="Include" />

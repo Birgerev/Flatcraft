@@ -92,8 +92,9 @@ public class Block : MonoBehaviour
         
         if (glowLevel > 0)
         {
-            LightObject.lightSources[this] = glowLevel;
-            new ChunkPosition(location).GetChunk().lightSourcesToUpdate.Add(location);
+            GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
+            lightSource.transform.localPosition = Vector3.zero;
+            lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
         }
 
         if (autoTick || autosave)
@@ -192,14 +193,9 @@ public class Block : MonoBehaviour
         }
     }
 
-    public bool IsSunlightSource()
-    {
-        return LightObject.sunlightSources.ContainsKey(location.x);
-    }
-
     public virtual void UpdateColliders()
     {
-        GetComponent<Collider2D>().enabled = playerCollide || triggerCollider;
+        gameObject.layer = LayerMask.NameToLayer(playerCollide ? "Block" : "NoCollisionBlock");
         GetComponent<Collider2D>().isTrigger = triggerCollider;
     }
 
@@ -307,7 +303,7 @@ public class Block : MonoBehaviour
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
         var r = new Random();
-        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        for (var i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
             var part = (Particle) Entity.Spawn("Particle");
 
