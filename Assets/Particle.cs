@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -29,12 +30,14 @@ public class Particle : Entity
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        Destroy(gameObject, maxAge);
+        StartCoroutine(ScheduleDeath());
     }
 
-    public override void Update()
+    IEnumerator ScheduleDeath()
     {
-        base.Update();
+        yield return new WaitForSeconds(maxAge);
+        
+        Die();
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -48,10 +51,6 @@ public class Particle : Entity
     }
 
     public override void Load()
-    {
-    }
-
-    public override void UpdateEntityLightLevel()
     {
     }
     

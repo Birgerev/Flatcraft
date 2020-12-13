@@ -241,15 +241,17 @@ public class LivingEntity : Entity
                     blockBeneath = block;
             }
 
+            if (blockBeneath == null)
+                return;
 
-            var part = (Particle) Spawn("Particle");
+            var particle = (Particle) Spawn("Particle");
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
-            part.doGravity = true;
-            part.velocity = -(GetVelocity() * 0.2f);
-            part.maxAge = (float) r.NextDouble();
-            part.maxBounces = 10;
+            particle.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
+            particle.color = blockBeneath.GetRandomColourFromTexture();
+            particle.doGravity = true;
+            particle.velocity = -(GetVelocity() * 0.2f);
+            particle.maxAge = (float) r.NextDouble();
+            particle.maxBounces = 10;
         }
     }
 

@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
 
-public class Wooden_Door : MonoBehaviour
+public class Wooden_Door : Door
 {
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
+    public override float breakTime { get; } = 3f;
+    public override bool isFlammable { get; } = true;
 
-    // Update is called once per frame
-    private void Update()
-    {
-    }
+    public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1149122271182722695}
   - component: {fileID: 1149122271182722688}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1149122271957633176}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: CameraFocusPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1149122272203067693}
   - component: {fileID: 1149122272203067694}
-  m_Layer: 8
+  - component: {fileID: 8518066337161117601}
+  - component: {fileID: 560340207394707743}
+  m_Layer: 12
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +189,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -197,6 +199,44 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8518066337161117601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149122272203067692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda8be18fda7c4f429cdf2d798b40cba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!61 &560340207394707743
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149122272203067692}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2}
+  m_EdgeRadius: 0
 --- !u!1 &1149122272397806801
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +250,7 @@ GameObject:
   - component: {fileID: 7118248979253364308}
   - component: {fileID: 1149122272397806803}
   - component: {fileID: 1149122272397806802}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,169 +287,177 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   age: 0
+  dead: 0
   facingLeft: 0
   id: 0
-  isOnGround: 0
   isInLiquid: 0
+  isOnGround: 0
   isOnLadder: 0
-  dead: 0
   lastFramePosition: {x: 0, y: 0}
   health: 0
-  maxHunger: 20
-  reach: 5
+  crosshair: {fileID: 1149122271182722694}
   hunger: 0
   inventory:
-    size: 36
+    holder:
+      x: 0
+      y: 0
+      dimension: 0
     items:
-    - material: 0
-      amount: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
-    - material: 0
-      amount: 0
+      durability: 0
+      material: 0
+    - amount: 0
       data: 
-      durablity: 0
+      durability: 0
+      material: 0
     name: Player Inventory
     open: 0
-    selectedSlot: 0
+    size: 36
     baseInventorySize: 36
-  crosshair: {fileID: 1149122271182722694}
+    selectedSlot: 0
+  maxHunger: 20
+  reach: 5
+  spawnLocation:
+    x: 0
+    y: 80
+    dimension: 0
 --- !u!95 &7118248979253364308
 Animator:
   serializedVersion: 3
@@ -486,7 +534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2524231000240290259}
   - component: {fileID: 6550336062071702866}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -569,7 +617,7 @@ GameObject:
   - component: {fileID: 1384443646631476411}
   - component: {fileID: 3190483317827036484}
   - component: {fileID: 6031265691855983832}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: itemInHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -664,7 +712,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8890941275697198515}
   - component: {fileID: 4609856735471935549}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -747,7 +795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2239911588411009801}
   - component: {fileID: 3482520972176343617}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: torso
   m_TagString: Untagged
   m_Icon: {fileID: 0}

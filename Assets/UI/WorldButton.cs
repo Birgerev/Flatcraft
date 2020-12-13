@@ -16,7 +16,9 @@ public class WorldButton : MonoBehaviour
         var fileSize = world.getDiskSize() / 1000;
         var fileSizeRounded = Mathf.Round(fileSize * 100f) / 100f;
 
-        descriptionText.text = "Survival Mode (Version: ?, " + fileSizeRounded + "KB)";
+        var versionName = VersionController.GetVersionName(world.versionId);
+
+        descriptionText.text = "Survival Mode (Version: "+ versionName + ", " + fileSizeRounded + "KB)";
     }
 
     public void Click()

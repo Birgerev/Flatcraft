@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
@@ -14,30 +15,37 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (WorldManager.instance.loadingProgress != 1)
-        {
-            active = false;
-            return;
-        }
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            active = !active;
-            Time.timeScale = active ? 0 : 1;
+            SetMenuActive(!active);
         }
+    }
 
-        GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
-        GetComponent<CanvasGroup>().interactable = active;
-        GetComponent<CanvasGroup>().blocksRaycasts = active;
+    public void EnterMenu()
+    {
+        SetMenuActive(true);
     }
 
     public void BackToGame()
     {
-        Time.timeScale = 1;
-        active = false;
+        SetMenuActive(false);
     }
 
-    public void BackToMenu()
+    public void SetMenuActive(bool setActive)
+    {
+        active = setActive;
+        
+        print("ea"+active);
+        Cursor.visible = active;
+        Time.timeScale = active ? 0 : 1;
+
+        GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
+        GetComponent<CanvasGroup>().interactable = active;
+        GetComponent<CanvasGroup>().blocksRaycasts = active;
+        print("abom");
+    }
+
+    public void BackToMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
     }
