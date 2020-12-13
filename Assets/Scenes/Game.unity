@@ -7137,6 +7137,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightSourcePrefab: {fileID: 5354969073293725047, guid: 4eeacdb360394e240982d55895125233,
     type: 3}
+  sunlightSourcePrefab: {fileID: 3202872062129521457, guid: de52d119504ed4d40931792fc1765247,
+    type: 3}
 --- !u!1001 &305091285
 PrefabInstance:
   m_ObjectHideFlags: 0

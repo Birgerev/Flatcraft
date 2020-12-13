@@ -93,7 +93,8 @@ public class Block : MonoBehaviour
         if (glowLevel > 0)
         {
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
-            lightSource.transform.localPosition = Vector3.zero; 
+            lightSource.transform.localPosition = Vector3.zero;
+            lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
         }
 
         if (autoTick || autosave)

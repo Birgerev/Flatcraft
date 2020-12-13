@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3335485599024612680}
-  - component: {fileID: 2644884623106752217}
+  - component: {fileID: -7038364961181234935}
   - component: {fileID: 5668931802861808296}
   m_Layer: 18
   m_Name: LightSource
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2644884623106752217
+--- !u!114 &-7038364961181234935
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
