@@ -65,18 +65,13 @@ public class Entity : MonoBehaviour
         entities.Add(this);
 
         Load();
+        UpdateLight();
     }
 
     public virtual void Update()
     {
         age += Time.deltaTime;
-
-        if (age > 0.3f && !hasInitializedLight)
-        {
-            UpdateEntityLightLevel();
-            hasInitializedLight = true;
-        }
-
+        
         if (isInLiquid)
             isOnGround = false;
 
@@ -84,11 +79,10 @@ public class Entity : MonoBehaviour
 
         UpdateCachedPosition();
 
-        if (Location.GetPosition() != Location.LocationByPosition(lastFramePosition, Location.dimension).GetPosition())
-            UpdateEntityLightLevel();
-
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
+
+        CheckLightUpdate();
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         CheckVoidDamage();
@@ -117,6 +111,19 @@ public class Entity : MonoBehaviour
         return result;
     }
 
+    private void CheckLightUpdate()
+    {
+        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
+            UpdateLight();
+    }
+    private void UpdateLight()
+    {
+        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
+
+        if (lightObj != null)
+            LightManager.UpdateLightObject(lightObj);
+    }
+
     private void CheckSuffocation()
     {
         if (!IsChunkLoaded())
@@ -130,16 +137,6 @@ public class Entity : MonoBehaviour
                 if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
-    }
-
-    public virtual void UpdateEntityLightLevel()
-    {
-        var lightLevel = Block.GetLightLevel(Location);
-        var lightLevelFactor = lightLevel / 15f;
-
-        var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
-
-        GetRenderer().color = color;
     }
 
     private void CheckVoidDamage()
