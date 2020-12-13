@@ -116,7 +116,6 @@ public class Block : MonoBehaviour
     {
         if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
         {
-            print(data.GetSaveString() + " rotating " + GetMaterial());
             RotateTowardsPlayer();
         }
     }
