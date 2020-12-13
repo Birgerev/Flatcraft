@@ -62,6 +62,15 @@ public class LightManager : MonoBehaviour
         }
     }
 
+    public static void UpdateLightObject(LightObject lightObj)
+    {
+        Vector2 pos = lightObj.transform.position;
+        int2 loc = new int2((int)pos.x, (int)pos.y);
+        List<LightSource> lightSources = GetLightSourcesForArea(loc - new int2(maxLightLevel, maxLightLevel), loc + new int2(maxLightLevel, maxLightLevel));
+
+        UpdateLight(lightObj, lightSources);
+    }
+
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
         var objectLoc = lightObject.transform.position;

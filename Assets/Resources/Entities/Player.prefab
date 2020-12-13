@@ -123,7 +123,8 @@ GameObject:
   - component: {fileID: 1149122272203067693}
   - component: {fileID: 1149122272203067694}
   - component: {fileID: 8518066337161117601}
-  m_Layer: 13
+  - component: {fileID: 560340207394707743}
+  m_Layer: 12
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,6 +211,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fda8be18fda7c4f429cdf2d798b40cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!61 &560340207394707743
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149122272203067692}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2}
+  m_EdgeRadius: 0
 --- !u!1 &1149122272397806801
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2524231000240290259}
   - component: {fileID: 6550336062071702866}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -590,7 +617,7 @@ GameObject:
   - component: {fileID: 1384443646631476411}
   - component: {fileID: 3190483317827036484}
   - component: {fileID: 6031265691855983832}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: itemInHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -685,7 +712,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8890941275697198515}
   - component: {fileID: 4609856735471935549}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -768,7 +795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2239911588411009801}
   - component: {fileID: 3482520972176343617}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: torso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
