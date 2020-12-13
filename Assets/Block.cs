@@ -303,7 +303,7 @@ public class Block : MonoBehaviour
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
         var r = new Random();
-        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        for (var i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
             var part = (Particle) Entity.Spawn("Particle");
 
