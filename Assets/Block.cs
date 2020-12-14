@@ -26,7 +26,7 @@ public class Block : MonoBehaviour
     public virtual string[] alternative_textures { get; } = { };
     public virtual float change_texture_time { get; } = 0;
 
-    public virtual bool playerCollide { get; } = true;
+    public virtual bool solid { get; set; } = true;
     public virtual bool isFlammable { get; } = false;
     public virtual bool triggerCollider { get; } = false;
     public virtual bool requiresGround { get; } = false;
@@ -194,8 +194,13 @@ public class Block : MonoBehaviour
 
     public virtual void UpdateColliders()
     {
-        gameObject.layer = LayerMask.NameToLayer(playerCollide ? "Block" : "NoCollisionBlock");
-        GetComponent<Collider2D>().isTrigger = triggerCollider;
+        UpdateColliders(solid, triggerCollider);
+    }
+
+    public virtual void UpdateColliders(bool collide, bool trigger)
+    {
+        gameObject.layer = LayerMask.NameToLayer(collide ? "Block" : "NoCollisionBlock");
+        GetComponent<Collider2D>().isTrigger = trigger;
     }
 
     public Color GetRandomColourFromTexture()

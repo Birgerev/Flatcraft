@@ -342,7 +342,7 @@ public class Chunk : MonoBehaviour
             {
                 if (mat == Material.Air)
                     placeBackground = true;
-                else if(loc.GetBlock() != null && !loc.GetBlock().playerCollide)
+                else if(loc.GetBlock() != null && !loc.GetBlock().solid)
                     placeBackground = true;
             }
             
@@ -693,7 +693,7 @@ public class Chunk : MonoBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.playerCollide)
+                if (mustBeSolid && !block.solid)
                     continue;
 
                 return block;

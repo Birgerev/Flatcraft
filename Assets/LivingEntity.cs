@@ -237,7 +237,7 @@ public class LivingEntity : Entity
             for (var y = 1; blockBeneath == null && y < 3; y++)
             {
                 var block = (Location - new Location(0, y)).GetBlock();
-                if (block != null && block.playerCollide)
+                if (block != null && block.solid)
                     blockBeneath = block;
             }
 
