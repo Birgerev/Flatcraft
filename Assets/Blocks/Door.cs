@@ -7,7 +7,7 @@ public class Door : Block
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override bool playerCollide { get; } = true;
+    public override bool solid { get; set; } = true;
 
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
@@ -70,8 +70,10 @@ public class Door : Block
         var open = data.GetData("open") == "true";
 
         texture = open ? open_texture : closed_texture;
+        solid = !open;
 
         Render();
+        UpdateColliders();
 
         base.Tick();
     }
@@ -79,10 +81,8 @@ public class Door : Block
     public override void UpdateColliders()
     {
         var open = false;
-
         open = data.GetData("open") == "true";
 
-        GetComponent<Collider2D>().enabled = !open;
-        GetComponent<Collider2D>().isTrigger = false;
+        UpdateColliders(!open, false);
     }
 }
