@@ -13,17 +13,17 @@ TagManager:
   - UI
   - 
   - 
-  - Player
   - Block
+  - NoCollisionBlock
+  - BackgroundBlock
+  - 
+  - Renderer
+  - Player
+  - Entity
   - DroppedItem
-  - Mob
-  - FallingSand
-  - Particle
   - 
   - 
-  - 
-  - 
-  - 
+  - LightSource
   - 
   - 
   - 

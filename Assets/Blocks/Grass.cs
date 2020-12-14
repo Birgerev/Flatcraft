@@ -34,7 +34,7 @@ public class Grass : Block
         var blockAbove = (location + new Location(0, 1)).GetBlock();
         if (blockAbove != null)
             //Turn to dirt if covered
-            if (blockAbove.playerCollide)
+            if (blockAbove.solid)
                 location.SetMaterial(Material.Dirt);
     }
 
@@ -44,7 +44,7 @@ public class Grass : Block
 
         var targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1));
         var blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
-        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.playerCollide))
+        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.solid))
             targetLoc.SetMaterial(Material.Grass);
     }
 }

@@ -9,6 +9,7 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="AnimalController.cs" t="Include" />
+        <e p="BackgroundBlock.cs" t="Include" />
         <e p="Biome.cs" t="Include" />
         <e p="Block.cs" t="Include" />
         <e p="BlockData.cs" t="Include" />
@@ -129,6 +130,9 @@
           <e p="Wooden_Sword.cs" t="Include" />
         </e>
         <e p="ItemStack.cs" t="Include" />
+        <e p="LightManager.cs" t="Include" />
+        <e p="LightObject.cs" t="Include" />
+        <e p="LightSource.cs" t="Include" />
         <e p="LivingEntity.cs" t="Include" />
         <e p="Location.cs" t="Include" />
         <e p="Material.cs" t="Include" />

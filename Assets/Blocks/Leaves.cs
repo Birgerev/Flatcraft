@@ -1,7 +1,7 @@
 ﻿public class Leaves : Block
 {
     public static string default_texture = "block_leaves";
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
     public override float averageRandomTickDuration { get; } = 100;
 
     public override float breakTime { get; } = 0.3f;

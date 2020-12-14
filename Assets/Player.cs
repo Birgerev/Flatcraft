@@ -150,7 +150,12 @@ public class Player : HumanEntity
 
     public Block GetMouseBlock()
     {
-        return GetBlockedMouseLocation().GetBlock();
+        Location blockedMouseLoc = GetBlockedMouseLocation();
+
+        if (blockedMouseLoc.y < 0 || blockedMouseLoc.y > Chunk.Height)
+            return null;
+
+        return blockedMouseLoc.GetBlock();
     }
 
     public Entity GetMouseEntity()
@@ -220,6 +225,7 @@ public class Player : HumanEntity
                 GetBlockedMouseLocation().Tick();
 
                 inventory.setItem(inventory.selectedSlot, new ItemStack(item.material, item.amount - 1));
+                return;
             }
         }
 
