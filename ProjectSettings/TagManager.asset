@@ -44,11 +44,17 @@ TagManager:
   - name: Stars
     uniqueID: 1419899589
     locked: 0
+  - name: BackgroundBlock
+    uniqueID: 434623851
+    locked: 0
   - name: Block
     uniqueID: 1750431023
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Entity
+    uniqueID: 3276645917
     locked: 0
   - name: Player
     uniqueID: 2455056893
