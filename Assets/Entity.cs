@@ -155,7 +155,7 @@ public class Entity : MonoBehaviour
         if (!IsChunkLoaded())
             return;
 
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
         {
             var block = Location.GetBlock();
 
@@ -168,8 +168,8 @@ public class Entity : MonoBehaviour
     private void CheckFireDamage()
     {
         if(IsBurning())
-            if (Time.frameCount % (int)(0.5f / Time.deltaTime) == 1)
-                TakeFireDamage(4);
+            if ((Time.time % 1f) - Time.deltaTime <= 0)
+                TakeFireDamage(1);
     }
 
     public virtual void TakeFireDamage(float damage)
@@ -179,7 +179,7 @@ public class Entity : MonoBehaviour
 
     private void CheckVoidDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (transform.position.y < 0)
                 TakeVoidDamage(2);
     }
@@ -191,7 +191,7 @@ public class Entity : MonoBehaviour
 
     private void CheckLavaDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
                 TakeLavaDamage(4);
     }
