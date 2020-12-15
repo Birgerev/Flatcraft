@@ -82,7 +82,7 @@ public class Entity : MonoBehaviour
         UpdateCachedPosition();
 
         if (ChunkLoadingEntity)
-            Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
+            Chunk.CreateChunksAround(new ChunkPosition(Location), Chunk.RenderDistance);
 
         CheckLightUpdate();
 
@@ -123,7 +123,7 @@ public class Entity : MonoBehaviour
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
             result = false;
-
+        
         return result;
     }
 

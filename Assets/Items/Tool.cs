@@ -13,10 +13,10 @@
     public override void InteractRight(Location loc, bool firstFrameDown)
     {
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
-            loc.SetMaterial(Material.Farmland_Dry);
+            loc.SetMaterial(Material.Farmland_Dry).Tick();
         
         if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.Air)
-            loc.SetMaterial(Material.Fire);
+            loc.SetMaterial(Material.Fire).Tick();
 
         base.InteractRight(loc, firstFrameDown);
     }

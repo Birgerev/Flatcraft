@@ -50,14 +50,23 @@ public struct ChunkPosition
         return false;
     }
 
-    public bool IsChunkLoaded()
+    public bool IsChunkCreated()
     {
         return WorldManager.instance.chunks.ContainsKey(this);
     }
+    
+    public bool IsChunkLoaded()
+    {
+        if (!IsChunkCreated())
+            return false;
+        
+        return GetChunk().isLoaded;
+    }
+
 
     public Chunk CreateChunk()
     {
-        if (IsChunkLoaded())
+        if (IsChunkCreated())
             return null;
 
         var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
@@ -93,16 +102,14 @@ public struct ChunkPosition
 
     public bool IsWithinDistanceOfPlayer(int range)
     {
+        Location playerLocation = new Location(0, 0);
+        if (Player.localInstance != null)
+            playerLocation = Player.localInstance.Location;
+
+        if (dimension != playerLocation.dimension)
+            return false;
         if (chunkX == 0)
             return true;
-
-        Location playerLocation;
-
-
-        if (Player.localInstance == null)
-            playerLocation = new Location(0, 0);
-        else
-            playerLocation = Player.localInstance.Location;
 
         float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - playerLocation.x);
 

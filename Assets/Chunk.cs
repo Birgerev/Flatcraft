@@ -78,7 +78,7 @@ public class Chunk : MonoBehaviour
 
         StartCoroutine(SelfDestructionChecker());
 
-        gameObject.name = "Chunk [" + chunkPosition.chunkX + "]";
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
 
@@ -106,12 +106,13 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public static void CreateChunksAround(Location loc, int distance)
+    public static void CreateChunksAround(ChunkPosition loc, int distance)
     {
         for (var i = -distance; i < distance; i++)
         {
-            var cPos = new ChunkPosition((int) (loc.x / (float) Width) + i, loc.dimension);
-            if (!cPos.IsChunkLoaded())
+            var cPos = new ChunkPosition(loc.chunkX + i, loc.dimension);
+            
+            if (!cPos.IsChunkCreated())
                 cPos.CreateChunk();
         }
     }
@@ -153,18 +154,26 @@ public class Chunk : MonoBehaviour
 
     private IEnumerator SelfDestructionChecker()
     {
+        var timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            var timePassedOutsideRenderDistance = 0f;
-            while (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))        //Is outside one chunk of the render distance, begin self destruction
+            if (Player.localInstance != null && Player.localInstance.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
             {
-                yield return new WaitForSeconds(1f);
+                DestroyChunk();
+            }
+            
+            if (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            {
                 timePassedOutsideRenderDistance += 1f;
                 if (timePassedOutsideRenderDistance > OutsideRenderDistanceUnloadTime)
                 {
+                    timePassedOutsideRenderDistance = 0f;
                     DestroyChunk();
-                    yield break;
                 }
+            }
+            else
+            {
+                timePassedOutsideRenderDistance = 0f;
             }
 
             yield return new WaitForSeconds(1f);
@@ -240,8 +249,10 @@ public class Chunk : MonoBehaviour
                 var i = 0;
                 foreach (var line in lines)
                 {
-                    var loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
-                        int.Parse(line.Split('*')[0].Split(',')[1]));
+                    var loc = new Location(
+                        int.Parse(line.Split('*')[0].Split(',')[0]),
+                        int.Parse(line.Split('*')[0].Split(',')[1]),
+                        chunkPosition.dimension);
                     var mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
                     var data = new BlockData(line.Split('*')[2]);
 
@@ -479,12 +490,7 @@ public class Chunk : MonoBehaviour
 
     private bool IsBlockLocal(Location loc)
     {
-        var local = new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension;
-
-        if (loc.y < 0 || loc.y > Height || loc.dimension != chunkPosition.dimension)
-            local = false;
-
-        return local;
+        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y <= Height);
     }
 
     public Block CreateLocalBlock(Location loc, Material mat, BlockData data)
@@ -603,51 +609,53 @@ public class Chunk : MonoBehaviour
 
         //-Terrain Generation-//
 
-        //-Ground-//
-        if (noiseValue > 0.1f)
-        {
-            if (biome.name == "desert")
+        if(chunkPosition.dimension == Dimension.Overworld) {
+            //-Ground-//
+            if (noiseValue > 0.1f)
             {
-                mat = Material.Sand;
-                if (noiseValue > biome.stoneLayerNoiseValue - 2)
-                    mat = Material.Sandstone;
+                if (biome.name == "desert")
+                {
+                    mat = Material.Sand;
+                    if (noiseValue > biome.stoneLayerNoiseValue - 2)
+                        mat = Material.Sandstone;
+                }
+                else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
+                         biome.name == "plains")
+                {
+                    mat = Material.Grass;
+                }
+
+                if (noiseValue > biome.stoneLayerNoiseValue) mat = Material.Stone;
             }
-            else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
-                     biome.name == "plains")
+
+            //-Lakes-//
+            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
+
+            //-Dirt & Gravel Patches-//
+            if (mat == Material.Stone)
             {
-                mat = Material.Grass;
+                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
+                    mat = Material.Dirt;
+                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
+                    mat = Material.Gravel;
             }
 
-            if (noiseValue > biome.stoneLayerNoiseValue) mat = Material.Stone;
-        }
+            //-Sea-//
+            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
 
-        //-Lakes-//
-        if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-        //-Dirt & Gravel Patches-//
-        if (mat == Material.Stone)
-        {
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
-                mat = Material.Dirt;
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
-                mat = Material.Gravel;
-        }
-
-        //-Sea-//
-        if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-        //-Caves-//
-        if (noiseValue > 0.1f)
-        {
-            var caveValue =
-                (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
-            if (caveValue > CaveHollowValue)
+            //-Caves-//
+            if (noiseValue > 0.1f)
             {
-                mat = Material.Air;
+                var caveValue =
+                    (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
+                if (caveValue > CaveHollowValue)
+                {
+                    mat = Material.Air;
 
-                //-Lava Lakes-//
-                if (loc.y <= LavaHeight)
-                    mat = Material.Lava;
+                    //-Lava Lakes-//
+                    if (loc.y <= LavaHeight)
+                        mat = Material.Lava;
+                }
             }
         }
 

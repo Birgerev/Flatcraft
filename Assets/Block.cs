@@ -194,13 +194,9 @@ public class Block : MonoBehaviour
 
     public virtual void UpdateColliders()
     {
-        UpdateColliders(solid, triggerCollider);
-    }
+        gameObject.layer = LayerMask.NameToLayer((solid || triggerCollider) ? "Block" : "NoCollisionBlock");
 
-    public virtual void UpdateColliders(bool collide, bool trigger)
-    {
-        gameObject.layer = LayerMask.NameToLayer(collide ? "Block" : "NoCollisionBlock");
-        GetComponent<Collider2D>().isTrigger = trigger;
+        GetComponent<Collider2D>().isTrigger = triggerCollider;
     }
 
     public Color GetRandomColourFromTexture()
