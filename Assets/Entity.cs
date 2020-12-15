@@ -93,6 +93,7 @@ public class Entity : MonoBehaviour
             WaterRemoveFireTime();
         }
 
+        CheckIsInFire();
         CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
@@ -137,6 +138,11 @@ public class Entity : MonoBehaviour
 
         if (lightObj != null)
             LightManager.UpdateLightObject(lightObj);
+    }
+    private void CheckIsInFire()
+    {
+        if (Location.GetMaterial() == Material.Fire)
+            fireTime = 7;
     }
 
     private void WaterRemoveFireTime()
@@ -193,7 +199,10 @@ public class Entity : MonoBehaviour
     {
         if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
+            {
                 TakeLavaDamage(4);
+                fireTime = 14;
+            }
     }
 
     public virtual void TakeLavaDamage(float damage)
