@@ -6,7 +6,7 @@ public class Fire : Block
     public override string[] alternative_textures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
     public override float change_texture_time { get; } = 0.3f;
 
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
     public override float averageRandomTickDuration { get; } = 5;

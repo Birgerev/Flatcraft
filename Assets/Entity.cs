@@ -66,18 +66,13 @@ public class Entity : MonoBehaviour
         entities.Add(this);
 
         Load();
+        UpdateLight();
     }
 
     public virtual void Update()
     {
         age += Time.deltaTime;
-
-        if (age > 0.3f && !hasInitializedLight)
-        {
-            UpdateEntityLightLevel();
-            hasInitializedLight = true;
-        }
-
+        
         if (isInLiquid)
             isOnGround = false;
 
@@ -85,11 +80,10 @@ public class Entity : MonoBehaviour
 
         UpdateCachedPosition();
 
-        if (Location.GetPosition() != Location.LocationByPosition(lastFramePosition, Location.dimension).GetPosition())
-            UpdateEntityLightLevel();
-
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
+
+        CheckLightUpdate();
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
 
@@ -131,6 +125,20 @@ public class Entity : MonoBehaviour
         return result;
     }
 
+    private void CheckLightUpdate()
+    {
+        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
+            UpdateLight();
+    }
+
+    private void UpdateLight()
+    {
+        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
+
+        if (lightObj != null)
+            LightManager.UpdateLightObject(lightObj);
+    }
+
     private void WaterRemoveFireTime()
     {
         if(isInLiquid && Location.GetMaterial() == Material.Water)
@@ -152,19 +160,9 @@ public class Entity : MonoBehaviour
             var block = Location.GetBlock();
 
             if (block != null)
-                if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
+                if (block.solid && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
-    }
-
-    public virtual void UpdateEntityLightLevel()
-    {
-        var lightLevel = Block.GetLightLevel(Location);
-        var lightLevelFactor = lightLevel / 15f;
-
-        var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
-
-        GetRenderer().color = color;
     }
     
     private void CheckFireDamage()
@@ -236,7 +234,6 @@ public class Entity : MonoBehaviour
     public virtual void Die()
     {
         DropAllDrops();
-
         DeleteOldSavePath();
 
         dead = true;
@@ -329,6 +326,14 @@ public class Entity : MonoBehaviour
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
     }
 
+    public virtual void Unload()
+    {
+        Save();
+
+        entities.Remove(this);
+        Destroy(gameObject, 0.2f);
+    }
+
     public virtual void Load()
     {
         if (!HasBeenSaved())
@@ -372,6 +377,24 @@ public class Entity : MonoBehaviour
     {
         if (col.transform.position.y + 1f < transform.position.y)
             isOnGround = false;
+    }
+
+    public void PlayCriticalDamageEffect()
+    {
+        var r = new Random();
+        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        {
+            var part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.color = new Color(0.854f, 0.788f, 0.694f);
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 4f + (float)r.NextDouble());
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
     }
 
     public virtual void EnterLiquid(Liquid liquid)

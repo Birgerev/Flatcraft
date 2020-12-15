@@ -3,7 +3,7 @@
 public class Ladder : Block
 {
     public static string default_texture = "block_ladder";
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
     public override bool triggerCollider { get; } = true;
 
     public override float breakTime { get; } = 3f;

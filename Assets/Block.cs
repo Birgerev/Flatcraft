@@ -11,8 +11,6 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public static Dictionary<Block, int> lightSources = new Dictionary<Block, int>();
-    public static Dictionary<int, Location> sunlightSources = new Dictionary<int, Location>();
     public int age;
 
     public float blockHealth;
@@ -28,7 +26,7 @@ public class Block : MonoBehaviour
     public virtual string[] alternative_textures { get; } = { };
     public virtual float change_texture_time { get; } = 0;
 
-    public virtual bool playerCollide { get; } = true;
+    public virtual bool solid { get; set; } = true;
     public virtual bool isFlammable { get; } = false;
     public virtual bool triggerCollider { get; } = false;
     public virtual bool requiresGround { get; } = false;
@@ -89,15 +87,14 @@ public class Block : MonoBehaviour
 
         UpdateColliders();
 
-        RenderNoLight();
-
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position, location.dimension);
         
         if (glowLevel > 0)
         {
-            lightSources[this] = glowLevel;
-            new ChunkPosition(location).GetChunk().lightSourcesToUpdate.Add(location);
+            GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
+            lightSource.transform.localPosition = Vector3.zero;
+            lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
         }
 
         if (autoTick || autosave)
@@ -119,7 +116,6 @@ public class Block : MonoBehaviour
     {
         if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
         {
-            print(data.GetSaveString() + " rotating " + GetMaterial());
             RotateTowardsPlayer();
         }
     }
@@ -196,131 +192,15 @@ public class Block : MonoBehaviour
         }
     }
 
-    public static void UpdateSunlightSourceAt(int x, Dimension dimension)
-    {
-        var topBlock = Chunk.GetTopmostBlock(x, dimension, false);
-        if (topBlock == null)
-            return;
-
-        //remove all sunlight sources in the same column
-        if (sunlightSources.ContainsKey(x))
-        {
-            var oldColumnSunlightSource = sunlightSources[x];
-            var oldColumnSunlightSourceBlock = oldColumnSunlightSource.GetBlock();
-            sunlightSources.Remove(x);
-            if(oldColumnSunlightSourceBlock != null)
-                lightSources.Remove(oldColumnSunlightSourceBlock);
-            UpdateLightAround(oldColumnSunlightSource);
-        }
-
-        var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-
-        //Add the new position
-        lightSources.Add(topBlock, isDay ? 15 : 5);
-        sunlightSources[topBlock.location.x] = topBlock.location;
-        UpdateLightAround(topBlock.location);
-    }
-
-    public bool IsSunlightSource()
-    {
-        return sunlightSources.ContainsKey(location.x);
-    }
-
-    public bool CheckBlockLightSource()
-    {
-        if (glowLevel > 0) lightSources[this] = glowLevel;
-
-        return GetLightSourceLevel(this) > 0;
-    }
-
-    public void RenderNoLight()
-    {
-        RenderBlockLight(0);
-    }
-
-    public void RenderBlockLight(int lightLevel)
-    {
-        var brightnessColorValue = lightLevel / 15f;
-        GetComponent<SpriteRenderer>().color =
-            new Color(brightnessColorValue, brightnessColorValue, brightnessColorValue);
-    }
-
-    public static void UpdateLightAround(Location loc)
-    {
-        var chunk = new ChunkPosition(loc).GetChunk();
-        if (chunk != null)
-            chunk.lightSourcesToUpdate.Add(loc);
-    }
-
-    public static int GetLightSourceLevel(Block block)
-    {
-        if (block == null)
-            return 0;
-
-        var blockLevel = block.glowLevel;
-        if (blockLevel == 0 && block.IsSunlightSource())
-        {
-            var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-            blockLevel = isDay ? 15 : 5;
-        }
-
-        return blockLevel;
-    }
-
-    public static int GetLightLevel(Location loc)
-    {
-        //Messy layout due to multithreading
-
-        List<Block> sources;
-        Dictionary<int, Location> sunlightSourcesClone;
-        lock (lightSources)
-        {
-            //clone actual list to avoid threading errors
-            sources = new Dictionary<Block, int>(lightSources).Keys.ToList();
-        }
-
-        lock (sunlightSources)
-        {
-            //clone actual list to avoid threading errors
-            sunlightSourcesClone = new Dictionary<int, Location>(sunlightSources);
-        }
-
-        var brightestSourceLoc = new Location(0, 0);
-        var brightestValue = 0;
-
-        foreach (var source in sources)
-        {
-            var sourceLoc = source.location;
-            if (sourceLoc.dimension == loc.dimension)
-            {
-                var sourceBrightness = GetLightSourceLevel(source);
-                var value = sourceBrightness - (int) math.distance(sourceLoc.GetPosition(), loc.GetPosition());
-
-                if (value > brightestValue)
-                {
-                    brightestValue = value;
-                    brightestSourceLoc = sourceLoc;
-                }
-            }
-        }
-
-        if (sunlightSourcesClone.ContainsKey(loc.x))
-            //If current location y level is above sunlight source, return sunlight light level
-            if (loc.y > sunlightSourcesClone[loc.x].y)
-            {
-                var isDay = WorldManager.world.time % WorldManager.dayLength < WorldManager.dayLength / 2;
-                var sunlightLevel = isDay ? 15 : 5;
-                if (brightestValue < sunlightLevel)
-                    brightestValue = sunlightLevel;
-            }
-
-        return brightestValue;
-    }
-
     public virtual void UpdateColliders()
     {
-        GetComponent<Collider2D>().enabled = playerCollide || triggerCollider;
-        GetComponent<Collider2D>().isTrigger = triggerCollider;
+        UpdateColliders(solid, triggerCollider);
+    }
+
+    public virtual void UpdateColliders(bool collide, bool trigger)
+    {
+        gameObject.layer = LayerMask.NameToLayer(collide ? "Block" : "NoCollisionBlock");
+        GetComponent<Collider2D>().isTrigger = trigger;
     }
 
     public Color GetRandomColourFromTexture()
@@ -345,6 +225,7 @@ public class Block : MonoBehaviour
 
         //Save new rotation
         Autosave();
+        RenderRotate();
     }
 
     public void RenderRotate()
@@ -402,12 +283,13 @@ public class Block : MonoBehaviour
         }
 
         RenderBlockDamage();
-        StartCoroutine(repairOnceViable());
+        StartCoroutine(repairBlockDamageOnceViable());
     }
 
-    private IEnumerator repairOnceViable()
+    private IEnumerator repairBlockDamageOnceViable()
     {
-        while (Time.time - time_of_last_hit < 1) yield return new WaitForSeconds(0.2f);
+        while (Time.time - time_of_last_hit < 1)
+            yield return new WaitForSeconds(0.2f);
 
         blockHealth = breakTime;
     }
@@ -426,7 +308,7 @@ public class Block : MonoBehaviour
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
         var r = new Random();
-        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        for (var i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
             var part = (Particle) Entity.Spawn("Particle");
 

@@ -4,4 +4,5 @@
     public override Tool_Type tool_type { get; } = Tool_Type.Sword;
     public override Tool_Level tool_level { get; } = Tool_Level.Iron;
     public override int maxDurabulity { get; } = 250;
+    public override float entityDamage { get; } = 6;
 }

@@ -86,29 +86,11 @@ public class InventoryMenu : MonoBehaviour
     public virtual void OnClickSlot(int slotIndex, int clickType)
     {
         if (clickType == 0)
-            OnRightClickSlot(slotIndex);
-        else
             OnLeftClickSlot(slotIndex);
+        else
+            OnRightClickSlot(slotIndex);
 
         pointerSlot.UpdateSlot();
-    }
-
-    public virtual void OnLeftClickSlot(int slotIndex)
-    {
-        var slotItem = getItem(slotIndex);
-        var pointerItem = pointerSlot.item;
-
-        if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.amount > 0) //Left Click to leave one item
-        {
-            SlotAction_LeaveOne(slotIndex);
-
-            return;
-        }
-
-        if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) &&
-            slotItem.amount > 0) //Left click to halve
-            SlotAction_Halve(slotIndex);
     }
 
     public virtual void OnRightClickSlot(int slotIndex)
@@ -116,11 +98,29 @@ public class InventoryMenu : MonoBehaviour
         var slotItem = getItem(slotIndex);
         var pointerItem = pointerSlot.item;
 
-        //Right click to swap
+        if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
+            && pointerItem.amount > 0 && slotItem.amount + 1 <= 64) //Right Click to leave one item
+        {
+            SlotAction_LeaveOne(slotIndex);
+
+            return;
+        }
+
+        if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) &&
+            slotItem.amount > 0) //Right click to halve
+            SlotAction_Halve(slotIndex);
+    }
+
+    public virtual void OnLeftClickSlot(int slotIndex)
+    {
+        var slotItem = getItem(slotIndex);
+        var pointerItem = pointerSlot.item;
+
+        //Left click to swap
         if (pointerItem.material == Material.Air || pointerItem.material != slotItem.material)
             SlotAction_Swap(slotIndex);
         else
-            //Right click to add pointer to slot
+            //Left click to add pointer to slot
             SlotAction_MergeSlot(slotIndex);
     }
 
@@ -173,7 +173,10 @@ public class InventoryMenu : MonoBehaviour
         var slotItem = getItem(slotIndex);
         var pointerItem = pointerSlot.item;
 
-        slotItem.amount += pointerItem.amount;
-        pointerItem.amount = 0;
+        int maxAmountOfItemsToMerge = Inventory.MaxStackSize - slotItem.amount;
+        int amountOfItemsFromPointerToMerge = Mathf.Clamp(pointerItem.amount, 0, maxAmountOfItemsToMerge);
+
+        slotItem.amount += amountOfItemsFromPointerToMerge;
+        pointerItem.amount -= amountOfItemsFromPointerToMerge;
     }
 }

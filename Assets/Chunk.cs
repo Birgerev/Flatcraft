@@ -55,8 +55,10 @@ public class Chunk : MonoBehaviour
     public int age;
 
     public GameObject blockPrefab;
+    public GameObject backgroundBlockPrefab;
 
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
+    public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
     private Perlin caveNoise;
 
@@ -88,12 +90,20 @@ public class Chunk : MonoBehaviour
         if (isSpawnChunk)
             return;
 
-        WorldManager.instance.chunks.Remove(chunkPosition);
+        UnloadEntities();
 
+        WorldManager.instance.chunks.Remove(chunkPosition);
         if (isLoading)
             WorldManager.instance.amountOfChunksLoading--;
 
         Destroy(gameObject);
+    }
+    public void UnloadEntities()
+    {
+        foreach(Entity entity in GetEntities())
+        {
+            entity.Unload();
+        }
     }
 
     public static void CreateChunksAround(Location loc, int distance)
@@ -166,7 +176,7 @@ public class Chunk : MonoBehaviour
         while (true)
         {
             //Update neighbor chunks
-            if (age < 5) TrySpawnMobs();
+            TrySpawnMobs();
 
             age++;
             yield return new WaitForSeconds(1f / TickRate);
@@ -287,113 +297,77 @@ public class Chunk : MonoBehaviour
             File.WriteAllLines(chunkDataPath, chunkDataLines);
         }
 
+        GenerateBackgroundBlocks();
         StartCoroutine(Tick());
 
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
 
-        StartCoroutine(GenerateSunlightLoop());
-        GenerateLight();
-        StartCoroutine(ProcessLightLoop());
+        yield return new WaitForSeconds(0.2f);
+        GenerateSunlight();
+        LightManager.UpdateChunkLight(chunkPosition);
     }
 
-    private IEnumerator GenerateSunlightLoop()
+    private void GenerateBackgroundBlocks()
     {
-        var lastUpdateTime = "none";
-
-        while (true)
+        for (int x = 0; x < Width; x++)
         {
-            var isNight = WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2;
-            var currentTime = isNight ? "night" : "day";
-
-            if (currentTime != lastUpdateTime)
-            {
-                //Fill sunlight source list
-                var minXPos = chunkPosition.worldX;
-                var maxXPos = chunkPosition.worldX + Width - 1;
-
-                for (var x = minXPos; x <= maxXPos; x++) Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
-
-                lastUpdateTime = currentTime;
-            }
-
-            yield return new WaitForSecondsRealtime(10f);
+            UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
         }
     }
 
-    public void GenerateLight()
+    public void UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
-        //Update Light Sources (not sunlight again)
-        foreach (var block in GetComponentsInChildren<Block>())
+        Material lastViableMaterial = Material.Air;
+        for (int y = Height; y >= 0; y--)
         {
-            if (block.glowLevel > 0)
+            Location loc = new Location(x, y, chunkPosition.dimension);
+            Material mat = loc.GetMaterial();
+
+            if (backgroundBlocks.ContainsKey(new int2(loc.x, loc.y)))
             {
-                if (!Block.lightSources.ContainsKey(block))
-                    Block.lightSources.Add(block, block.glowLevel);
-                Block.UpdateLightAround(block.location);
+                Destroy(backgroundBlocks[new int2(loc.x, loc.y)].gameObject);
+                backgroundBlocks.Remove(new int2(loc.x, loc.y));
             }
-        }
-    }
 
-    private IEnumerator ProcessLightLoop()
-    {
-        yield return new WaitForSecondsRealtime(0.5f);
-        
-        while (true)
-        {
-            if (lightSourcesToUpdate.Count > 0)
+            if (BackgroundBlock.viableMaterials.Contains(mat))
             {
-                var oldLightCopy = new List<Location>(lightSourcesToUpdate);
-                lightSourcesToUpdate.Clear();
-                List<KeyValuePair<Block, int>> lightToRender = null;
+                lastViableMaterial = mat;
+            }
 
-                var lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLightCopy); });
-                lightThread.Start();
+            bool placeBackground = false;
 
-                while (lightThread.IsAlive) yield return new WaitForSeconds(0.1f);
-
-                //Render
-                foreach (var entry in new List<KeyValuePair<Block, int>>(lightToRender))    //Not using dictionaries, since it doesn't work multi-threaded
-                {
-                    if (entry.Key == null)
-                        continue;
+            if (lastViableMaterial != Material.Air)
+            {
+                if (mat == Material.Air)
+                    placeBackground = true;
+                else if(loc.GetBlock() != null && !loc.GetBlock().solid)
+                    placeBackground = true;
+            }
+            
+            if(placeBackground)
+            {
+                GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
+                BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
                     
-                    entry.Key.RenderBlockLight(entry.Value);
-                }
-            }
+                blockObject.transform.position = loc.GetPosition();
+                backgroundBlock.material = lastViableMaterial;
+                backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
 
-            yield return new WaitForSecondsRealtime(0.2f);
+                if (updateLight)
+                    StartCoroutine(scheduleBlockLightUpdate(loc));
+            }
         }
     }
 
-    private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
+    private void GenerateSunlight()
     {
-        var distinctLocationsToProcess = lightToProcess.Distinct();
-        var lightToRender = new List<KeyValuePair<Block, int>>();
+        var minXPos = chunkPosition.worldX;
+        var maxXPos = chunkPosition.worldX + Width - 1;
 
-        //Process
-        foreach (var loc in distinctLocationsToProcess)
-            for (var x = loc.x - 15; x < loc.x + 15; x++)
-                for (var y = loc.y - 15; y < loc.y + 15; y++)
-                {
-                    if(y < 0 || y >= Height)
-                        continue;
-                    
-                    var blockLoc = new Location(x, y, loc.dimension);
-                    var block = blockLoc.GetBlock();
-
-                    if (block == null)
-                        continue;
-
-                    var result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
-                    lightToRender.Add(result);
-            }
-
-        //Remove Copies
-        lightToRender = lightToRender.Distinct().ToList();
-
-        return lightToRender;
+        for (var x = minXPos; x <= maxXPos; x++) 
+            LightManager.UpdateSunlightInColumn(x);
     }
 
     private void LoadAllEntities()
@@ -529,6 +503,9 @@ public class Chunk : MonoBehaviour
             return null;
         }
 
+        //Before any blocks are removed or added, check wether current block is a sunlight source
+        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(loc.GetPosition()));
+
         //remove old block
         if (GetLocalBlock(loc) != null)
         {
@@ -565,12 +542,22 @@ public class Chunk : MonoBehaviour
 
         if (isLoaded)
         {
-            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.Location.dimension);
-            Block.UpdateLightAround(loc);
+            if (doesBlockChangeImpactSunlight)
+                LightManager.UpdateSunlightInColumn(loc.x);
+
+            UpdateBackgroundBlockColumn(loc.x, true);
+            StartCoroutine(scheduleBlockLightUpdate(loc));
         }
 
         return result;
     }
+
+    IEnumerator scheduleBlockLightUpdate(Location loc)
+    {
+        yield return new WaitForSeconds(0.01f);
+        LightManager.UpdateBlockLight(loc);
+    }
+
 
     public Block GetLocalBlock(Location loc)
     {
@@ -706,7 +693,7 @@ public class Chunk : MonoBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.playerCollide)
+                if (mustBeSolid && !block.solid)
                     continue;
 
                 return block;

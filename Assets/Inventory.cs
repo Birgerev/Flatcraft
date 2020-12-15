@@ -1,8 +1,10 @@
 ﻿using System;
+using UnityEngine;
 
 [Serializable]
 public class Inventory
 {
+    public static int MaxStackSize = 64;
     public static bool anyOpen;
 
     public Location holder;
@@ -42,6 +44,11 @@ public class Inventory
             items[slot] = new ItemStack();
             return;
         }
+        if (item.amount > MaxStackSize)
+        {
+            item.amount = MaxStackSize;
+        }
+
 
         items[slot] = item;
     }
@@ -62,20 +69,20 @@ public class Inventory
     public bool AddItem(ItemStack item)
     {
         foreach (var invItem in items)
-            if (invItem.material == item.material && invItem.data == item.data)
+            if (invItem.material == item.material && invItem.amount + item.amount <= MaxStackSize)
             {
                 invItem.amount += item.amount;
                 return true;
             }
 
-        foreach (var invItem in items)
-            if (invItem == null || invItem.material == Material.Air)
+        for (int slot = 0; slot < items.Length; slot++)
+        {
+            if (getItem(slot).material == Material.Air)
             {
-                invItem.material = item.material;
-                invItem.amount = item.amount;
-                invItem.data = item.data;
+                setItem(slot, item);
                 return true;
             }
+        }
 
         return false;
     }
@@ -133,6 +140,8 @@ public class Inventory
     public virtual void Open(Location holder)
     {
         this.holder = holder;
+
+        Cursor.visible = true;
         open = true;
         anyOpen = true;
         UpdateMenuStatus();
@@ -140,6 +149,7 @@ public class Inventory
 
     public virtual void Close()
     {
+        Cursor.visible = false;
         open = false;
         anyOpen = false;
         UpdateMenuStatus();
