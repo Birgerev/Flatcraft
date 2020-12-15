@@ -297,8 +297,11 @@ public class LivingEntity : Entity
     {
         var baseColor = GetRenderer().color;
 
-        GetRenderer().color = damageColor;
-        yield return new WaitForSeconds(0.15f);
+        for (int i = 0; i < 15; i++)
+        {
+            GetRenderer().color = damageColor;
+            yield return new WaitForSeconds(0.01f);
+        }
         GetRenderer().color = baseColor;
     }
 }
