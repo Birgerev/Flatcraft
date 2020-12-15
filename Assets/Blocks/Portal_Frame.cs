@@ -4,7 +4,7 @@ using UnityEngine;
 public class Portal_Frame : Block
 {
     public static string default_texture = "block_portal_frame";
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
     public override bool triggerCollider { get; } = true;
 
     public override float breakTime { get; } = 9999999999f;
