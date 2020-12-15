@@ -11,27 +11,27 @@ public class LivingEntity : Entity
     [Header("Movement Properties")] private readonly float acceleration = 4f;
 
     private readonly float airDrag = 0.92f;
-    private readonly float climbSpeed = 0.35f;
+    private readonly float climbSpeed = 1.2f;
     protected EntityController controller;
     private readonly float groundFriction = 0.92f;
 
     //Entity Data Tags
     [EntityDataTag(false)] public float health;
 
-    protected float highestYlevelsinceground;
     private readonly float jumpVelocity = 8f;
-    private readonly float ladderFriction = 0.95f;
-    protected float last_jump_time;
+    private readonly float ladderFriction = 0.8f;
     private readonly float liquidDrag = 0.75f;
-    protected bool sneaking;
     private readonly float sneakSpeed = 1.3f;
-
-
-    //Entity State
-    protected bool sprinting;
     private readonly float sprintSpeed = 5.6f;
     private readonly float swimUpSpeed = 2f;
     private readonly float walkSpeed = 4.3f;
+
+
+    //Entity State
+    protected float highestYlevelsinceground;
+    protected float last_jump_time;
+    protected bool sprinting;
+    protected bool sneaking;
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
