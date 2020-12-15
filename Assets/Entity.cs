@@ -21,6 +21,7 @@ public class Entity : MonoBehaviour
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
     public bool dead;
+    public GameObject burningRender;
 
     [EntityDataTag(false)] public bool facingLeft;
 
@@ -92,6 +93,7 @@ public class Entity : MonoBehaviour
             ReduceFireTime();
             WaterRemoveFireTime();
         }
+        DoFireRender();
 
         CheckFireDamage();
         CheckVoidDamage();
@@ -123,6 +125,12 @@ public class Entity : MonoBehaviour
             result = false;
 
         return result;
+    }
+
+    private void DoFireRender()
+    {
+        if(burningRender != null)
+            burningRender.SetActive(IsBurning());
     }
 
     private void CheckLightUpdate()
