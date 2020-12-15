@@ -24,9 +24,7 @@ public class SingleplayerMenu : MonoBehaviour
 
         foreach (var world in worlds)
         {
-            var obj = Instantiate(worldPrefab);
-
-            obj.transform.SetParent(list);
+            var obj = Instantiate(worldPrefab, list, false);
         }
     }
 

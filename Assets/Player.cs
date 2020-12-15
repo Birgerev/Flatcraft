@@ -225,6 +225,7 @@ public class Player : HumanEntity
                 GetBlockedMouseLocation().Tick();
 
                 inventory.setItem(inventory.selectedSlot, new ItemStack(item.material, item.amount - 1));
+                return;
             }
         }
 

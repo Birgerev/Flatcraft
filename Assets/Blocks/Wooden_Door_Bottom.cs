@@ -7,7 +7,8 @@
     public override string closed_texture { get; } = "block_wooden_door_bottom_close";
     public override void BuildTick()
     {
-        (location + new Location(0, 1)).SetMaterial(Material.Wooden_Door_Top);
+        otherBlockLocation.SetMaterial(Material.Wooden_Door_Top);
+        otherBlockLocation.GetBlock().ScheduleBlockBuildTick();
 
         base.BuildTick();
     }

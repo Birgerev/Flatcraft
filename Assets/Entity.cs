@@ -135,7 +135,7 @@ public class Entity : MonoBehaviour
             var block = Location.GetBlock();
 
             if (block != null)
-                if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
+                if (block.solid && !block.triggerCollider && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
     }
