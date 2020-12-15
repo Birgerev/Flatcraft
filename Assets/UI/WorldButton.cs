@@ -7,9 +7,13 @@ public class WorldButton : MonoBehaviour
 
     public float lastClickTime;
     public Text nameText;
+    public Button button;
+    private SingleplayerMenu menuManager;
 
     private void Start()
     {
+        menuManager = GetComponentInParent<SingleplayerMenu>();
+
         var world = GetComponentInParent<SingleplayerMenu>().worlds[transform.GetSiblingIndex()];
 
         nameText.text = world.name;
@@ -19,6 +23,14 @@ public class WorldButton : MonoBehaviour
         var versionName = VersionController.GetVersionName(world.versionId);
 
         descriptionText.text = "Survival Mode (Version: "+ versionName + ", " + fileSizeRounded + "KB)";
+    }
+
+    private void Update()
+    {
+        if (menuManager.selectedWorld == transform.GetSiblingIndex())
+        {
+            button.Select();
+        }
     }
 
     public void Click()
