@@ -93,7 +93,6 @@ public class Entity : MonoBehaviour
             WaterRemoveFireTime();
         }
 
-        CheckIsInFire();
         CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
@@ -138,11 +137,6 @@ public class Entity : MonoBehaviour
 
         if (lightObj != null)
             LightManager.UpdateLightObject(lightObj);
-    }
-    private void CheckIsInFire()
-    {
-        if (Location.GetMaterial() == Material.Fire)
-            fireTime = 7;
     }
 
     private void WaterRemoveFireTime()
