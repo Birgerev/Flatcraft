@@ -75,14 +75,4 @@ public class Door : Block
 
         base.Tick();
     }
-
-    public override void UpdateColliders()
-    {
-        var open = false;
-
-        open = data.GetData("open") == "true";
-
-        GetComponent<Collider2D>().enabled = !open;
-        GetComponent<Collider2D>().isTrigger = false;
-    }
 }
