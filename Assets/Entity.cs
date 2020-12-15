@@ -16,10 +16,12 @@ public class Entity : MonoBehaviour
 
     //Entity data tags
     [EntityDataTag(false)] public float age;
+    [EntityDataTag(false)] public float fireTime;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
     public bool dead;
+    public GameObject burningRender;
 
     [EntityDataTag(false)] public bool facingLeft;
 
@@ -85,6 +87,15 @@ public class Entity : MonoBehaviour
         CheckLightUpdate();
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+
+        if (IsBurning())
+        {
+            ReduceFireTime();
+            WaterRemoveFireTime();
+        }
+        DoFireRender();
+
+        CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
@@ -100,6 +111,11 @@ public class Entity : MonoBehaviour
         _cachedposition = transform.position;
     }
 
+    public virtual bool IsBurning()
+    {
+        return (fireTime > 0);
+    }
+
     public virtual bool IsChunkLoaded()
     {
         var result = new ChunkPosition(Location).IsChunkLoaded();
@@ -111,11 +127,18 @@ public class Entity : MonoBehaviour
         return result;
     }
 
+    private void DoFireRender()
+    {
+        if(burningRender != null)
+            burningRender.SetActive(IsBurning());
+    }
+
     private void CheckLightUpdate()
     {
         if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
             UpdateLight();
     }
+
     private void UpdateLight()
     {
         LightObject lightObj = GetRenderer().GetComponent<LightObject>();
@@ -124,12 +147,23 @@ public class Entity : MonoBehaviour
             LightManager.UpdateLightObject(lightObj);
     }
 
+    private void WaterRemoveFireTime()
+    {
+        if(isInLiquid && Location.GetMaterial() == Material.Water)
+            fireTime = 0;
+    }
+
+    private void ReduceFireTime()
+    {
+        fireTime -= Time.deltaTime;
+    }
+
     private void CheckSuffocation()
     {
         if (!IsChunkLoaded())
             return;
 
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
         {
             var block = Location.GetBlock();
 
@@ -138,10 +172,22 @@ public class Entity : MonoBehaviour
                     TakeSuffocationDamage(1);
         }
     }
+    
+    private void CheckFireDamage()
+    {
+        if(IsBurning())
+            if ((Time.time % 1f) - Time.deltaTime <= 0)
+                TakeFireDamage(1);
+    }
+
+    public virtual void TakeFireDamage(float damage)
+    {
+        Damage(damage);
+    }
 
     private void CheckVoidDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (transform.position.y < 0)
                 TakeVoidDamage(2);
     }
@@ -153,9 +199,12 @@ public class Entity : MonoBehaviour
 
     private void CheckLavaDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
+            {
                 TakeLavaDamage(4);
+                fireTime = 14;
+            }
     }
 
     public virtual void TakeLavaDamage(float damage)
