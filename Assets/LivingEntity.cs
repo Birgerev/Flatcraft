@@ -168,7 +168,7 @@ public class LivingEntity : Entity
     {
         if (isOnGround)
         {
-            if (Time.time - last_jump_time < 0.7f)
+            if (Time.time - last_jump_time < 0.3f)
                 return;
 
             SetVelocity(GetVelocity() + new Vector2(0, jumpVelocity));
