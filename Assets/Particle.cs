@@ -53,10 +53,6 @@ public class Particle : Entity
     public override void Load()
     {
     }
-
-    public override void UpdateEntityLightLevel()
-    {
-    }
     
     public static void Spawn_SmallSmoke(Vector2 position, Color color)
     {

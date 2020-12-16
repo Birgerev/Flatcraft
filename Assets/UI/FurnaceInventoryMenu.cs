@@ -1,13 +1,31 @@
 ﻿using UnityEngine.UI;
+using UnityEngine;
+using System.Collections;
 
 public class FurnaceInventoryMenu : ContainerInventoryMenu
 {
     public Image fuelProgress;
     public Image smeltingProgress;
 
-    public override void FillSlots()
+    private void Start()
     {
-        base.FillSlots();
+        StartCoroutine(furnaceInvenoryLoop());
+    }
+
+    IEnumerator furnaceInvenoryLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            if (active)
+                UpdateInventory();
+        }
+    }
+
+    public override void UpdateInventory()
+    {
+        base.UpdateInventory();
 
         if (inventory == null || inventory as FurnaceInventory == null)
             return;
@@ -16,7 +34,6 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
         if (((FurnaceInventory) inventory).highestFuel == 0)
             fuelProgress.fillAmount = 0;
         smeltingProgress.fillAmount = ((FurnaceInventory) inventory).smeltingProgress / SmeltingRecepie.smeltTime;
-        //TODO show fuel left
     }
 
     public override void OnClickSlot(int slotIndex, int clickType)
@@ -24,6 +41,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
         if (slotIndex == playerInventory.baseInventorySize + ((FurnaceInventory) inventory).getResultSlot())
         {
             OnClickSmeltingResultSlot(slotIndex, clickType);
+            base.OnClickSlot(-1, -1);
             return;
         }
 

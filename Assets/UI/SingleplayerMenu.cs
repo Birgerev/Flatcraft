@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class SingleplayerMenu : MonoBehaviour
@@ -8,6 +9,8 @@ public class SingleplayerMenu : MonoBehaviour
     public int selectedWorld = -1;
     public GameObject worldPrefab;
     public List<World> worlds = new List<World>();
+    public Button playButton;
+    public Button deleteButton;
 
 
     private void Start()
@@ -16,17 +19,20 @@ public class SingleplayerMenu : MonoBehaviour
         Cursor.visible = true;
     }
 
+    private void Update()
+    {
+        playButton.interactable = (selectedWorld != -1);
+        deleteButton.interactable = (selectedWorld != -1);
+    }
+
     public void LoadWorlds()
     {
         worlds.Clear();
-
         worlds = GetWorlds();
 
         foreach (var world in worlds)
         {
-            var obj = Instantiate(worldPrefab);
-
-            obj.transform.SetParent(list);
+            var obj = Instantiate(worldPrefab, list, false);
         }
     }
 

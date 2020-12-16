@@ -160,5 +160,13 @@ public class Inventory
         var inventory = InventoryMenuManager.instance.containerInventoryMenu;
         inventory.active = open;
         inventory.inventory = this;
+        ContainerInventoryMenu invMenu = (ContainerInventoryMenu)GetInventoryMenu();
+        invMenu.active = open;
+        invMenu.inventory = this;
+    }
+
+    public virtual InventoryMenu GetInventoryMenu()
+    {
+        return InventoryMenuManager.instance.containerInventoryMenu;
     }
 }

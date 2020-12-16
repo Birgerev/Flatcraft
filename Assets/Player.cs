@@ -106,6 +106,9 @@ public class Player : HumanEntity
 
     private void performMovementInput()
     {
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            return;
+
         //Movement
         if (Input.GetKey(KeyCode.A)) Walk(-1);
         if (Input.GetKey(KeyCode.D)) Walk(1);
@@ -114,6 +117,9 @@ public class Player : HumanEntity
 
     private void PerformInput()
     {
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            return;
+
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             inventory.Open(Location);
 
@@ -150,7 +156,12 @@ public class Player : HumanEntity
 
     public Block GetMouseBlock()
     {
-        return GetBlockedMouseLocation().GetBlock();
+        Location blockedMouseLoc = GetBlockedMouseLocation();
+
+        if (blockedMouseLoc.y < 0 || blockedMouseLoc.y > Chunk.Height)
+            return null;
+
+        return blockedMouseLoc.GetBlock();
     }
 
     public Entity GetMouseEntity()
@@ -167,6 +178,8 @@ public class Player : HumanEntity
     private void MouseInput()
     {
         if (WorldManager.instance.loadingProgress != 1)
+            return;
+        if (InventoryMenuManager.instance.anyInventoryOpen())
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -220,6 +233,7 @@ public class Player : HumanEntity
                 GetBlockedMouseLocation().Tick();
 
                 inventory.setItem(inventory.selectedSlot, new ItemStack(item.material, item.amount - 1));
+                return;
             }
         }
 

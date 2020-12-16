@@ -21,9 +21,14 @@
 
     public override void UpdateMenuStatus()
     {
-        var inventory = InventoryMenuManager.instance.craftingInventoryMenu;
-        inventory.active = open;
-        inventory.inventory = this;
+        CraftingInventoryMenu invMenu = (CraftingInventoryMenu)GetInventoryMenu();
+        invMenu.active = open;
+        invMenu.inventory = this;
+    }
+
+    public override InventoryMenu GetInventoryMenu()
+    {
+        return InventoryMenuManager.instance.craftingInventoryMenu;
     }
 
     public override void Close()

@@ -56,10 +56,14 @@ public class PlayerInventory : Inventory
 
     public override void UpdateMenuStatus()
     {
-        var inventory = InventoryMenuManager.instance.playerInventoryMenu;
-        inventory.active = open;
-
+        PlayerInventoryMenu invMenu = (PlayerInventoryMenu)GetInventoryMenu();
+        invMenu.active = open;
         InventoryMenu.playerInventory = this;
+    }
+
+    public override InventoryMenu GetInventoryMenu()
+    {
+        return InventoryMenuManager.instance.playerInventoryMenu;
     }
 
     public override void Close()

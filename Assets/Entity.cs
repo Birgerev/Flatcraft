@@ -16,10 +16,12 @@ public class Entity : MonoBehaviour
 
     //Entity data tags
     [EntityDataTag(false)] public float age;
+    [EntityDataTag(false)] public float fireTime;
 
 
     public Dictionary<string, string> data = new Dictionary<string, string>();
     public bool dead;
+    public GameObject burningRender;
 
     [EntityDataTag(false)] public bool facingLeft;
 
@@ -30,7 +32,7 @@ public class Entity : MonoBehaviour
     public int id;
     public bool isInLiquid;
     public bool isOnGround;
-    public bool isOnLadder;
+    public bool isOnClimbable;
     public Vector2 lastFramePosition;
     public static int EntityCount => entities.Count;
 
@@ -65,18 +67,13 @@ public class Entity : MonoBehaviour
         entities.Add(this);
 
         Load();
+        UpdateLight();
     }
 
     public virtual void Update()
     {
         age += Time.deltaTime;
-
-        if (age > 0.3f && !hasInitializedLight)
-        {
-            UpdateEntityLightLevel();
-            hasInitializedLight = true;
-        }
-
+        
         if (isInLiquid)
             isOnGround = false;
 
@@ -84,13 +81,21 @@ public class Entity : MonoBehaviour
 
         UpdateCachedPosition();
 
-        if (Location.GetPosition() != Location.LocationByPosition(lastFramePosition, Location.dimension).GetPosition())
-            UpdateEntityLightLevel();
-
         if (ChunkLoadingEntity)
-            Chunk.CreateChunksAround(Location, Chunk.RenderDistance);
+            Chunk.CreateChunksAround(new ChunkPosition(Location), Chunk.RenderDistance);
+
+        CheckLightUpdate();
 
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+
+        if (IsBurning())
+        {
+            ReduceFireTime();
+            WaterRemoveFireTime();
+        }
+        DoFireRender();
+
+        CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
@@ -106,6 +111,11 @@ public class Entity : MonoBehaviour
         _cachedposition = transform.position;
     }
 
+    public virtual bool IsBurning()
+    {
+        return (fireTime > 0);
+    }
+
     public virtual bool IsChunkLoaded()
     {
         var result = new ChunkPosition(Location).IsChunkLoaded();
@@ -113,8 +123,39 @@ public class Entity : MonoBehaviour
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
             result = false;
-
+        
         return result;
+    }
+
+    private void DoFireRender()
+    {
+        if(burningRender != null)
+            burningRender.SetActive(IsBurning());
+    }
+
+    private void CheckLightUpdate()
+    {
+        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
+            UpdateLight();
+    }
+
+    private void UpdateLight()
+    {
+        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
+
+        if (lightObj != null)
+            LightManager.UpdateLightObject(lightObj);
+    }
+
+    private void WaterRemoveFireTime()
+    {
+        if(isInLiquid && Location.GetMaterial() == Material.Water)
+            fireTime = 0;
+    }
+
+    private void ReduceFireTime()
+    {
+        fireTime -= Time.deltaTime;
     }
 
     private void CheckSuffocation()
@@ -122,29 +163,31 @@ public class Entity : MonoBehaviour
         if (!IsChunkLoaded())
             return;
 
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
         {
             var block = Location.GetBlock();
 
             if (block != null)
-                if (block.playerCollide && !block.triggerCollider && !(block is Liquid))
+                if (block.solid && !block.trigger && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
     }
-
-    public virtual void UpdateEntityLightLevel()
+    
+    private void CheckFireDamage()
     {
-        var lightLevel = Block.GetLightLevel(Location);
-        var lightLevelFactor = lightLevel / 15f;
+        if(IsBurning())
+            if ((Time.time % 1f) - Time.deltaTime <= 0)
+                TakeFireDamage(1);
+    }
 
-        var color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
-
-        GetRenderer().color = color;
+    public virtual void TakeFireDamage(float damage)
+    {
+        Damage(damage);
     }
 
     private void CheckVoidDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (transform.position.y < 0)
                 TakeVoidDamage(2);
     }
@@ -156,9 +199,12 @@ public class Entity : MonoBehaviour
 
     private void CheckLavaDamage()
     {
-        if (Time.frameCount % (int) (0.5f / Time.deltaTime) == 1)
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
             if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
+            {
                 TakeLavaDamage(4);
+                fireTime = 14;
+            }
     }
 
     public virtual void TakeLavaDamage(float damage)
@@ -333,8 +379,7 @@ public class Entity : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.transform.position.y + 1f < transform.position.y &&
-            Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
+        if (col.transform.position.y + 1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 

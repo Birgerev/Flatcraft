@@ -11,27 +11,27 @@ public class LivingEntity : Entity
     [Header("Movement Properties")] private readonly float acceleration = 4f;
 
     private readonly float airDrag = 0.92f;
-    private readonly float climbSpeed = 0.35f;
+    private readonly float climbSpeed = 1.2f;
     protected EntityController controller;
     private readonly float groundFriction = 0.92f;
 
     //Entity Data Tags
     [EntityDataTag(false)] public float health;
 
-    protected float highestYlevelsinceground;
     private readonly float jumpVelocity = 8f;
-    private readonly float ladderFriction = 0.95f;
-    protected float last_jump_time;
+    private readonly float ladderFriction = 0.8f;
     private readonly float liquidDrag = 0.75f;
-    protected bool sneaking;
     private readonly float sneakSpeed = 1.3f;
-
-
-    //Entity State
-    protected bool sprinting;
     private readonly float sprintSpeed = 5.6f;
     private readonly float swimUpSpeed = 2f;
     private readonly float walkSpeed = 4.3f;
+
+
+    //Entity State
+    protected float highestYlevelsinceground;
+    protected float last_jump_time;
+    protected bool sprinting;
+    protected bool sneaking;
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
@@ -92,11 +92,11 @@ public class LivingEntity : Entity
     {
         if (isInLiquid)
             SetVelocity(GetVelocity() * liquidDrag);
-        if (isOnLadder)
+        if (isOnClimbable)
             SetVelocity(GetVelocity() * ladderFriction);
-        if (!isInLiquid && !isOnLadder && !isOnGround)
+        if (!isInLiquid && !isOnClimbable && !isOnGround)
             SetVelocity(new Vector3(GetVelocity().x * airDrag, GetVelocity().y));
-        if (!isInLiquid && !isOnLadder && isOnGround)
+        if (!isInLiquid && !isOnClimbable && isOnGround)
             SetVelocity(GetVelocity() * groundFriction);
     }
 
@@ -168,7 +168,7 @@ public class LivingEntity : Entity
     {
         if (isOnGround)
         {
-            if (Time.time - last_jump_time < 0.7f)
+            if (Time.time - last_jump_time < 0.3f)
                 return;
 
             SetVelocity(GetVelocity() + new Vector2(0, jumpVelocity));
@@ -177,7 +177,7 @@ public class LivingEntity : Entity
 
         if (isInLiquid && GetVelocity().y < swimUpSpeed) SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
 
-        if (isOnLadder) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
+        if (isOnClimbable) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
 
@@ -196,7 +196,7 @@ public class LivingEntity : Entity
             }
         }
 
-        if (isOnGround || isInLiquid || isOnLadder)
+        if (isOnGround || isInLiquid || isOnClimbable)
             highestYlevelsinceground = transform.position.y;
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
@@ -237,7 +237,7 @@ public class LivingEntity : Entity
             for (var y = 1; blockBeneath == null && y < 3; y++)
             {
                 var block = (Location - new Location(0, y)).GetBlock();
-                if (block != null && block.playerCollide)
+                if (block != null && block.solid)
                     blockBeneath = block;
             }
 
@@ -297,8 +297,11 @@ public class LivingEntity : Entity
     {
         var baseColor = GetRenderer().color;
 
-        GetRenderer().color = damageColor;
-        yield return new WaitForSeconds(0.15f);
+        for (int i = 0; i < 15; i++)
+        {
+            GetRenderer().color = damageColor;
+            yield return new WaitForSeconds(0.01f);
+        }
         GetRenderer().color = baseColor;
     }
 }

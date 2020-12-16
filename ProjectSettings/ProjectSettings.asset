@@ -3,7 +3,7 @@
 --- !u!129 &1
 PlayerSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 21
+  serializedVersion: 22
   productGUID: 7186b50299ec83a4dbd0ce04ad19e129
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: BigDogInc
-  productName: 2D Minecraft
+  companyName: ScuttledInterractive
+  productName: Flatcraft
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
@@ -22,7 +22,7 @@ PlayerSettings:
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 0
   m_SplashScreenLogoStyle: 0
-  m_SplashScreenDrawMode: 1
+  m_SplashScreenDrawMode: 0
   m_SplashScreenBackgroundAnimationZoom: 1
   m_SplashScreenLogoAnimationZoom: 1
   m_SplashScreenBackgroundLandscapeAspect: 1
@@ -40,8 +40,8 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos:
-  - logo: {fileID: 10404, guid: 0000000000000000e000000000000000, type: 0}
-    duration: 2
+  - logo: {fileID: 21300000, guid: e6857e0064d47f749a8356d5314a5089, type: 3}
+    duration: 3
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
   defaultScreenWidth: 1024
@@ -216,6 +216,7 @@ PlayerSettings:
   metalEditorSupport: 1
   metalAPIValidation: 1
   iOSRenderExtraFrameOnPause: 0
+  iosCopyPluginsCodeInsteadOfSymlink: 0
   appleDeveloperTeamID: 
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
@@ -225,6 +226,7 @@ PlayerSettings:
   iOSRequireARKit: 0
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0
+  shaderPrecisionModel: 0
   clonedFromGUID: 5f34be1353de5cf4398729fda238591b
   templatePackageId: com.unity.template.2d@3.2.0
   templateDefaultScene: Assets/Scenes/SampleScene.unity
@@ -261,14 +263,14 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: ac774f2dc656d584287c250284c8274e, type: 3}
+      m_Icon: {fileID: 2800000, guid: b82a218a0a009a842975f0853990dcc8, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
   - m_BuildTarget: Standalone
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: ac774f2dc656d584287c250284c8274e, type: 3}
+      m_Icon: {fileID: 2800000, guid: b82a218a0a009a842975f0853990dcc8, type: 3}
       m_Width: 1024
       m_Height: 1024
       m_Kind: 0
@@ -606,11 +608,13 @@ PlayerSettings:
     27: UNITY_POST_PROCESSING_STACK_V2
     28: UNITY_POST_PROCESSING_STACK_V2
     29: UNITY_POST_PROCESSING_STACK_V2
+  additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
+  suppressCommonWarnings: 1
   allowUnsafeCode: 0
   useDeterministicCompilation: 1
   useReferenceAssemblies: 1
@@ -690,13 +694,12 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
+  activeInputHandler: 0
   cloudProjectId: 
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: 
   organizationId: 
   cloudEnabled: 0
-  enableNativePlatformBackendsForNewInputSystem: 0
-  disableOldInputManagerSupport: 0
   legacyClampBlendShapeWeights: 1
   virtualTexturingSupportEnabled: 0

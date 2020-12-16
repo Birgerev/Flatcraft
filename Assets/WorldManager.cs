@@ -58,17 +58,21 @@ public class WorldManager : MonoBehaviour
         loadingProgress = 1f / steps;
 
         Spawn();
-
+        
         yield return new WaitForSeconds(0.1f);
+        
+        while (amountOfChunksLoading == 0 || chunks.Count == 0)
+        {
+            loadingState = "Creating Chunks";
+            yield return new WaitForSeconds(0.5f);
+        }
 
         loadingState = "Generating Spawn Chunk: 0";
         loadingProgress = 2f / steps;
-        //Load Chunk [0]
-        mainChunk = new ChunkPosition(0, Dimension.Overworld).CreateChunk();
 
         while (amountOfChunksLoading > 0 || chunks.Count < 3)
         {
-            loadingState = "Generating Chunks: " + amountOfChunksLoading;
+            loadingState = "Building Terrain: " + amountOfChunksLoading + " Chunks Left";
             yield return new WaitForSeconds(0.5f);
         }
 

@@ -1,6 +1,6 @@
 ﻿public class Log : Block
 {
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
 
     public override float breakTime { get; } = 3f;
     public override bool isFlammable { get; } = true;

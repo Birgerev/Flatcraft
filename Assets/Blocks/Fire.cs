@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public class Fire : Block
 {
@@ -6,7 +7,8 @@ public class Fire : Block
     public override string[] alternative_textures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
     public override float change_texture_time { get; } = 0.3f;
 
-    public override bool playerCollide { get; } = false;
+    public override bool solid { get; set; } = false;
+    public override bool trigger { get; set; } = true;
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
     public override float averageRandomTickDuration { get; } = 5;
@@ -56,9 +58,11 @@ public class Fire : Block
 
         base.RandomTick();
     }
-
-    public override void Tick()
+    public override void OnTriggerStay2D(Collider2D col)
     {
-        base.Tick();
+        if (col.GetComponent<Entity>() != null)
+            col.GetComponent<Entity>().fireTime = 7;
+
+        base.OnTriggerStay2D(col);
     }
 }

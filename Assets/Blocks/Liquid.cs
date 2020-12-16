@@ -7,7 +7,7 @@ public class Liquid : Block
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
-    public override bool triggerCollider { get; } = true;
+    public override bool trigger { get; set; } = true;
     
     public override void BuildTick()
     {
@@ -241,14 +241,18 @@ public class Liquid : Block
             col.GetComponent<Entity>().EnterLiquid(this);
     }
 
-    public virtual void OnTriggerStay2D(Collider2D col)
+    public override void OnTriggerStay2D(Collider2D col)
     {
         if (col.GetComponent<Entity>() != null) col.GetComponent<Entity>().isInLiquid = true;
+
+        base.OnTriggerStay2D(col);
     }
 
-    public virtual void OnTriggerExit2D(Collider2D col)
+    public override void OnTriggerExit2D(Collider2D col)
     {
         if (col.GetComponent<Entity>() != null && col.GetComponent<Entity>().isInLiquid)
             col.GetComponent<Entity>().ExitLiquid(this);
+
+        base.OnTriggerExit2D(col);
     }
 }

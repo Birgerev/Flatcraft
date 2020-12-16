@@ -23,7 +23,7 @@ public class AnimalController : EntityController
             instance.Walk(walkingRight ? 1 : -1);
 
             //Jump when there is a block in front of entity
-            if (blockInFront != null && blockInFront.playerCollide) instance.Jump();
+            if (blockInFront != null && blockInFront.solid) instance.Jump();
         }
 
         //Swim in water

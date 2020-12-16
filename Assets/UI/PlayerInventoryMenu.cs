@@ -3,18 +3,19 @@
     private CraftingRecepie curRecepie;
     public override bool wholePlayerInventory { get; } = true;
 
-    public override void FillSlots()
+    public override void UpdateInventory()
     {
-        if (active) CheckCraftingRecepies();
+        base.UpdateInventory();
 
-        base.FillSlots();
+        CheckCraftingRecepies();
     }
 
     public override void OnClickSlot(int slotIndex, int clickType)
     {
         if (slotIndex == playerInventory.getCraftingResultSlot())
         {
-            OnClickCraftingResultSlot(slotIndex, clickType);
+            OnClickSmeltingResultSlot(slotIndex, clickType);
+            base.OnClickSlot(-1, -1);
             return;
         }
 
@@ -24,18 +25,23 @@
 
     public void CheckCraftingRecepies()
     {
-        curRecepie = CraftingRecepie.FindRecepieByItems(playerInventory.getCraftingTable());
+        CraftingRecepie newRecepie = CraftingRecepie.FindRecepieByItems(playerInventory.getCraftingTable());
 
-        if (curRecepie == null)
+        if (curRecepie != newRecepie)
+            ScheduleUpdateInventory();
+
+        curRecepie = newRecepie;
+
+        if (newRecepie == null)
         {
             playerInventory.setItem(playerInventory.getCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        playerInventory.setItem(playerInventory.getCraftingResultSlot(), curRecepie.result);
+        playerInventory.setItem(playerInventory.getCraftingResultSlot(), newRecepie.result);
     }
 
-    public virtual void OnClickCraftingResultSlot(int slotIndex, int clickType)
+    public virtual void OnClickSmeltingResultSlot(int slotIndex, int clickType)
     {
         if (playerInventory.getItem(playerInventory.getCraftingResultSlot()).material == Material.Air)
             return;

@@ -55,8 +55,10 @@ public class Chunk : MonoBehaviour
     public int age;
 
     public GameObject blockPrefab;
+    public GameObject backgroundBlockPrefab;
 
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
+    public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
     private Perlin caveNoise;
 
@@ -76,7 +78,7 @@ public class Chunk : MonoBehaviour
 
         StartCoroutine(SelfDestructionChecker());
 
-        gameObject.name = "Chunk [" + chunkPosition.chunkX + "]";
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
 
@@ -104,12 +106,13 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public static void CreateChunksAround(Location loc, int distance)
+    public static void CreateChunksAround(ChunkPosition loc, int distance)
     {
         for (var i = -distance; i < distance; i++)
         {
-            var cPos = new ChunkPosition((int) (loc.x / (float) Width) + i, loc.dimension);
-            if (!cPos.IsChunkLoaded())
+            var cPos = new ChunkPosition(loc.chunkX + i, loc.dimension);
+            
+            if (!cPos.IsChunkCreated())
                 cPos.CreateChunk();
         }
     }
@@ -151,18 +154,26 @@ public class Chunk : MonoBehaviour
 
     private IEnumerator SelfDestructionChecker()
     {
+        var timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            var timePassedOutsideRenderDistance = 0f;
-            while (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))        //Is outside one chunk of the render distance, begin self destruction
+            if (Player.localInstance != null && Player.localInstance.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
             {
-                yield return new WaitForSeconds(1f);
+                DestroyChunk();
+            }
+            
+            if (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            {
                 timePassedOutsideRenderDistance += 1f;
                 if (timePassedOutsideRenderDistance > OutsideRenderDistanceUnloadTime)
                 {
+                    timePassedOutsideRenderDistance = 0f;
                     DestroyChunk();
-                    yield break;
                 }
+            }
+            else
+            {
+                timePassedOutsideRenderDistance = 0f;
             }
 
             yield return new WaitForSeconds(1f);
@@ -238,8 +249,10 @@ public class Chunk : MonoBehaviour
                 var i = 0;
                 foreach (var line in lines)
                 {
-                    var loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
-                        int.Parse(line.Split('*')[0].Split(',')[1]));
+                    var loc = new Location(
+                        int.Parse(line.Split('*')[0].Split(',')[0]),
+                        int.Parse(line.Split('*')[0].Split(',')[1]),
+                        chunkPosition.dimension);
                     var mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
                     var data = new BlockData(line.Split('*')[2]);
 
@@ -295,113 +308,77 @@ public class Chunk : MonoBehaviour
             File.WriteAllLines(chunkDataPath, chunkDataLines);
         }
 
+        GenerateBackgroundBlocks();
         StartCoroutine(Tick());
 
         isLoading = false;
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
 
-        StartCoroutine(GenerateSunlightLoop());
-        GenerateLight();
-        StartCoroutine(ProcessLightLoop());
+        yield return new WaitForSeconds(0.2f);
+        GenerateSunlight();
+        LightManager.UpdateChunkLight(chunkPosition);
     }
 
-    private IEnumerator GenerateSunlightLoop()
+    private void GenerateBackgroundBlocks()
     {
-        var lastUpdateTime = "none";
-
-        while (true)
+        for (int x = 0; x < Width; x++)
         {
-            var isNight = WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2;
-            var currentTime = isNight ? "night" : "day";
-
-            if (currentTime != lastUpdateTime)
-            {
-                //Fill sunlight source list
-                var minXPos = chunkPosition.worldX;
-                var maxXPos = chunkPosition.worldX + Width - 1;
-
-                for (var x = minXPos; x <= maxXPos; x++) Block.UpdateSunlightSourceAt(x, chunkPosition.dimension);
-
-                lastUpdateTime = currentTime;
-            }
-
-            yield return new WaitForSecondsRealtime(10f);
+            UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
         }
     }
 
-    public void GenerateLight()
+    public void UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
-        //Update Light Sources (not sunlight again)
-        foreach (var block in GetComponentsInChildren<Block>())
+        Material lastViableMaterial = Material.Air;
+        for (int y = Height; y >= 0; y--)
         {
-            if (block.glowLevel > 0)
+            Location loc = new Location(x, y, chunkPosition.dimension);
+            Material mat = loc.GetMaterial();
+
+            if (backgroundBlocks.ContainsKey(new int2(loc.x, loc.y)))
             {
-                if (!Block.lightSources.ContainsKey(block))
-                    Block.lightSources.Add(block, block.glowLevel);
-                Block.UpdateLightAround(block.location);
+                Destroy(backgroundBlocks[new int2(loc.x, loc.y)].gameObject);
+                backgroundBlocks.Remove(new int2(loc.x, loc.y));
             }
-        }
-    }
 
-    private IEnumerator ProcessLightLoop()
-    {
-        yield return new WaitForSecondsRealtime(0.5f);
-        
-        while (true)
-        {
-            if (lightSourcesToUpdate.Count > 0)
+            if (BackgroundBlock.viableMaterials.Contains(mat))
             {
-                var oldLightCopy = new List<Location>(lightSourcesToUpdate);
-                lightSourcesToUpdate.Clear();
-                List<KeyValuePair<Block, int>> lightToRender = null;
+                lastViableMaterial = mat;
+            }
 
-                var lightThread = new Thread(() => { lightToRender = processDirtyLight(oldLightCopy); });
-                lightThread.Start();
+            bool placeBackground = false;
 
-                while (lightThread.IsAlive) yield return new WaitForSeconds(0.1f);
-
-                //Render
-                foreach (var entry in new List<KeyValuePair<Block, int>>(lightToRender))    //Not using dictionaries, since it doesn't work multi-threaded
-                {
-                    if (entry.Key == null)
-                        continue;
+            if (lastViableMaterial != Material.Air)
+            {
+                if (mat == Material.Air)
+                    placeBackground = true;
+                else if(loc.GetBlock() != null && !loc.GetBlock().solid)
+                    placeBackground = true;
+            }
+            
+            if(placeBackground)
+            {
+                GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
+                BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
                     
-                    entry.Key.RenderBlockLight(entry.Value);
-                }
-            }
+                blockObject.transform.position = loc.GetPosition();
+                backgroundBlock.material = lastViableMaterial;
+                backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
 
-            yield return new WaitForSecondsRealtime(0.2f);
+                if (updateLight)
+                    StartCoroutine(scheduleBlockLightUpdate(loc));
+            }
         }
     }
 
-    private List<KeyValuePair<Block, int>> processDirtyLight(List<Location> lightToProcess)
+    private void GenerateSunlight()
     {
-        var distinctLocationsToProcess = lightToProcess.Distinct();
-        var lightToRender = new List<KeyValuePair<Block, int>>();
+        var minXPos = chunkPosition.worldX;
+        var maxXPos = chunkPosition.worldX + Width - 1;
 
-        //Process
-        foreach (var loc in distinctLocationsToProcess)
-            for (var x = loc.x - 15; x < loc.x + 15; x++)
-                for (var y = loc.y - 15; y < loc.y + 15; y++)
-                {
-                    if(y < 0 || y >= Height)
-                        continue;
-                    
-                    var blockLoc = new Location(x, y, loc.dimension);
-                    var block = blockLoc.GetBlock();
-
-                    if (block == null)
-                        continue;
-
-                    var result = new KeyValuePair<Block, int>(block, Block.GetLightLevel(blockLoc));
-                    lightToRender.Add(result);
-            }
-
-        //Remove Copies
-        lightToRender = lightToRender.Distinct().ToList();
-
-        return lightToRender;
+        for (var x = minXPos; x <= maxXPos; x++) 
+            LightManager.UpdateSunlightInColumn(x);
     }
 
     private void LoadAllEntities()
@@ -513,12 +490,7 @@ public class Chunk : MonoBehaviour
 
     private bool IsBlockLocal(Location loc)
     {
-        var local = new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension;
-
-        if (loc.y < 0 || loc.y > Height || loc.dimension != chunkPosition.dimension)
-            local = false;
-
-        return local;
+        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y <= Height);
     }
 
     public Block CreateLocalBlock(Location loc, Material mat, BlockData data)
@@ -536,6 +508,9 @@ public class Chunk : MonoBehaviour
                              "]");
             return null;
         }
+
+        //Before any blocks are removed or added, check wether current block is a sunlight source
+        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(loc.GetPosition()));
 
         //remove old block
         if (GetLocalBlock(loc) != null)
@@ -573,12 +548,22 @@ public class Chunk : MonoBehaviour
 
         if (isLoaded)
         {
-            Block.UpdateSunlightSourceAt(loc.x, Player.localInstance.Location.dimension);
-            Block.UpdateLightAround(loc);
+            if (doesBlockChangeImpactSunlight)
+                LightManager.UpdateSunlightInColumn(loc.x);
+
+            UpdateBackgroundBlockColumn(loc.x, true);
+            StartCoroutine(scheduleBlockLightUpdate(loc));
         }
 
         return result;
     }
+
+    IEnumerator scheduleBlockLightUpdate(Location loc)
+    {
+        yield return new WaitForSeconds(0.01f);
+        LightManager.UpdateBlockLight(loc);
+    }
+
 
     public Block GetLocalBlock(Location loc)
     {
@@ -624,51 +609,53 @@ public class Chunk : MonoBehaviour
 
         //-Terrain Generation-//
 
-        //-Ground-//
-        if (noiseValue > 0.1f)
-        {
-            if (biome.name == "desert")
+        if(chunkPosition.dimension == Dimension.Overworld) {
+            //-Ground-//
+            if (noiseValue > 0.1f)
             {
-                mat = Material.Sand;
-                if (noiseValue > biome.stoneLayerNoiseValue - 2)
-                    mat = Material.Sandstone;
+                if (biome.name == "desert")
+                {
+                    mat = Material.Sand;
+                    if (noiseValue > biome.stoneLayerNoiseValue - 2)
+                        mat = Material.Sandstone;
+                }
+                else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
+                         biome.name == "plains")
+                {
+                    mat = Material.Grass;
+                }
+
+                if (noiseValue > biome.stoneLayerNoiseValue) mat = Material.Stone;
             }
-            else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
-                     biome.name == "plains")
+
+            //-Lakes-//
+            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
+
+            //-Dirt & Gravel Patches-//
+            if (mat == Material.Stone)
             {
-                mat = Material.Grass;
+                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
+                    mat = Material.Dirt;
+                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
+                    mat = Material.Gravel;
             }
 
-            if (noiseValue > biome.stoneLayerNoiseValue) mat = Material.Stone;
-        }
+            //-Sea-//
+            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
 
-        //-Lakes-//
-        if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-        //-Dirt & Gravel Patches-//
-        if (mat == Material.Stone)
-        {
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
-                mat = Material.Dirt;
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
-                mat = Material.Gravel;
-        }
-
-        //-Sea-//
-        if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-        //-Caves-//
-        if (noiseValue > 0.1f)
-        {
-            var caveValue =
-                (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
-            if (caveValue > CaveHollowValue)
+            //-Caves-//
+            if (noiseValue > 0.1f)
             {
-                mat = Material.Air;
+                var caveValue =
+                    (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
+                if (caveValue > CaveHollowValue)
+                {
+                    mat = Material.Air;
 
-                //-Lava Lakes-//
-                if (loc.y <= LavaHeight)
-                    mat = Material.Lava;
+                    //-Lava Lakes-//
+                    if (loc.y <= LavaHeight)
+                        mat = Material.Lava;
+                }
             }
         }
 
@@ -714,7 +701,7 @@ public class Chunk : MonoBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.playerCollide)
+                if (mustBeSolid && !block.solid)
                     continue;
 
                 return block;
