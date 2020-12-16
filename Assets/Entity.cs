@@ -379,8 +379,7 @@ public class Entity : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.transform.position.y + 1f < transform.position.y &&
-            Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
+        if (col.transform.position.y + 1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
 

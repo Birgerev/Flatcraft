@@ -106,6 +106,9 @@ public class Player : HumanEntity
 
     private void performMovementInput()
     {
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            return;
+
         //Movement
         if (Input.GetKey(KeyCode.A)) Walk(-1);
         if (Input.GetKey(KeyCode.D)) Walk(1);
@@ -114,6 +117,9 @@ public class Player : HumanEntity
 
     private void PerformInput()
     {
+        if (InventoryMenuManager.instance.anyInventoryOpen())
+            return;
+
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             inventory.Open(Location);
 
@@ -172,6 +178,8 @@ public class Player : HumanEntity
     private void MouseInput()
     {
         if (WorldManager.instance.loadingProgress != 1)
+            return;
+        if (InventoryMenuManager.instance.anyInventoryOpen())
             return;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
