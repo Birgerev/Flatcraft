@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Unity.Burst;
-using Unity.Mathematics;
 using UnityEngine;
 using Random = System.Random;
 
@@ -28,7 +25,8 @@ public class Block : MonoBehaviour
 
     public virtual bool solid { get; set; } = true;
     public virtual bool isFlammable { get; } = false;
-    public virtual bool triggerCollider { get; } = false;
+    public virtual bool trigger { get; set; } = false;
+    public virtual bool climbable { get; } = false;
     public virtual bool requiresGround { get; } = false;
     public virtual bool autosave { get; } = false;
     public virtual bool autoTick { get; } = false;
@@ -194,9 +192,9 @@ public class Block : MonoBehaviour
 
     public virtual void UpdateColliders()
     {
-        gameObject.layer = LayerMask.NameToLayer((solid || triggerCollider) ? "Block" : "NoCollisionBlock");
+        gameObject.layer = LayerMask.NameToLayer((solid || trigger) ? "Block" : "NoCollisionBlock");
 
-        GetComponent<Collider2D>().isTrigger = triggerCollider;
+        GetComponent<Collider2D>().isTrigger = trigger;
     }
 
     public Color GetRandomColourFromTexture()
@@ -381,6 +379,20 @@ public class Block : MonoBehaviour
     public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
+    }
+
+    public virtual void OnTriggerStay2D(Collider2D col)
+    {
+        if(climbable)
+            if (col.GetComponent<Entity>() != null) 
+                col.GetComponent<Entity>().isOnClimbable = true;
+    }
+
+    public virtual void OnTriggerExit2D(Collider2D col)
+    {
+        if (climbable)
+            if (col.GetComponent<Entity>() != null) 
+                col.GetComponent<Entity>().isOnClimbable = false;
     }
 }
 

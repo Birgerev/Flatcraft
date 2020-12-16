@@ -92,11 +92,11 @@ public class LivingEntity : Entity
     {
         if (isInLiquid)
             SetVelocity(GetVelocity() * liquidDrag);
-        if (isOnLadder)
+        if (isOnClimbable)
             SetVelocity(GetVelocity() * ladderFriction);
-        if (!isInLiquid && !isOnLadder && !isOnGround)
+        if (!isInLiquid && !isOnClimbable && !isOnGround)
             SetVelocity(new Vector3(GetVelocity().x * airDrag, GetVelocity().y));
-        if (!isInLiquid && !isOnLadder && isOnGround)
+        if (!isInLiquid && !isOnClimbable && isOnGround)
             SetVelocity(GetVelocity() * groundFriction);
     }
 
@@ -177,7 +177,7 @@ public class LivingEntity : Entity
 
         if (isInLiquid && GetVelocity().y < swimUpSpeed) SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
 
-        if (isOnLadder) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
+        if (isOnClimbable) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
 
@@ -196,7 +196,7 @@ public class LivingEntity : Entity
             }
         }
 
-        if (isOnGround || isInLiquid || isOnLadder)
+        if (isOnGround || isInLiquid || isOnClimbable)
             highestYlevelsinceground = transform.position.y;
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;

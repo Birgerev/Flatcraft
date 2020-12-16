@@ -5,7 +5,7 @@ public class Portal_Frame : Block
 {
     public static string default_texture = "block_portal_frame";
     public override bool solid { get; set; } = false;
-    public override bool triggerCollider { get; } = true;
+    public override bool trigger { get; set; } = true;
 
     public override float breakTime { get; } = 9999999999f;
 
@@ -15,7 +15,7 @@ public class Portal_Frame : Block
     private Dictionary<Entity, float> entityTimeSpentInsidePortal = new Dictionary<Entity, float>();
     private static float timeRequiredBeforeTeleport = 3f;
 
-    public virtual void OnTriggerStay2D(Collider2D col)
+    public override void OnTriggerStay2D(Collider2D col)
     {
         Entity entity = col.GetComponent<Entity>();
 
@@ -33,6 +33,8 @@ public class Portal_Frame : Block
             if (timeSpentInPortal >= timeRequiredBeforeTeleport)
                 PortalTeleport(entity);
         }
+
+        base.OnTriggerStay2D(col);
     }
 
     public virtual void OnTriggerExit2D(Collider2D col)

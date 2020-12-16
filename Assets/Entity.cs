@@ -32,7 +32,7 @@ public class Entity : MonoBehaviour
     public int id;
     public bool isInLiquid;
     public bool isOnGround;
-    public bool isOnLadder;
+    public bool isOnClimbable;
     public Vector2 lastFramePosition;
     public static int EntityCount => entities.Count;
 
@@ -168,7 +168,7 @@ public class Entity : MonoBehaviour
             var block = Location.GetBlock();
 
             if (block != null)
-                if (block.solid && !block.triggerCollider && !(block is Liquid))
+                if (block.solid && !block.trigger && !(block is Liquid))
                     TakeSuffocationDamage(1);
         }
     }
