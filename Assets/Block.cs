@@ -125,8 +125,7 @@ public class Block : MonoBehaviour
     public virtual void Tick()
     {
         if (age == 0 && new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f,
-                1.5f);
+            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
         checkGround();
         UpdateColliders();
