@@ -11,11 +11,11 @@ public class Crafting_Table : InventoryContainer
 
     public override Type inventoryType { get; } = typeof(CraftingInventory);
 
-    public override void Tick()
+    private void Update()
     {
-        base.Tick();
-
-        CheckCraftingRecepies();
+        if(getInventory() != null)
+            if(getInventory().open)
+                CheckCraftingRecepies();
     }
 
     public void CheckCraftingRecepies()

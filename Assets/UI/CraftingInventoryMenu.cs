@@ -5,6 +5,7 @@
         if (slotIndex == playerInventory.baseInventorySize + ((CraftingInventory) inventory).getCraftingResultSlot())
         {
             OnClickCraftingResultSlot(slotIndex, clickType);
+            base.OnClickSlot(-1, -1);
             return;
         }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 
 public class InventoryMenu : MonoBehaviour
@@ -23,6 +24,12 @@ public class InventoryMenu : MonoBehaviour
         if (playerInventory == null)
             return;
 
+        playerInventory = Player.localInstance.inventory;
+        SetTitle();
+
+        if (inventoryAge == 0 && active)
+            ScheduleUpdateInventory();
+
         if (active)
             inventoryAge++;
         else inventoryAge = 0;
@@ -33,11 +40,6 @@ public class InventoryMenu : MonoBehaviour
         GetComponent<CanvasGroup>().interactable = active;
         GetComponent<CanvasGroup>().blocksRaycasts = active;
 
-        playerInventory = Player.localInstance.inventory;
-
-        SetTitle();
-
-        FillSlots();
     }
 
     public virtual void CheckClose()
@@ -56,14 +58,39 @@ public class InventoryMenu : MonoBehaviour
         playerInventoryTitle.text = playerInventory.name;
     }
 
+    public virtual void ScheduleUpdateInventory()
+    {
+        StartCoroutine(scheduleUpdateInventory());
+    }
+
+    IEnumerator scheduleUpdateInventory()
+    {
+        yield return new WaitForSeconds(0.01f);
+
+        if(active)
+            UpdateInventory();
+    }
+
+    public virtual void UpdateInventory()
+    {
+        FillSlots();
+        UpdateSlots();
+    }
+
     public virtual void FillSlots()
     {
-        if (active)
-        {
-            var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
+        var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
 
-            for (var i = 0; i < size; i++) getSlotObject(i).item = getItem(i);
-        }
+        for (var i = 0; i < size; i++) getSlotObject(i).item = getItem(i);
+    }
+    public virtual void UpdateSlots()
+    {
+
+        var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
+
+        for (var i = 0; i < size; i++) getSlotObject(i).UpdateSlot();
+
+        pointerSlot.UpdateSlot();
     }
 
     public virtual ItemSlot getSlotObject(int index)
@@ -87,10 +114,10 @@ public class InventoryMenu : MonoBehaviour
     {
         if (clickType == 0)
             OnLeftClickSlot(slotIndex);
-        else
+        else if (clickType == 1)
             OnRightClickSlot(slotIndex);
 
-        pointerSlot.UpdateSlot();
+        ScheduleUpdateInventory();
     }
 
     public virtual void OnRightClickSlot(int slotIndex)

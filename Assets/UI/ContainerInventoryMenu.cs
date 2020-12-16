@@ -31,9 +31,16 @@ public class ContainerInventoryMenu : InventoryMenu
     public override void FillSlots()
     {
         base.FillSlots();
-        if (active)
-            for (var i = playerInventory.baseInventorySize; i < playerInventory.baseInventorySize + inventory.size; i++)
-                if (getSlotObject(i) != null)
-                    getSlotObject(i).item = getItem(i);
+        for (var i = playerInventory.baseInventorySize; i < playerInventory.baseInventorySize + inventory.size; i++)
+            if (getSlotObject(i) != null)
+                getSlotObject(i).item = getItem(i);
+    }
+    public override void UpdateSlots()
+    {
+        base.UpdateSlots();
+
+        for (var i = playerInventory.baseInventorySize; i < playerInventory.baseInventorySize + inventory.size; i++)
+            if (getSlotObject(i) != null)
+                getSlotObject(i).UpdateSlot();
     }
 }
