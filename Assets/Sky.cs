@@ -34,7 +34,7 @@ public class Sky : MonoBehaviour
 
         lightLevels();
 
-        GetComponent<Animator>().SetFloat("time", timeOfDay);
+        GetComponent<Animator>().SetFloat("time", timeOfDay * 100);
     }
 
     private void lightLevels()
