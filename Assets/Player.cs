@@ -285,6 +285,7 @@ public class Player : HumanEntity
     {
         bool criticalHit = false;
         float damage = inventory.getSelectedItem().GetItemEntityDamage();
+
         
         if (GetVelocity().y < -0.5f)
             criticalHit = true;
@@ -294,6 +295,9 @@ public class Player : HumanEntity
             damage *= 1.5f;
             entity.PlayCriticalDamageEffect();
         }
+
+        if (inventory.getSelectedItem().durability != -1)
+            DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage);
     }

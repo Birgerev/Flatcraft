@@ -7,16 +7,23 @@
     {
         var block = loc.GetBlock();
 
-        if (block != null) block.Hit(1 / Player.interactionsPerPerSecond, tool_type, tool_level);
+        if (block != null) 
+            block.Hit(1 / Player.interactionsPerPerSecond, tool_type, tool_level);
     }
 
     public override void InteractRight(Location loc, bool firstFrameDown)
     {
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
+        {
             loc.SetMaterial(Material.Farmland_Dry).Tick();
-        
+            Player.localInstance.DoToolDurability();
+        }
+
         if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.Air)
+        {
             loc.SetMaterial(Material.Fire).Tick();
+            Player.localInstance.DoToolDurability();
+        }
 
         base.InteractRight(loc, firstFrameDown);
     }
