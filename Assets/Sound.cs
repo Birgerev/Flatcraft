@@ -24,6 +24,11 @@ public class Sound : MonoBehaviour
 
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch)
     {
+        Play(loc, sound, type, minPitch, maxPitch, 15);
+    }
+
+    public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance)
+    {
         var obj = new GameObject("sound " + sound);
         var source = obj.AddComponent<AudioSource>();
 
@@ -58,6 +63,7 @@ public class Sound : MonoBehaviour
         source.clip = clip;
         obj.transform.position = loc.GetPosition();
         source.pitch = pitch;
+        source.maxDistance = distance;
 
 
         source.Play();
