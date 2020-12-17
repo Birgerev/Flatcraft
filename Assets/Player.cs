@@ -24,7 +24,7 @@ public class Player : HumanEntity
     public float maxHunger = 20;
     public float reach = 5;
 
-    [EntityDataTag(true)] public Location spawnLocation = new Location(0, 80);
+    [EntityDataTag(true)] public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
@@ -38,9 +38,8 @@ public class Player : HumanEntity
         inventory = new PlayerInventory();
         Cursor.visible = false;
 
-        if (!HasBeenSaved())
-            StartCoroutine(ValidSpawnOnceChunkLoaded(0, true));
-            
+        StartCoroutine(ValidSpawnOnceChunkLoaded());
+
         base.Start();
     }
 
@@ -347,6 +346,12 @@ public class Player : HumanEntity
         hunger = 20;
 
         base.Die();
+
+        Location spawnLocation = new Location(0, 80, Dimension.Overworld);
+
+        if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
+            spawnLocation = bedLocation;
+
         Location = spawnLocation;
         UpdateCachedPosition();
         Save();
@@ -388,14 +393,15 @@ public class Player : HumanEntity
         return resultData;
     }
 
-    private IEnumerator ValidSpawnOnceChunkLoaded(int x, bool saveSpawnLocation)
+    private IEnumerator ValidSpawnOnceChunkLoaded()
     {
-        while (!IsChunkLoaded()) yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
+        while (!IsChunkLoaded()) 
+            yield return new WaitForSeconds(0.1f);
 
         highestYlevelsinceground = 0; //Reset falldamage
-        var validLoc = ValidSpawn(x);
+        Location validLoc = ValidSpawn(Location.x);
+
         Location = validLoc;
-        if (saveSpawnLocation)
-            spawnLocation = validLoc;
     }
 }
