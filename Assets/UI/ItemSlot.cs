@@ -21,8 +21,6 @@ public class ItemSlot : MonoBehaviour
             canvasGroup = GetComponentInParent<CanvasGroup>();
             return;
         }
-
-        if (Time.frameCount % 30 == 0 && canvasGroup.interactable) UpdateSlot();
     }
 
 
