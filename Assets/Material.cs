@@ -72,6 +72,7 @@
     Oak_Plank_Stairs,
 
     Wooden_Trapdoor,
+    Wooden_Door,
     Wooden_Door_Top,
     Wooden_Door_Bottom,
 

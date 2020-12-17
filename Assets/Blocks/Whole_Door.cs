@@ -6,7 +6,18 @@ public class Whole_Door : Door
         location + new Location(0, GetMaterial() == Material.Wooden_Door_Bottom ? 1 : -1);
 
     public virtual Material otherBlockMaterial => Material.Air;
-    
+
+    public override void BuildTick()
+    {
+        if(otherBlockLocation.GetMaterial() != otherBlockMaterial)
+        {
+            otherBlockLocation.SetMaterial(otherBlockMaterial);
+            otherBlockLocation.GetBlock().ScheduleBlockBuildTick();
+        }
+
+        base.BuildTick();
+    }
+
     public override void Interact()
     {
         var otherDoor = (Door) otherBlockLocation.GetBlock();

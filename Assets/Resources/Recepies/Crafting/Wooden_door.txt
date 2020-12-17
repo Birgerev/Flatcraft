@@ -1,4 +1,4 @@
-Wooden_Door_Bottom*3*
+Wooden_Door*3*
 Oak_Planks*0,0*
 Oak_Planks*1,0*
 Oak_Planks*0,1*
