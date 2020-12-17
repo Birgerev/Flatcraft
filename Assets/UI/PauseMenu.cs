@@ -35,14 +35,12 @@ public class PauseMenu : MonoBehaviour
     {
         active = setActive;
         
-        print("ea"+active);
         Cursor.visible = active;
         Time.timeScale = active ? 0 : 1;
 
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = active;
         GetComponent<CanvasGroup>().blocksRaycasts = active;
-        print("abom");
     }
 
     public void BackToMainMenu()

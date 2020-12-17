@@ -2,14 +2,12 @@
 
 public class DroppedItem : Entity
 {
-    [EntityDataTag(false)] public bool canPickup = true;
-
-
     //Entity State
     private float cosIndex;
     //Entity Properties
 
     //Entity Data Tags
+    [EntityDataTag(false)] public bool canPickup = true;
     [EntityDataTag(true)] public ItemStack item = new ItemStack();
 
     // Start is called before the first frame update

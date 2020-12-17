@@ -6,6 +6,12 @@ public class HotbarItemSlot : ItemSlot
     public Sprite normal;
     public Sprite selected;
 
+    private void Update()
+    {
+        if (Time.frameCount % 2 == 0) 
+            UpdateSlot();
+    }
+
     // Update is called once per frame
     public override void UpdateSlot()
     {

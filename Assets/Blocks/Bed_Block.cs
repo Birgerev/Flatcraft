@@ -25,7 +25,7 @@
     public override void Interact()
     {
         Player.localInstance.Sleep();
-        Player.localInstance.spawnLocation = location;
+        Player.localInstance.bedLocation = location;
 
         base.Interact();
     }
@@ -37,7 +37,8 @@
             var otherBlock = otherBlockLocation.GetBlock();
             if (otherBlock == null)
                 Break(false);
-            else if (otherBlock.GetMaterial() != otherBlockMaterial) Break(false);
+            else if (otherBlock.GetMaterial() != otherBlockMaterial) 
+                Break(false);
         }
 
         base.Tick();
