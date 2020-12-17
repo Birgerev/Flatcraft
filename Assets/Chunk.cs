@@ -15,7 +15,7 @@ using Random = System.Random;
 public class Chunk : MonoBehaviour
 {
     public const int Width = 16, Height = 255;
-    public const int RenderDistance = 4;
+    public const int RenderDistance = 6;
     public const int AmountOfChunksInRegion = 16;
     public const int SpawnChunkDistance = 0;
     public const int OutsideRenderDistanceUnloadTime = 10;
@@ -315,9 +315,16 @@ public class Chunk : MonoBehaviour
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
 
-        yield return new WaitForSeconds(0.2f);
-        GenerateSunlight();
-        LightManager.UpdateChunkLight(chunkPosition);
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
+            {
+                GenerateSunlight();
+                LightManager.UpdateChunkLight(chunkPosition);
+                break;
+            }
+        }
     }
 
     private void GenerateBackgroundBlocks()
