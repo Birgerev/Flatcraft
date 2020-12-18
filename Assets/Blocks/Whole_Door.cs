@@ -3,7 +3,7 @@
 public class Whole_Door : Door
 {
     public Location otherBlockLocation =>
-        location + new Location(0, GetMaterial() == Material.Wooden_Door_Bottom ? 1 : -1);
+        location + new Location(0, IsBottomDoorPart() ? 1 : -1);
 
     public virtual Material otherBlockMaterial => Material.Air;
 
@@ -26,6 +26,16 @@ public class Whole_Door : Door
         otherDoor.SetOpenState(open);
 
         base.Interact();
+    }
+    public override void PlaySound(bool open)
+    {
+        if (IsBottomDoorPart())
+            base.PlaySound(open);
+    }
+
+    public bool IsBottomDoorPart()
+    {
+        return GetMaterial() == Material.Wooden_Door_Bottom;
     }
 
     public override void Break()
