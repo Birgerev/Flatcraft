@@ -1,4 +1,6 @@
 ﻿using System;
+using UnityEngine;
+using System.Collections;
 
 public class Chest : InventoryContainer
 {
@@ -28,5 +30,21 @@ public class Chest : InventoryContainer
     private Inventory getInventory()
     {
         return inventory;
+    }
+    public override void Interact()
+    {
+        StartCoroutine(awaitInventoryClosed());
+
+        base.Interact();
+    }
+
+    IEnumerator awaitInventoryClosed()
+    {
+        Sound.Play(location, "random/door/door_open", SoundType.Blocks, 0.8f, 1.3f);
+        yield return new WaitForSeconds(0.5f);
+        while (getInventory().open)
+            yield return new WaitForSeconds(0.2f);
+
+        Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);
     }
 }
