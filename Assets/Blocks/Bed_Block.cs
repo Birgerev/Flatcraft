@@ -32,14 +32,11 @@
 
     public override void Tick()
     {
-        if (age > 0)
-        {
-            var otherBlock = otherBlockLocation.GetBlock();
-            if (otherBlock == null)
-                Break(false);
-            else if (otherBlock.GetMaterial() != otherBlockMaterial) 
-                Break(false);
-        }
+        var otherBlock = otherBlockLocation.GetBlock();
+        if (otherBlock == null)
+            Break(false);
+        else if (otherBlock.GetMaterial() != otherBlockMaterial) 
+            Break(false);
 
         base.Tick();
     }

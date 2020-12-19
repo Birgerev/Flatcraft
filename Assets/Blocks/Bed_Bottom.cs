@@ -4,16 +4,16 @@
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override void Tick()
+    public override void BuildTick()
     {
-        base.Tick();
+        base.BuildTick();
 
-        if (age == 0)
+        if (otherBlockLocation.GetMaterial() == Material.Air)
         {
-            var otherMaterial = otherBlockLocation.GetMaterial();
-            if (otherMaterial == Material.Air)
-                otherBlockLocation.SetMaterial(otherBlockMaterial);
-            else if (otherMaterial != otherBlockMaterial) Break(true);
+            otherBlockLocation.SetMaterial(otherBlockMaterial).GetBlock().BuildTick();
+            otherBlockLocation.Tick();
         }
+        else 
+            Break(true);
     }
 }
