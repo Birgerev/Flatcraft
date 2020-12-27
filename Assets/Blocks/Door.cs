@@ -27,8 +27,15 @@ public class Door : Block
     {
         data.SetData("open", open ? "true" : "false");
 
+        PlaySound(open);
+
         Tick();
         Autosave();
+    }
+
+    public virtual void PlaySound(bool open)
+    {
+        Sound.Play(location, "random/door/door_" + (open ? "open" : "close"), SoundType.Blocks, 0.8f, 1.2f);
     }
 
     public bool GetOpenState()

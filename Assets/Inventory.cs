@@ -129,9 +129,7 @@ public class Inventory
     {
         foreach (var item in items)
         {
-            dropPosition = dropPosition + new Location(0, 1);
-
-            item.Drop(dropPosition, true);
+            item.Drop(dropPosition + new Location(0, 1), true);
         }
 
         items = new ItemStack[size];
