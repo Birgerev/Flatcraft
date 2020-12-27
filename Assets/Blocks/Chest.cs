@@ -50,7 +50,7 @@ public class Chest : InventoryContainer
 
         Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.1f);
         texture = default_texture;
         Render();
     }
