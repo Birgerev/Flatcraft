@@ -1,6 +1,6 @@
 ﻿public class Wooden_Trapdoor : Door
 {
-    public static string default_texture = "block_wooden_trapdoor_close";
+    public override string texture { get; set; } = "block_wooden_trapdoor_close";
     public override string open_texture { get; } = "block_wooden_trapdoor_open";
     public override string closed_texture { get; } = "block_wooden_trapdoor_close";
     public override float breakTime { get; } = 3f;

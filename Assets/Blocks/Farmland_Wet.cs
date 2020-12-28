@@ -1,6 +1,6 @@
 ﻿public class Farmland_Wet : Block
 {
-    public static string default_texture = "block_farmland_wet";
+    public override string texture { get; set; } = "block_farmland_wet";
     public override float breakTime { get; } = 0.75f;
     public override float averageRandomTickDuration { get; } = 5;
 

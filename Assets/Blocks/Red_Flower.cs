@@ -1,6 +1,6 @@
 ﻿public class Red_Flower : Block
 {
-    public static string default_texture = "block_red_flower_0";
+    public override string texture { get; set; } = "block_red_flower_0";
 
     public override string[] alternative_textures { get; } =
         {"block_red_flower_0", "block_red_flower_1", "block_red_flower_2"};

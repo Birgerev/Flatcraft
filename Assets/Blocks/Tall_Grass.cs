@@ -1,6 +1,6 @@
 ﻿public class Tall_Grass : Block
 {
-    public static string default_texture = "block_tall_grass_0";
+    public override string texture { get; set; } = "block_tall_grass_0";
 
     public override string[] alternative_textures { get; } =
         {"block_tall_grass_0", "block_tall_grass_1", "block_tall_grass_2"};

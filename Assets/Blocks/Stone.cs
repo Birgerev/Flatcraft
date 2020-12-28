@@ -1,6 +1,6 @@
 ﻿public class Stone : Block
 {
-    public static string default_texture = "block_stone";
+    public override string texture { get; set; } = "block_stone";
     public override float breakTime { get; } = 6;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Pickaxe;

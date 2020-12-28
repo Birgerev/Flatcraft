@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Fire : Block
 {
-    public static string default_texture = "block_fire_0";
+    public override string texture { get; set; } = "block_fire_0";
     public override string[] alternative_textures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
     public override float change_texture_time { get; } = 0.3f;
 

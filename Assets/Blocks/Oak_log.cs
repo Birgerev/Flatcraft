@@ -1,4 +1,4 @@
 ﻿public class Oak_Log : Log
 {
-    public static string default_texture = "block_oak_log";
+    public override string texture { get; set; } = "block_oak_log";
 }

@@ -7,16 +7,9 @@ public class Item
 {
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
-    public string texture;
+    public virtual string texture { get; set; } = "";
     public virtual int maxDurabulity { get; } = -1;
     public virtual float entityDamage { get; } = 1;
-
-
-    private void Start()
-    {
-        texture = (string) GetType().GetField("default_texture", BindingFlags.Public | BindingFlags.Static)
-            .GetValue(null);
-    }
 
     public void Interact(Location loc, int mouseType, bool firstFrameDown)
     {

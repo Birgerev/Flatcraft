@@ -1,6 +1,6 @@
 ﻿public class Sand : Block
 {
-    public static string default_texture = "block_sand";
+    public override string texture { get; set; } = "block_sand";
     public override float breakTime { get; } = 0.75f;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Shovel;
