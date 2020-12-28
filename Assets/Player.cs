@@ -12,6 +12,7 @@ public class Player : HumanEntity
 
     public GameObject crosshair;
     private int framesSinceInventoryOpen;
+    private float eatingTime;
 
 
     //Entity Data Tags
@@ -191,6 +192,23 @@ public class Player : HumanEntity
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
 
+        //Eating
+        if (Input.GetMouseButton(1) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        {
+            if(eatingTime > 1.6f)
+            {
+                print("2");
+                EatHeldItem();
+                eatingTime = 0;
+                return;
+            }
+            print("1");
+
+            eatingTime += Time.deltaTime;
+            return;
+        }
+        eatingTime = 0;
+
 
         if (!isInRange)
             return;
@@ -278,6 +296,20 @@ public class Player : HumanEntity
             if (inventory.getSelectedItem().durability < 0)
                 inventory.setItem(inventory.selectedSlot, new ItemStack());
         }
+    }
+
+    private void EatHeldItem()
+    {
+        //Subtract food item from inventory
+        ItemStack selectedItemStack = inventory.getSelectedItem();
+        selectedItemStack.amount -= 1;
+        inventory.setItem(inventory.selectedSlot, selectedItemStack);
+
+        //Add hunger
+        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
+        int foodPoints = foodItemType.food_points;
+        hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
+        print("3");
     }
 
     public virtual void HitEntity(Entity entity)
