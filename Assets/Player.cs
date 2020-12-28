@@ -310,30 +310,24 @@ public class Player : HumanEntity
         hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
 
         //Particle Effect
-        var firstNotAlphaColor = Color.white;
-        foreach (var pixel in foodItemType.getTexture().texture.GetPixels())
-            if (pixel.a > 0.1f)
-            {
-                PlayEatEffect(pixel);
-                break;
-            }
+        PlayEatEffect(selectedItemStack.GetTextureColors());
     }
 
-    public void PlayEatEffect(Color color)
+    public void PlayEatEffect(Color[] colors)
     {
         var r = new System.Random();
         for (var i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
-            var part = (Particle)Entity.Spawn("Particle");
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
-            part.color = color;
-            part.doGravity = true;
-            part.velocity = new Vector2(
-                (1 + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 4f + (float)r.NextDouble());
-            part.maxAge = 1f + (float)r.NextDouble();
-            part.maxBounces = 10;
+            var particle = (Particle)Entity.Spawn("Particle");
+            Color color = colors[r.Next(0, colors.Length)];
+            particle.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
+            particle.color = color;
+            particle.doGravity = true;
+            particle.velocity = new Vector2(
+                (0.5f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1), 
+                3f + (float)r.NextDouble());
+            particle.maxAge = (float)r.NextDouble();
+            particle.maxBounces = 10;
         }
     }
 
