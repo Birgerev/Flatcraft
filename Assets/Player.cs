@@ -322,15 +322,15 @@ public class Player : HumanEntity
     public void PlayEatEffect(Color color)
     {
         var r = new System.Random();
-        for (var i = 0; i < r.Next(2, 6); i++) //SpawnParticles
+        for (var i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
             var part = (Particle)Entity.Spawn("Particle");
 
-            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
             part.color = color;
             part.doGravity = true;
             part.velocity = new Vector2(
-                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                (1 + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
                 , 4f + (float)r.NextDouble());
             part.maxAge = 1f + (float)r.NextDouble();
             part.maxBounces = 10;
