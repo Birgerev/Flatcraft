@@ -194,7 +194,7 @@ public class Player : HumanEntity
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
 
         //Eating
-        if (Input.GetMouseButton(1) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        if (Input.GetMouseButton(1) && hunger < maxHunger && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
         {
             if(eatingTime > 1.6f)
             {
