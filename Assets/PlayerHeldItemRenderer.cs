@@ -24,17 +24,7 @@ public class PlayerHeldItemRenderer : MonoBehaviour
         if (itemInHand == lastItemInHand) 
             return;
 
-        Sprite sprite = new ItemStack(itemInHand).GetSprite();
-
-        var firstNotAlphaColor = Color.white;
-        foreach (var pixel in sprite.texture.GetPixels())
-            if (pixel.a > 0.1f)
-            {
-                firstNotAlphaColor = pixel;
-                break;
-            }
-
-        SetColor(firstNotAlphaColor);
+        SetColor(new ItemStack(itemInHand).GetTextureColors()[0]);
 
         lastItemInHand = itemInHand;
     }

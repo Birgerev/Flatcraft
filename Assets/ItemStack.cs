@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -63,6 +64,17 @@ public class ItemStack
     public Sprite GetSprite()
     {
         return Resources.Load<Sprite>("Sprites/" + GetTexture());
+    }
+    public Color[] GetTextureColors()
+    {
+        List<Color> textureColors = new List<Color>();
+        foreach (Color color in GetSprite().texture.GetPixels())
+        {
+            if (color.a != 0)
+                textureColors.Add(color);
+        }
+
+        return textureColors.ToArray();
     }
 
     public int GetMaxDurability()
