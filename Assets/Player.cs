@@ -197,12 +197,10 @@ public class Player : HumanEntity
         {
             if(eatingTime > 1.6f)
             {
-                print("2");
                 EatHeldItem();
                 eatingTime = 0;
                 return;
             }
-            print("1");
 
             eatingTime += Time.deltaTime;
             return;
@@ -309,7 +307,6 @@ public class Player : HumanEntity
         Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
         int foodPoints = foodItemType.food_points;
         hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
-        print("3");
     }
 
     public virtual void HitEntity(Entity entity)
