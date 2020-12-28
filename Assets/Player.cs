@@ -58,6 +58,7 @@ public class Player : HumanEntity
 
         var anim = GetComponent<Animator>();
 
+        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))));
         anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
         anim.SetBool("holding-item", inventory.getSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
