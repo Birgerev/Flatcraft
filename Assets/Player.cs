@@ -308,6 +308,33 @@ public class Player : HumanEntity
         Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
         int foodPoints = foodItemType.food_points;
         hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
+
+        //Particle Effect
+        var firstNotAlphaColor = Color.white;
+        foreach (var pixel in foodItemType.getTexture().texture.GetPixels())
+            if (pixel.a > 0.1f)
+            {
+                PlayEatEffect(pixel);
+                break;
+            }
+    }
+
+    public void PlayEatEffect(Color color)
+    {
+        var r = new System.Random();
+        for (var i = 0; i < r.Next(2, 6); i++) //SpawnParticles
+        {
+            var part = (Particle)Entity.Spawn("Particle");
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.color = color;
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 4f + (float)r.NextDouble());
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
     }
 
     public virtual void HitEntity(Entity entity)
