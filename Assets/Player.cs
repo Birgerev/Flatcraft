@@ -209,7 +209,7 @@ public class Player : HumanEntity
         //Eating
         if (Input.GetMouseButton(1) && hunger < maxHunger && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
         {
-            if(eatingTime > 1.6f)
+            if(eatingTime > 1.3f)
             {
                 EatHeldItem();
                 eatingTime = 0;
