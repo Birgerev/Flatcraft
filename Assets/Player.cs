@@ -97,10 +97,24 @@ public class Player : HumanEntity
         else
             framesSinceInventoryOpen++;
 
+        CheckStarvationDamage();
+
         //Crosshair
         MouseInput();
         PerformInput();
     }
+    private void CheckStarvationDamage()
+    {
+        if (hunger <= 0)
+            if ((Time.time % 4f) - Time.deltaTime <= 0)
+                TakeStarvationDamage(1);
+    }
+
+    public virtual void TakeStarvationDamage(float damage)
+    {
+        Damage(damage);
+    }
+
 
     private void performMovementInput()
     {
