@@ -27,6 +27,9 @@ public class Player : HumanEntity
     public override float maxHealth { get; } = 20;
     public float maxHunger = 20;
     public float reach = 5;
+    private float movementHungerCost = 0.03f;
+    private float sprintHungerCost = 0.03f;
+    private float jumpHungerCost = 0.1f;
 
     public override void Start()
     {
@@ -55,7 +58,7 @@ public class Player : HumanEntity
 
         var anim = GetComponent<Animator>();
 
-        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger != maxHunger);
+        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger <= maxHunger - 1);
         anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
         anim.SetBool("holding-item", inventory.getSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
@@ -97,12 +100,28 @@ public class Player : HumanEntity
         else
             framesSinceInventoryOpen++;
 
+        CheckHunger();
+
         CheckStarvationDamage();
 
         //Crosshair
         MouseInput();
         PerformInput();
     }
+
+    private void CheckHunger()
+    {
+        if ((Time.time % 1f) - Time.deltaTime <= 0)
+        {
+            if (GetVelocity().x > 0.2f || GetVelocity().x < -0.2f)
+                hunger -= movementHungerCost;
+            if (sprinting)
+                hunger -= sprintHungerCost;
+            if (GetVelocity().y > 0)
+                hunger -= jumpHungerCost;
+        }
+    }
+
     private void CheckStarvationDamage()
     {
         if (hunger <= 0)
@@ -207,7 +226,7 @@ public class Player : HumanEntity
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
 
         //Eating
-        if (Input.GetMouseButton(1) && hunger < maxHunger && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
         {
             if(eatingTime > 1.3f)
             {
