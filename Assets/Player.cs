@@ -140,8 +140,10 @@ public class Player : HumanEntity
 
         sneaking = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S);
 
-        if (Input.GetKey(KeyCode.LeftControl)) sprinting = true;
-        if (Mathf.Abs(GetVelocity().x) < 3f || sneaking) sprinting = false;
+        if (Input.GetKey(KeyCode.LeftControl) && hunger > 6) 
+            sprinting = true;
+        if (Mathf.Abs(GetVelocity().x) < 3f || sneaking || hunger <= 6) 
+            sprinting = false;
 
 
         //Inventory Managment
