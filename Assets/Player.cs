@@ -30,6 +30,7 @@ public class Player : HumanEntity
     private float movementHungerCost = 0.03f;
     private float sprintHungerCost = 0.03f;
     private float jumpHungerCost = 0.1f;
+    public float healthRegenerationHungerCost;
 
     public override void Start()
     {
@@ -101,12 +102,35 @@ public class Player : HumanEntity
             framesSinceInventoryOpen++;
 
         CheckHunger();
-
+        CheckRegenerateHealth();
         CheckStarvationDamage();
 
         //Crosshair
         MouseInput();
         PerformInput();
+    }
+
+    private void CheckRegenerateHealth()
+    {
+        if (health >= 20)
+            return;
+
+        if(hunger > 19)
+        {
+            if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+            {
+                health += 1;
+                hunger -= healthRegenerationHungerCost;
+            }
+        }
+        else if (hunger > 17)
+        {
+            if ((Time.time % 4f) - Time.deltaTime <= 0)
+            {
+                health += 1;
+                hunger -= healthRegenerationHungerCost;
+            }
+        }
     }
 
     private void CheckHunger()
