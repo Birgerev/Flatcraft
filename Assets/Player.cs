@@ -216,6 +216,13 @@ public class Player : HumanEntity
                 return;
             }
 
+            if ((eatingTime % 0.2f) - Time.deltaTime <= 0)
+            {
+                System.Random r = new System.Random();
+
+                Sound.Play(Location, "entity/Player/eat"+r.Next(1, 3), SoundType.Entities, 0.85f, 1.15f);
+            }
+
             eatingTime += Time.deltaTime;
             return;
         }
