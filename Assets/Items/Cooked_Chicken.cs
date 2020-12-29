@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class Cooked_Chicken : MonoBehaviour
+public class Cooked_Chicken : Food
 {
-    public static string default_texture = "item_cooked_chicken";
+    public override int food_points { get; } = 6;
+    public override string texture { get; set; } = "item_cooked_chicken";
 }

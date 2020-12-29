@@ -16,7 +16,7 @@ public class Block : MonoBehaviour
 
     public Location location;
 
-    public string texture;
+    public virtual string texture { get; set; } = "";
     private float time_of_last_autosave;
 
     private float time_of_last_hit;
@@ -78,9 +78,6 @@ public class Block : MonoBehaviour
     public virtual void Initialize()
     {
         blockHealth = breakTime;
-
-        texture = (string) GetType().GetField("default_texture", BindingFlags.Public | BindingFlags.Static)
-            .GetValue(null);
 
 
         UpdateColliders();

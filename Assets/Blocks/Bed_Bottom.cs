@@ -1,6 +1,6 @@
 ﻿public class Bed_Bottom : Bed_Block
 {
-    public static string default_texture = "block_bed_bottom";
+    public override string texture { get; set; } = "block_bed_bottom";
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 

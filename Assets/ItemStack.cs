@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -47,17 +48,33 @@ public class ItemStack
         this.data = data;
         this.durability = durability;
     }
+    public string GetTexture()
+    {
+        System.Type materialType = Type.GetType(material.ToString());
+        string texture = "invalid item class (not inheriting from Block nor Item)";
+
+        if (materialType.IsSubclassOf(typeof(Block)))
+            texture = ((Block)Activator.CreateInstance(materialType)).texture;
+        else if (materialType.IsSubclassOf(typeof(Item)))
+            texture = ((Item)Activator.CreateInstance(materialType)).texture;
+
+        return texture;
+    }
 
     public Sprite GetSprite()
     {
-        var type = Type.GetType(material.ToString());
-        if (type == null)
-            return null;
+        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+    }
+    public Color[] GetTextureColors()
+    {
+        List<Color> textureColors = new List<Color>();
+        foreach (Color color in GetSprite().texture.GetPixels())
+        {
+            if (color.a != 0)
+                textureColors.Add(color);
+        }
 
-        var texture = (string) type.GetField("default_texture", BindingFlags.Public | BindingFlags.Static)
-            .GetValue(null);
-
-        return Resources.Load<Sprite>("Sprites/" + texture);
+        return textureColors.ToArray();
     }
 
     public int GetMaxDurability()

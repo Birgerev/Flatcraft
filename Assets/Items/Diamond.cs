@@ -1,4 +1,4 @@
 public class Diamond : Item
 {
-    public static string default_texture = "item_diamond";
+    public override string texture { get; set; } = "item_diamond";
 }

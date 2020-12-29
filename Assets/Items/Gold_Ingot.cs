@@ -1,4 +1,4 @@
 public class Gold_Ingot : Item
 {
-    public static string default_texture = "item_gold_ingot";
+    public override string texture { get; set; } = "item_gold_ingot";
 }

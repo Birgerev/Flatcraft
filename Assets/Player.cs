@@ -12,23 +12,25 @@ public class Player : HumanEntity
 
     public GameObject crosshair;
     private int framesSinceInventoryOpen;
+    private float eatingTime;
+    private float lastBlockInteractionTime;
+    private float lastFrameScroll;
 
 
     //Entity Data Tags
     [EntityDataTag(false)] public float hunger;
-
     [EntityDataTag(true)] public PlayerInventory inventory = new PlayerInventory();
-
-    private float lastBlockInteractionTime;
-    private float lastFrameScroll;
-    public float maxHunger = 20;
-    public float reach = 5;
-
     [EntityDataTag(true)] public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
+    public float maxHunger = 20;
+    public float reach = 5;
+    private float movementHungerCost = 0.03f;
+    private float sprintHungerCost = 0.03f;
+    private float jumpHungerCost = 0.1f;
+    public float healthRegenerationHungerCost;
 
     public override void Start()
     {
@@ -57,6 +59,7 @@ public class Player : HumanEntity
 
         var anim = GetComponent<Animator>();
 
+        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger <= maxHunger - 1);
         anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
         anim.SetBool("holding-item", inventory.getSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
@@ -98,10 +101,63 @@ public class Player : HumanEntity
         else
             framesSinceInventoryOpen++;
 
+        CheckHunger();
+        CheckRegenerateHealth();
+        CheckStarvationDamage();
+
         //Crosshair
         MouseInput();
         PerformInput();
     }
+
+    private void CheckRegenerateHealth()
+    {
+        if (health >= 20)
+            return;
+
+        if(hunger > 19)
+        {
+            if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+            {
+                health += 1;
+                hunger -= healthRegenerationHungerCost;
+            }
+        }
+        else if (hunger > 17)
+        {
+            if ((Time.time % 4f) - Time.deltaTime <= 0)
+            {
+                health += 1;
+                hunger -= healthRegenerationHungerCost;
+            }
+        }
+    }
+
+    private void CheckHunger()
+    {
+        if ((Time.time % 1f) - Time.deltaTime <= 0)
+        {
+            if (GetVelocity().x > 0.2f || GetVelocity().x < -0.2f)
+                hunger -= movementHungerCost;
+            if (sprinting)
+                hunger -= sprintHungerCost;
+            if (GetVelocity().y > 0)
+                hunger -= jumpHungerCost;
+        }
+    }
+
+    private void CheckStarvationDamage()
+    {
+        if (hunger <= 0)
+            if ((Time.time % 4f) - Time.deltaTime <= 0)
+                TakeStarvationDamage(1);
+    }
+
+    public virtual void TakeStarvationDamage(float damage)
+    {
+        Damage(damage);
+    }
+
 
     private void performMovementInput()
     {
@@ -127,8 +183,10 @@ public class Player : HumanEntity
 
         sneaking = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S);
 
-        if (Input.GetKey(KeyCode.LeftControl)) sprinting = true;
-        if (Mathf.Abs(GetVelocity().x) < 3f || sneaking) sprinting = false;
+        if (Input.GetKey(KeyCode.LeftControl) && hunger > 6) 
+            sprinting = true;
+        if (Mathf.Abs(GetVelocity().x) < 3f || sneaking || hunger <= 6) 
+            sprinting = false;
 
 
         //Inventory Managment
@@ -190,6 +248,28 @@ public class Player : HumanEntity
 
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/crosshair_" + (isInRange ? (entity != null ? "entity" : "full") : "empty"));
+
+        //Eating
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        {
+            if(eatingTime > 1.3f)
+            {
+                EatHeldItem();
+                eatingTime = 0;
+                return;
+            }
+
+            if ((eatingTime % 0.2f) - Time.deltaTime <= 0)
+            {
+                System.Random r = new System.Random();
+
+                Sound.Play(Location, "entity/Player/eat"+r.Next(1, 3), SoundType.Entities, 0.85f, 1.15f);
+            }
+
+            eatingTime += Time.deltaTime;
+            return;
+        }
+        eatingTime = 0;
 
 
         if (!isInRange)
@@ -277,6 +357,43 @@ public class Player : HumanEntity
 
             if (inventory.getSelectedItem().durability < 0)
                 inventory.setItem(inventory.selectedSlot, new ItemStack());
+        }
+    }
+
+    private void EatHeldItem()
+    {
+        //Subtract food item from inventory
+        ItemStack selectedItemStack = inventory.getSelectedItem();
+        selectedItemStack.amount -= 1;
+        inventory.setItem(inventory.selectedSlot, selectedItemStack);
+
+        //Add hunger
+        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
+        int foodPoints = foodItemType.food_points;
+        hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
+
+        //Particle Effect
+        PlayEatEffect(selectedItemStack.GetTextureColors());
+
+        //Burp sounds
+        Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
+    }
+
+    public void PlayEatEffect(Color[] colors)
+    {
+        var r = new System.Random();
+        for (var i = 0; i < r.Next(6, 10); i++) //SpawnParticles
+        {
+            var particle = (Particle)Entity.Spawn("Particle");
+            Color color = colors[r.Next(0, colors.Length)];
+            particle.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
+            particle.color = color;
+            particle.doGravity = true;
+            particle.velocity = new Vector2(
+                (0.5f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1), 
+                3f + (float)r.NextDouble());
+            particle.maxAge = (float)r.NextDouble();
+            particle.maxBounces = 10;
         }
     }
 

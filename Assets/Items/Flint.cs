@@ -1,4 +1,4 @@
 public class Flint : Item
 {
-    public static string default_texture = "item_flint";
+    public override string texture { get; set; } = "item_flint";
 }

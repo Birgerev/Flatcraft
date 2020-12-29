@@ -1,4 +1,4 @@
 public class Wheat : Item
 {
-    public static string default_texture = "item_wheat";
+    public override string texture { get; set; } = "item_wheat";
 }

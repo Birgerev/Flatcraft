@@ -2,7 +2,7 @@
 
 public class Grass : Block
 {
-    public static string default_texture = "block_grass";
+    public override string texture { get; set; } = "block_grass";
     public override float breakTime { get; } = 0.75f;
     public override float averageRandomTickDuration { get; } = 20;
 
