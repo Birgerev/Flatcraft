@@ -324,6 +324,9 @@ public class Player : HumanEntity
 
         //Particle Effect
         PlayEatEffect(selectedItemStack.GetTextureColors());
+
+        //Burp sounds
+        Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
     }
 
     public void PlayEatEffect(Color[] colors)
