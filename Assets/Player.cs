@@ -13,23 +13,20 @@ public class Player : HumanEntity
     public GameObject crosshair;
     private int framesSinceInventoryOpen;
     private float eatingTime;
+    private float lastBlockInteractionTime;
+    private float lastFrameScroll;
 
 
     //Entity Data Tags
     [EntityDataTag(false)] public float hunger;
-
     [EntityDataTag(true)] public PlayerInventory inventory = new PlayerInventory();
-
-    private float lastBlockInteractionTime;
-    private float lastFrameScroll;
-    public float maxHunger = 20;
-    public float reach = 5;
-
     [EntityDataTag(true)] public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
+    public float maxHunger = 20;
+    public float reach = 5;
 
     public override void Start()
     {
