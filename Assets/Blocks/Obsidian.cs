@@ -14,6 +14,24 @@ public class Obsidian : Block
         base.Tick();
     }
 
+    public override void Break(bool drop)
+    {
+        int positiveY = 1;
+        while ((location + new Location(0, positiveY)).GetMaterial() == Material.Portal_Frame)
+        {
+            (location + new Location(0, positiveY)).GetBlock().Break();
+            positiveY++;
+        }
+        int negativeY = -1;
+        while ((location + new Location(0, negativeY)).GetMaterial() == Material.Portal_Frame)
+        {
+            (location + new Location(0, negativeY)).GetBlock().Break();
+            negativeY--;
+        }
+
+        base.Break(drop);
+    }
+
     public void CheckPortalActivation()
     {
         if ((location + new Location(0, 1)).GetMaterial() == Material.Fire)

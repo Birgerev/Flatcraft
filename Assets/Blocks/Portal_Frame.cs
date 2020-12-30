@@ -15,6 +15,11 @@ public class Portal_Frame : Block
     private Dictionary<Entity, float> entityTimeSpentInsidePortal = new Dictionary<Entity, float>();
     private float timeRequiredBeforeTeleport = 3f;
 
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack();
+    }
+
     public override void Initialize()
     {
         base.Initialize();
