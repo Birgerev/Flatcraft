@@ -683,6 +683,7 @@ public class Chunk : MonoBehaviour
         foreach (var e in Entity.entities)
             if (e.Location.x >= chunkPosition.worldX &&
                 e.Location.x <= chunkPosition.worldX + Width &&
+                e != null &&
                 !(e is Player))
                 entities.Add(e);
 
