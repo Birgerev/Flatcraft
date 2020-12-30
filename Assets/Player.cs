@@ -461,6 +461,7 @@ public class Player : HumanEntity
         DeathMenu.active = true;
         health = 20;
         hunger = 20;
+        fireTime = 0;
 
         base.Die();
 
