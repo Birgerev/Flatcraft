@@ -13,7 +13,16 @@ public class Portal_Frame : Block
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
     private Dictionary<Entity, float> entityTimeSpentInsidePortal = new Dictionary<Entity, float>();
-    private static float timeRequiredBeforeTeleport = 3f;
+    private float timeRequiredBeforeTeleport = 3f;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        //Add random duration to teleportation time, so multiple portals wont teleport entity at the same time
+        System.Random r = new System.Random(SeedGenerator.SeedByLocation(location));
+        timeRequiredBeforeTeleport += ((float)r.NextDouble()*4);
+    }
 
     public override void OnTriggerStay2D(Collider2D col)
     {
@@ -37,7 +46,7 @@ public class Portal_Frame : Block
         base.OnTriggerStay2D(col);
     }
 
-    public virtual void OnTriggerExit2D(Collider2D col)
+    public override void OnTriggerExit2D(Collider2D col)
     {
         Entity entity = col.GetComponent<Entity>();
 
@@ -46,6 +55,8 @@ public class Portal_Frame : Block
             //Reset time spent in portal if entity leaves portal
             entityTimeSpentInsidePortal.Remove(entity);
         }
+
+        base.OnTriggerExit2D(col);
     }
 
     private void PortalTeleport(Entity entity)
