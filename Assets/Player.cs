@@ -30,7 +30,7 @@ public class Player : HumanEntity
     private float movementHungerCost = 0.03f;
     private float sprintHungerCost = 0.03f;
     private float jumpHungerCost = 0.1f;
-    public float healthRegenerationHungerCost;
+    private float healthRegenerationHungerCost = 0.4f;
 
     public override void Start()
     {
