@@ -87,9 +87,6 @@ public class Chunk : MonoBehaviour
 
     public void DestroyChunk()
     {
-        if (isSpawnChunk)
-            return;
-
         UnloadEntities();
 
         WorldManager.instance.chunks.Remove(chunkPosition);
