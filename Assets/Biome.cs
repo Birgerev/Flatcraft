@@ -8,10 +8,9 @@ using Random = System.Random;
 [Serializable]
 public class Biome
 {
-    public int biomeMaximumChunkSize;
-
     [Space] [Header("Occourance Frequency")]
     public int biomeMinimumChunkSize;
+    public int biomeMaximumChunkSize;
 
 
     [Space] public List<string> biomeSpecificEntitySpawns;

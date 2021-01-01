@@ -7016,8 +7016,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amountOfChunksLoading: 0
   biomes:
-  - biomeMaximumChunkSize: 5
-    biomeMinimumChunkSize: 3
+  overworldBiomes:
+  - biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 5
     biomeSpecificEntitySpawns: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
@@ -7027,8 +7028,8 @@ MonoBehaviour:
     landscapeSize: 0.05
     name: forest
     stoneLayerNoiseValue: 6.86
-  - biomeMaximumChunkSize: 10
-    biomeMinimumChunkSize: 4
+  - biomeMinimumChunkSize: 4
+    biomeMaximumChunkSize: 10
     biomeSpecificEntitySpawns: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 1.23
@@ -7038,8 +7039,8 @@ MonoBehaviour:
     landscapeSize: 0.05
     name: desert
     stoneLayerNoiseValue: 7
-  - biomeMaximumChunkSize: 6
-    biomeMinimumChunkSize: 3
+  - biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
     biomeSpecificEntitySpawns: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
@@ -7049,8 +7050,8 @@ MonoBehaviour:
     landscapeSize: 0.06
     name: forest_hills
     stoneLayerNoiseValue: 4.63
-  - biomeMaximumChunkSize: 6
-    biomeMinimumChunkSize: 3
+  - biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
     biomeSpecificEntitySpawns: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
@@ -7060,8 +7061,8 @@ MonoBehaviour:
     landscapeSize: 0.06
     name: birch_forest
     stoneLayerNoiseValue: 4.63
-  - biomeMaximumChunkSize: 6
-    biomeMinimumChunkSize: 3
+  - biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
     biomeSpecificEntitySpawns: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
