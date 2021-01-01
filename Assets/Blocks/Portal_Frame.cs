@@ -46,7 +46,7 @@ public class Portal_Frame : Block
 
             //Teleport entity if time requirements are met
             if (timeSpentInPortal >= timeRequiredBeforeTeleport)
-                PortalTeleport(entity);
+                entity.TeleportNetherPortal();
         }
 
         base.OnTriggerStay2D(col);
@@ -63,23 +63,5 @@ public class Portal_Frame : Block
         }
 
         base.OnTriggerExit2D(col);
-    }
-
-    private void PortalTeleport(Entity entity)
-    {
-        Location entityLocation = entity.Location;
-        Dimension currentDimension = entityLocation.dimension;
-        Location newLocation = new Location(0, 0);
-
-        if (currentDimension == Dimension.Overworld)
-        {
-            newLocation = new Location(entityLocation.x / 8, entityLocation.y, Dimension.Nether);
-        }
-        else if (currentDimension == Dimension.Nether)
-        {
-            newLocation = new Location(entityLocation.x * 8, entityLocation.y, Dimension.Overworld);
-        }
-
-        entity.Location = newLocation;
     }
 }
