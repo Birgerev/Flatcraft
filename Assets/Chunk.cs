@@ -303,7 +303,7 @@ public class Chunk : MonoBehaviour
             File.WriteAllLines(chunkDataPath, chunkDataLines);
         }
 
-        GenerateBackgroundBlocks();
+        StartCoroutine(GenerateBackgroundBlocks());
         StartCoroutine(Tick());
 
         isLoading = false;
@@ -322,11 +322,12 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    private void GenerateBackgroundBlocks()
+    IEnumerator GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
         {
             UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
