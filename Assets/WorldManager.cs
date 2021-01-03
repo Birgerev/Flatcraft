@@ -11,7 +11,8 @@ public class WorldManager : MonoBehaviour
     public static float dayLength = 60 * 20;
     public int amountOfChunksLoading;
 
-    public List<Biome> biomes = new List<Biome>();
+    public List<Biome> overworldBiomes = new List<Biome>();
+    public Biome netherBiome;
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
     public GameObject chunkPrefab;

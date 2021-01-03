@@ -33,7 +33,7 @@ public class Biome
             seed = WorldManager.world.seed;
 
         if (WorldManager.instance != null)
-            seed += WorldManager.instance.biomes.IndexOf(this);
+            seed += WorldManager.instance.overworldBiomes.IndexOf(this);
 
         return new Perlin(1, landscapeLacunarity, landscapePercistance, landscapeOctaves, seed, QualityMode.Low);
     }
@@ -75,7 +75,7 @@ public class Biome
 
     public static void GenerateBiomesForRegion(ChunkPosition chunkPos)
     {
-        var dimension = chunkPos.dimension; //The dimension of the region
+        Dimension dimension = chunkPos.dimension; //The dimension of the region
         int region; //region position
 
         if (chunkPos.chunkX >= 0)
@@ -83,26 +83,23 @@ public class Biome
         else
             region = Mathf.CeilToInt(((float) chunkPos.chunkX + 1) / Chunk.AmountOfChunksInRegion) - 1;
 
-        var startChunk = region * Chunk.AmountOfChunksInRegion; //first chunk of the region
-        var endChunk = startChunk + Chunk.AmountOfChunksInRegion; //last chunk of the region
+        int startChunk = region * Chunk.AmountOfChunksInRegion; //first chunk of the region
+        int endChunk = startChunk + Chunk.AmountOfChunksInRegion; //last chunk of the region
 
-        var currentChunk = startChunk; //start generating biome values at the first chunk of the region
+        int currentChunk = startChunk; //start generating biome values at the first chunk of the region
         while (currentChunk < endChunk) //Keep on iterating until every chunk in the region has a biome
         {
-            var r = new Random(currentChunk.GetHashCode() + dimension.GetHashCode() +
-                               WorldManager.world
-                                   .seed); //Random, with a seed unique to the chunk x position, the dimension, and the world seed
-            var biome = WorldManager.instance.biomes[
-                r.Next(0,
-                    WorldManager.instance.biomes
-                        .Count)]; //determine the biome that will be generated for the next few chunks at random
-            var biomeChunkSize =
-                r.Next(biome.biomeMinimumChunkSize,
-                    biome.biomeMaximumChunkSize); //how many chunks will this biome cover
-            var biomeBeginningChunk = currentChunk; //where the biome starts
+            Random r = new Random(currentChunk.GetHashCode() + dimension.GetHashCode() + WorldManager.world.seed); //Random, with a seed unique to the chunk x position, the dimension, and the world seed
+            Biome biome = null;
+            if (dimension == Dimension.Overworld)
+                biome = WorldManager.instance.overworldBiomes[r.Next(0, WorldManager.instance.overworldBiomes.Count)]; //determine the biome that will be generated for the next few chunks at random
+            else if (dimension == Dimension.Nether)
+                biome = WorldManager.instance.netherBiome;
 
-            while (currentChunk <= biomeBeginningChunk + biomeChunkSize
-            ) //Assign this biome to every one of these chunks
+            int biomeChunkSize = r.Next(biome.biomeMinimumChunkSize, biome.biomeMaximumChunkSize); //how many chunks will this biome cover
+            int biomeBeginningChunk = currentChunk; //where the biome starts
+
+            while (currentChunk <= biomeBeginningChunk + biomeChunkSize) //Assign this biome to every one of these chunks
             {
                 if (currentChunk >= endChunk) //if chunk is outside of region, stop generating
                     break;
