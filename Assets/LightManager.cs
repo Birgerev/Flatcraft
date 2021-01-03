@@ -41,6 +41,13 @@ public class LightManager : MonoBehaviour
         instance.sunlightSources.Add(x, newSunlightSource.GetComponent<SunlightSource>());
     }
 
+    public static void DestroySource(GameObject source)
+    {
+        int2 location = new int2((int)source.transform.position.x, (int)source.transform.position.y);
+        LightManager.UpdateLightInArea(location - new int2(15, 15), location + new int2(15, 15));
+        Destroy(source);
+    }
+
     public static void UpdateBlockLight(Location block)
     {
         UpdateLightInArea(new int2(block.x, block.y), new int2(block.x, block.y));

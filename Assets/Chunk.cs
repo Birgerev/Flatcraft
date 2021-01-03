@@ -517,6 +517,9 @@ public class Chunk : MonoBehaviour
         //remove old block
         if (GetLocalBlock(loc) != null)
         {
+            if (isLoaded && GetLocalBlock(loc).GetComponentInChildren<LightSource>() != null)
+                LightManager.DestroySource(GetLocalBlock(loc).GetComponentInChildren<LightSource>().gameObject);
+
             Destroy(GetLocalBlock(loc).gameObject);
             blocks.Remove(pos);
         }

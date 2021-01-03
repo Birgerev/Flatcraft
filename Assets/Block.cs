@@ -89,7 +89,9 @@ public class Block : MonoBehaviour
         {
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
             lightSource.transform.localPosition = Vector3.zero;
-            lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
+
+            if (new ChunkPosition(location).IsChunkLoaded())
+                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
         }
 
         if (autoTick || autosave)
@@ -310,6 +312,9 @@ public class Block : MonoBehaviour
             part.maxAge = 1f + (float) r.NextDouble();
             part.maxBounces = 10;
         }
+
+        if (GetComponentInChildren<LightSource>() != null)
+            LightManager.DestroySource(GetComponentInChildren<LightSource>().gameObject);
 
         location.SetMaterial(Material.Air).Tick();
     }
