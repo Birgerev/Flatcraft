@@ -547,7 +547,10 @@ public class Chunk : MonoBehaviour
 
             block.data = data;
             block.location = loc;
-            block.ScheduleBlockInitialization();
+            if (isLoaded)
+                block.ScheduleBlockInitialization();
+            else
+                block.Initialize();
 
             result = blockObject.GetComponent<Block>();
         }
