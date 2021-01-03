@@ -661,6 +661,27 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
+        else if (chunkPosition.dimension == Dimension.Nether)
+        {
+            if (noiseValue > 0.1f)
+                mat = Material.Netherrack;
+
+            if (mat == Material.Air && loc.y <= SeaLevel) 
+                mat = Material.Lava;
+
+            //-Bedrock Generation-//
+            if (loc.y >= 128 - 4 && loc.y <= 128)
+            {
+                //Fill layer 256 and then progressively less chance of bedrock further down
+                if (loc.y == 128 - 4)
+                    mat = Material.Bedrock;
+                else if (r.Next(0, (128 - loc.y) + 2) <= 1)
+                    mat = Material.Bedrock;
+            }
+
+            if (loc.y > 128)
+                mat = Material.Air;
+        }
 
         //-Bedrock Generation-//
         if (loc.y <= 4)
