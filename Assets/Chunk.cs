@@ -81,7 +81,6 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
-
         StartCoroutine(GenerateChunk());
     }
 
@@ -233,7 +232,6 @@ public class Chunk : MonoBehaviour
 
         //pre-generate chunk biomes
         Biome.GetBiomeAt(chunkPosition);
-
 
         if (chunkPosition.HasBeenGenerated())
         {
@@ -613,7 +611,8 @@ public class Chunk : MonoBehaviour
 
         //-Terrain Generation-//
 
-        if(chunkPosition.dimension == Dimension.Overworld) {
+        if (chunkPosition.dimension == Dimension.Overworld)
+        {
             //-Ground-//
             if (noiseValue > 0.1f)
             {
@@ -638,9 +637,9 @@ public class Chunk : MonoBehaviour
             //-Dirt & Gravel Patches-//
             if (mat == Material.Stone)
             {
-                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
+                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20)) > 7.5f)
                     mat = Material.Dirt;
-                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
+                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20 + 100, (float)loc.y / 20, 200)) > 7.5f)
                     mat = Material.Gravel;
             }
 
@@ -651,7 +650,7 @@ public class Chunk : MonoBehaviour
             if (noiseValue > 0.1f)
             {
                 var caveValue =
-                    (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
+                    (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
                 if (caveValue > CaveHollowValue)
                 {
                     mat = Material.Air;
