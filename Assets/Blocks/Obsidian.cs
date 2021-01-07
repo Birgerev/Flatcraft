@@ -8,7 +8,6 @@ public class Obsidian : Block
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
     public override void Tick()
     {
-        print("tick");
         CheckPortalActivation();
 
         base.Tick();
