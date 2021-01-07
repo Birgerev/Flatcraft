@@ -67,7 +67,7 @@ public class Chunk : MonoBehaviour
     public bool isLoading;
     public bool isSpawnChunk;
 
-    public HashSet<Location> lightSourcesToUpdate = new HashSet<Location>();
+    public Portal_Frame netherPortal;
     private Perlin patchNoise;
 
     private void Start()
@@ -556,6 +556,11 @@ public class Chunk : MonoBehaviour
             result = blockObject.GetComponent<Block>();
         }
 
+        if(mat == Material.Portal_Frame)
+        {
+            netherPortal = (Portal_Frame)result;
+        }
+
         if (isLoaded)
         {
             if (doesBlockChangeImpactSunlight)
@@ -574,6 +579,25 @@ public class Chunk : MonoBehaviour
         LightManager.UpdateBlockLight(loc);
     }
 
+    public Location GeneratePortal(int x)
+    {
+        //Find an air pocket to place portal at
+        int maxPortalHeight = (chunkPosition.dimension == Dimension.Overworld) ? Chunk.Height : 128; 
+        for (int y = 0; y < maxPortalHeight; y++)
+        {
+            Location loc = new Location(x, y, chunkPosition.dimension);
+            if (loc.GetMaterial() == Material.Air)
+            {
+                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Nether_Portal")).Tick();
+                return loc;
+            }
+        }
+
+        //if no air pocket is found, place portal at y level 64
+        Location defaultLocation = new Location(x, 64, chunkPosition.dimension);
+        defaultLocation.SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Nether_Portal")).Tick();
+        return defaultLocation;
+    }
 
     public Block GetLocalBlock(Location loc)
     {

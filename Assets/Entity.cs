@@ -456,7 +456,7 @@ public class Entity : MonoBehaviour
 
         if (currentDimension == Dimension.Overworld)
         {
-            newLocation.x = Location.x / 8;
+            newLocation.x = Mathf.FloorToInt((float)Location.x / 8f);
             newLocation.dimension = Dimension.Nether;
         }
         else if (currentDimension == Dimension.Nether)
@@ -468,32 +468,22 @@ public class Entity : MonoBehaviour
         //Load chunk in the other dimension
         Location = newLocation;                 //teleport player so chunk doesn't unload
         ChunkPosition cPos = new ChunkPosition(newLocation);
-        cPos.CreateChunk();
+        Chunk chunk = cPos.CreateChunk();
 
         //Wait for chunk to load
-        while (!cPos.IsChunkLoaded())
+        while (!chunk.isLoaded)
             yield return new WaitForSeconds(0.5f);
 
-        //Find an air pocket to teleport player to, if none is found, teleport player to y level 64
-        int airPocketY = 64;
-        for(int y = 0; y < Chunk.Height; y++)
-        {
-            Location loc = newLocation;
-            loc.y = y;
-
-            if(loc.GetMaterial() == Material.Air)
-            {
-                airPocketY = y;
-                break;
-            }
-        }
-        newLocation.y = airPocketY;             //Update location y value to where an air pocket was found
-
+        Location portal;
+        if (chunk.netherPortal != null)
+            portal = chunk.netherPortal.location;
+        else
+            portal = chunk.GeneratePortal(newLocation.x);
 
         //Teleport player to new y value
         if(this.GetType().IsSubclassOf(typeof(LivingEntity)))
             ((LivingEntity)this).highestYlevelsinceground = 0;
-        Location = newLocation;
+        Location = portal;
     }
 
     public static Entity Spawn(string type)

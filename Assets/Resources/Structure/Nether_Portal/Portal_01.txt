@@ -1,0 +1,11 @@
+Obsidian*0,0*
+Portal_Frame*0,1*
+Portal_Frame*0,2*
+Portal_Frame*0,3*
+Obsidian*0,4*
+Air*-1,1*
+Air*-1,2*
+Air*-1,3*
+Air*1,1*
+Air*1,2*
+Air*1,3*
