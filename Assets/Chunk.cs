@@ -98,7 +98,8 @@ public class Chunk : MonoBehaviour
     {
         foreach(Entity entity in GetEntities())
         {
-            entity.Unload();
+            if (!(entity is Player))
+                entity.Unload();
         }
     }
 
@@ -710,8 +711,7 @@ public class Chunk : MonoBehaviour
         foreach (var e in Entity.entities)
             if (e.Location.x >= chunkPosition.worldX &&
                 e.Location.x <= chunkPosition.worldX + Width &&
-                e != null &&
-                !(e is Player))
+                e != null)
                 entities.Add(e);
 
         return entities.ToArray();
