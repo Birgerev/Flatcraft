@@ -168,7 +168,8 @@ public class Block : MonoBehaviour
         while (true)
         {
             float nextTickDuration = 1;
-            while (r.NextDouble() > 1 / averageRandomTickDuration) nextTickDuration += 1;
+            while (r.NextDouble() > 1 / averageRandomTickDuration) 
+                nextTickDuration += 1;
 
             yield return new WaitForSeconds(nextTickDuration);
             RandomTick();

@@ -82,15 +82,15 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        var brightestRecordedLightLevel = 0;
         Vector3 objectLoc = lightObject.transform.position;
+        int brightestRecordedLightLevel = 0;
 
         foreach (LightSource source in possibleLightSources)
         {
-            var sourceBrightness = source.lightLevel;
-            var objectBrightness = sourceBrightness - (int) objectDistance;
             Vector3 sourceLoc = source.transform.position;
+            int sourceBrightness = source.lightLevel;
             float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
+            int objectBrightness = sourceBrightness - (int) objectDistance;
             
             if (objectBrightness > brightestRecordedLightLevel)
             {
