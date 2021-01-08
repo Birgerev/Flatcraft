@@ -133,7 +133,7 @@ public class ItemStack
 
         var obj = Entity.Spawn("DroppedItem").gameObject;
 
-        obj.transform.position = new Vector3(location.x, location.y, 0);
+        obj.GetComponent<DroppedItem>().Location = location;
         obj.GetComponent<DroppedItem>().item = this;
         obj.GetComponent<Rigidbody2D>().velocity = velocity;
     }
