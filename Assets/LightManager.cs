@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using Unity.Burst;
 
+[BurstCompile]
 public class LightManager : MonoBehaviour
 {
     public static int maxLightLevel = 15;
@@ -80,15 +82,15 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        var objectLoc = lightObject.transform.position;
         var brightestRecordedLightLevel = 0;
+        Vector3 objectLoc = lightObject.transform.position;
 
         foreach (LightSource source in possibleLightSources)
         {
-            var sourceLoc = source.transform.position;
             var sourceBrightness = source.lightLevel;
-            var objectDistance = math.distance(sourceLoc, objectLoc);
             var objectBrightness = sourceBrightness - (int) objectDistance;
+            Vector3 sourceLoc = source.transform.position;
+            float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
             
             if (objectBrightness > brightestRecordedLightLevel)
             {
