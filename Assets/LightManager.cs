@@ -31,6 +31,9 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateSunlightInColumn(int x)
     {
+        if (Player.localInstance.Location.dimension == Dimension.Nether)
+            return;
+        
         if (instance.sunlightSources.ContainsKey(x))
         {
             SunlightSource oldSunlightSource = instance.sunlightSources[x];
