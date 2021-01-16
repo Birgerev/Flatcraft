@@ -8,6 +8,7 @@ using Unity.Burst;
 public class LightManager : MonoBehaviour
 {
     public static int maxLightLevel = 15;
+    public static int netherLightLevel = 8;
     public static LightManager instance;
 
     public GameObject lightSourcePrefab;
