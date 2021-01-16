@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -440,6 +441,49 @@ public class Entity : MonoBehaviour
     public static int CreateId()
     {
         return UnityEngine.Random.Range(1, 99999);
+    }
+
+    public virtual void TeleportNetherPortal()
+    {
+        StartCoroutine(teleportNetherPortal());
+    }
+
+    IEnumerator teleportNetherPortal()
+    {
+        //Translate dimension coordinates
+        Dimension currentDimension = Location.dimension;
+        Location newLocation = new Location(0, 300);
+
+        if (currentDimension == Dimension.Overworld)
+        {
+            newLocation.x = Mathf.FloorToInt((float)Location.x / 8f);
+            newLocation.dimension = Dimension.Nether;
+        }
+        else if (currentDimension == Dimension.Nether)
+        {
+            newLocation.x = Location.x * 8;
+            newLocation.dimension = Dimension.Overworld;
+        }
+
+        //Load chunk in the other dimension
+        Location = newLocation;                 //teleport player so chunk doesn't unload
+        ChunkPosition cPos = new ChunkPosition(newLocation);
+        Chunk chunk = cPos.CreateChunk();
+
+        //Wait for chunk to load
+        while (!chunk.isLoaded)
+            yield return new WaitForSeconds(0.5f);
+
+        Location portal;
+        if (chunk.netherPortal != null)
+            portal = chunk.netherPortal.location;
+        else
+            portal = chunk.GeneratePortal(newLocation.x);
+
+        //Teleport player to new y value
+        if(this.GetType().IsSubclassOf(typeof(LivingEntity)))
+            ((LivingEntity)this).highestYlevelsinceground = 0;
+        Location = portal;
     }
 
     public static Entity Spawn(string type)

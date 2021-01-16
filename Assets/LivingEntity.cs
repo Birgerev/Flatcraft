@@ -28,7 +28,7 @@ public class LivingEntity : Entity
 
 
     //Entity State
-    protected float highestYlevelsinceground;
+    public float highestYlevelsinceground;
     protected float last_jump_time;
     protected bool sprinting;
     protected bool sneaking;

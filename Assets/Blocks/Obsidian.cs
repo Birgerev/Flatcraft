@@ -8,10 +8,27 @@ public class Obsidian : Block
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
     public override void Tick()
     {
-        print("tick");
         CheckPortalActivation();
 
         base.Tick();
+    }
+
+    public override void Break(bool drop)
+    {
+        int positiveY = 1;
+        while ((location + new Location(0, positiveY)).GetMaterial() == Material.Portal_Frame)
+        {
+            (location + new Location(0, positiveY)).GetBlock().Break();
+            positiveY++;
+        }
+        int negativeY = -1;
+        while ((location + new Location(0, negativeY)).GetMaterial() == Material.Portal_Frame)
+        {
+            (location + new Location(0, negativeY)).GetBlock().Break();
+            negativeY--;
+        }
+
+        base.Break(drop);
     }
 
     public void CheckPortalActivation()

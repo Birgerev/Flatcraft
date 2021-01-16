@@ -99,5 +99,6 @@
     Obsidian,
     Flint,
     Flint_And_Steel,
-    Portal_Frame
+    Portal_Frame,
+    Netherrack
 }

@@ -8,12 +8,27 @@ public class Portal_Frame : Block
     public override bool trigger { get; set; } = true;
 
     public override float breakTime { get; } = 9999999999f;
+    public override int glowLevel { get; } = 11;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.None;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
     private Dictionary<Entity, float> entityTimeSpentInsidePortal = new Dictionary<Entity, float>();
-    private static float timeRequiredBeforeTeleport = 3f;
+    private float timeRequiredBeforeTeleport = 3f;
+
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack();
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        //Add random duration to teleportation time, so multiple portals wont teleport entity at the same time
+        System.Random r = new System.Random(SeedGenerator.SeedByLocation(location));
+        timeRequiredBeforeTeleport += ((float)r.NextDouble()*4);
+    }
 
     public override void OnTriggerStay2D(Collider2D col)
     {
@@ -31,13 +46,13 @@ public class Portal_Frame : Block
 
             //Teleport entity if time requirements are met
             if (timeSpentInPortal >= timeRequiredBeforeTeleport)
-                PortalTeleport(entity);
+                entity.TeleportNetherPortal();
         }
 
         base.OnTriggerStay2D(col);
     }
 
-    public virtual void OnTriggerExit2D(Collider2D col)
+    public override void OnTriggerExit2D(Collider2D col)
     {
         Entity entity = col.GetComponent<Entity>();
 
@@ -46,23 +61,7 @@ public class Portal_Frame : Block
             //Reset time spent in portal if entity leaves portal
             entityTimeSpentInsidePortal.Remove(entity);
         }
-    }
 
-    private void PortalTeleport(Entity entity)
-    {
-        Location entityLocation = entity.Location;
-        Dimension currentDimension = entityLocation.dimension;
-        Location newLocation = new Location(0, 0);
-
-        if (currentDimension == Dimension.Overworld)
-        {
-            newLocation = new Location(entityLocation.x / 8, entityLocation.y, Dimension.Nether);
-        }
-        else if (currentDimension == Dimension.Nether)
-        {
-            newLocation = new Location(entityLocation.x * 8, entityLocation.y, Dimension.Overworld);
-        }
-
-        entity.Location = newLocation;
+        base.OnTriggerExit2D(col);
     }
 }

@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using Unity.Burst;
 
+[BurstCompile]
 public class LightManager : MonoBehaviour
 {
     public static int maxLightLevel = 15;
+    public static int netherLightLevel = 8;
     public static LightManager instance;
 
     public GameObject lightSourcePrefab;
@@ -28,6 +31,9 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateSunlightInColumn(int x)
     {
+        if (Player.localInstance.Location.dimension == Dimension.Nether)
+            return;
+        
         if (instance.sunlightSources.ContainsKey(x))
         {
             SunlightSource oldSunlightSource = instance.sunlightSources[x];
@@ -39,6 +45,13 @@ public class LightManager : MonoBehaviour
         GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
 
         instance.sunlightSources.Add(x, newSunlightSource.GetComponent<SunlightSource>());
+    }
+
+    public static void DestroySource(GameObject source)
+    {
+        int2 location = new int2((int)source.transform.position.x, (int)source.transform.position.y);
+        LightManager.UpdateLightInArea(location - new int2(15, 15), location + new int2(15, 15));
+        Destroy(source);
     }
 
     public static void UpdateBlockLight(Location block)
@@ -73,15 +86,15 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        var objectLoc = lightObject.transform.position;
-        var brightestRecordedLightLevel = 0;
+        Vector3 objectLoc = lightObject.transform.position;
+        int brightestRecordedLightLevel = 0;
 
         foreach (LightSource source in possibleLightSources)
         {
-            var sourceLoc = source.transform.position;
-            var sourceBrightness = source.lightLevel;
-            var objectDistance = math.distance(sourceLoc, objectLoc);
-            var objectBrightness = sourceBrightness - (int) objectDistance;
+            Vector3 sourceLoc = source.transform.position;
+            int sourceBrightness = source.lightLevel;
+            float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
+            int objectBrightness = sourceBrightness - (int) objectDistance;
             
             if (objectBrightness > brightestRecordedLightLevel)
             {

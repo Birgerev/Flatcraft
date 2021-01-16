@@ -67,7 +67,7 @@ public class Chunk : MonoBehaviour
     public bool isLoading;
     public bool isSpawnChunk;
 
-    public HashSet<Location> lightSourcesToUpdate = new HashSet<Location>();
+    public Portal_Frame netherPortal;
     private Perlin patchNoise;
 
     private void Start()
@@ -81,15 +81,11 @@ public class Chunk : MonoBehaviour
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
-
         StartCoroutine(GenerateChunk());
     }
 
     public void DestroyChunk()
     {
-        if (isSpawnChunk)
-            return;
-
         UnloadEntities();
 
         WorldManager.instance.chunks.Remove(chunkPosition);
@@ -102,7 +98,8 @@ public class Chunk : MonoBehaviour
     {
         foreach(Entity entity in GetEntities())
         {
-            entity.Unload();
+            if (!(entity is Player))
+                entity.Unload();
         }
     }
 
@@ -237,7 +234,6 @@ public class Chunk : MonoBehaviour
         //pre-generate chunk biomes
         Biome.GetBiomeAt(chunkPosition);
 
-
         if (chunkPosition.HasBeenGenerated())
         {
             //Load blocks
@@ -308,7 +304,7 @@ public class Chunk : MonoBehaviour
             File.WriteAllLines(chunkDataPath, chunkDataLines);
         }
 
-        GenerateBackgroundBlocks();
+        StartCoroutine(GenerateBackgroundBlocks());
         StartCoroutine(Tick());
 
         isLoading = false;
@@ -327,11 +323,12 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    private void GenerateBackgroundBlocks()
+    IEnumerator GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
         {
             UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -522,6 +519,9 @@ public class Chunk : MonoBehaviour
         //remove old block
         if (GetLocalBlock(loc) != null)
         {
+            if (isLoaded && GetLocalBlock(loc).GetComponentInChildren<LightSource>() != null)
+                LightManager.DestroySource(GetLocalBlock(loc).GetComponentInChildren<LightSource>().gameObject);
+
             Destroy(GetLocalBlock(loc).gameObject);
             blocks.Remove(pos);
         }
@@ -548,9 +548,17 @@ public class Chunk : MonoBehaviour
 
             block.data = data;
             block.location = loc;
-            block.ScheduleBlockInitialization();
+            if (isLoaded)
+                block.ScheduleBlockInitialization();
+            else
+                block.Initialize();
 
             result = blockObject.GetComponent<Block>();
+        }
+
+        if(mat == Material.Portal_Frame)
+        {
+            netherPortal = (Portal_Frame)result;
         }
 
         if (isLoaded)
@@ -571,6 +579,25 @@ public class Chunk : MonoBehaviour
         LightManager.UpdateBlockLight(loc);
     }
 
+    public Location GeneratePortal(int x)
+    {
+        //Find an air pocket to place portal at
+        int maxPortalHeight = (chunkPosition.dimension == Dimension.Overworld) ? Chunk.Height : 128; 
+        for (int y = 0; y < maxPortalHeight; y++)
+        {
+            Location loc = new Location(x, y, chunkPosition.dimension);
+            if (loc.GetMaterial() == Material.Air)
+            {
+                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Nether_Portal")).Tick();
+                return loc;
+            }
+        }
+
+        //if no air pocket is found, place portal at y level 64
+        Location defaultLocation = new Location(x, 64, chunkPosition.dimension);
+        defaultLocation.SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Nether_Portal")).Tick();
+        return defaultLocation;
+    }
 
     public Block GetLocalBlock(Location loc)
     {
@@ -616,7 +643,8 @@ public class Chunk : MonoBehaviour
 
         //-Terrain Generation-//
 
-        if(chunkPosition.dimension == Dimension.Overworld) {
+        if (chunkPosition.dimension == Dimension.Overworld)
+        {
             //-Ground-//
             if (noiseValue > 0.1f)
             {
@@ -641,9 +669,9 @@ public class Chunk : MonoBehaviour
             //-Dirt & Gravel Patches-//
             if (mat == Material.Stone)
             {
-                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
+                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20)) > 7.5f)
                     mat = Material.Dirt;
-                if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
+                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20 + 100, (float)loc.y / 20, 200)) > 7.5f)
                     mat = Material.Gravel;
             }
 
@@ -654,7 +682,7 @@ public class Chunk : MonoBehaviour
             if (noiseValue > 0.1f)
             {
                 var caveValue =
-                    (caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20) + 4.0f) / 4f;
+                    (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
                 if (caveValue > CaveHollowValue)
                 {
                     mat = Material.Air;
@@ -664,6 +692,27 @@ public class Chunk : MonoBehaviour
                         mat = Material.Lava;
                 }
             }
+        }
+        else if (chunkPosition.dimension == Dimension.Nether)
+        {
+            if (noiseValue > 0.1f)
+                mat = Material.Netherrack;
+
+            if (mat == Material.Air && loc.y <= SeaLevel) 
+                mat = Material.Lava;
+
+            //-Bedrock Generation-//
+            if (loc.y >= 128 - 4 && loc.y <= 128)
+            {
+                //Fill layer 256 and then progressively less chance of bedrock further down
+                if (loc.y == 128 - 4)
+                    mat = Material.Bedrock;
+                else if (r.Next(0, (128 - loc.y) + 2) <= 1)
+                    mat = Material.Bedrock;
+            }
+
+            if (loc.y > 128)
+                mat = Material.Air;
         }
 
         //-Bedrock Generation-//
@@ -685,7 +734,8 @@ public class Chunk : MonoBehaviour
 
         foreach (var e in Entity.entities)
             if (e.Location.x >= chunkPosition.worldX &&
-                e.Location.x <= chunkPosition.worldX + Width)
+                e.Location.x <= chunkPosition.worldX + Width &&
+                e != null)
                 entities.Add(e);
 
         return entities.ToArray();
