@@ -8,7 +8,6 @@ public class Crop : Block
     public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 100;
     public override bool autosave { get; } = true;
-    public override bool requiresGround { get; } = true;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
@@ -21,6 +20,7 @@ public class Crop : Block
     {
         texture = crop_textures[GetStage()];
         Render();
+        CheckFarmland();
 
         base.Tick();
     }
@@ -37,7 +37,8 @@ public class Crop : Block
     {
         var materialBeneath = (location - new Location(0, 1)).GetMaterial();
 
-        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry) Break();
+        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry) 
+            Break();
     }
 
     public void Grow()
