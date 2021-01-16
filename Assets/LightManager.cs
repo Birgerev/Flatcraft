@@ -31,9 +31,6 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateSunlightInColumn(int x)
     {
-        if (Player.localInstance.Location.dimension == Dimension.Nether)
-            return;
-        
         if (instance.sunlightSources.ContainsKey(x))
         {
             SunlightSource oldSunlightSource = instance.sunlightSources[x];
@@ -41,6 +38,10 @@ public class LightManager : MonoBehaviour
             Destroy(oldSunlightSource.gameObject);
         }
 
+        //Dont create sunlight sources if player is in the nether
+        if (Player.localInstance.Location.dimension == Dimension.Nether)
+            return;
+        
         Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localInstance.Location.dimension, false);
         GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
 
