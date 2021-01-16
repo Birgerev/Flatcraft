@@ -64,9 +64,14 @@ public class Crop : Block
 
     public override void Drop()
     {
-        new ItemStack(seed, new Random().Next(0, 3)).Drop(location);
-
         if (GetStage() == GetAmountOfStages() - 1)
+        {
+            new ItemStack(seed, new Random().Next(0, 3)).Drop(location);
             new ItemStack(result, 1).Drop(location);
+        }
+        else
+        {
+            new ItemStack(seed, 1).Drop(location);
+        }
     }
 }
