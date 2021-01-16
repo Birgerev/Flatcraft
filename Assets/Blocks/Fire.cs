@@ -26,7 +26,6 @@ public class Fire : Block
         var random = new System.Random();
         bool spread = (random.NextDouble() < 0.8d);
 
-
         if (spread)
         {
             var spreadLocation = new Location();
@@ -51,9 +50,14 @@ public class Fire : Block
         }
         else
         {
-            location.SetMaterial(Material.Air).Tick();
-            if((location + new Location(0, -1)).GetBlock().isFlammable)
-                (location + new Location(0, -1)).SetMaterial(Material.Air).Tick();
+            bool netherrackBelow = ((location + new Location(0, -1)).GetMaterial() == Material.Netherrack);
+
+            if (!netherrackBelow)
+            {
+                location.SetMaterial(Material.Air).Tick();
+                if ((location + new Location(0, -1)).GetBlock().isFlammable)
+                    (location + new Location(0, -1)).SetMaterial(Material.Air).Tick();
+            }
         }
 
         base.RandomTick();
