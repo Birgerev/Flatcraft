@@ -36,6 +36,10 @@ public class Portal_Frame : Block
 
         if (entity != null)
         {
+            //Temporarily made only players being able to teleport
+            if (!(entity.GetType() == typeof(Player)))
+                return;
+            
             //Add time since last frame to table
             float timeSpentInPortal = 0;
             if (entityTimeSpentInsidePortal.ContainsKey(entity))
