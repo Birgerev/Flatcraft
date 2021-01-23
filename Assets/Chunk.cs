@@ -94,6 +94,7 @@ public class Chunk : MonoBehaviour
 
         Destroy(gameObject);
     }
+    
     public void UnloadEntities()
     {
         foreach(Entity entity in GetEntities())
@@ -409,10 +410,10 @@ public class Chunk : MonoBehaviour
     private void GenerateStructures(Location loc)
     {
         var block = loc.GetBlock();
-        if (block == null)
-            return;
-
-        var mat = block.GetMaterial();
+        var mat = Material.Air;
+        if (block != null)
+            mat = block.GetMaterial();
+        
         var biome = GetBiome();
         var r = new Random(SeedGenerator.SeedByLocation(loc));
         Material[] flowerMaterials = {Material.Red_Flower};
@@ -467,7 +468,6 @@ public class Chunk : MonoBehaviour
                         .SetData(new BlockData("structure=Cactus"));
         }
 
-
         //Generate Ores
         if (mat == Material.Stone)
         {
@@ -489,6 +489,17 @@ public class Chunk : MonoBehaviour
             else if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
                 (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
                     .SetData(new BlockData("structure=Ore_Coal"));
+        }
+        
+        //Generate Liquid Pockets
+        if (loc.y < 50 && mat == Material.Air && r.Next(0, 100) <= 5)
+        {
+            if ((loc + new Location(0, 1)).GetMaterial() == Material.Stone)
+            {
+                Material liquidMat = (r.Next(0, 100) < 75 ? Material.Water : Material.Lava);
+                
+                (loc + new Location(0, 1)).SetMaterial(liquidMat);
+            }
         }
     }
 

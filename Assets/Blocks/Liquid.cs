@@ -20,6 +20,7 @@ public class Liquid : Block
     public override void GeneratingTick()
     {
         MakeIntoLiquidSourceBlock();
+        Tick();
         
         base.GeneratingTick();
     }

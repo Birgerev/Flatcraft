@@ -39,7 +39,8 @@ public struct Location
 
     public Location SetMaterial(Material mat)
     {
-        if (SaveManager.blockChanges.ContainsKey(this)) SaveManager.blockChanges.Remove(this);
+        if (SaveManager.blockChanges.ContainsKey(this)) 
+            SaveManager.blockChanges.Remove(this);
 
         SaveManager.blockChanges.Add(this, mat + "*"); //Add block change to list, without old data, as it should be reset whenever the block is replaced
 
