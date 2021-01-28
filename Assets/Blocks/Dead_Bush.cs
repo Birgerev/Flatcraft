@@ -5,7 +5,7 @@
         {"block_dead_bush_0", "block_dead_bush_1", "block_dead_bush_2"};
 
     public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.3f;
+    public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
     public override bool isFlammable { get; } = true;
 
