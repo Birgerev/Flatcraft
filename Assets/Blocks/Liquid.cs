@@ -127,7 +127,9 @@ public class Liquid : Block
         if (loc.GetMaterial() == Material.Air)                //Flow if no block is in the way
         {
             loc.SetMaterial(GetMaterial()).SetData(new BlockData("liquid_level=" + liquidLevel));
-            ((Liquid) loc.GetBlock()).ScheduleLiquidTick();
+            if (loc.GetBlock() != null)
+                ((Liquid) loc.GetBlock()).ScheduleLiquidTick();
+
             return true;
         }
         
