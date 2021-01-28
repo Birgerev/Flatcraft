@@ -48,6 +48,7 @@ public class ItemStack
         this.data = data;
         this.durability = durability;
     }
+    
     public string GetTexture()
     {
         System.Type materialType = Type.GetType(material.ToString());
@@ -65,6 +66,7 @@ public class ItemStack
     {
         return Resources.Load<Sprite>("Sprites/" + GetTexture());
     }
+    
     public Color[] GetTextureColors()
     {
         List<Color> textureColors = new List<Color>();

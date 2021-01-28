@@ -79,6 +79,7 @@ public struct Location
     {
         var cPos = new ChunkPosition(this);
         var chunk = cPos.GetChunk();
+        
         if (chunk != null)
         {
             var block = chunk.GetLocalBlock(this);
