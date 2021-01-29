@@ -18,7 +18,7 @@ public class UIHunger : MonoBehaviour
         if (Player.localInstance == null)
             return;
 
-        var hunger = Mathf.Round(Player.localInstance.hunger * 2) / 2;
+        var hunger = Mathf.CeilToInt(Player.localInstance.hunger * 2) / 2;
         float hungerIndex = transform.GetSiblingIndex();
 
         GetComponent<Image>().sprite = full;
