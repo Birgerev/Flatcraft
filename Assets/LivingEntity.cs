@@ -162,7 +162,8 @@ public class LivingEntity : Entity
 
     public virtual void CalculateFlip()
     {
-        if (GetVelocity().x != 0) facingLeft = GetVelocity().x < 0;
+        if (Mathf.Abs(GetVelocity().x) > 0.1f)
+            facingLeft = GetVelocity().x < 0;
     }
 
     public virtual void Jump()
