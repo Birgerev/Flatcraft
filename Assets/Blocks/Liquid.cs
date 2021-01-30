@@ -7,6 +7,7 @@ public class Liquid : Block
     public override float breakTime { get; } = 100;
     public virtual int max_liquid_level { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
+    public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
     
     public override void BuildTick()
