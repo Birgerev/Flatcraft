@@ -86,6 +86,7 @@ public class LivingEntity : Entity
     public virtual void ProcessMovement()
     {
         ApplyFriction();
+        CrouchOnLadder();
     }
 
     public virtual void ApplyFriction()
@@ -180,6 +181,13 @@ public class LivingEntity : Entity
         if (isOnClimbable) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
+    public virtual void CrouchOnLadder()
+    {
+        if (isOnClimbable && sneaking)
+        {
+            SetVelocity(new Vector2(GetVelocity().x, 0.45f));        //y should be 0, but 0.45 prevents any downwards movement
+        }
+    }
 
     private void fallDamageCheck()
     {
