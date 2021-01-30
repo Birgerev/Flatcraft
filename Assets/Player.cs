@@ -283,13 +283,13 @@ public class Player : HumanEntity
                 HitEntity(entity.transform.GetComponent<Entity>());
                 return;
             }
-
         }
+        
 
         //Place blocks
         if (Input.GetMouseButtonDown(1))
         {
-            if (block == null || block.GetMaterial() == Material.Water || block.GetMaterial() == Material.Lava)
+            if (entity == null && block == null || block.GetMaterial() == Material.Water || block.GetMaterial() == Material.Lava)
             {
                 ItemStack item = inventory.getSelectedItem().Clone();
                 Material mat;
