@@ -11,7 +11,7 @@ public class Portal_Frame : Block
     public override int glowLevel { get; } = 11;
 
     public override Tool_Type propperToolType { get; } = Tool_Type.None;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Glass;
 
     private Dictionary<Entity, float> entityTimeSpentInsidePortal = new Dictionary<Entity, float>();
     private float timeRequiredBeforeTeleport = 3f;
