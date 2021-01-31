@@ -406,5 +406,6 @@ public enum Block_SoundType
     Dirt,
     Grass,
     Wool,
-    Gravel
+    Gravel,
+    Ladder,
 }
