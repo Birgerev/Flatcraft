@@ -32,7 +32,8 @@ public class Sound : MonoBehaviour
         var obj = new GameObject("sound " + sound);
         var source = obj.AddComponent<AudioSource>();
 
-        var clip = Resources.Load<AudioClip>("Sounds/" + sound);
+        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        var clip = clips[new System.Random().Next(0, clips.Length)];
 
         if (clip == null)
         {
