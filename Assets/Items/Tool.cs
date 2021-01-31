@@ -23,6 +23,7 @@
         {
             loc.SetMaterial(Material.Fire).Tick();
             Player.localInstance.DoToolDurability();
+            Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
 
         base.InteractRight(loc, firstFrameDown);
