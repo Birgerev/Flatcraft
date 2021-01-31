@@ -101,6 +101,8 @@ public class Player : HumanEntity
         else
             framesSinceInventoryOpen++;
 
+        ClimbableSound();
+        
         CheckHunger();
         CheckRegenerateHealth();
         CheckStarvationDamage();
@@ -158,6 +160,13 @@ public class Player : HumanEntity
         Damage(damage);
     }
 
+    private void ClimbableSound()
+    {
+        if (isOnClimbable && Mathf.Abs(GetVelocity().y) > 0.5f)
+            if ((Time.time % 0.8f) - Time.deltaTime <= 0)
+                Sound.Play(Location, "block/ladder/hit", SoundType.Entities, 0.8f, 1.2f);
+                
+    }
 
     private void performMovementInput()
     {
