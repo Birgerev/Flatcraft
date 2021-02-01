@@ -189,9 +189,11 @@ public class LivingEntity : Entity
             last_jump_time = Time.time;
         }
 
-        if (isInLiquid && GetVelocity().y < swimUpSpeed) SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
+        if (isInLiquid && GetVelocity().y < swimUpSpeed) 
+            SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
 
-        if (isOnClimbable) SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
+        if (isOnClimbable) 
+            SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
     public virtual void CrouchOnLadder()
