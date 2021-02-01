@@ -409,4 +409,5 @@ public enum Block_SoundType
     Gravel,
     Ladder,
     Glass,
+    Fire,
 }
