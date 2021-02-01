@@ -66,6 +66,9 @@ public class Sound : MonoBehaviour
 
         var pitch = Random.Range(minPitch, maxPitch);
 
+        source.spatialBlend = 1;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.playOnAwake = false;
         source.outputAudioMixerGroup = group;
         source.clip = clip;
         obj.transform.position = loc.GetPosition();

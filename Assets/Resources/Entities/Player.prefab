@@ -279,6 +279,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1149122272397806830}
+  - component: {fileID: 5904043677331230750}
   - component: {fileID: 1149122272397806829}
   - component: {fileID: 7118248979253364308}
   - component: {fileID: 1149122272397806803}
@@ -308,6 +309,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &5904043677331230750
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149122272397806801}
+  m_Enabled: 1
 --- !u!114 &1149122272397806829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,9 +337,10 @@ MonoBehaviour:
   id: 0
   isInLiquid: 0
   isOnGround: 0
-  isOnLadder: 0
+  isOnClimbable: 0
   lastFramePosition: {x: 0, y: 0}
   health: 0
+  highestYlevelsinceground: 0
   crosshair: {fileID: 1149122271182722694}
   hunger: 0
   inventory:
@@ -488,12 +498,12 @@ MonoBehaviour:
     size: 36
     baseInventorySize: 36
     selectedSlot: 0
+  bedLocation:
+    x: 0
+    y: 0
+    dimension: 0
   maxHunger: 20
   reach: 5
-  spawnLocation:
-    x: 0
-    y: 80
-    dimension: 0
 --- !u!95 &7118248979253364308
 Animator:
   serializedVersion: 3
