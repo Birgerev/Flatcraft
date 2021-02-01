@@ -29,7 +29,7 @@ public class PlayerInventory : Inventory
     {
         var armor = new ItemStack[4];
 
-        for (var i = 36; i <= 39; i++) armor[i] = getItem(i);
+        for (var i = getFirstArmorSlot(); i <= 39; i++) armor[i] = getItem(i);
 
         return armor;
     }
@@ -42,12 +42,16 @@ public class PlayerInventory : Inventory
 
         return table;
     }
+    
+    public int getFirstArmorSlot()
+    {
+        return 36;
+    }
 
     public int getFirstCraftingTableSlot()
     {
         return 40;
     }
-
 
     public int getCraftingResultSlot()
     {
