@@ -16,7 +16,13 @@ public class Sound : MonoBehaviour
         instance = this;
     }
 
-
+    public static bool Exists(string sound)
+    {
+        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        
+        return (clips.Length > 0);
+    }
+    
     public static void Play(Location loc, string sound, SoundType type)
     {
         Play(loc, sound, type, 1, 1);
@@ -32,13 +38,14 @@ public class Sound : MonoBehaviour
         var obj = new GameObject("sound " + sound);
         var source = obj.AddComponent<AudioSource>();
 
-        var clip = Resources.Load<AudioClip>("Sounds/" + sound);
-
-        if (clip == null)
+        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        if (clips.Length == 0)
         {
             Debug.LogError("Sound clip not found: " + sound);
             return;
         }
+        
+        var clip = clips[new System.Random().Next(0, clips.Length)];
 
         AudioMixerGroup group = null;
         switch (type)
@@ -59,11 +66,15 @@ public class Sound : MonoBehaviour
 
         var pitch = Random.Range(minPitch, maxPitch);
 
+        source.spatialBlend = 1;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.playOnAwake = false;
         source.outputAudioMixerGroup = group;
         source.clip = clip;
         obj.transform.position = loc.GetPosition();
         source.pitch = pitch;
         source.maxDistance = distance;
+        DontDestroyOnLoad(obj);
 
 
         source.Play();

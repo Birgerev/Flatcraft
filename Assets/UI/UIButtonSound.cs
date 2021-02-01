@@ -5,7 +5,7 @@ public class UIButtonSound : MonoBehaviour
 {
     public void Play()
     {
-        Sound.Play(new Location(), "menu/click", SoundType.Menu, 0.8f, 1.2f);
+        Sound.Play(new Location(), "menu/click", SoundType.Menu, 1f, 1f);
     }
 
     private void Start()

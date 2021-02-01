@@ -12,6 +12,7 @@
 
         if (relativeLocation.y != 0)        // Lava only effects when flowing down to water, which creates regular stone
         {
+            LiquidEncounterEffect(loc);
             loc.SetMaterial(Material.Stone).Tick();
             
             base.LiquidEncounterFlow(relativeLocation);

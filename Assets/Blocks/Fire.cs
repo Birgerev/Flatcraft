@@ -14,7 +14,7 @@ public class Fire : Block
     public override float averageRandomTickDuration { get; } = 5;
     public override int glowLevel { get; } = 15;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;    //TODO new fire sound
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;    //TODO new fire sound
 
     public override ItemStack GetDrop()
     {
@@ -24,7 +24,13 @@ public class Fire : Block
     public override void RandomTick()
     {
         var random = new System.Random();
+        bool ambinetSound = (random.NextDouble() < 0.5d);
         bool spread = (random.NextDouble() < 0.8d);
+
+        if (ambinetSound)
+        {
+            Sound.Play(location, "block/fire/ambient", SoundType.Blocks, 0.8f, 1.2f);
+        }
 
         if (spread)
         {

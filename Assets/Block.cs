@@ -111,6 +111,9 @@ public class Block : MonoBehaviour
 
     public virtual void BuildTick()
     {
+        if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
+            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
+        
         if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
         {
             RotateTowardsPlayer();
@@ -123,9 +126,6 @@ public class Block : MonoBehaviour
 
     public virtual void Tick()
     {
-        if (age == 0 && new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
-
         checkGround();
         UpdateColliders();
         RenderRotate();
@@ -406,5 +406,8 @@ public enum Block_SoundType
     Dirt,
     Grass,
     Wool,
-    Gravel
+    Gravel,
+    Ladder,
+    Glass,
+    Fire,
 }
