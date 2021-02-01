@@ -16,7 +16,13 @@ public class Sound : MonoBehaviour
         instance = this;
     }
 
-
+    public static bool Exists(string sound)
+    {
+        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        
+        return (clips.Length > 0);
+    }
+    
     public static void Play(Location loc, string sound, SoundType type)
     {
         Play(loc, sound, type, 1, 1);
