@@ -371,10 +371,7 @@ public class Player : HumanEntity
 
     private void EatHeldItem()
     {
-        //Subtract food item from inventory
         ItemStack selectedItemStack = inventory.getSelectedItem();
-        selectedItemStack.amount -= 1;
-        inventory.setItem(inventory.selectedSlot, selectedItemStack);
 
         //Add hunger
         Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
@@ -386,6 +383,10 @@ public class Player : HumanEntity
 
         //Burp sounds
         Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
+        
+        //Subtract food item from inventory
+        selectedItemStack.amount -= 1;
+        inventory.setItem(inventory.selectedSlot, selectedItemStack);
     }
 
     public void PlayEatEffect(Color[] colors)
