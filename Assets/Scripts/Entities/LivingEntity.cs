@@ -18,7 +18,7 @@ public class LivingEntity : Entity
     //Entity Data Tags
     [EntityDataTag(false)] public float health;
 
-    private readonly float jumpVelocity = 8f;
+    private readonly float jumpVelocity = 8.5f;
     private readonly float ladderFriction = 0.8f;
     private readonly float liquidDrag = 0.75f;
     private readonly float sneakSpeed = 1.3f;
