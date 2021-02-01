@@ -57,6 +57,7 @@ public class DroppedItem : Entity
         if (col.GetComponent<Player>() != null)
             if (col.GetComponent<Player>().inventory.AddItem(item))
             {
+                Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
                 canPickup = false;
                 Die();
             }
