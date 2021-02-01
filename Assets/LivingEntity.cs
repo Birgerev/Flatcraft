@@ -57,8 +57,10 @@ public class LivingEntity : Entity
         
         if(controller != null)
             controller.Tick();
+        
         CalculateFlip();
         UpdateAnimatorValues();
+        AmbientSoundCheck();
 
         if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
         {
@@ -72,6 +74,16 @@ public class LivingEntity : Entity
         }
     }
 
+    public virtual void AmbientSoundCheck()
+    {
+        int checkDuration = 4;
+        float timeOffset = (float)new System.Random(id).NextDouble() * checkDuration;    //Uses a static seed (id)
+        
+        if (((Time.time + timeOffset) % checkDuration) - Time.deltaTime <= 0)
+            if(new System.Random(Time.time.GetHashCode() + id).NextDouble() < 0.5f)
+                AmbientSound();
+    }
+    
     public virtual void UpdateAnimatorValues()
     {
         var anim = GetComponent<Animator>();
@@ -278,6 +290,7 @@ public class LivingEntity : Entity
 
     public override void Damage(float damage)
     {
+        HurtSound();
         Sound.Play(Location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
 
         health -= damage;
@@ -290,9 +303,34 @@ public class LivingEntity : Entity
 
     public override void Die()
     {
+        DeathSound();
         Particle.Spawn_SmallSmoke(transform.position, Color.white);
 
         base.Die();
+    }
+
+    public virtual void HurtSound()
+    {
+        string soundName = "entity/" + this.GetType().ToString() + "/hurt";
+        
+        if(Sound.Exists(soundName))
+            Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
+    }
+
+    public virtual void DeathSound()
+    {
+        string soundName = "entity/" + this.GetType().ToString() + "/death";
+        
+        if(Sound.Exists(soundName))
+            Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
+    }
+    
+    public virtual void AmbientSound()
+    {
+        string soundName = "entity/" + this.GetType().ToString() + "/idle";
+        
+        if(Sound.Exists(soundName))
+            Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
 
     public virtual void Knockback(Vector2 direction)
