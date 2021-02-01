@@ -64,6 +64,7 @@ public class Entity : MonoBehaviour
 
     public virtual void Start()
     {
+        UpdateCachedPosition();
         gameObject.name = "Entity [" + GetType().Name + "]";
         entities.Add(this);
 
@@ -300,8 +301,8 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "\\region\\" + Location.dimension + "\\" +
-               new ChunkPosition(Location).chunkX + "\\entities\\" + id + "." + GetType().Name;
+        return WorldManager.world.getPath() + "/region/" + Location.dimension + "/" +
+               new ChunkPosition(Location).chunkX + "/entities/" + id + "." + GetType().Name;
     }
 
     public virtual void Save()
