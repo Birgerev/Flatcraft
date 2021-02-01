@@ -39,13 +39,13 @@ public class Sound : MonoBehaviour
         var source = obj.AddComponent<AudioSource>();
 
         var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
-        var clip = clips[new System.Random().Next(0, clips.Length)];
-
-        if (clip == null)
+        if (clips.Length == 0)
         {
             Debug.LogError("Sound clip not found: " + sound);
             return;
         }
+        
+        var clip = clips[new System.Random().Next(0, clips.Length)];
 
         AudioMixerGroup group = null;
         switch (type)
