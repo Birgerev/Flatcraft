@@ -483,14 +483,6 @@ public class Player : HumanEntity
         UpdateCachedPosition();
         Save();
     }
-
-    public override void Damage(float damage)
-    {
-        base.Damage(damage);
-
-        Sound.Play(Location, "entity/Player/hurt", SoundType.Entities, 0.85f, 1.15f); //Play hurt sound
-    }
-
     public override void Hit(float damage)
     {
     }
