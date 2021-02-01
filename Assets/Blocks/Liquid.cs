@@ -160,6 +160,12 @@ public class Liquid : Block
         
     }
     
+    public virtual void LiquidEncounterEffect(Location location)
+    {
+        Sound.Play(location, "block/fire/break", SoundType.Blocks, 0.8f, 1.2f);
+        Particle.Spawn_SmallSmoke(location.GetPosition(), Color.black);
+    }
+    
     public Location FindSourceBlock()
     {
         Location up = location + new Location(0, 1);    //Vertical source check

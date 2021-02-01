@@ -9,10 +9,12 @@
         
         if (((Liquid) loc.GetBlock()).IsLiquidSourceBlock())    //If water flows down to a lava source, make it to obsidian
         {
+            LiquidEncounterEffect(loc);
             loc.SetMaterial(Material.Obsidian).Tick();
         }
         else                                                    //Water flowing onto a non source lava block, make it cobblestone
         {
+            LiquidEncounterEffect(loc);
             loc.SetMaterial(Material.Cobblestone).Tick();
         }
         
