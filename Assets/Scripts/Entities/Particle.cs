@@ -29,15 +29,10 @@ public class Particle : Entity
 
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-
-        StartCoroutine(ScheduleDeath());
-    }
-
-    IEnumerator ScheduleDeath()
-    {
-        yield return new WaitForSeconds(maxAge);
         
-        Die();
+        Destroy(gameObject, maxAge);
+    }
+    {
     }
 
     private void OnCollisionEnter2D(Collision2D col)
