@@ -9,7 +9,10 @@ public class Particle : Entity
     public bool doGravity = true;
     public float maxAge = 5;
     public int maxBounces = 3;
-
+    public string spriteSheet = "particle_dot";
+    public int animationLength = -1;
+    public float animationDuration = -1;
+    
     public Color color
     {
         get => GetRenderer().color;
@@ -29,29 +32,43 @@ public class Particle : Entity
 
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-
-        StartCoroutine(ScheduleDeath());
-    }
-
-    IEnumerator ScheduleDeath()
-    {
-        yield return new WaitForSeconds(maxAge);
         
-        Die();
+        Destroy(gameObject, maxAge);
+        
+        if(animationLength != -1)
+            StartCoroutine(ParticleAnimation());
+    }
+    
+    IEnumerator ParticleAnimation()
+    {
+        Sprite[] frames = Resources.LoadAll<Sprite> ("Sprites/" + spriteSheet);
+        int frameIndex = 0;
+        while (frameIndex < animationLength)
+        {
+            GetRenderer().sprite = frames[frameIndex];
+            frameIndex++;
+            
+            yield return new WaitForSeconds((float)animationDuration / (float)animationLength);
+        }
+
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         bounces++;
-        if (bounces > maxBounces) Destroy(gameObject);
+        if (bounces > maxBounces) 
+            Destroy(gameObject);
     }
 
     public override void Save()
     {
+        //Particles shouldn't be saved
     }
 
     public override void Load()
     {
+        //Particles shouldn't load
     }
     
     public static void Spawn_SmallSmoke(Vector2 position, Color color)
@@ -143,6 +160,7 @@ public class Particle : Entity
 
     public override void EnterLiquid(Liquid liquid)
     {
+        //Normal enter liquid creates particles which creates an infinite loop
         isInLiquid = true;
     }
 }
