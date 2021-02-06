@@ -38,15 +38,18 @@ public class Particle : Entity
     private void OnCollisionEnter2D(Collision2D col)
     {
         bounces++;
-        if (bounces > maxBounces) Destroy(gameObject);
+        if (bounces > maxBounces) 
+            Destroy(gameObject);
     }
 
     public override void Save()
     {
+        //Particles shouldn't be saved
     }
 
     public override void Load()
     {
+        //Particles shouldn't load
     }
     
     public static void Spawn_SmallSmoke(Vector2 position, Color color)
@@ -138,6 +141,7 @@ public class Particle : Entity
 
     public override void EnterLiquid(Liquid liquid)
     {
+        //Normal enter liquid creates particles which creates an infinite loop
         isInLiquid = true;
     }
 }
