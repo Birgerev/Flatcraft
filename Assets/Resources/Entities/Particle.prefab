@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 8466682603583594596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2348263347211368238}
   m_Father: {fileID: 0}
@@ -58,7 +58,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.25, y: 0.25}
   m_EdgeRadius: 0
 --- !u!50 &8466682603583594599
 Rigidbody2D:
@@ -94,16 +94,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   age: 0
+  fireTime: 0
   dead: 0
+  burningRender: {fileID: 0}
   facingLeft: 0
   id: 0
   isInLiquid: 0
   isOnGround: 0
-  isOnLadder: 0
+  isOnClimbable: 0
   lastFramePosition: {x: 0, y: 0}
   doGravity: 1
   maxAge: 5
   maxBounces: 3
+  spriteSheet: particle_dot
+  animationLength: -1
 --- !u!1 &8817448794502047748
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,12 +179,12 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5a6439fa0139b0f4fbd396f0c7bd181b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ef21c42318f0af946bd0dfc0feb56bc0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1.5}
+  m_Size: {x: 0.25, y: 0.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
