@@ -9,7 +9,10 @@ public class Particle : Entity
     public bool doGravity = true;
     public float maxAge = 5;
     public int maxBounces = 3;
-
+    public string spriteSheet = "particle_dot";
+    public int animationLength = -1;
+    public float animationDuration = -1;
+    
     public Color color
     {
         get => GetRenderer().color;
@@ -31,8 +34,24 @@ public class Particle : Entity
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         
         Destroy(gameObject, maxAge);
+        
+        if(animationLength != -1)
+            StartCoroutine(ParticleAnimation());
     }
+    
+    IEnumerator ParticleAnimation()
     {
+        Sprite[] frames = Resources.LoadAll<Sprite> ("Sprites/" + spriteSheet);
+        int frameIndex = 0;
+        while (frameIndex < animationLength)
+        {
+            GetRenderer().sprite = frames[frameIndex];
+            frameIndex++;
+            
+            yield return new WaitForSeconds((float)animationDuration / (float)animationLength);
+        }
+
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
