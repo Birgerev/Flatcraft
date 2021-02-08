@@ -30,6 +30,10 @@ public class DroppedItem : Entity
         //Bobbing
         GetRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
         cosIndex += 2f * Time.deltaTime;
+        
+        //Despawn
+        if (age > 60)
+            Die();
 
         if (isOnGround)
             GetComponent<Rigidbody2D>().velocity *= 0.95f;
