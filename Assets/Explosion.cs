@@ -30,6 +30,12 @@ public class Explosion : MonoBehaviour
 
         foreach (Block block in blocks)
         {
+            if(block.GetMaterial() == Material.TNT)
+            {
+                ((TNT)block).Prime(0.2f);
+                continue;
+            }
+            
             bool drop = (r.NextDouble() <= blockDropChance);
             
             block.Break(drop);
