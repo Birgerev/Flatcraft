@@ -10,6 +10,11 @@ public class Liquid : Block
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
     
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack();
+    }
+
     public override void BuildTick()
     {
         //If block was built by player, it is a liquid source
