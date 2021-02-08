@@ -26,6 +26,13 @@
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
 
+        if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.TNT)
+        {
+            ((TNT)loc.GetBlock()).Prime();
+            Player.localInstance.DoToolDurability();
+            Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
+        }
+
         base.InteractRight(loc, firstFrameDown);
     }
 }
