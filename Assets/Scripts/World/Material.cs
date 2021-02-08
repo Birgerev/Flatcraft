@@ -100,5 +100,6 @@
     Flint,
     Flint_And_Steel,
     Portal_Frame,
-    Netherrack
+    Netherrack,
+    TNT,
 }
