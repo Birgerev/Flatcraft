@@ -29,7 +29,8 @@ public class Item
     {
         var block = loc.GetBlock();
 
-        if (firstFrameDown) block.Interact();
+        if (firstFrameDown && block != null) 
+            block.Interact();
     }
 
     public virtual Sprite getTexture()
