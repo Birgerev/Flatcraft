@@ -36,7 +36,7 @@ public class PrimedTNT : Entity
         if (age >= fuse)
         {
             Explosion.Create(Location, 5, 1);
-            Destroy(gameObject);
+            Die();
         }
 
         bool blinkerState = (Time.time % 0.5f * 2 <= 0.5f);
