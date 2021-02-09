@@ -128,6 +128,20 @@ public class Chunk : MonoBehaviour
             block.GeneratingTick();
         }
     }
+    
+    private void InitializeAllBlocks()
+    {
+        //Initialize Blocks
+        var blockList = transform.GetComponentsInChildren<Block>();
+
+        foreach (var block in blockList)
+        {
+            if (block == null || block.transform == null)
+                continue;
+
+            block.Initialize();
+        }
+    }
 
     private IEnumerator AutosaveAllBlocks()
     {
@@ -259,6 +273,8 @@ public class Chunk : MonoBehaviour
                 }
             }
 
+            InitializeAllBlocks();
+
             //Loading Entities
             LoadAllEntities();
         }
@@ -294,6 +310,8 @@ public class Chunk : MonoBehaviour
                     yield return new WaitForSeconds(0.05f);
             }
 
+            
+            InitializeAllBlocks();
             //Generate Tick all block (decay all necessary grass etc)
             GeneratingTickAllBlocks();
 
@@ -561,8 +579,6 @@ public class Chunk : MonoBehaviour
             block.location = loc;
             if (isLoaded)
                 block.ScheduleBlockInitialization();
-            else
-                block.Initialize();
 
             result = blockObject.GetComponent<Block>();
         }
