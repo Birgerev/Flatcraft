@@ -327,6 +327,7 @@ public class Chunk : MonoBehaviour
 
         StartCoroutine(GenerateBackgroundBlocks());
         StartCoroutine(Tick());
+        GenerateSunlight();
 
         isLoading = false;
         isLoaded = true;
@@ -337,7 +338,6 @@ public class Chunk : MonoBehaviour
             yield return new WaitForSeconds(1f);
             if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
-                GenerateSunlight();
                 LightManager.UpdateChunkLight(chunkPosition);
                 break;
             }
