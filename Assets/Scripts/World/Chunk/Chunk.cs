@@ -275,8 +275,6 @@ public class Chunk : MonoBehaviour
                 }
             }
 
-            InitializeAllBlocks();
-
             //Loading Entities
             LoadAllEntities();
         }
@@ -311,9 +309,7 @@ public class Chunk : MonoBehaviour
                 if (y < 80 && y % 4 == 0)
                     yield return new WaitForSeconds(0.05f);
             }
-
             
-            InitializeAllBlocks();
             //Generate Tick all block (decay all necessary grass etc)
             GeneratingTickAllBlocks();
 
@@ -328,6 +324,9 @@ public class Chunk : MonoBehaviour
         StartCoroutine(GenerateBackgroundBlocks());
         StartCoroutine(Tick());
         GenerateSunlight();
+            
+        //Initialize all blocks after all blocks have been craeted
+        InitializeAllBlocks();
 
         isLoading = false;
         isLoaded = true;
