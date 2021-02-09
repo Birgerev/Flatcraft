@@ -50,10 +50,10 @@ public class Structure_Block : Block
 
                     loc += location;
 
-                    loc.SetMaterial(mat).SetData(data);
+                    loc.SetMaterial(mat).SetData(data).Tick();
                 }
 
-                location.SetMaterial(replaceMaterial).SetData(replaceData);
+                location.SetMaterial(replaceMaterial).SetData(replaceData).Tick();
             }
         }
     }
