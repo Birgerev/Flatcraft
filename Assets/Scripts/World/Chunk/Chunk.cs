@@ -268,8 +268,10 @@ public class Chunk : MonoBehaviour
                     var data = new BlockData(line.Split('*')[2]);
 
                     CreateLocalBlock(loc, mat, data);
+                    
                     i++;
-                    if (i % 10 == 1) yield return new WaitForSeconds(0.05f);
+                    if (i % 10 == 1) 
+                        yield return new WaitForSeconds(0.05f);
                 }
             }
 
