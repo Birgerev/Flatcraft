@@ -11,8 +11,7 @@ public class FallingSand : Entity
 
     public void Awake()
     {
-        GetComponent<Rigidbody2D>().simulated =
-            false; //wait till the block that spawned the sand dissapears to begin simulating physics
+        GetComponent<Rigidbody2D>().simulated = false; //wait till the block that spawned the sand dissapears to begin simulating physics
     }
 
     public override void Start()
