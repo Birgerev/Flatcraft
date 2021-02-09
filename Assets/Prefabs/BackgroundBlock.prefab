@@ -137,4 +137,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fda8be18fda7c4f429cdf2d798b40cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightLevelDeduct: 4
+  lightLevelDeduct: 7
