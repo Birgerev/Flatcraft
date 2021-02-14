@@ -1,3 +1,4 @@
+mirror*0*0
 Wooden_Sword*1*
 Stick*0,0*
 Oak_Planks*0,1*

@@ -1,3 +1,4 @@
+mirror*0*0
 Stone_Sword*1*
 Stick*0,0*
 Cobblestone*0,1*

@@ -1,3 +1,4 @@
+mirror*0*0
 Iron_Sword*1*
 Stick*0,0*
 Iron_Ingot*0,1*

@@ -1,3 +1,4 @@
+mirror*0*0
 Chest*1*
 Oak_Planks*0,0*
 Oak_Planks*1,0*

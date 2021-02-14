@@ -1,3 +1,4 @@
+mirror*1*0
 Oak_Plank_Stairs*4*
 Oak_Planks*0,0*
 Oak_Planks*1,0*

@@ -1,3 +1,4 @@
+mirror*0*0
 Ladder*3*
 Stick*0,0*
 Stick*2,0*

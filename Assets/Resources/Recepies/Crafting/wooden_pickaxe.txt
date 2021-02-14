@@ -1,3 +1,4 @@
+mirror*0*0
 Wooden_Pickaxe*1*
 Stick*1,0*
 Stick*1,1*

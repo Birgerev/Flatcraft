@@ -1,3 +1,4 @@
+mirror*0*0
 Torch*4*
 Stick*0,0*
 Coal*0,1*

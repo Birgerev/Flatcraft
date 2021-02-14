@@ -1,3 +1,4 @@
+mirror*1*1
 Flint_And_Steel*1*
 Flint*0,1*
 Iron_Ingot*1,0*
