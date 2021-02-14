@@ -192,9 +192,6 @@ public class CraftingRecepie
             recepie.flipX = lines[0].Split('*')[1].Contains("1");
             recepie.flipY = lines[0].Split('*')[2].Contains("1");
             
-            if(recepie.flipY)
-                Debug.Log("funnydank");
-
             recepie.result = new ItemStack(
                 (Material) Enum.Parse(typeof(Material), lines[1].Split('*')[0]),
                 int.Parse(lines[1].Split('*')[1]), lines[1].Split('*')[2]);
