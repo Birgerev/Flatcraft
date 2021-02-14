@@ -9,6 +9,8 @@ public class CraftingRecepie
     public Dictionary<Vector2Int, Material> recepieShape = new Dictionary<Vector2Int, Material>();
 
     public ItemStack result;
+    public bool flipX;
+    public bool flipY;
 
     public static CraftingRecepie[] allRecepies()
     {
@@ -17,7 +19,8 @@ public class CraftingRecepie
             var files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
             var recepies = new List<CraftingRecepie>();
 
-            foreach (var file in files) recepies.Add(FileToRecepie(file));
+            foreach (var file in files) 
+                recepies.Add(FileToRecepie(file));
 
             _cachedRecepies = recepies.ToArray(); //Cache results
 
@@ -29,13 +32,36 @@ public class CraftingRecepie
 
     public bool Compare(ItemStack[] items)
     {
+        if (Compare(items, false, false))
+            return true;
+        
+        if(flipX)
+            if (Compare(items, true, false))
+                return true;
+        
+        if(flipY)
+            if (Compare(items, false, true))
+                return true;
+        
+        if(flipX && flipY)
+            if (Compare(items, true, true))
+                return true;
+
+        return false;
+    }
+    
+    public bool Compare(ItemStack[] items, bool mirrorX, bool mirrorY)
+    {
         var shape = new Dictionary<Vector2Int, Material>();
 
         //Get shape by item list
-        if (items.Length == 4)
-            for (var i = 0; i < 4; i++)
+        for (var i = 0; i < items.Length; i++)
+        {
+            var curPos = Vector2Int.zero;
+            var maxPos = Vector2Int.zero;
+
+            if (items.Length == 4)
             {
-                var curPos = Vector2Int.zero;
                 switch (i)
                 {
                     case 0:
@@ -52,12 +78,10 @@ public class CraftingRecepie
                         break;
                 }
 
-                if (items[i].material != Material.Air) shape.Add(curPos, items[i].material);
+                maxPos = new Vector2Int(1, 1);
             }
-        else if (items.Length == 9)
-            for (var i = 0; i < 9; i++)
+            else if (items.Length == 9)
             {
-                var curPos = Vector2Int.zero;
                 switch (i)
                 {
                     case 0:
@@ -83,16 +107,27 @@ public class CraftingRecepie
                         break;
                     case 7:
                         curPos = new Vector2Int(1, 0);
-                        curPos = new Vector2Int(1, 0);
                         break;
                     case 8:
                         curPos = new Vector2Int(2, 0);
                         break;
                 }
 
-                if (items[i] != null && items[i].material != Material.Air) shape.Add(curPos, items[i].material);
+                maxPos = new Vector2Int(2, 2);
             }
-        else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
+            else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
+            
+            Debug.Log(curPos.x + " " + curPos.y);
+            
+            //Mirroring
+            if (mirrorX)
+                curPos.x = maxPos.x - curPos.x;
+            if (mirrorY)
+                curPos.y = maxPos.y - curPos.y;
+            
+            if (items[i] != null && items[i].material != Material.Air) 
+                shape.Add(curPos, items[i].material);
+        }
 
         //Find How much the recepie is Offsetted by
         var lowest_x = 2;
@@ -155,12 +190,18 @@ public class CraftingRecepie
         try
         {
             var lines = file.text.Split('\n');
+            
+            recepie.flipX = lines[0].Split('*')[1].Contains("1");
+            recepie.flipY = lines[0].Split('*')[2].Contains("1");
+            
+            if(recepie.flipY)
+                Debug.Log("funnydank");
 
             recepie.result = new ItemStack(
-                (Material) Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
-                int.Parse(lines[0].Split('*')[1]), lines[0].Split('*')[2]);
+                (Material) Enum.Parse(typeof(Material), lines[1].Split('*')[0]),
+                int.Parse(lines[1].Split('*')[1]), lines[1].Split('*')[2]);
 
-            for (var i = 1; i < lines.Length; i++)
+            for (var i = 2; i < lines.Length; i++)
             {
                 var mat = (Material) Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
                 var pos = new Vector2Int(

@@ -1,3 +1,4 @@
+mirror*0*0
 Golden_Sword*1*
 Stick*0,0*
 Gold_Ingot*0,1*

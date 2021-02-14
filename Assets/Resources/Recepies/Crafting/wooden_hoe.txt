@@ -1,3 +1,4 @@
+mirror*1*0
 Wooden_Hoe*1*
 Stick*1,0*
 Stick*1,1*

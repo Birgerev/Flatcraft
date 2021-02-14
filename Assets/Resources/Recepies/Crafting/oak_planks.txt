@@ -1,2 +1,3 @@
+mirror*0*0
 Oak_Planks*4*
 Oak_Log*0,0*

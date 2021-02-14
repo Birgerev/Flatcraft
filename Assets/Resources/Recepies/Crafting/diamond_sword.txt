@@ -1,3 +1,4 @@
+mirror*0*0
 Diamond_Sword*1*
 Stick*0,0*
 Diamond*0,1*
