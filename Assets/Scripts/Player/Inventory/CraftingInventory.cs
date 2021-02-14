@@ -5,16 +5,17 @@
         initialize(10, "Crafting");
     }
 
-    public ItemStack[] getCraftingTable()
+    public ItemStack[] GetCraftingTable()
     {
         var table = new ItemStack[9];
 
-        for (var i = 0; i <= 8; i++) table[i] = getItem(i);
+        for (var i = 0; i <= 8; i++) 
+            table[i] = getItem(i);
 
         return table;
     }
 
-    public int getCraftingResultSlot()
+    public int GetCraftingResultSlot()
     {
         return 9;
     }
@@ -34,7 +35,7 @@
     public override void Close()
     {
         //Don't drop results slot
-        items[getCraftingResultSlot()] = new ItemStack();
+        items[GetCraftingResultSlot()] = new ItemStack();
 
         DropAll(holder);
 

@@ -81,14 +81,15 @@ public class InventoryMenu : MonoBehaviour
     {
         var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
 
-        for (var i = 0; i < size; i++) getSlotObject(i).item = getItem(i);
+        for (var i = 0; i < size; i++) 
+            getSlotObject(i).item = getItem(i);
     }
     public virtual void UpdateSlots()
     {
-
         var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
 
-        for (var i = 0; i < size; i++) getSlotObject(i).UpdateSlot();
+        foreach (ItemSlot slot in getSlotObjects()) 
+            slot.UpdateSlot();
 
         pointerSlot.UpdateSlot();
     }

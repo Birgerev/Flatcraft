@@ -20,15 +20,15 @@ public class Crafting_Table : InventoryContainer
 
     public void CheckCraftingRecepies()
     {
-        var curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().getCraftingTable());
+        var curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().GetCraftingTable());
 
         if (curRecepie == null)
         {
-            getInventory().setItem(getInventory().getCraftingResultSlot(), new ItemStack());
+            getInventory().setItem(getInventory().GetCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        getInventory().setItem(getInventory().getCraftingResultSlot(), curRecepie.result);
+        getInventory().setItem(getInventory().GetCraftingResultSlot(), curRecepie.result);
     }
 
     public override void Interact()
