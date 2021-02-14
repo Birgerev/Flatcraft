@@ -117,8 +117,6 @@ public class CraftingRecepie
             }
             else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
             
-            Debug.Log(curPos.x + " " + curPos.y);
-            
             //Mirroring
             if (mirrorX)
                 curPos.x = maxPos.x - curPos.x;
