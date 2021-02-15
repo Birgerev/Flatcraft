@@ -28,8 +28,13 @@
         //Clear Crafting slot
         inventories[1].setItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot(), new ItemStack());
 
-        foreach (var craftingItem in ((CraftingInventory) inventories[1]).GetCraftingTable())
-            if (craftingItem.amount > 0)
-                craftingItem.amount--;
+        for (int i = 0; i <= 8; i++)
+        {
+            ItemStack newCraftingSlotItem = inventories[1].getItem(i).Clone();
+            if (newCraftingSlotItem.amount > 0)
+                newCraftingSlotItem.amount--;
+            
+            inventories[1].setItem(i, newCraftingSlotItem);
+        }
     }
 }
