@@ -61,10 +61,10 @@ public class ItemSlot : MonoBehaviour
 
     public virtual void Click()
     {
-        var menu = GetComponentInParent<InventoryMenu>();
-        var slot = menu.getSlotObjects().ToList().IndexOf(this);
+        InventoryMenu menu = GetComponentInParent<InventoryMenu>();
+        int inventoryId = menu.GetSlotInventoryId(this);
+        int slotId = menu.GetSlotIndex(this);
 
-        GetComponentInParent<InventoryMenu>().OnClickSlot(slot, Input.GetMouseButtonUp(0) ? 0 : 1);
-        UpdateSlot();
+        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryId, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
     }
 }

@@ -1,61 +1,59 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 
 public class InventoryMenu : MonoBehaviour
 {
-    public static PlayerInventory playerInventory;
+    public static Dictionary<int, Inventory> inventories = new Dictionary<int, Inventory>();
+    public List<Transform> inventorySlotLists = new List<Transform>();
 
     public bool active;
 
-    private int inventoryAge;
+    private float inventoryAge;
     public Text playerInventoryTitle;
     public PointerSlot pointerSlot;
 
-    public Transform slotList;
-
-    public virtual bool wholePlayerInventory { get; } = false;
-
     public virtual void Update()
     {
+        //Assign player inventory
         if (Player.localInstance != null)
-            playerInventory = Player.localInstance.inventory;
-
-        if (playerInventory == null)
-            return;
-
-        playerInventory = Player.localInstance.inventory;
-        SetTitle();
-
-        if (inventoryAge == 0 && active)
-            ScheduleUpdateInventory();
+            inventories[0] = Player.localInstance.inventory;
 
         if (active)
-            inventoryAge++;
+        {
+            SetTitle();
+            CheckClose();
+            
+            if (inventoryAge == 0)
+                ScheduleUpdateInventory();
+            
+            inventoryAge += Time.deltaTime;
+        }
         else inventoryAge = 0;
-
-        CheckClose();
 
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = active;
         GetComponent<CanvasGroup>().blocksRaycasts = active;
-
     }
 
     public virtual void CheckClose()
     {
-        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 10)
+        if (active && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 0.1f)
             Close();
     }
 
-    public virtual void Close()
+    public void Close()
     {
-        playerInventory.Close();
+        //Close inventories
+        foreach(Inventory inventory in inventories.Values)
+            inventory.Close();
     }
 
     public virtual void SetTitle()
     {
-        playerInventoryTitle.text = playerInventory.name;
+        playerInventoryTitle.text = inventories[0].name;
     }
 
     public virtual void ScheduleUpdateInventory()
@@ -73,88 +71,107 @@ public class InventoryMenu : MonoBehaviour
 
     public virtual void UpdateInventory()
     {
-        FillSlots();
         UpdateSlots();
     }
-
-    public virtual void FillSlots()
+    
+    public void UpdateSlots()
     {
-        var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
+        //Update every slot in every inventory
+        for (int inventoryId = 0; inventoryId < inventorySlotLists.Count; inventoryId++)
+        {
+            ItemSlot[] slots = GetSlots(inventoryId);
 
-        for (var i = 0; i < size; i++) 
-            getSlotObject(i).item = getItem(i);
-    }
-    public virtual void UpdateSlots()
-    {
-        var size = wholePlayerInventory ? playerInventory.size : playerInventory.baseInventorySize;
+            for (int slotId = 0; slotId < slots.Length; slotId++)
+            {
+                slots[slotId].item = GetItem(inventoryId, slotId);
+                slots[slotId].UpdateSlot();
+            }
+        }
 
-        foreach (ItemSlot slot in getSlotObjects()) 
-            slot.UpdateSlot();
-
+        //Update the pointer slot aswell
         pointerSlot.UpdateSlot();
     }
 
-    public virtual ItemSlot getSlotObject(int index)
+    public ItemSlot GetSlot(int inventory, int index)
     {
-        if (index < slotList.childCount)
-            return getSlotObjects()[index];
+        if (index < GetSlots(inventory).Length)
+            return GetSlots(inventory)[index];
         return null;
     }
 
-    public ItemSlot[] getSlotObjects()
+    public ItemSlot[] GetSlots(int inventory)
     {
-        return slotList.GetComponentsInChildren<ItemSlot>();
+        return inventorySlotLists[inventory].GetComponentsInChildren<ItemSlot>();
     }
 
-    public virtual ItemStack getItem(int index)
+    public ItemStack GetItem(int inventory, int index)
     {
-        return playerInventory.getItem(index);
+        return inventories[inventory].getItem(index);
+    }
+    
+    public int GetSlotIndex(ItemSlot slot)
+    {
+        return slot.transform.GetSiblingIndex();
     }
 
-    public virtual void OnClickSlot(int slotIndex, int clickType)
+    public int GetSlotInventoryId(ItemSlot slot)
+    {
+        for (int inventoryid = 0; inventoryid < inventorySlotLists.Count; inventoryid++)
+        {
+            Transform inventorySlotList = inventorySlotLists[inventoryid];
+
+            if (slot.transform.IsChildOf(inventorySlotList))
+                return inventoryid;
+        }
+        
+        Debug.LogError("No tracked inventory was found for slot '" + slot.gameObject.name+"' in " + this.name);
+        return -1;
+    }
+
+    public virtual void OnClickSlot(int inventory, int slotIndex, int clickType)
     {
         if (clickType == 0)
-            OnLeftClickSlot(slotIndex);
+            OnLeftClickSlot(inventory, slotIndex);
         else if (clickType == 1)
-            OnRightClickSlot(slotIndex);
+            OnRightClickSlot(inventory, slotIndex);
 
         ScheduleUpdateInventory();
     }
 
-    public virtual void OnRightClickSlot(int slotIndex)
+    public virtual void OnRightClickSlot(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
             && pointerItem.amount > 0 && slotItem.amount + 1 <= 64) //Right Click to leave one item
         {
-            SlotAction_LeaveOne(slotIndex);
+            SlotAction_LeaveOne(inventory, slotIndex);
 
             return;
         }
 
         if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) &&
             slotItem.amount > 0) //Right click to halve
-            SlotAction_Halve(slotIndex);
+            SlotAction_Halve(inventory, slotIndex);
     }
 
-    public virtual void OnLeftClickSlot(int slotIndex)
+    public virtual void OnLeftClickSlot(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         //Left click to swap
         if (pointerItem.material == Material.Air || pointerItem.material != slotItem.material)
-            SlotAction_Swap(slotIndex);
+            SlotAction_Swap(inventory, slotIndex);
         else
             //Left click to add pointer to slot
-            SlotAction_MergeSlot(slotIndex);
+            SlotAction_MergeSlot(inventory, slotIndex);
     }
 
-    public virtual void SlotAction_LeaveOne(int slotIndex)
+    public virtual void SlotAction_LeaveOne(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         slotItem.material = pointerItem.material;
@@ -162,9 +179,9 @@ public class InventoryMenu : MonoBehaviour
         pointerItem.amount--;
     }
 
-    public virtual void SlotAction_Halve(int slotIndex)
+    public virtual void SlotAction_Halve(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         pointerItem.material = slotItem.material;
@@ -176,9 +193,9 @@ public class InventoryMenu : MonoBehaviour
         slotItem.amount = slotAmount;
     }
 
-    public virtual void SlotAction_Swap(int slotIndex)
+    public virtual void SlotAction_Swap(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         var slotItemClone = slotItem.Clone();
@@ -196,9 +213,9 @@ public class InventoryMenu : MonoBehaviour
         pointerItem.durability = slotItemClone.durability;
     }
 
-    public virtual void SlotAction_MergeSlot(int slotIndex)
+    public virtual void SlotAction_MergeSlot(int inventory, int slotIndex)
     {
-        var slotItem = getItem(slotIndex);
+        var slotItem = GetItem(inventory, slotIndex);
         var pointerItem = pointerSlot.item;
 
         int maxAmountOfItemsToMerge = Inventory.MaxStackSize - slotItem.amount;

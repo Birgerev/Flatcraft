@@ -16,7 +16,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
 
             if (active)
                 UpdateInventory();
@@ -27,38 +27,37 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
     {
         base.UpdateInventory();
 
-        if (inventory == null || inventory as FurnaceInventory == null)
+        if (!(inventories[1] is FurnaceInventory))
             return;
 
-        fuelProgress.fillAmount = ((FurnaceInventory) inventory).fuelLeft / ((FurnaceInventory) inventory).highestFuel;
-        if (((FurnaceInventory) inventory).highestFuel == 0)
+        fuelProgress.fillAmount = ((FurnaceInventory) inventories[1]).fuelLeft / ((FurnaceInventory) inventories[1]).highestFuel;
+        if (((FurnaceInventory) inventories[1]).highestFuel == 0)
             fuelProgress.fillAmount = 0;
-        smeltingProgress.fillAmount = ((FurnaceInventory) inventory).smeltingProgress / SmeltingRecepie.smeltTime;
+        smeltingProgress.fillAmount = ((FurnaceInventory) inventories[1]).smeltingProgress / SmeltingRecepie.smeltTime;
     }
 
-    public override void OnClickSlot(int slotIndex, int clickType)
+    public override void OnClickSlot(int inventory, int slotIndex, int clickType)
     {
-        if (slotIndex == playerInventory.baseInventorySize + ((FurnaceInventory) inventory).getResultSlot())
+        if (inventory == 1 && slotIndex == ((FurnaceInventory) inventories[1]).getResultSlot())
         {
             OnClickSmeltingResultSlot(slotIndex, clickType);
-            base.OnClickSlot(-1, -1);
+            base.OnClickSlot(inventory,slotIndex, -1);
             return;
         }
 
-        base.OnClickSlot(slotIndex, clickType);
+        base.OnClickSlot(inventory, slotIndex, clickType);
     }
 
     public virtual void OnClickSmeltingResultSlot(int slotIndex, int clickType)
     {
-        if (((FurnaceInventory) inventory).getItem(((FurnaceInventory) inventory).getResultSlot()).material ==
-            Material.Air) return;
-        if (((FurnaceInventory) inventory).getItem(((FurnaceInventory) inventory).getResultSlot()).material !=
-            pointerSlot.item.material && pointerSlot.item.material != Material.Air) return;
+        if (inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material == Material.Air) 
+            return;
+        if (inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material != pointerSlot.item.material && 
+            pointerSlot.item.material != Material.Air) 
+            return;
 
-        pointerSlot.item.material = ((FurnaceInventory) inventory)
-            .getItem(((FurnaceInventory) inventory).getResultSlot()).material;
-        pointerSlot.item.amount += ((FurnaceInventory) inventory)
-            .getItem(((FurnaceInventory) inventory).getResultSlot()).amount;
-        ((FurnaceInventory) inventory).setItem(((FurnaceInventory) inventory).getResultSlot(), new ItemStack());
+        pointerSlot.item.material = inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material;
+        pointerSlot.item.amount += inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).amount;
+        inventories[1].setItem(((FurnaceInventory) inventories[1]).getResultSlot(), new ItemStack());
     }
 }

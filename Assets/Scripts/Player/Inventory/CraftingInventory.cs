@@ -23,8 +23,8 @@
     public override void UpdateMenuStatus()
     {
         CraftingInventoryMenu invMenu = (CraftingInventoryMenu)GetInventoryMenu();
+        CraftingInventoryMenu.inventories[1] = this;
         invMenu.active = open;
-        invMenu.inventory = this;
     }
 
     public override InventoryMenu GetInventoryMenu()

@@ -30,8 +30,8 @@ public class FurnaceInventory : Inventory
     public override void UpdateMenuStatus()
     {
         FurnaceInventoryMenu invMenu = (FurnaceInventoryMenu)GetInventoryMenu();
+        FurnaceInventoryMenu.inventories[1] = this;
         invMenu.active = open;
-        invMenu.inventory = this;
     }
 
     public override InventoryMenu GetInventoryMenu()

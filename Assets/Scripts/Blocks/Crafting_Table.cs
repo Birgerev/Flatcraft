@@ -20,7 +20,7 @@ public class Crafting_Table : InventoryContainer
 
     public void CheckCraftingRecepies()
     {
-        var curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().GetCraftingTable());
+        CraftingRecepie curRecepie = CraftingRecepie.FindRecepieByItems(getInventory().GetCraftingTable());
 
         if (curRecepie == null)
         {

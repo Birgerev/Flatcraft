@@ -62,7 +62,6 @@ public class PlayerInventory : Inventory
     {
         PlayerInventoryMenu invMenu = (PlayerInventoryMenu)GetInventoryMenu();
         invMenu.active = open;
-        InventoryMenu.playerInventory = this;
     }
 
     public override InventoryMenu GetInventoryMenu()

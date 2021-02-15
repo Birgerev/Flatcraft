@@ -155,12 +155,9 @@ public class Inventory
 
     public virtual void UpdateMenuStatus()
     {
-        var inventory = InventoryMenuManager.instance.containerInventoryMenu;
-        inventory.active = open;
-        inventory.inventory = this;
         ContainerInventoryMenu invMenu = (ContainerInventoryMenu)GetInventoryMenu();
+        ContainerInventoryMenu.inventories[1] = this;
         invMenu.active = open;
-        invMenu.inventory = this;
     }
 
     public virtual InventoryMenu GetInventoryMenu()
