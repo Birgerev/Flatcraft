@@ -103,7 +103,7 @@ public class Entity : MonoBehaviour
         CheckLavaDamage();
     }
 
-    public void LateUpdate()
+    public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
     }

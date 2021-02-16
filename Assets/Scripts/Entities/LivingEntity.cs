@@ -24,12 +24,14 @@ public class LivingEntity : Entity
     private readonly float sneakSpeed = 1.3f;
     private readonly float sprintSpeed = 5.6f;
     private readonly float swimUpSpeed = 2f;
+    public float swimJumpVelocity = 2f;
     private readonly float walkSpeed = 4.3f;
 
 
     //Entity State
     public float highestYlevelsinceground;
     protected float last_jump_time;
+    protected bool inLiquidLastFrame;
     protected bool sprinting;
     protected bool sneaking;
     public virtual float maxHealth { get; } = 20;
@@ -43,6 +45,12 @@ public class LivingEntity : Entity
         controller = GetController();
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    public override void LateUpdate()
+    {
+        inLiquidLastFrame = isInLiquid;
+        base.LateUpdate();
     }
 
     public virtual void FixedUpdate()
@@ -61,6 +69,9 @@ public class LivingEntity : Entity
         CalculateFlip();
         UpdateAnimatorValues();
         AmbientSoundCheck();
+        
+        if(inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
+            SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
 
         if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
         {
