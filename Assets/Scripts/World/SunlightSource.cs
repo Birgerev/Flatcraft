@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class SunlightSource : MonoBehaviour
 {
+    public static Transform SunlightSourceParent;
     private LightSource lightSource;
 
     private void Start()
     {
+        if (SunlightSourceParent == null)
+        {
+            GameObject sunlightSourceParent = new GameObject("Sunlight Sources");
+            SunlightSourceParent = sunlightSourceParent.transform;
+        }
+        
+        transform.SetParent(SunlightSourceParent);
         lightSource = GetComponent<LightSource>();
         StartCoroutine(UpdateTimeOfDayLoop());
     }
