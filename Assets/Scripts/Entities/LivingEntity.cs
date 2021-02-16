@@ -73,6 +73,7 @@ public class LivingEntity : Entity
         if(inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
             SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
 
+        //Sprinting particles    
         if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
         {
             float chances;
