@@ -75,6 +75,8 @@ public class Entity : MonoBehaviour
     public virtual void Update()
     {
         age += Time.deltaTime;
+
+        isInLiquid = (GetLiquidBlocksForEntity().Length > 0);
         
         if (isInLiquid)
             isOnGround = false;
@@ -207,6 +209,15 @@ public class Entity : MonoBehaviour
                 TakeLavaDamage(4);
                 fireTime = 14;
             }
+
+    public Liquid[] GetLiquidBlocksForEntity()
+    {
+        List<Liquid> liquids = new List<Liquid>();
+        foreach (Collider2D col in Physics2D.OverlapBoxAll(transform.position, GetComponent<BoxCollider2D>().size, 0))
+            if (col.GetComponent<Liquid>() != null)
+                liquids.Add(col.GetComponent<Liquid>());
+
+        return liquids.ToArray();
     }
 
     public virtual void TakeLavaDamage(float damage)
@@ -407,36 +418,6 @@ public class Entity : MonoBehaviour
             part.maxAge = 1f + (float)r.NextDouble();
             part.maxBounces = 10;
         }
-    }
-
-    public virtual void EnterLiquid(Liquid liquid)
-    {
-        isInLiquid = true;
-
-        if (GetVelocity().y < -2)
-        {
-            var r = new Random();
-            for (var i = 0; i < 8; i++) //Spawn landing partickes
-            {
-                var part = (Particle) Spawn("Particle");
-
-                part.transform.position = liquid.location.GetPosition() + new Vector2(0, 0.5f);
-                part.color = liquid.GetRandomColourFromTexture();
-                part.doGravity = true;
-                part.velocity = new Vector2(
-                    (1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                    , 3f + (float) r.NextDouble());
-                part.maxAge = 1f + (float) r.NextDouble();
-                part.maxBounces = 10;
-            }
-
-            Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-        }
-    }
-
-    public virtual void ExitLiquid(Liquid liquid)
-    {
-        isInLiquid = false;
     }
 
     public static int CreateId()

@@ -249,25 +249,11 @@ public class Liquid : Block
 
         return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(data.GetData("liquid_level")) - 1];
     }
-
-    public virtual void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.GetComponent<Entity>() != null && !col.GetComponent<Entity>().isInLiquid)
-            col.GetComponent<Entity>().EnterLiquid(this);
-    }
-
+    
     public override void OnTriggerStay2D(Collider2D col)
     {
         if (col.GetComponent<Entity>() != null) col.GetComponent<Entity>().isInLiquid = true;
 
         base.OnTriggerStay2D(col);
-    }
-
-    public override void OnTriggerExit2D(Collider2D col)
-    {
-        if (col.GetComponent<Entity>() != null && col.GetComponent<Entity>().isInLiquid)
-            col.GetComponent<Entity>().ExitLiquid(this);
-
-        base.OnTriggerExit2D(col);
     }
 }
