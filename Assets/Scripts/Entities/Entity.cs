@@ -193,8 +193,21 @@ public class Entity : MonoBehaviour
 
     private void WaterRemoveFireTime()
     {
-        if(isInLiquid && Location.GetMaterial() == Material.Water)
-            fireTime = 0;
+        if(isInLiquid)
+        {
+            bool isInWater = false;
+            foreach (Liquid liquid in GetLiquidBlocksForEntity())
+                if (liquid is Water)
+                {
+                    isInWater = true;
+                    break;
+                }
+
+            if (isInWater)
+            {
+                fireTime = 0;
+            }
+        }
     }
 
     private void ReduceFireTime()
