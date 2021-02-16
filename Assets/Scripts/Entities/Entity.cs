@@ -98,6 +98,7 @@ public class Entity : MonoBehaviour
             WaterRemoveFireTime();
         }
         DoFireRender();
+        CheckWaterSplash();
 
         CheckFireDamage();
         CheckVoidDamage();
@@ -141,6 +142,45 @@ public class Entity : MonoBehaviour
     {
         if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
             UpdateLight();
+    }
+
+    private void CheckWaterSplash()
+    {
+        if (isInLiquid && GetVelocity().y < -2)
+        {
+            bool isInWater = false;
+            foreach (Liquid liquid in GetLiquidBlocksForEntity())
+                if (liquid is Water)
+                {
+                    isInWater = true;
+                    break;
+                }
+
+            if (isInWater)
+            {
+                WaterSplash();
+            }
+        }
+    }
+
+    public virtual void WaterSplash()
+    {
+        var r = new Random();
+        for (var i = 0; i < 8; i++) //Spawn landing partickes
+        {
+            var part = (Particle) Spawn("Particle");
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
+            part.color = GetLiquidBlocksForEntity()[0].GetRandomColourFromTexture();
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 3f + (float) r.NextDouble());
+            part.maxAge = 1f + (float) r.NextDouble();
+            part.maxBounces = 10;
+        }
+
+        Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
     }
 
     private void UpdateLight()

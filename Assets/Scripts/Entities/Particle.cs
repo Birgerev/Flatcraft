@@ -158,9 +158,8 @@ public class Particle : Entity
         }
     }
 
-    public override void EnterLiquid(Liquid liquid)
+    public override void WaterSplash()
     {
-        //Normal enter liquid creates particles which creates an infinite loop
-        isInLiquid = true;
+        //Water Splash creates particles which also could call water splash causing an infinite loop
     }
 }
