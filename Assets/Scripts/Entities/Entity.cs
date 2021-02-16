@@ -243,12 +243,27 @@ public class Entity : MonoBehaviour
 
     private void CheckLavaDamage()
     {
-        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
-            if (isInLiquid && (Location + new Location(0, -1)).GetMaterial() == Material.Lava)
+        if (isInLiquid)
+        {
+            bool isInLava = false;
+            foreach(Liquid liquid in GetLiquidBlocksForEntity())
+                if (liquid is Lava)
+                {
+                    isInLava = true;
+                    break;
+                }
+
+            if (isInLava)
             {
-                TakeLavaDamage(4);
                 fireTime = 14;
+                
+                if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+                {
+                    TakeLavaDamage(4);
+                }
             }
+        }
+    }
 
     public Liquid[] GetLiquidBlocksForEntity()
     {
