@@ -27,7 +27,7 @@ public class AnimalController : EntityController
         }
 
         //Swim in water
-        if (block != null && block.GetMaterial() == Material.Water)
+        if (instance.isInLiquid)
             instance.Jump();
 
 
