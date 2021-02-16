@@ -194,6 +194,7 @@ public class Block : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer((solid || trigger) ? "Block" : "NoCollisionBlock");
 
         GetComponent<Collider2D>().isTrigger = trigger;
+        GetComponent<BoxCollider2D>().size = trigger ? new Vector2(0.9f, 0.9f) : new Vector2(1, 1);   //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
 
     public Color GetRandomColourFromTexture()
