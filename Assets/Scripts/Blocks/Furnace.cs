@@ -30,11 +30,11 @@ public class Furnace : InventoryContainer
     {
         if (getInventory().fuelLeft <= 0)
             if (getInventory().getItem(getInventory().getFuelSlot()) != null)
-                if (SmeltingRecepie.Fuels.ContainsKey(getInventory().getItem(getInventory().getFuelSlot()).material))
+                if (SmeltingRecipe.Fuels.ContainsKey(getInventory().getItem(getInventory().getFuelSlot()).material))
                     if (GetRecepie() != null)
                     {
                         getInventory().fuelLeft =
-                            SmeltingRecepie.Fuels[getInventory().getItem(getInventory().getFuelSlot()).material];
+                            SmeltingRecipe.Fuels[getInventory().getItem(getInventory().getFuelSlot()).material];
                         getInventory().highestFuel = getInventory().fuelLeft;
                         getInventory().getItem(getInventory().getFuelSlot()).amount--;
                     }
@@ -60,7 +60,7 @@ public class Furnace : InventoryContainer
             getInventory().smeltingProgress += 1 / Chunk.TickRate;
 
             //If smelting is done, give result
-            if (getInventory().smeltingProgress >= SmeltingRecepie.smeltTime)
+            if (getInventory().smeltingProgress >= SmeltingRecipe.smeltTime)
                 FillSmeltingResult();
         }
         else
@@ -86,12 +86,12 @@ public class Furnace : InventoryContainer
         getInventory().smeltingProgress = 0;
     }
 
-    public SmeltingRecepie GetRecepie()
+    public SmeltingRecipe GetRecepie()
     {
         if (getInventory().getItem(getInventory().getIngredientSlot()).amount <= 0)
             return null;
         //Get recepie based on contents of ingredient slot
-        return SmeltingRecepie.FindRecepieByIngredient(getInventory().getItem(getInventory().getIngredientSlot())
+        return SmeltingRecipe.FindRecipeByIngredient(getInventory().getItem(getInventory().getIngredientSlot())
             .material);
     }
 

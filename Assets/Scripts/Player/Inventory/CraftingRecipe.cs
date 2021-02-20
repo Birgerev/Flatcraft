@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CraftingRecepie
+public class CraftingRecipe
 {
-    private static CraftingRecepie[] _cachedRecepies;
-    public Dictionary<Vector2Int, Material> recepieShape = new Dictionary<Vector2Int, Material>();
+    private static CraftingRecipe[] _cachedRecipes;
+    public Dictionary<Vector2Int, Material> recipeShape = new Dictionary<Vector2Int, Material>();
 
     public ItemStack result;
     public bool flipX;
     public bool flipY;
 
-    public static CraftingRecepie[] allRecepies()
+    public static CraftingRecipe[] allRecipes()
     {
-        if (_cachedRecepies == null)
+        if (_cachedRecipes == null)
         {
-            var files = Resources.LoadAll<TextAsset>("Recepies/Crafting");
-            var recepies = new List<CraftingRecepie>();
+            var files = Resources.LoadAll<TextAsset>("Recipes/Crafting");
+            var recipes = new List<CraftingRecipe>();
 
             foreach (var file in files) 
-                recepies.Add(FileToRecepie(file));
+                recipes.Add(FileToRecipe(file));
 
-            _cachedRecepies = recepies.ToArray(); //Cache results
+            _cachedRecipes = recipes.ToArray(); //Cache results
 
-            return recepies.ToArray();
+            return recipes.ToArray();
         }
 
-        return _cachedRecepies;
+        return _cachedRecipes;
     }
 
     public bool Compare(ItemStack[] items)
@@ -152,18 +152,18 @@ public class CraftingRecepie
         //Compare both Dictionaries
         var anyDifferences = false;
 
-        if (recepieShape.Count != shape.Count)
+        if (recipeShape.Count != shape.Count)
             anyDifferences = true;
 
-        foreach (var recepieItem in recepieShape)
+        foreach (var recipeItem in recipeShape)
         {
-            if (!shape.ContainsKey(recepieItem.Key))
+            if (!shape.ContainsKey(recipeItem.Key))
             {
                 anyDifferences = true;
                 break;
             }
 
-            if (shape[recepieItem.Key] != recepieItem.Value)
+            if (shape[recipeItem.Key] != recipeItem.Value)
             {
                 anyDifferences = true;
                 break;
@@ -173,26 +173,26 @@ public class CraftingRecepie
         return !anyDifferences;
     }
 
-    public static CraftingRecepie FindRecepieByItems(ItemStack[] items)
+    public static CraftingRecipe FindRecipeByItems(ItemStack[] items)
     {
-        foreach (var recepie in allRecepies())
-            if (recepie.Compare(items))
-                return recepie;
+        foreach (var recipe in allRecipes())
+            if (recipe.Compare(items))
+                return recipe;
         return null;
     }
 
-    public static CraftingRecepie FileToRecepie(TextAsset file)
+    public static CraftingRecipe FileToRecipe(TextAsset file)
     {
-        var recepie = new CraftingRecepie();
+        var recipe = new CraftingRecipe();
 
         try
         {
             var lines = file.text.Split('\n');
             
-            recepie.flipX = lines[0].Split('*')[1].Contains("1");
-            recepie.flipY = lines[0].Split('*')[2].Contains("1");
+            recipe.flipX = lines[0].Split('*')[1].Contains("1");
+            recipe.flipY = lines[0].Split('*')[2].Contains("1");
             
-            recepie.result = new ItemStack(
+            recipe.result = new ItemStack(
                 (Material) Enum.Parse(typeof(Material), lines[1].Split('*')[0]),
                 int.Parse(lines[1].Split('*')[1]), lines[1].Split('*')[2]);
 
@@ -203,14 +203,14 @@ public class CraftingRecepie
                     int.Parse(lines[i].Split('*')[1].Split(',')[0]),
                     int.Parse(lines[i].Split('*')[1].Split(',')[1]));
 
-                recepie.recepieShape.Add(pos, mat);
+                recipe.recipeShape.Add(pos, mat);
             }
         }
         catch (Exception e)
         {
-            Debug.LogError("faulty crafting recepie \"" + file.name + "\", error: " + e.StackTrace);
+            Debug.LogError("faulty crafting recipe \"" + file.name + "\", error: " + e.StackTrace);
         }
 
-        return recepie;
+        return recipe;
     }
 }

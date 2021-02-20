@@ -1,6 +1,6 @@
 ﻿public class PlayerInventoryMenu : InventoryMenu
 {
-    private CraftingRecepie curRecepie;
+    private CraftingRecipe _curRecipe;
 
     public override void UpdateInventory()
     {
@@ -30,20 +30,20 @@
 
     public void CheckCraftingRecepies()
     {
-        CraftingRecepie newRecepie = CraftingRecepie.FindRecepieByItems(((PlayerInventory) inventories[0]).getCraftingTable());
+        CraftingRecipe newRecipe = CraftingRecipe.FindRecipeByItems(((PlayerInventory) inventories[0]).getCraftingTable());
 
-        if (curRecepie != newRecepie)
+        if (_curRecipe != newRecipe)
             ScheduleUpdateInventory();
 
-        curRecepie = newRecepie;
+        _curRecipe = newRecipe;
 
-        if (newRecepie == null)
+        if (newRecipe == null)
         {
             inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), newRecepie.result);
+        inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), newRecipe.result);
     }
 
     public virtual void OnClickCraftingResultSlot(int slotIndex, int clickType)

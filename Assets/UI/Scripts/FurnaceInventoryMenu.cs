@@ -33,7 +33,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
         fuelProgress.fillAmount = ((FurnaceInventory) inventories[1]).fuelLeft / ((FurnaceInventory) inventories[1]).highestFuel;
         if (((FurnaceInventory) inventories[1]).highestFuel == 0)
             fuelProgress.fillAmount = 0;
-        smeltingProgress.fillAmount = ((FurnaceInventory) inventories[1]).smeltingProgress / SmeltingRecepie.smeltTime;
+        smeltingProgress.fillAmount = ((FurnaceInventory) inventories[1]).smeltingProgress / SmeltingRecipe.smeltTime;
     }
 
     public override void OnClickSlot(int inventory, int slotIndex, int clickType)
