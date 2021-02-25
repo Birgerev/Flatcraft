@@ -63,7 +63,8 @@ public class SaveManager : MonoBehaviour
         foreach (var blockChange in changes)
         {
             var cPos = new ChunkPosition(blockChange.Key);
-            if (!changedChunks.Contains(cPos)) changedChunks.Add(cPos);
+            if (!changedChunks.Contains(cPos)) 
+                changedChunks.Add(cPos);
         }
 
         //Rewrite all block changes for chunks
@@ -74,7 +75,8 @@ public class SaveManager : MonoBehaviour
                 if (new ChunkPosition(blockChange.Key).Equals(currentEditingChunk))
                     changesForChunk.Add(blockChange.Key, blockChange.Value);
 
-            if (!currentEditingChunk.HasBeenSaved()) currentEditingChunk.CreateChunkPath();
+            if (!currentEditingChunk.HasBeenSaved()) 
+                currentEditingChunk.CreateChunkPath();
 
             var chunkPath = WorldManager.world.getPath() + "\\region\\" + currentEditingChunk.dimension + "\\" +
                             currentEditingChunk.chunkX;
@@ -82,9 +84,9 @@ public class SaveManager : MonoBehaviour
             foreach (var line in File.ReadAllLines(chunkPath + "\\blocks")
             ) //Add all old block changes, removing duplicates of new block changes
             {
-                var lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
+                Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
                     int.Parse(line.Split('*')[0].Split(',')[1]));
-                var lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
+                string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
 
                 if (!changesForChunk.ContainsKey(lineLoc))
                     changesForChunk.Add(lineLoc, lineData);
@@ -95,7 +97,8 @@ public class SaveManager : MonoBehaviour
 
             //Write all block changes
             TextWriter c = new StreamWriter(chunkPath + "\\blocks");
-            foreach (var line in changesForChunk) c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
+            foreach (var line in changesForChunk) 
+                c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
 
             //Close file writer
             c.Close();

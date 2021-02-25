@@ -401,16 +401,7 @@ public class Entity : MonoBehaviour
 
     public virtual void DeleteOldSavePath()
     {
-        var chunks = Directory.GetDirectories(WorldManager.world.getPath() + "\\region\\" + Location.dimension);
-
-        foreach (var chunk in chunks)
-        {
-            var entitySaveList = Directory.GetFiles(chunk + "\\entities\\");
-
-            foreach (var entity in entitySaveList)
-                if (int.Parse(entity.Split('\\')[entity.Split('\\').Length - 1].Split('.')[0]) == id)
-                    File.Delete(entity);
-        }
+        File.Delete(SavePath());
     }
 
     public virtual SpriteRenderer GetRenderer()

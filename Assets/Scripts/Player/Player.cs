@@ -20,7 +20,7 @@ public class Player : HumanEntity
     //Entity Data Tags
     [EntityDataTag(false)] public float hunger;
     [EntityDataTag(true)] public PlayerInventory inventory = new PlayerInventory();
-    [EntityDataTag(true)] public Location bedLocation = new Location(0, 0);
+    public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
@@ -35,14 +35,16 @@ public class Player : HumanEntity
     public override void Start()
     {
         localInstance = this;
+        
+        base.Start();
 
         hunger = maxHunger;
         inventory = new PlayerInventory();
         Cursor.visible = false;
+        if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
+            Location = bedLocation;
 
         StartCoroutine(ValidSpawnOnceChunkLoaded());
-
-        base.Start();
     }
 
     public override void FixedUpdate()
@@ -461,29 +463,30 @@ public class Player : HumanEntity
     {
         var topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, true);
 
-        if (topmostBlock == null) return new Location(x, 80, Location.dimension);
+        if (topmostBlock == null) 
+            return new Location(x, 80, Location.dimension);
 
         return topmostBlock.location + new Location(0, 2);
     }
 
     public override void Die()
     {
-        DeathMenu.active = true;
-        health = 20;
-        hunger = 20;
-        fireTime = 0;
-
         base.Die();
-
-        Location spawnLocation = new Location(0, 80, Dimension.Overworld);
-
-        if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
-            spawnLocation = bedLocation;
-
-        Location = spawnLocation;
-        UpdateCachedPosition();
-        Save();
+        DeathMenu.active = true;
     }
+    
+    public override void Save()
+    {
+        base.Save();
+        PlayerSaveData.SetBedLocation("player", bedLocation);
+    }
+    
+    public override void Load()
+    {
+        base.Load();
+        bedLocation = PlayerSaveData.GetBedLocation("player");
+    }
+    
     public override void Hit(float damage)
     {
     }
