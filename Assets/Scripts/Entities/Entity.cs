@@ -390,7 +390,8 @@ public class Entity : MonoBehaviour
 
         var path = SavePath();
 
-        if (!File.Exists(path)) File.Create(path).Close();
+        if (!File.Exists(path))
+            File.Create(path).Close();
 
         var lines = new List<string>();
 

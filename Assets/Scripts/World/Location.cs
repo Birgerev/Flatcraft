@@ -70,7 +70,8 @@ public struct Location
         SaveManager.blockChanges.Add(this, oldMaterial + "*" + data.GetSaveString());
 
         var block = GetBlock();
-        if (block != null) block.data = data;
+        if (block != null) 
+            block.data = data;
 
         return this;
     }

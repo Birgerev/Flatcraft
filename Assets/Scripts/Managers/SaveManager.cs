@@ -29,17 +29,20 @@ public class SaveManager : MonoBehaviour
                 var worldThread = new Thread(() => { SaveBlockChanges(blockChangesCopy); });
                 worldThread.Start();
 
-                while (worldThread.IsAlive) yield return new WaitForSeconds(0.1f);
+                while (worldThread.IsAlive) 
+                    yield return new WaitForSeconds(0.1f);
             }
 
             //Save Entities
             var entities = new List<Entity>();
-            foreach (var chunk in WorldManager.instance.chunks.Values) entities.AddRange(chunk.GetEntities());
+            foreach (var chunk in WorldManager.instance.chunks.Values) 
+                entities.AddRange(chunk.GetEntities());
 
             var entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();
 
-            while (entityThread.IsAlive) yield return new WaitForSeconds(0.1f);
+            while (entityThread.IsAlive) 
+                yield return new WaitForSeconds(0.1f);
         }
     }
 
