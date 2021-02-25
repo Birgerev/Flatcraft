@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerHeldItemRenderer : MonoBehaviour
 {
-    private Material lastItemInHand = Material.Fire;
+    private Material lastItemInHand;
     public Player player;
 
     private void Update()

@@ -340,6 +340,7 @@ MonoBehaviour:
   isOnClimbable: 0
   lastFramePosition: {x: 0, y: 0}
   health: 0
+  swimJumpVelocity: 2
   highestYlevelsinceground: 0
   crosshair: {fileID: 1149122271182722694}
   hunger: 0
@@ -725,7 +726,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 5a6439fa0139b0f4fbd396f0c7bd181b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
