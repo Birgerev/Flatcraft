@@ -57,8 +57,7 @@ public struct Location
 
     public Location SetData(BlockData data)
     {
-        var oldMaterial =
-            GetMaterial().ToString(); //Get current material, and later apply it to our new block change entry
+        var oldMaterial = GetMaterial().ToString(); //Get current material, and later apply it to our new block change entry
 
         if (SaveManager.blockChanges.ContainsKey(this))
         {

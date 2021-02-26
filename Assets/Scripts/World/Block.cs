@@ -79,7 +79,7 @@ public class Block : MonoBehaviour
     {
         blockHealth = breakTime;
 
-
+        RenderRotate();
         UpdateColliders();
 
         //Cache position for use in multithreading
