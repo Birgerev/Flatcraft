@@ -67,4 +67,12 @@ public class ItemSlot : MonoBehaviour
 
         GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryId, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
     }
+
+    public virtual void Hover(bool hover)
+    {
+        if(hover)
+            Tooltip.hoveredItem = item;
+        if (!hover && Tooltip.hoveredItem == item)
+            Tooltip.hoveredItem = new ItemStack();
+    }
 }
