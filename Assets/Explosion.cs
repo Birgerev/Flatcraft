@@ -52,7 +52,7 @@ public class Explosion : MonoBehaviour
         
         for (var i = 0; i < 10; i++) //Spawn explosion emmiters
         {
-            var part = (Particle) Entity.Spawn("Particle");
+            Particle part = Particle.Spawn();
             var position = loc.GetPosition() + new Vector2(
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -4 : 4),
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -4 : 4));
@@ -71,7 +71,7 @@ public class Explosion : MonoBehaviour
         
         for (var i = 0; i < 50; i++) //Spawn smoke particles
         {
-            var part = (Particle) Entity.Spawn("Particle");
+            Particle part = Particle.Spawn();
             var position = loc.GetPosition() + new Vector2(
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -3 : 3),
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -3 : 3));
@@ -93,7 +93,7 @@ public class Explosion : MonoBehaviour
         
         for (var i = 0; i < 50; i++) //Spawn black particles
         {
-            var part = (Particle) Entity.Spawn("Particle");
+            Particle part = Particle.Spawn();
             var position = loc.GetPosition() + new Vector2(
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -4 : 4),
                 ((float) r.NextDouble()) * (r.Next(0, 1 + 1) == 0 ? -4 : 4));

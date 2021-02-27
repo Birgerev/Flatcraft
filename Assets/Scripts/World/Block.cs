@@ -304,7 +304,7 @@ public class Block : MonoBehaviour
         var r = new Random();
         for (var i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
-            var part = (Particle) Entity.Spawn("Particle");
+            Particle part = Particle.Spawn();
 
             part.transform.position = location.GetPosition() +
                                       new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);

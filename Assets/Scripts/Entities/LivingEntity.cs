@@ -251,7 +251,7 @@ public class LivingEntity : Entity
         var particleAmount = r.Next(4, 8);
         for (var i = 0; i < particleAmount; i++) //Spawn landing partickes
         {
-            var part = (Particle) Spawn("Particle");
+            Particle part = Particle.Spawn();
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
@@ -279,14 +279,14 @@ public class LivingEntity : Entity
             if (blockBeneath == null)
                 return;
 
-            var particle = (Particle) Spawn("Particle");
+            Particle part = Particle.Spawn();
 
-            particle.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            particle.color = blockBeneath.GetRandomColourFromTexture();
-            particle.doGravity = true;
-            particle.velocity = -(GetVelocity() * 0.2f);
-            particle.maxAge = (float) r.NextDouble();
-            particle.maxBounces = 10;
+            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
+            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.doGravity = true;
+            part.velocity = -(GetVelocity() * 0.2f);
+            part.maxAge = (float) r.NextDouble();
+            part.maxBounces = 10;
         }
     }
 

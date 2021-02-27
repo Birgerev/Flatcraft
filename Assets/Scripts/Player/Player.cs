@@ -395,16 +395,16 @@ public class Player : HumanEntity
         var r = new System.Random();
         for (var i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
-            var particle = (Particle)Entity.Spawn("Particle");
+            Particle part = Particle.Spawn();
             Color color = colors[r.Next(0, colors.Length)];
-            particle.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
-            particle.color = color;
-            particle.doGravity = true;
-            particle.velocity = new Vector2(
+            part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
+            part.color = color;
+            part.doGravity = true;
+            part.velocity = new Vector2(
                 (0.5f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1), 
                 3f + (float)r.NextDouble());
-            particle.maxAge = (float)r.NextDouble();
-            particle.maxBounces = 10;
+            part.maxAge = (float)r.NextDouble();
+            part.maxBounces = 10;
         }
     }
 

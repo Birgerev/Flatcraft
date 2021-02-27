@@ -21,7 +21,7 @@ TagManager:
   - Player
   - Entity
   - DroppedItem
-  - 
+  - Particle
   - 
   - LightSource
   - 

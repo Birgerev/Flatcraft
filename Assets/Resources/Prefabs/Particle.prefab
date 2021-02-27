@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8466682603583594593}
   - component: {fileID: 8466682603583594592}
-  - component: {fileID: 8466682603583594599}
   - component: {fileID: 8466682603583594597}
-  m_Layer: 14
+  - component: {fileID: 8466682603583594599}
+  m_Layer: 16
   m_Name: Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,6 +60,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.25, y: 0.25}
   m_EdgeRadius: 0
+--- !u!114 &8466682603583594597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8466682603583594596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9784f2af4e47134f8414d03422ec9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doGravity: 1
+  maxAge: 5
+  maxBounces: 3
+  spriteSheet: particle_dot
+  animationLength: -1
+  animationDuration: -1
 --- !u!50 &8466682603583594599
 Rigidbody2D:
   serializedVersion: 4
@@ -81,33 +99,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &8466682603583594597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8466682603583594596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9784f2af4e47134f8414d03422ec9fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  age: 0
-  fireTime: 0
-  dead: 0
-  burningRender: {fileID: 0}
-  facingLeft: 0
-  id: 0
-  isInLiquid: 0
-  isOnGround: 0
-  isOnClimbable: 0
-  lastFramePosition: {x: 0, y: 0}
-  doGravity: 1
-  maxAge: 5
-  maxBounces: 3
-  spriteSheet: particle_dot
-  animationLength: -1
 --- !u!1 &8817448794502047748
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2348263347211368238}
   - component: {fileID: 947058316184454317}
-  m_Layer: 14
+  m_Layer: 16
   m_Name: _renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

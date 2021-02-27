@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
-public class Particle : Entity
+public class Particle : MonoBehaviour
 {
     private int bounces;
     public bool doGravity = true;
@@ -26,10 +26,8 @@ public class Particle : Entity
     }
 
     // Start is called before the first frame update
-    public override void Start()
+    public void Start()
     {
-        base.Start();
-
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         
@@ -61,14 +59,18 @@ public class Particle : Entity
             Destroy(gameObject);
     }
 
-    public override void Save()
+    public virtual SpriteRenderer GetRenderer()
     {
-        //Particles shouldn't be saved
+        return transform.Find("_renderer").GetComponent<SpriteRenderer>();
     }
-
-    public override void Load()
+    
+    public static Particle Spawn()
     {
-        //Particles shouldn't load
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Particle");
+        GameObject partObj = Instantiate(prefab);
+        Particle part = partObj.GetComponent<Particle>();
+
+        return part;
     }
     
     public static void Spawn_SmallSmoke(Vector2 position, Color color)
@@ -79,7 +81,7 @@ public class Particle : Entity
         for (var y = 0; y < 4; y++)
             if (rand.NextDouble() < 0.2f)
             {
-                var part = (Particle) Spawn("Particle");
+                Particle part = Spawn();
 
                 part.transform.position = position - new Vector2(0.5f, 0.5f) + new Vector2(0.25f * x, 0.25f * y);
                 part.color = color;
@@ -147,7 +149,7 @@ public class Particle : Entity
         var totalVelocity = new Vector2(((float) rand.NextDouble() - 0.5f) * 0.5f, (float) rand.NextDouble() * 1f);
         foreach (var pos in shape)
         {
-            var part = (Particle) Spawn("Particle");
+            Particle part = Spawn();
 
             part.transform.position = position - new Vector2(0.5f, 0.5f) + pos * 0.25f;
             part.color = color;
@@ -156,10 +158,5 @@ public class Particle : Entity
             part.maxAge = 1f + (float) rand.NextDouble();
             part.maxBounces = 10;
         }
-    }
-
-    public override void WaterSplash()
-    {
-        //Water Splash creates particles which also could call water splash causing an infinite loop
     }
 }
