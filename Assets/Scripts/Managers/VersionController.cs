@@ -12,7 +12,7 @@ public class VersionController : MonoBehaviour
         }
     }
     public static List<string> versionNames = new List<string> { 
-        "Indev 9", "Indev 10" };
+        "Indev 9", "Indev 10", "Indev 11" };
     
     public static string GetVersionName()
     {
