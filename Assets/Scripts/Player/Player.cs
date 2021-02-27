@@ -35,11 +35,10 @@ public class Player : HumanEntity
     public override void Start()
     {
         localInstance = this;
+        hunger = maxHunger;
         
         base.Start();
-
-        hunger = maxHunger;
-        inventory = new PlayerInventory();
+        
         Cursor.visible = false;
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Location = bedLocation;
