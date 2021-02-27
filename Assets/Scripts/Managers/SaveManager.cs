@@ -34,9 +34,7 @@ public class SaveManager : MonoBehaviour
             }
 
             //Save Entities
-            var entities = new List<Entity>();
-            foreach (var chunk in WorldManager.instance.chunks.Values) 
-                entities.AddRange(chunk.GetEntities());
+            var entities = Entity.entities;
 
             var entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();
