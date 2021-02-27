@@ -21,6 +21,9 @@ public class VersionController : MonoBehaviour
 
     public static string GetVersionName(int versionId)
     {
+        if (versionId >= versionNames.Count)
+            return "Future Version";
+        
         return versionNames[versionId];
     }
 }
