@@ -20,23 +20,30 @@ public class SunlightSource : MonoBehaviour
         StartCoroutine(UpdateTimeOfDayLoop());
     }
 
+    private TimeOfDay GetTimeOfDay()
+    {
+        return (WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2) ? TimeOfDay.Night : TimeOfDay.Day;
+    }
+    
     IEnumerator UpdateTimeOfDayLoop()
     {
-        bool wasNightLastCheck = false;
+        TimeOfDay lastUpdated = GetTimeOfDay();
 
         while (true)
         {
-            var isNight = WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2;
-
-            if(isNight != wasNightLastCheck)
+            if(GetTimeOfDay() != lastUpdated)
             {
-
-                lightSource.UpdateLightLevel(isNight ? 5 : LightManager.maxLightLevel);
+                lightSource.UpdateLightLevel(GetTimeOfDay() == TimeOfDay.Night ? 5 : LightManager.maxLightLevel);
+                lastUpdated = GetTimeOfDay();
             }
-            
 
-            wasNightLastCheck = isNight;
             yield return new WaitForSeconds(5);
         }
     }
+}
+
+enum TimeOfDay
+{
+    Day,
+    Night
 }
