@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -11,6 +12,8 @@ public class LightManager : MonoBehaviour
     public static int netherLightLevel = 8;
     public static LightManager instance;
 
+    public bool doLight = true;
+    private bool doLightLastFrame = true;
     public GameObject lightSourcePrefab;
     public GameObject sunlightSourcePrefab;
     public Dictionary<int, SunlightSource> sunlightSources = new Dictionary<int, SunlightSource>();
@@ -18,6 +21,19 @@ public class LightManager : MonoBehaviour
     void Start()
     {
         instance = this;
+    }
+
+    void Update()
+    {
+        if (doLight != doLightLastFrame)
+        {
+            foreach (var chunkPos in WorldManager.instance.chunks.Keys)
+            {
+                UpdateChunkLight(chunkPos);
+            }
+
+            doLightLastFrame = doLight;
+        }
     }
 
     public static bool DoesBlockInfluenceSunlight(int2 location)
@@ -76,6 +92,25 @@ public class LightManager : MonoBehaviour
         }
     }
 
+    public static void UpdateLightForSources(List<LightSource> sources)
+    {
+        HashSet<LightObject> lightObjects = new HashSet<LightObject>();
+
+        foreach (LightSource source in sources)
+        {
+            Vector3 sourcePos = source.transform.position;
+            lightObjects.UnionWith(GetLightObjectsForArea(
+                new int2((int)sourcePos.x - maxLightLevel, (int)sourcePos.y - maxLightLevel),
+                new int2((int)sourcePos.x + maxLightLevel, (int)sourcePos.y + maxLightLevel)));
+        }
+        
+        foreach(LightObject lightObject in lightObjects)
+        {
+            
+            UpdateLight(lightObject, sources);
+        }
+    }
+
     public static void UpdateLightObject(LightObject lightObj)
     {
         Vector2 pos = lightObj.transform.position;
@@ -90,18 +125,25 @@ public class LightManager : MonoBehaviour
         Vector3 objectLoc = lightObject.transform.position;
         int brightestRecordedLightLevel = 0;
 
-        foreach (LightSource source in possibleLightSources)
-        {
-            Vector3 sourceLoc = source.transform.position;
-            int sourceBrightness = source.lightLevel;
-            float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
-            int objectBrightness = sourceBrightness - (int) objectDistance;
-            
-            if (objectBrightness > brightestRecordedLightLevel)
+        if (LightManager.instance.doLight)
+            foreach (LightSource source in possibleLightSources)
             {
-                brightestRecordedLightLevel = objectBrightness;
+                
+                Vector3 sourceLoc = source.transform.position;
+                float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
+                if(objectDistance > maxLightLevel)
+                    continue;
+                
+                int sourceBrightness = source.lightLevel;
+                int objectBrightness = sourceBrightness - (int) objectDistance;
+                
+                if (objectBrightness > brightestRecordedLightLevel)
+                {
+                    brightestRecordedLightLevel = objectBrightness;
+                }
             }
-        }
+        else
+            brightestRecordedLightLevel = 15;
         
         lightObject.UpdateLightLevel(brightestRecordedLightLevel);
     }
