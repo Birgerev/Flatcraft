@@ -17,23 +17,29 @@ public class SunlightSource : MonoBehaviour
         
         transform.SetParent(SunlightSourceParent);
         lightSource = GetComponent<LightSource>();
+        
         StartCoroutine(UpdateTimeOfDayLoop());
     }
 
     private TimeOfDay GetTimeOfDay()
     {
-        return (WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2) ? TimeOfDay.Night : TimeOfDay.Day;
+        return (WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
+            TimeOfDay.Night : TimeOfDay.Day;
     }
     
     IEnumerator UpdateTimeOfDayLoop()
     {
         TimeOfDay lastUpdated = GetTimeOfDay();
+        lightSource.UpdateLightLevel(
+            GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel, 
+            false);
 
         while (true)
         {
             if(GetTimeOfDay() != lastUpdated)
             {
-                lightSource.UpdateLightLevel(GetTimeOfDay() == TimeOfDay.Night ? 5 : LightManager.maxLightLevel);
+                lightSource.UpdateLightLevel(
+                    GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel);
                 lastUpdated = GetTimeOfDay();
             }
 
