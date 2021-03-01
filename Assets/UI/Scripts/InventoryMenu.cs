@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class InventoryMenu : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class InventoryMenu : MonoBehaviour
     public void Close()
     {
         //Close inventories
-        foreach(Inventory inventory in inventories.Values)
+        foreach(Inventory inventory in inventories.Values.ToList())
             inventory.Close();
     }
 
