@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Player : HumanEntity
@@ -476,6 +477,9 @@ public class Player : HumanEntity
     
     public override void Save()
     {
+        if (!Directory.Exists(WorldManager.world.getPath() + "\\players\\player"))
+            Directory.CreateDirectory(WorldManager.world.getPath() + "\\players\\player");
+        
         base.Save();
         PlayerSaveData.SetBedLocation("player", bedLocation);
     }
@@ -501,7 +505,7 @@ public class Player : HumanEntity
 
     public override string SavePath()
     {
-        return WorldManager.world.getPath() + "\\players\\player.dat";
+        return WorldManager.world.getPath() + "\\players\\player\\entity.dat";
     }
 
     private Dictionary<string, string> dataFromString(string[] lines)

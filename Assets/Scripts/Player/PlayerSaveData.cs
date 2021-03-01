@@ -6,12 +6,12 @@ public class PlayerSaveData
 {
     public static string GetPath()
     {
-        return WorldManager.world.getPath() + "\\playerData\\";
+        return WorldManager.world.getPath() + "\\players";
     }
 
     public static string GetPlayerPath(string Player)
     {
-        return GetPath() + Player + ".dat";
+        return GetPath() + "\\" + Player + "\\playerData.dat";
     }
     
     public static void SetBedLocation(string player, Location loc)
@@ -31,8 +31,6 @@ public class PlayerSaveData
 
     public static void EditLine(string player, string key, string value)
     {
-        if (!Directory.Exists(GetPath()))
-            Directory.CreateDirectory(GetPath());
         if (!File.Exists(GetPlayerPath(player)))
             File.Create(GetPlayerPath(player)).Close();
         
