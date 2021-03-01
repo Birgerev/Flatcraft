@@ -12,7 +12,7 @@ public class Chicken : PassiveEntity
         var result = new List<ItemStack>();
         var r = new Random(SeedGenerator.SeedByLocation(Location));
 
-        result.Add(new ItemStack(Material.Raw_Chicken, r.Next(0, 1 + 1)));
+        result.Add(new ItemStack(Material.Raw_Chicken, 1));
 
         return result;
     }
