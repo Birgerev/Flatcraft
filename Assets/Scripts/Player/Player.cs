@@ -19,7 +19,7 @@ public class Player : HumanEntity
 
     //Entity Data Tags
     [EntityDataTag(false)] public float hunger;
-    [EntityDataTag(true)] public PlayerInventory inventory = new PlayerInventory();
+    [EntityDataTag(true)] public PlayerInventory inventory;
     public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
@@ -36,6 +36,7 @@ public class Player : HumanEntity
     {
         localInstance = this;
         hunger = maxHunger;
+        inventory = new PlayerInventory();
         
         base.Start();
         
