@@ -13,8 +13,6 @@ public class DeathMenu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (active)
-            Cursor.visible = true;
 
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = active;
@@ -30,7 +28,6 @@ public class DeathMenu : MonoBehaviour
     public void Respawn()
     {
         WorldManager.instance.Spawn();
-        Cursor.visible = false;
         active = false;
     }
 }

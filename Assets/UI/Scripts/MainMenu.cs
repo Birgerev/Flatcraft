@@ -4,12 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public static string discordURL = "https://discord.gg/kfY6MyTFNK";
+    public static string discordURL = "find";
     public Text versionText;
 
     public void Start()
     {
-        Cursor.visible = true;
         versionText.text = "Flatcraft " + VersionController.GetVersionName();
     }
 

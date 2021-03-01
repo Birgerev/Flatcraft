@@ -35,7 +35,6 @@ public class PauseMenu : MonoBehaviour
     {
         active = setActive;
         
-        Cursor.visible = active;
         Time.timeScale = active ? 0 : 1;
 
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;

@@ -16,7 +16,6 @@ public class SingleplayerMenu : MonoBehaviour
     private void Start()
     {
         LoadWorlds();
-        Cursor.visible = true;
     }
 
     private void Update()

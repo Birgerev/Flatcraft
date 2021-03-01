@@ -139,7 +139,6 @@ public class Inventory
     {
         this.holder = holder;
 
-        Cursor.visible = true;
         open = true;
         anyOpen = true;
         UpdateMenuStatus();
@@ -147,7 +146,6 @@ public class Inventory
 
     public virtual void Close()
     {
-        Cursor.visible = false;
         open = false;
         anyOpen = false;
         UpdateMenuStatus();

@@ -40,7 +40,6 @@ public class Player : HumanEntity
         
         base.Start();
         
-        Cursor.visible = false;
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Location = bedLocation;
 
