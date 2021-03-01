@@ -71,13 +71,13 @@ public class PlayerInventory : Inventory
 
     public override void Close()
     {
-        var i = 0;
-        foreach (var index in getCraftingTable())
+        for (int i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot() + 4; i++)
         {
-            index.Drop(holder, true);
+            ItemStack item = getItem(i);
+            if(item != null)
+                item.Drop(holder, true);
 
-            items[getFirstCraftingTableSlot() + i] = new ItemStack();
-            i++;
+            setItem(i, new ItemStack());
         }
 
         base.Close();
