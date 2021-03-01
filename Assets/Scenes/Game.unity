@@ -4394,8 +4394,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventorySlotLists:
-  - {fileID: 25132951}
-  - {fileID: 1697814894}
+  - {fileID: 2009792786}
+  - {fileID: 1910307081}
   active: 0
   playerInventoryTitle: {fileID: 1429391557}
   pointerSlot: {fileID: 7035934}
