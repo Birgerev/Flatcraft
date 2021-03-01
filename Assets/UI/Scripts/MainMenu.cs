@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public static string discordURL = "find";
+    public static string discordURL = "https://discord.gg/kfY6MyTFNK";
     public Text versionText;
 
     public void Start()
