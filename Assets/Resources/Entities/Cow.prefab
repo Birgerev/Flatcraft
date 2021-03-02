@@ -128,7 +128,7 @@ MonoBehaviour:
   age: 0
   fireTime: 0
   dead: 0
-  burningRender: {fileID: 0}
+  burningRender: {fileID: 6884519462786658413}
   facingLeft: 0
   id: 0
   isInLiquid: 0
