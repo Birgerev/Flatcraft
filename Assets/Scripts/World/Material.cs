@@ -103,5 +103,7 @@
     Netherrack,
     TNT,
     Raw_Beef,
-    Steak
+    Steak,
+    Raw_Porkchop,
+    Cooked_Porkchop,
 }
