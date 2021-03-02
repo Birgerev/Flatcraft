@@ -11,7 +11,7 @@ public class Entity : MonoBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
 
-    public static int MaxLivingAmount = 8;
+    public static int MaxLivingAmount = 4;
     private Vector2 _cachedposition;
     private Dimension _dimension;
 
