@@ -12,7 +12,7 @@ public class Pig : PassiveEntity
         var result = new List<ItemStack>();
         var r = new Random(SeedGenerator.SeedByLocation(Location));
 
-        result.Add(new ItemStack(Material.Raw_Beef, r.Next(1, 3 + 1)));
+        result.Add(new ItemStack(Material.Raw_Porkchop, r.Next(1, 3 + 1)));
 
         return result;
     }
