@@ -49,6 +49,7 @@ public class WorldManager : MonoBehaviour
     private IEnumerator LoadWorld()
     {
         SeedGenerator.Reset();
+        Entity.entities.Clear();
         Time.timeScale = 1;
         chunks.Clear();
 
