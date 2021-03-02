@@ -102,4 +102,6 @@
     Portal_Frame,
     Netherrack,
     TNT,
+    Raw_Beef,
+    Steak
 }

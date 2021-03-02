@@ -51,7 +51,7 @@ public class Chunk : MonoBehaviour
     public const int SeaLevel = 62;
 
     private static readonly float mobSpawningChance = 0.005f;
-    private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep"};
+    private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow"};
     public int age;
 
     public GameObject blockPrefab;
