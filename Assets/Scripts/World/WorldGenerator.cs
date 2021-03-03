@@ -9,4 +9,9 @@ public class WorldGenerator
     {
         return Material.TNT;
     }
+
+    public virtual void GenerateStructures(Location loc)
+    {
+        
+    }
 }

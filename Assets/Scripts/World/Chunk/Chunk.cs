@@ -21,26 +21,6 @@ public class Chunk : MonoBehaviour
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
-    [Header("Ore Generation Settings")] private const int OreCoalHeight = 128;
-
-    private const double OreCoalChance = 0.004f;
-
-    private const int OreIronHeight = 64;
-    private const double OreIronChance = 0.002f;
-
-    private const int OreGoldHeight = 32;
-    private const double OreGoldChance = 0.001f;
-
-    private const int OreLapisHeight = 32;
-    private const double OreLapisChance = 0.001f;
-
-    private const int OreRedstoneHeight = 16;
-    private const double OreRedstoneChance = 0.002f;
-
-    private const int OreDiamondHeight = 16;
-    private const double OreDiamondChance = 0.0004f;
-
-
     private static readonly float mobSpawningChance = 0.005f;
     private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
     public int age;
@@ -294,7 +274,7 @@ public class Chunk : MonoBehaviour
             for (var y = 0; y <= Height; y++)
             {
                 for (var x = 0; x < Width; x++)
-                    GenerateStructures(Location.LocationByPosition(transform.position, chunkPosition.dimension) +
+                    worldGenerator.GenerateStructures(Location.LocationByPosition(transform.position, chunkPosition.dimension) +
                                        new Location(x, y));
 
                 if (y < 80 && y % 4 == 0)
@@ -414,102 +394,6 @@ public class Chunk : MonoBehaviour
             entity.id = entityId;
             //Make sure the newly created entity is in the chunk, to make loading work correctly (setting actual position happens inside Entity class)
             entity.transform.position = transform.position + new Vector3(1, 1);
-        }
-    }
-
-    private void GenerateStructures(Location loc)
-    {
-        var block = loc.GetBlock();
-        var mat = Material.Air;
-        if (block != null)
-            mat = block.GetMaterial();
-        
-        var biome = GetBiome();
-        var r = new Random(SeedGenerator.SeedByLocation(loc));
-        Material[] flowerMaterials = {Material.Red_Flower};
-        Material[] vegetationMaterials = {Material.Tall_Grass};
-
-        if ((mat == Material.Grass || mat == Material.Sand) && (loc + new Location(0, 1)).GetBlock() == null)
-        {
-            //Vegetation
-            if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
-                biome.name == "plains")
-                if (r.Next(0, 100) <= 50)
-                    (loc + new Location(0, 1)).SetMaterial(vegetationMaterials[r.Next(0, vegetationMaterials.Length)]);
-
-            if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
-                biome.name == "plains")
-                if (r.Next(0, 100) <= 10)
-                    (loc + new Location(0, 1)).SetMaterial(flowerMaterials[r.Next(0, flowerMaterials.Length)]);
-
-            //Trees
-            if (biome.name == "forest" || biome.name == "forest_hills")
-                if (r.Next(0, 100) <= 20)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Oak_Tree"));
-
-            //Birch Trees
-            if (biome.name == "birch_forest")
-                if (r.Next(0, 100) <= 20)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Birch_Tree"));
-
-            //Unlikely Trees
-            if (biome.name == "plains")
-                if (r.Next(0, 100) <= 3)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Oak_Tree"));
-
-            //Large Trees
-            if (biome.name == "plains")
-                if (r.Next(0, 100) <= 1)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Large_Oak_Tree"));
-
-            //Dead Bushes
-            if (biome.name == "desert")
-                if (r.Next(0, 100) <= 8)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Dead_Bush);
-
-            //Cactie
-            if (biome.name == "desert")
-                if (r.Next(0, 100) <= 5)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Cactus"));
-        }
-
-        //Generate Ores
-        if (mat == Material.Stone)
-        {
-            if (r.NextDouble() < OreDiamondChance && loc.y <= OreDiamondHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Diamond"));
-            else if (r.NextDouble() < OreRedstoneChance && loc.y <= OreRedstoneHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Redstone"));
-            else if (r.NextDouble() < OreLapisChance && loc.y <= OreLapisHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Lapis"));
-            else if (r.NextDouble() < OreGoldChance && loc.y <= OreGoldHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Gold"));
-            else if (r.NextDouble() < OreIronChance && loc.y <= OreIronHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Iron"));
-            else if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Coal"));
-        }
-        
-        //Generate Liquid Pockets
-        if (loc.y < 50 && mat == Material.Air && r.Next(0, 100) <= 5)
-        {
-            if ((loc + new Location(0, 1)).GetMaterial() == Material.Stone)
-            {
-                Material liquidMat = (r.Next(0, 100) < 75 ? Material.Water : Material.Lava);
-                
-                (loc + new Location(0, 1)).SetMaterial(liquidMat);
-            }
         }
     }
 
