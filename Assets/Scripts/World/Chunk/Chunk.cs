@@ -21,13 +21,6 @@ public class Chunk : MonoBehaviour
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
-    [Header("Cave Generation Settings")] private const float CaveFrequency = 5;
-
-    private const float CaveLacunarity = 0.6f;
-    private const float CavePercistance = 2;
-    private const int CaveOctaves = 4;
-    private const float CaveHollowValue = 2.2f;
-
     [Header("Ore Generation Settings")] private const int OreCoalHeight = 128;
 
     private const double OreCoalChance = 0.004f;
@@ -47,8 +40,6 @@ public class Chunk : MonoBehaviour
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0004f;
 
-    private const int LavaHeight = 10;
-    public const int SeaLevel = 62;
 
     private static readonly float mobSpawningChance = 0.005f;
     private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
@@ -60,7 +51,7 @@ public class Chunk : MonoBehaviour
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
-    private Perlin caveNoise;
+    public WorldGenerator worldGenerator;
 
     public ChunkPosition chunkPosition;
     public bool isLoaded;
@@ -68,7 +59,6 @@ public class Chunk : MonoBehaviour
     public bool isSpawnChunk;
 
     public Portal_Frame netherPortal;
-    private Perlin patchNoise;
 
     private void Start()
     {
@@ -229,7 +219,7 @@ public class Chunk : MonoBehaviour
         for (var x = 0; x < Width; x++)
         {
             var loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
-            var mat = GenerateTerrainBlock(loc);
+            var mat = worldGenerator.GenerateTerrainBlock(loc);
 
             if (mat != Material.Air) blockList.Add(loc, mat);
         }
@@ -239,15 +229,16 @@ public class Chunk : MonoBehaviour
 
     private IEnumerator GenerateChunk()
     {
-        patchNoise = new Perlin(0.6f, 0.8f, 0.8f, 2, WorldManager.world.seed, QualityMode.Low);
-        caveNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
-            WorldManager.world.seed, QualityMode.High);
-
         isLoading = true;
         WorldManager.instance.amountOfChunksLoading++;
 
         //pre-generate chunk biomes
         Biome.GetBiomeAt(chunkPosition);
+        
+        if(chunkPosition.dimension == Dimension.Overworld)
+            worldGenerator = new OverworldGenerator();
+        else if(chunkPosition.dimension == Dimension.Nether)
+            worldGenerator = new NetherGenerator();
 
         if (chunkPosition.HasBeenGenerated())
         {
@@ -640,120 +631,6 @@ public class Chunk : MonoBehaviour
         blocks.TryGetValue(new int2(loc.x, loc.y), out block);
 
         return block;
-    }
-
-    private Material GenerateTerrainBlock(Location loc)
-    {
-        var r = new Random(SeedGenerator.SeedByLocation(loc));
-        var mat = Material.Air;
-
-        float noiseValue;
-
-        var biome = GetBiome();
-        var rightBiome = Biome.GetBiomeAt(new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension));
-        var leftBiome = Biome.GetBiomeAt(new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension));
-        float primaryBiomeWeight;
-
-        if (biome != rightBiome)
-        {
-            primaryBiomeWeight = 0.5f - (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2f;
-            noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
-        }
-        else if (biome != leftBiome)
-        {
-            primaryBiomeWeight = 0.5f + (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Width) / Width / 2f;
-            noiseValue = Biome.BlendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
-        }
-        else
-        {
-            noiseValue = biome.GetLandscapeNoiseAt(loc);
-        }
-
-        //-Terrain Generation-//
-
-        if (chunkPosition.dimension == Dimension.Overworld)
-        {
-            //-Ground-//
-            if (noiseValue > 0.1f)
-            {
-                if (biome.name == "desert")
-                {
-                    mat = Material.Sand;
-                    if (noiseValue > biome.stoneLayerNoiseValue - 2)
-                        mat = Material.Sandstone;
-                }
-                else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
-                         biome.name == "plains")
-                {
-                    mat = Material.Grass;
-                }
-
-                if (noiseValue > biome.stoneLayerNoiseValue) mat = Material.Stone;
-            }
-
-            //-Lakes-//
-            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-            //-Dirt & Gravel Patches-//
-            if (mat == Material.Stone)
-            {
-                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20)) > 7.5f)
-                    mat = Material.Dirt;
-                if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20 + 100, (float)loc.y / 20, 200)) > 7.5f)
-                    mat = Material.Gravel;
-            }
-
-            //-Sea-//
-            if (mat == Material.Air && loc.y <= SeaLevel) mat = Material.Water;
-
-            //-Caves-//
-            if (noiseValue > 0.1f)
-            {
-                var caveValue =
-                    (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
-                if (caveValue > CaveHollowValue)
-                {
-                    mat = Material.Air;
-
-                    //-Lava Lakes-//
-                    if (loc.y <= LavaHeight)
-                        mat = Material.Lava;
-                }
-            }
-        }
-        else if (chunkPosition.dimension == Dimension.Nether)
-        {
-            if (noiseValue > 0.1f)
-                mat = Material.Netherrack;
-
-            if (mat == Material.Air && loc.y <= SeaLevel) 
-                mat = Material.Lava;
-
-            //-Bedrock Generation-//
-            if (loc.y >= 128 - 4 && loc.y <= 128)
-            {
-                //Fill layer 256 and then progressively less chance of bedrock further down
-                if (loc.y == 128 - 4)
-                    mat = Material.Bedrock;
-                else if (r.Next(0, (128 - loc.y) + 2) <= 1)
-                    mat = Material.Bedrock;
-            }
-
-            if (loc.y > 128)
-                mat = Material.Air;
-        }
-
-        //-Bedrock Generation-//
-        if (loc.y <= 4)
-        {
-            //Fill layer 0 and then progressively less chance of bedrock further up
-            if (loc.y == 0)
-                mat = Material.Bedrock;
-            else if (r.Next(0, loc.y + 2) <= 1)
-                mat = Material.Bedrock;
-        }
-
-        return mat;
     }
 
     public Entity[] GetEntities()
