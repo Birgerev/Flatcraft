@@ -1,0 +1,11 @@
+mirror*0*0
+TNT*1*
+Gunpowder*0,0*
+Sand*1,0*
+Gunpowder*2,0*
+Sand*0,1*
+Gunpowder*1,1*
+Sand*2,1*
+Gunpowder*0,2*
+Sand*1,2*
+Gunpowder*2,2*
