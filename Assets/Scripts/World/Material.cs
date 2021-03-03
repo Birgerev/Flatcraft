@@ -106,4 +106,5 @@
     Steak,
     Raw_Porkchop,
     Cooked_Porkchop,
+    Gunpowder,
 }
