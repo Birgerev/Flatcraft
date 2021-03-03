@@ -1,0 +1,5 @@
+mirror*0*0
+Bread*1*
+Wheat*0,0*
+Wheat*1,0*
+Wheat*2,0*
