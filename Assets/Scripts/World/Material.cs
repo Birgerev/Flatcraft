@@ -108,4 +108,5 @@
     Cooked_Porkchop,
     Rotten_Flesh,
     Bread,
+    Gunpowder,
 }
