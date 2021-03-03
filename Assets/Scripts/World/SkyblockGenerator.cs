@@ -9,6 +9,6 @@ public class SkyblockGenerator : WorldGenerator
     public override void GenerateStructures(Location loc)
     {
         if(loc.x == 0 && loc.y == 60)
-            loc.SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Ore_Coal"));
+            loc.SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Sky_Block"));
     }
 }

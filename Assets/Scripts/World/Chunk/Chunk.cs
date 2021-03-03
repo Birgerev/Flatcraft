@@ -180,9 +180,15 @@ public class Chunk : MonoBehaviour
 
         if (!(r.NextDouble() < mobSpawningChance / TickRate) || Entity.LivingEntityCount >= Entity.MaxLivingAmount) 
             return;
-        
+
         var x = r.Next(0, Width) + chunkPosition.worldX;
-        var y = GetTopmostBlock(x, chunkPosition.dimension, true).location.y + 1;
+        Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
+
+        //Return in case no block was found in column, may be the case in ex void worlds
+        if (topmostBlock == null)
+            return;
+            
+        var y = topmostBlock.location.y + 1;
         var entities = MobSpawnTypes;
         entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
         var entityType = entities[r.Next(0, entities.Count)];
