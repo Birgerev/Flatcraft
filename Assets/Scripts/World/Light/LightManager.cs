@@ -60,6 +60,11 @@ public class LightManager : MonoBehaviour
             return;
         
         Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localInstance.Location.dimension, false);
+        
+        //Return in case no block was found in column, may be the case in ex void worlds
+        if (topmostBlock == null)
+            return;
+        
         GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
 
         instance.sunlightSources.Add(x, newSunlightSource.GetComponent<SunlightSource>());

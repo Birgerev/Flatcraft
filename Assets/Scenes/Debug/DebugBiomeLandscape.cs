@@ -38,7 +38,7 @@ public class DebugBiomeLandscape : MonoBehaviour
 
             if (showSeaLevel)
                 for (var x = 0; x < previewWidth; x++)
-                    tex.SetPixel(x, Chunk.SeaLevel, Color.red);
+                    tex.SetPixel(x, OverworldGenerator.SeaLevel, Color.red);
 
             tex.Apply();
 

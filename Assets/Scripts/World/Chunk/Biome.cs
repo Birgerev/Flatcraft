@@ -41,10 +41,10 @@ public class Biome
     public float GetLandscapeNoiseAt(Location loc)
     {
         float value = 100;
-        if (loc.y > Chunk.SeaLevel - 20)
+        if (loc.y > OverworldGenerator.SeaLevel - 20)
         {
             value = (float) GetLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
-            value -= landscapeHeightWeight * (loc.y + landscapeHeightOverSeaLevel - Chunk.SeaLevel);
+            value -= landscapeHeightWeight * (loc.y + landscapeHeightOverSeaLevel - OverworldGenerator.SeaLevel);
         }
 
         return value;
