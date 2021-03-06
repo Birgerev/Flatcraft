@@ -258,7 +258,10 @@ public class Chunk : MonoBehaviour
         else
         {
             chunkPosition.CreateChunkPath();
-
+            
+            //Generate Caves
+            CaveGenerator.GenerateCavesForRegion(chunkPosition);
+            
             //Generate Terrain Blocks
             Dictionary<Location, Material> terrainBlocks = null;
             var terrainThread = new Thread(() => { terrainBlocks = GenerateChunkTerrain(); });

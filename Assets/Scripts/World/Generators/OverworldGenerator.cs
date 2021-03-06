@@ -112,18 +112,8 @@ public class OverworldGenerator : WorldGenerator
             mat = Material.Water;
 
         //-Caves-//
-        if (noiseValue > 0.1f)
-        {
-            var caveValue = (caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20) + 4.0f) / 4f;
-            if (caveValue > CaveHollowValue)
-            {
-                mat = Material.Air;
-
-                //-Lava Lakes-//
-                if (loc.y <= LavaHeight)
-                    mat = Material.Lava;
-            }
-        }
+        if (WorldManager.instance.caveHollowBlocks.Contains(loc))
+            mat = Material.Air;
 
         //-Bedrock Generation-//
         if (loc.y <= 4)
@@ -224,7 +214,7 @@ public class OverworldGenerator : WorldGenerator
         }
         
         //Generate Liquid Pockets
-        if (loc.y < 50 && mat == Material.Air && r.Next(0, 100) <= 5)
+        if (loc.y < 40 && mat == Material.Air && r.Next(0, 100) <= 3)
         {
             if ((loc + new Location(0, 1)).GetMaterial() == Material.Stone)
             {
