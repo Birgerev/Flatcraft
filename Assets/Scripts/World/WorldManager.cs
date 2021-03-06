@@ -10,6 +10,9 @@ public class WorldManager : MonoBehaviour
 
     public static float dayLength = 60 * 20;
     public int amountOfChunksLoading;
+    
+    public HashSet<Location> caveHollowBlocks = new HashSet<Location>();
+    public List<int> caveGeneratedRegions = new List<int>();
 
     public List<Biome> overworldBiomes = new List<Biome>();
     public Biome netherBiome;
