@@ -204,6 +204,9 @@ public class Player : HumanEntity
         if (Input.GetKeyDown(KeyCode.Q))
             DropSelected();
 
+        if (Input.GetKeyDown(KeyCode.F4))
+            LightManager.instance.doLight = !LightManager.instance.doLight;
+
         KeyCode[] numpadCodes =
         {
             KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
