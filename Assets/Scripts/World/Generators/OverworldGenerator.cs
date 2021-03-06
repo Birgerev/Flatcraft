@@ -214,7 +214,7 @@ public class OverworldGenerator : WorldGenerator
         }
         
         //Generate Liquid Pockets
-        if (loc.y < 50 && mat == Material.Air && r.Next(0, 100) <= 3)
+        if (loc.y < 40 && mat == Material.Air && r.Next(0, 100) <= 3)
         {
             if ((loc + new Location(0, 1)).GetMaterial() == Material.Stone)
             {
