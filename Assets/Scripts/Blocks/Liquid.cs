@@ -44,8 +44,8 @@ public class Liquid : Block
 
     public override void Tick()
     {
-        if (!data.HasData("liquid_level"))
-            data.SetData("liquid_level", max_liquid_level.ToString());
+        if (!GetData().HasTag("liquid_level"))
+            SetData(GetData().SetTag("liquid_level", max_liquid_level.ToString()));
 
         if(CheckSource())
             CheckFlow();
@@ -87,12 +87,10 @@ public class Liquid : Block
         if (downMat == GetMaterial())
             return;
         
-        var liquidLevel = int.Parse(data.GetData("liquid_level"));
+        var liquidLevel = int.Parse(GetData().GetTag("liquid_level"));
         
         if (liquidLevel > 1)
         {
-            Location left = location + new Location(-1, 0);
-            Location right = location + new Location(1, 0);
             var flowLeft = true;
             var flowRight = true;
             
@@ -150,13 +148,13 @@ public class Liquid : Block
     
     public bool IsLiquidSourceBlock()
     {
-        return data.GetData("source_block") == "true";
+        return GetData().GetTag("source_block") == "true";
     }
     
     public void MakeIntoLiquidSourceBlock()
     {
-        data.SetData("source_block", "true");
-        data.SetData("liquid_level", max_liquid_level.ToString());
+        SetData(GetData().SetTag("source_block", "true"));
+        SetData(GetData().SetTag("liquid_level", max_liquid_level.ToString()));
         Autosave();
     }
     
@@ -191,10 +189,10 @@ public class Liquid : Block
             if (possibleSourceMaterial == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
             {
                 var possibleSourceData = possibleSource.GetData();
-                if (possibleSourceData.HasData("liquid_level"))
+                if (possibleSourceData.HasTag("liquid_level"))
                 {
-                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetData("liquid_level"));
-                    var currentLiquidLevel = int.Parse(data.GetData("liquid_level"));
+                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
+                    var currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
                     if (possibleSourceLiquidLevel > currentLiquidLevel         //Make sure the source is of a higher liquid level
                         && possibleSourceLiquidLevel >= 1)                     //If the source liquid level is less than 1, it's not a viable source
@@ -222,10 +220,10 @@ public class Liquid : Block
             if (possibleSourceMaterial == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
             {
                 var possibleSourceData = possibleSource.GetData();
-                if (possibleSourceData.HasData("liquid_level"))
+                if (possibleSourceData.HasTag("liquid_level"))
                 {
-                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetData("liquid_level"));
-                    var currentLiquidLevel = int.Parse(data.GetData("liquid_level"));
+                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
+                    var currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
                     if (possibleSourceLiquidLevel < currentLiquidLevel || possibleSourceLiquidLevel == max_liquid_level) //Make sure the source is of a lower liquid level, or a full block (result of liquid flowing down)
                     {
@@ -244,10 +242,10 @@ public class Liquid : Block
 
     public override Sprite getTexture()
     {
-        if (!data.HasData("liquid_level"))
+        if (!GetData().HasTag("liquid_level"))
             return Resources.LoadAll<Sprite>("Sprites/" + texture)[max_liquid_level - 1];
 
-        return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(data.GetData("liquid_level")) - 1];
+        return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(GetData().GetTag("liquid_level")) - 1];
     }
     
     public override void OnTriggerStay2D(Collider2D col)

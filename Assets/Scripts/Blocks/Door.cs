@@ -25,7 +25,7 @@ public class Door : Block
 
     public void SetOpenState(bool open)
     {
-        data.SetData("open", open ? "true" : "false");
+        SetData(GetData().SetTag("open", open ? "true" : "false"));
 
         PlaySound(open);
 
@@ -40,14 +40,14 @@ public class Door : Block
 
     public bool GetOpenState()
     {
-        var open = data.GetData("open") == "true";
+        var open = GetData().GetTag("open") == "true";
 
         return open;
     }
 
     public override void Tick()
     {
-        var open = data.GetData("open") == "true";
+        var open = GetData().GetTag("open") == "true";
 
         texture = open ? open_texture : closed_texture;
         solid = !open;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Mirror;
 using UnityEngine;
 using Random = System.Random;
 
@@ -8,71 +9,72 @@ public class LivingEntity : Entity
     //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
 
-    [Header("Movement Properties")] private readonly float acceleration = 4f;
+    [Header("Movement Properties")] public float acceleration = 4f;
 
-    private readonly float airDrag = 0.92f;
-    private readonly float climbSpeed = 1.2f;
-    protected EntityController controller;
-    private readonly float groundFriction = 0.92f;
+    public Nameplate nameplate;
+    EntityController controller;
 
     //Entity Data Tags
-    [EntityDataTag(false)] public float health;
+    [EntityDataTag(false)] [SyncVar] public float health;
+    [EntityDataTag(false)] [SyncVar] public string displayName;
 
-    private readonly float jumpVelocity = 8.5f;
-    private readonly float ladderFriction = 0.8f;
-    private readonly float liquidDrag = 0.75f;
-    private readonly float sneakSpeed = 1.3f;
-    private readonly float sprintSpeed = 5.6f;
-    private readonly float swimUpSpeed = 2f;
-    public float swimJumpVelocity = 2f;
-    private readonly float walkSpeed = 4.3f;
+    private float airDrag = 4.3f;
+    private float climbSpeed = 0.5f;
+    private float groundFriction = 5f;
+    private float jumpVelocity = 8.5f;
+    private float ladderFriction = 10f;
+    private float liquidDrag = 10f;
+    private float sneakSpeed = 1.3f;
+    private float sprintSpeed = 5.6f;
+    private float swimUpSpeed = 2f;
+    private float swimJumpVelocity = 2f;
+    private float walkSpeed = 4.3f;
 
 
     //Entity State
     public float highestYlevelsinceground;
     protected float last_jump_time;
     protected bool inLiquidLastFrame;
+    [SyncVar]
     protected bool sprinting;
+    [SyncVar]
     protected bool sneaking;
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
     {
-        health = maxHealth;
-
         base.Start();
-
-        controller = GetController();
-
+        
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-    }
-
-    public override void LateUpdate()
-    {
-        inLiquidLastFrame = isInLiquid;
-        base.LateUpdate();
-    }
-
-    public virtual void FixedUpdate()
-    {
-        ProcessMovement();
-        fallDamageCheck();
     }
 
     public override void Update()
     {
         base.Update();
+
+        CalculateFlip();
+    }
+
+    [Server]
+    public override void Initialize()
+    {
+        health = maxHealth;
+        controller = GetController();
+        
+        base.Initialize();
+    }
+    
+    [Server]
+    public override void Tick()
+    {
+        base.Tick();
+        
+        AmbientSoundCheck();
         
         if(controller != null)
             controller.Tick();
         
-        CalculateFlip();
-        UpdateAnimatorValues();
-        AmbientSoundCheck();
         
-        if(inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
-            SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
-
         //Sprinting particles    
         if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
         {
@@ -82,11 +84,33 @@ public class LivingEntity : Entity
             else
                 chances = 0.02f;
 
-            spawnMovementParticles(chances);
+            MovementParticlesEffect(chances);
         }
+        
+        ProcessMovement();
+        FallDamageCheck();
+        
+        inLiquidLastFrame = isInLiquid;
     }
 
-    public virtual void AmbientSoundCheck()
+    [Server]
+    public override void Teleport(Location loc)
+    {
+        highestYlevelsinceground = 0;
+        base.Teleport(loc);
+    }
+    
+    [Client]
+    public override void ClientUpdate()
+    {
+        base.ClientUpdate();
+
+        UpdateAnimatorValues();
+        UpdateNameplate();
+    }
+
+    [Server]
+    public void AmbientSoundCheck()
     {
         int checkDuration = 4;
         float timeOffset = (float)new System.Random(id).NextDouble() * checkDuration;    //Uses a static seed (id)
@@ -96,6 +120,7 @@ public class LivingEntity : Entity
                 AmbientSound();
     }
     
+    [Client]
     public virtual void UpdateAnimatorValues()
     {
         var anim = GetComponent<Animator>();
@@ -106,27 +131,45 @@ public class LivingEntity : Entity
         if (anim.isInitialized)
             anim.SetFloat("velocity-x", Mathf.Abs(GetVelocity().x));
     }
+    
+    [Client]
+    public virtual void UpdateNameplate()
+    {
+        if (nameplate == null)
+        {
+            Debug.LogWarning("Nameplate is missing for entity type: " + this.name);
+            return;
+        }
+        
+        nameplate.text = displayName;
+    }
 
     public virtual void ProcessMovement()
     {
+        if(inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
+            SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
+        
         ApplyFriction();
-        CrouchOnLadder();
+        CrouchOnLadderCheck();
     }
 
-    public virtual void ApplyFriction()
+    public void ApplyFriction()
     {
         if (isInLiquid)
-            SetVelocity(GetVelocity() * liquidDrag);
+            SetVelocity(GetVelocity() * (1 / (1 + (liquidDrag * Time.deltaTime))));
         if (isOnClimbable)
-            SetVelocity(GetVelocity() * ladderFriction);
+            SetVelocity(GetVelocity() * (1 / (1 + (ladderFriction * Time.deltaTime))));
         if (!isInLiquid && !isOnClimbable && !isOnGround)
-            SetVelocity(new Vector3(GetVelocity().x * airDrag, GetVelocity().y));
+            SetVelocity(new Vector3(GetVelocity().x * (1 / (1 + (airDrag * Time.deltaTime))), GetVelocity().y));
         if (!isInLiquid && !isOnClimbable && isOnGround)
-            SetVelocity(GetVelocity() * groundFriction);
+            SetVelocity(GetVelocity() * (1 / (1 + (groundFriction * Time.deltaTime))));
     }
 
-    public virtual void Walk(int direction)
+    public void Walk(int direction)
     {
+        if (!hasAuthority)
+            return;
+        
         float maxSpeed;
         if (sprinting)
             maxSpeed = sprintSpeed;
@@ -146,10 +189,31 @@ public class LivingEntity : Entity
             else targetXVelocity = 0;
 
             GetComponent<Rigidbody2D>().velocity +=
-                new Vector2(targetXVelocity * (acceleration * Time.fixedDeltaTime), 0);
+                new Vector2(targetXVelocity * (acceleration * Time.deltaTime), 0);
         }
 
         StairCheck(direction);
+    }
+
+    public void Jump()
+    {
+        if (!hasAuthority)
+            return;
+
+        if (isOnGround)
+        {
+            if (Time.time - last_jump_time < 0.3f)
+                return;
+
+            SetVelocity(new Vector2(GetVelocity().x, jumpVelocity));
+            last_jump_time = Time.time;
+        }
+
+        if (isInLiquid && GetVelocity().y < swimUpSpeed) 
+            SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
+
+        if (isOnClimbable) 
+            SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
     }
 
     public void StairCheck(int direction)
@@ -170,45 +234,28 @@ public class LivingEntity : Entity
             var rotated_x = false;
             var rotated_y = false;
 
-            rotated_x = blockInFront.data.GetData("rotated_x") == "true";
-            rotated_y = blockInFront.data.GetData("rotated_y") == "true";
-
-            if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x)
-            ) //if the stairs are rotated correctly
+            rotated_x = blockInFront.location.GetData().GetTag("rotated_x") == "true";
+            rotated_y = blockInFront.location.GetData().GetTag("rotated_y") == "true";
+            
+            //if the stairs are rotated correctly
+            if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x))
                 transform.position += new Vector3(0, 1);
         }
     }
 
+    [Server]
     public virtual EntityController GetController()
     {
         return new EntityController(this);
     }
 
-    public virtual void CalculateFlip()
+    public void CalculateFlip()
     {
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;
     }
 
-    public virtual void Jump()
-    {
-        if (isOnGround)
-        {
-            if (Time.time - last_jump_time < 0.3f)
-                return;
-
-            SetVelocity(GetVelocity() + new Vector2(0, jumpVelocity));
-            last_jump_time = Time.time;
-        }
-
-        if (isInLiquid && GetVelocity().y < swimUpSpeed) 
-            SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
-
-        if (isOnClimbable) 
-            SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
-    }
-
-    public virtual void CrouchOnLadder()
+    public void CrouchOnLadderCheck()
     {
         if (isOnClimbable && sneaking)
         {
@@ -216,7 +263,8 @@ public class LivingEntity : Entity
         }
     }
 
-    private void fallDamageCheck()
+    [Server]
+    private void FallDamageCheck()
     {
         if (isOnGround && !isInLiquid)
         {
@@ -225,7 +273,7 @@ public class LivingEntity : Entity
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
 
-                spawnFallDamageParticles();
+                FallDamageParticlesEffect();
 
                 TakeFallDamage(damage);
             }
@@ -237,7 +285,8 @@ public class LivingEntity : Entity
             highestYlevelsinceground = transform.position.y;
     }
 
-    private void spawnFallDamageParticles()
+    [ClientRpc]
+    private void FallDamageParticlesEffect()
     {
         var r = new Random();
         Block blockBeneath = null;
@@ -248,6 +297,9 @@ public class LivingEntity : Entity
                 blockBeneath = block;
         }
 
+        if (blockBeneath == null)
+            return;
+        
         var particleAmount = r.Next(4, 8);
         for (var i = 0; i < particleAmount; i++) //Spawn landing partickes
         {
@@ -262,7 +314,8 @@ public class LivingEntity : Entity
         }
     }
 
-    private void spawnMovementParticles(float chances)
+    [ClientRpc]
+    private void MovementParticlesEffect(float chances)
     {
         var r = new Random();
 
@@ -290,31 +343,35 @@ public class LivingEntity : Entity
         }
     }
 
-    public override void Hit(float damage)
+    [Server]
+    public override void Hit(float damage, Entity source)
     {
-        base.Hit(damage);
+        base.Hit(damage, source);
 
-        Knockback(transform.position - Player.localInstance.transform.position);
+        Knockback(transform.position - source.transform.position);
     }
 
+    [Server]
     public virtual void TakeFallDamage(float damage)
     {
         Damage(damage);
     }
 
+    [Server]
     public override void Damage(float damage)
     {
         HurtSound();
-        Sound.Play(Location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
+        DamageSound();
 
         health -= damage;
 
         if (health <= 0)
             Die();
 
-        StartCoroutine(TurnRedByDamage());
+        RedDamageEffect();
     }
 
+    [Server]
     public override void Die()
     {
         DeathSound();
@@ -323,6 +380,13 @@ public class LivingEntity : Entity
         base.Die();
     }
 
+    [Server]
+    public void DamageSound()
+    {
+        Sound.Play(Location, "entity/damage", SoundType.Entities, 0.5f, 1.5f);
+    }
+
+    [Server]
     public virtual void HurtSound()
     {
         string soundName = "entity/" + this.GetType().ToString() + "/hurt";
@@ -331,6 +395,7 @@ public class LivingEntity : Entity
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
 
+    [Server]
     public virtual void DeathSound()
     {
         string soundName = "entity/" + this.GetType().ToString() + "/death";
@@ -339,6 +404,7 @@ public class LivingEntity : Entity
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
     
+    [Server]
     public virtual void AmbientSound()
     {
         string soundName = "entity/" + this.GetType().ToString() + "/idle";
@@ -354,6 +420,12 @@ public class LivingEntity : Entity
         GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 3f, 4f);
     }
 
+    [ClientRpc]
+    public void RedDamageEffect()
+    {
+        StartCoroutine(TurnRedByDamage());
+    }
+    
     private IEnumerator TurnRedByDamage()
     {
         var baseColor = GetRenderer().color;

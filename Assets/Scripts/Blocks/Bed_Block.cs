@@ -13,7 +13,7 @@
             //other block position is based on whether this block is a bottom or top piece
             var otherBlockXRelative = GetMaterial() == Material.Bed_Bottom ? -1 : 1;
             //if block is flipped, invert side of other block
-            if (data.GetData("rotated_x") == "true")
+            if (GetData().GetTag("rotated_x") == "true")
                 otherBlockXRelative *= -1;
 
             return location + new Location(otherBlockXRelative, 0);

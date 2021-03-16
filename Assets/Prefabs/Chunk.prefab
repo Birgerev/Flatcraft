@@ -43,11 +43,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ce59c33d145c4d44abcfdd2ed5a559e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
   age: 0
   blockPrefab: {fileID: 575257251474519024, guid: c3190a59a41a1394f826456bffa9f25d,
     type: 3}
   backgroundBlockPrefab: {fileID: 5028111455950451761, guid: 84efbcfe3f8d32c42b3ea8644b123480,
     type: 3}
+  isGenerated: 0
+  donePlacingGeneratedBlocks: 0
   isLoaded: 0
-  isLoading: 0
-  isSpawnChunk: 0
+  netherPortal: {fileID: 0}

@@ -12,4 +12,3 @@ Documentation:
 
 Support:
   Discord: https://discordapp.com/invite/N9QVxbM
-  Bug Reports: https://github.com/vis2k/Mirror/issues

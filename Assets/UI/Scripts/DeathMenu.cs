@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DeathMenu : MonoBehaviour
@@ -27,7 +28,7 @@ public class DeathMenu : MonoBehaviour
 
     public void Respawn()
     {
-        WorldManager.instance.Spawn();
+        ClientScene.AddPlayer(NetworkClient.connection);
         active = false;
     }
 }

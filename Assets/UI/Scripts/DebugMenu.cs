@@ -59,13 +59,14 @@ public class DebugMenu : MonoBehaviour
         text_time.text = "time: " + (int) WorldManager.world.time + ", (day " +
                          (int) (WorldManager.world.time / WorldManager.dayLength) + ")";
 
+        var location = player.GetBlockedMouseLocation();
         var block = player.GetMouseBlock();
         var material = Material.Air;
         var data = "{}";
         if(block != null)
         {
             material = block.GetMaterial();
-            data = block.data.GetSaveString();
+            data = location.GetData().GetSaveString();
         }
         text_blockInfo.text = "Material." + material.ToString() + " " + data;
     }

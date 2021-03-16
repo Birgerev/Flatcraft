@@ -3,16 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Mirror;
 using UnityEngine;
 
-public class SaveManager : MonoBehaviour
+public class SaveManager : NetworkBehaviour
 {
     public static float AutosaveDuration = 2;
     public static Dictionary<Location, string> blockChanges = new Dictionary<Location, string>();
 
     private void Start()
     {
-        StartCoroutine(SaveLoop());
+        if(isServer)
+            StartCoroutine(SaveLoop());
     }
 
     private IEnumerator SaveLoop()

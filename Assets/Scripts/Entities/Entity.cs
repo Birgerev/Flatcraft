@@ -3,40 +3,43 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Mirror;
 using UnityEngine;
 using Random = System.Random;
 
 [Serializable]
-public class Entity : MonoBehaviour
+public class Entity : NetworkBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
 
     public static int MaxLivingAmount = 4;
     private Vector2 _cachedposition;
+    [SyncVar]
     private Dimension _dimension;
 
     //Entity data tags
-    [EntityDataTag(false)] public float age;
-    [EntityDataTag(false)] public float fireTime;
+    [EntityDataTag(false)] 
+    public float age;
+    [SyncVar] [EntityDataTag(false)] 
+    public float fireTime;
+    
+    [EntityDataTag(false)] 
+    public bool facingLeft;
 
-
-    public Dictionary<string, string> data = new Dictionary<string, string>();
-    public bool dead;
-    public GameObject burningRender;
-
-    [EntityDataTag(false)] public bool facingLeft;
-
-    private bool hasInitializedLight;
 
 
     //Entity State
+    [SyncVar]
     public int id;
     public bool isInLiquid;
     public bool isOnGround;
+    [SyncVar]
     public bool isOnClimbable;
+    
     public Vector2 lastFramePosition;
+    public GameObject burningRender;
+    
     public static int EntityCount => entities.Count;
-
     public static int LivingEntityCount
     {
         get
@@ -67,45 +70,102 @@ public class Entity : MonoBehaviour
         UpdateCachedPosition();
         gameObject.name = "Entity [" + GetType().Name + "]";
         entities.Add(this);
-
-        Load();
-        UpdateLight();
+        
+        if(isServer)
+            Initialize();
+        if(isClient)
+            ClientInitialize();
     }
-
+    
     public virtual void Update()
     {
-        age += Time.deltaTime;
-
+        GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         isInLiquid = (GetLiquidBlocksForEntity().Length > 0);
         
-        if (isInLiquid)
-            isOnGround = false;
+        if(isServer)
+            Tick();
+        if(isClient)
+            ClientUpdate();
+    }
 
-        GetRenderer().flipX = facingLeft;
+    [Server]
+    public virtual void Initialize()
+    {
+        Load();
+        if (!HasBeenSaved())
+            Spawn();
+    }
 
+    [Server]
+    public virtual void Spawn()
+    {
+
+    }
+
+    [Server]
+    public virtual void Tick()
+    {
         UpdateCachedPosition();
-
+        
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(new ChunkPosition(Location), Chunk.RenderDistance);
-
-        CheckLightUpdate();
-
-        GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
-
+        
+        age += Time.deltaTime;
+        
         if (IsBurning())
         {
             ReduceFireTime();
-            WaterRemoveFireTime();
+            WaterRemoveFireTimeCheck();
         }
-        DoFireRender();
+        
         CheckWaterSplash();
-
         CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
     }
+    
+    [Client]
+    public virtual void ClientInitialize()
+    {
+    }
 
+    [Client]
+    public virtual void ClientUpdate()
+    {
+        GetRenderer().flipX = facingLeft;
+        
+        if (isInLiquid)
+            isOnGround = false;
+        
+        CheckLightUpdate();
+        DoFireRender();
+    }
+
+    [Server]
+    public virtual void Teleport(Location loc)
+    {
+        Location = loc;
+    }
+    
+    [Server]
+    public static Entity Spawn(string type)
+    {
+        if (Resources.Load("Entities/" + type) == null)
+        {
+            Debug.LogError("No Entity with the type '" + type + "' was found");
+            return null;
+        }
+
+        GameObject obj = Instantiate((GameObject) Resources.Load("Entities/" + type));
+        NetworkServer.Spawn(obj);
+        var result = obj.GetComponent<Entity>();
+
+        result.id = CreateId();
+
+        return result;
+    }
+    
     public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
@@ -123,27 +183,17 @@ public class Entity : MonoBehaviour
 
     public virtual bool IsChunkLoaded()
     {
-        var result = new ChunkPosition(Location).IsChunkLoaded();
-
+        if (WorldManager.instance == null)
+            return true;
+        
         //Freeze if no chunk is found
         if (WorldManager.instance.loadingProgress != 1)
-            result = false;
+            return false;
         
-        return result;
+        return new ChunkPosition(Location).IsChunkLoaded();
     }
-
-    private void DoFireRender()
-    {
-        if(burningRender != null)
-            burningRender.SetActive(IsBurning());
-    }
-
-    private void CheckLightUpdate()
-    {
-        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
-            UpdateLight();
-    }
-
+    
+    [Server]
     private void CheckWaterSplash()
     {
         if (isInLiquid && GetVelocity().y < -2)
@@ -158,40 +208,14 @@ public class Entity : MonoBehaviour
 
             if (isInWater)
             {
-                WaterSplash();
+                WaterSplashEffect();
             }
         }
     }
 
-    public virtual void WaterSplash()
-    {
-        var r = new Random();
-        for (var i = 0; i < 8; i++) //Spawn landing partickes
-        {
-            Particle part = Particle.Spawn();
 
-            part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
-            part.color = GetLiquidBlocksForEntity()[0].GetRandomColourFromTexture();
-            part.doGravity = true;
-            part.velocity = new Vector2(
-                (1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 3f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-
-        Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-    }
-
-    private void UpdateLight()
-    {
-        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
-
-        if (lightObj != null)
-            LightManager.UpdateLightObject(lightObj);
-    }
-
-    private void WaterRemoveFireTime()
+    [Server]
+    private void WaterRemoveFireTimeCheck()
     {
         if(isInLiquid)
         {
@@ -209,12 +233,14 @@ public class Entity : MonoBehaviour
             }
         }
     }
-
+    
+    [Server]
     private void ReduceFireTime()
     {
         fireTime -= Time.deltaTime;
     }
 
+    [Server]
     private void CheckSuffocation()
     {
         if (!IsChunkLoaded())
@@ -230,6 +256,7 @@ public class Entity : MonoBehaviour
         }
     }
     
+    [Server]
     private void CheckFireDamage()
     {
         if(IsBurning())
@@ -237,11 +264,13 @@ public class Entity : MonoBehaviour
                 TakeFireDamage(1);
     }
 
+    [Server]
     public virtual void TakeFireDamage(float damage)
     {
         Damage(damage);
     }
 
+    [Server]
     private void CheckVoidDamage()
     {
         if ((Time.time % 0.5f) - Time.deltaTime <= 0)
@@ -249,11 +278,13 @@ public class Entity : MonoBehaviour
                 TakeVoidDamage(2);
     }
 
+    [Server]
     public virtual void TakeVoidDamage(float damage)
     {
         Damage(damage);
     }
 
+    [Server]
     private void CheckLavaDamage()
     {
         if (isInLiquid)
@@ -288,11 +319,13 @@ public class Entity : MonoBehaviour
         return liquids.ToArray();
     }
 
+    [Server]
     public virtual void TakeLavaDamage(float damage)
     {
         Damage(damage);
     }
     
+    [Server]
     public virtual void TakeSuffocationDamage(float damage)
     {
         Damage(damage);
@@ -305,6 +338,7 @@ public class Entity : MonoBehaviour
         return result;
     }
 
+    [Server]
     public virtual void DropAllDrops()
     {
         var i = 0;
@@ -323,27 +357,40 @@ public class Entity : MonoBehaviour
             }
     }
 
+    [Server]
     public virtual void Die()
     {
         DropAllDrops();
         DeleteOldSavePath();
 
-        dead = true;
-        entities.Remove(this);
-
-        Destroy(gameObject, 0.2f);
+        StartCoroutine(ScheduleDestruction(0.5f));
     }
 
+    IEnumerator ScheduleDestruction(float time)
+    {
+        yield return new WaitForSeconds(time);
+        
+        NetworkServer.Destroy(gameObject);
+    }
+
+    public void OnDestroy()
+    {
+        entities.Remove(this);
+    }
+
+    [Server]
     public virtual void Damage(float damage)
     {
         Die();
     }
 
-    public virtual void Hit(float damage)
+    [Server]
+    public virtual void Hit(float damage, Entity source)
     {
         TakeHitDamage(damage);
     }
 
+    [Server]
     public virtual void TakeHitDamage(float damage)
     {
         Damage(damage);
@@ -359,6 +406,7 @@ public class Entity : MonoBehaviour
         return GetComponent<Rigidbody2D>().velocity;
     }
 
+    [Server]
     public virtual List<string> GetSaveStrings()
     {
         var result = new List<string>();
@@ -367,23 +415,31 @@ public class Entity : MonoBehaviour
 
         foreach (var field in fields)
         {
-            var json = ((EntityDataTag) Attribute.GetCustomAttributes(field)[0]).json;
+            foreach (var attribute in Attribute.GetCustomAttributes(field))
+            {
+                if (attribute is EntityDataTag)
+                {
+                    var json = ((EntityDataTag) attribute).json;
 
-            if (json)
-                result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
-            else
-                result.Add(field.Name + "=" + field.GetValue(this));
+                    if (json)
+                        result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
+                    else
+                        result.Add(field.Name + "=" + field.GetValue(this));
+                }
+            }
         }
 
         return result;
     }
 
+    [Server]
     public virtual string SavePath()
     {
         return WorldManager.world.getPath() + "/region/" + Location.dimension + "/" +
                new ChunkPosition(Location).chunkX + "/entities/" + id + "." + GetType().Name;
     }
 
+    [Server]
     public virtual void Save()
     {
         DeleteOldSavePath();
@@ -400,51 +456,59 @@ public class Entity : MonoBehaviour
         File.WriteAllLines(path, lines);
     }
 
+    [Server]
     public virtual void DeleteOldSavePath()
     {
         File.Delete(SavePath());
     }
 
-    public virtual SpriteRenderer GetRenderer()
-    {
-        return transform.Find("_renderer").GetComponent<SpriteRenderer>();
-    }
-
+    [Server]
     public virtual void Unload()
     {
         Save();
 
-        entities.Remove(this);
-        Destroy(gameObject, 0.2f);
+        NetworkServer.Destroy(gameObject);
     }
 
+    [Server]
     public virtual void Load()
     {
         if (!HasBeenSaved())
             return;
 
-        var lines = DataFromStrings(File.ReadAllLines(SavePath()));
+        var lines = new Dictionary<string, string>();
+
+        foreach (var line in File.ReadAllLines(SavePath()))
+            if (line.Contains("="))
+                lines.Add(line.Split('=')[0], line.Split('=')[1]);
 
         if (lines.Count <= 1)
             return;
 
-        Location = JsonUtility.FromJson<Location>(lines["location"]);
+        Teleport(JsonUtility.FromJson<Location>(lines["location"]));
         var fields = GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
         foreach (var field in fields)
         {
-            var json = ((EntityDataTag) Attribute.GetCustomAttributes(field)[0]).json;
-            var type = field.FieldType;
+            foreach (var attribute in Attribute.GetCustomAttributes(field))
+            {
+                if (attribute is EntityDataTag)
+                {
+                    var json = ((EntityDataTag) attribute).json;
+                    var type = field.FieldType;
 
-            if (json)
-                field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
-            else if (type == typeof(string))
-                field.SetValue(this, lines[field.Name]);
-            else
-                field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
+                    if (json)
+                        field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
+                    else if (type == typeof(string))
+                        field.SetValue(this, lines[field.Name]);
+                    else
+                        field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
+                }
+            }
         }
     }
 
+    [Server]
     public bool HasBeenSaved()
     {
         return File.Exists(SavePath());
@@ -455,41 +519,26 @@ public class Entity : MonoBehaviour
         if (col.transform.position.y + 1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
-
+    
     private void OnCollisionExit2D(Collision2D col)
     {
         if (col.transform.position.y + 1f < transform.position.y)
             isOnGround = false;
     }
 
-    public void PlayCriticalDamageEffect()
-    {
-        var r = new Random();
-        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
-        {
-            Particle part = Particle.Spawn();
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
-            part.color = new Color(0.854f, 0.788f, 0.694f);
-            part.doGravity = true;
-            part.velocity = new Vector2(
-                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 4f + (float)r.NextDouble());
-            part.maxAge = 1f + (float)r.NextDouble();
-            part.maxBounces = 10;
-        }
-    }
-
+    [Server]
     public static int CreateId()
     {
         return UnityEngine.Random.Range(1, 99999);
     }
 
+    [Server]
     public virtual void TeleportNetherPortal()
     {
         StartCoroutine(teleportNetherPortal());
     }
 
+    [Server]
     IEnumerator teleportNetherPortal()
     {
         //Translate dimension coordinates
@@ -508,7 +557,7 @@ public class Entity : MonoBehaviour
         }
 
         //Load chunk in the other dimension
-        Location = newLocation;                 //teleport player so chunk doesn't unload
+        Teleport(newLocation);                 //teleport player so chunk doesn't unload
         ChunkPosition cPos = new ChunkPosition(newLocation);
         Chunk chunk = cPos.CreateChunk();
 
@@ -525,44 +574,78 @@ public class Entity : MonoBehaviour
         //Teleport player to new y value
         if(this.GetType().IsSubclassOf(typeof(LivingEntity)))
             ((LivingEntity)this).highestYlevelsinceground = 0;
-        Location = portal;
+        Teleport(portal);
     }
 
-    public static Entity Spawn(string type)
+    [Client]
+    private void CheckLightUpdate()
     {
-        if (Resources.Load("Entities/" + type) == null)
+        if (Vector2Int.FloorToInt(lastFramePosition) != Vector2Int.FloorToInt(Location.GetPosition()))
+            UpdateClientLight();
+    }
+
+    [ClientRpc]
+    public virtual void WaterSplashEffect()
+    {
+        if (GetLiquidBlocksForEntity().Length == 0)
+            return;
+        
+        var r = new Random();
+        for (var i = 0; i < 8; i++) //Spawn landing partickes
         {
-            Debug.LogError("No Entity with the type '" + type + "' was found");
-            return null;
+            Particle part = Particle.Spawn();
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
+            part.color = GetLiquidBlocksForEntity()[0].GetRandomColourFromTexture();
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 3f + (float) r.NextDouble());
+            part.maxAge = 1f + (float) r.NextDouble();
+            part.maxBounces = 10;
         }
 
-        var obj = Instantiate((GameObject) Resources.Load("Entities/" + type));
-        var result = obj.GetComponent<Entity>();
-
-        result.id = CreateId();
-
-        return result;
+        Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
     }
 
-    public static Dictionary<string, string> DataFromStrings(string[] dataStrings)
+    [Client]
+    private void UpdateClientLight()
     {
-        var resultData = new Dictionary<string, string>();
+        LightObject lightObj = GetRenderer().GetComponent<LightObject>();
 
-        foreach (var line in dataStrings)
-            if (line.Contains("="))
-                resultData.Add(line.Split('=')[0], line.Split('=')[1]);
-
-        return resultData;
+        if (lightObj != null)
+            LightManager.UpdateLightObject(lightObj);
     }
-}
-
-[AttributeUsage(AttributeTargets.All)]
-public class EntityDataTag : Attribute
-{
-    public readonly bool json;
-
-    public EntityDataTag(bool json)
+    
+    [Client]
+    public virtual SpriteRenderer GetRenderer()
     {
-        this.json = json;
+        return transform.Find("_renderer").GetComponent<SpriteRenderer>();
+    }
+    
+    [ClientRpc]
+    public void CriticalDamageEffect()
+    {
+        var r = new Random();
+        for (var i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        {
+            Particle part = Particle.Spawn();
+
+            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
+            part.color = new Color(0.854f, 0.788f, 0.694f);
+            part.doGravity = true;
+            part.velocity = new Vector2(
+                (2f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
+                , 4f + (float)r.NextDouble());
+            part.maxAge = 1f + (float)r.NextDouble();
+            part.maxBounces = 10;
+        }
+    }
+    
+    [Client]
+    private void DoFireRender()
+    {
+        if(burningRender != null)
+            burningRender.SetActive(IsBurning());
     }
 }

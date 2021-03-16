@@ -20,40 +20,41 @@ public class Structure_Block : Block
         {
             base.Tick();
 
-            if (data.HasData("structure"))
+            if (GetData().HasTag("structure"))
             {
-                var structureId = data.GetData("structure");
+                var structureId = GetData().GetTag("structure");
                 var structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
-                var structure =
-                    structures[new Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
+                var structure = structures[new Random(
+                    SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
 
-                var replaceMaterial = Material.Air;
-                var replaceData = new BlockData();
+                BlockState replaceState = new BlockState(Material.Air);
 
                 foreach (var blockText in structure.text.Split('\n', '\r'))
                 {
                     if (blockText.Length < 4)
                         continue;
+                    
                     var mat = (Material) Enum.Parse(typeof(Material), blockText.Split('*')[0]);
-                    var loc = new Location(
+                    Location loc = new Location(
                         int.Parse(blockText.Split('*')[1].Split(',')[0]),
                         int.Parse(blockText.Split('*')[1].Split(',')[1]),
                         location.dimension);
-                    var data = new BlockData(blockText.Split('*')[2]);
+                    BlockData data = new BlockData(blockText.Split('*')[2]);
+                    BlockState state = new BlockState(mat, data);
 
                     if (loc.x == 0 && loc.y == 0)
                     {
-                        replaceMaterial = mat;
-                        replaceData = data;
+                        replaceState = state;
                         continue;
                     }
 
                     loc += location;
 
-                    loc.SetMaterial(mat).SetData(data).Tick();
+                    
+                    loc.SetState(state).Tick();
                 }
 
-                location.SetMaterial(replaceMaterial).SetData(replaceData).Tick();
+                location.SetState(replaceState).Tick();
             }
         }
     }

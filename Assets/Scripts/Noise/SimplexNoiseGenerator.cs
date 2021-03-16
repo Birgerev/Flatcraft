@@ -181,7 +181,7 @@ namespace SimplexNoise
 
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to return values in the interval [-1,1].
-            return 40.0f * (n0 + n1 + n2); // TODO: The scale factor is preliminary!
+            return 40.0f * (n0 + n1 + n2);
         }
 
 
@@ -345,7 +345,7 @@ namespace SimplexNoise
 
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to stay just inside [-1,1]
-            return 32.0f * (n0 + n1 + n2 + n3); // TODO: The scale factor is preliminary!
+            return 32.0f * (n0 + n1 + n2 + n3);
         }
 
         private static int FastFloor(float x)

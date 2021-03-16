@@ -13,7 +13,11 @@ public class LightObject : MonoBehaviour
         lightLevel -= lightLevelDeduct;
         lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.maxLightLevel);
 
-        Dimension dim = Player.localInstance.Location.dimension;
+        Player player = Player.localInstance;
+        if (player == null)
+            return;
+        
+        Dimension dim = player.Location.dimension;
         if (dim == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
         

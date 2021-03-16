@@ -35,7 +35,7 @@
     public override void Close()
     {
         //Don't drop results slot
-        items[GetCraftingResultSlot()] = new ItemStack();
+        setItem(GetCraftingResultSlot(), new ItemStack());
 
         DropAll(holder);
 

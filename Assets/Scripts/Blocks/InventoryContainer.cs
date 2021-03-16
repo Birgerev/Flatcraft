@@ -12,14 +12,14 @@ public class InventoryContainer : Block
     {
         base.Initialize();
 
-        if (data.GetData("inventory") != "")
-            inventory = (Inventory) JsonUtility.FromJson(data.GetData("inventory"), inventoryType);
+        if (GetData().GetTag("inventory") != "")
+            inventory = (Inventory) JsonUtility.FromJson(GetData().GetTag("inventory"), inventoryType);
         else inventory = (Inventory) Activator.CreateInstance(inventoryType);
     }
 
     public override void Tick()
     {
-        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
+        SetData(GetData().SetTag("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType))));
 
         base.Tick();
     }
@@ -33,7 +33,7 @@ public class InventoryContainer : Block
 
     public override void Autosave()
     {
-        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
+        SetData(GetData().SetTag("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType))));
 
         if (inventory == null || inventory.open) return;
 

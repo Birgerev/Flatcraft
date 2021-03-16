@@ -14,7 +14,7 @@ public class Fire : Block
     public override float averageRandomTickDuration { get; } = 5;
     public override int glowLevel { get; } = 15;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;    //TODO new fire sound
+    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;
 
     public override ItemStack GetDrop()
     {

@@ -12,7 +12,7 @@
 
     public override void Tick()
     {
-        var open = data.GetData("open") == "true";
+        var open = GetData().GetTag("open") == "true";
 
         trigger = open;                             //Custom solution, so that block becomes trigger (and as such climbable), when trapdoor is open
         UpdateColliders();

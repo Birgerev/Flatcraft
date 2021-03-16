@@ -12,7 +12,10 @@ public class SkyManager : MonoBehaviour
         //Every second, update active sky object
         if ((Time.time % 1f) - Time.deltaTime <= 0)
         {
-            Dimension dim = Player.localInstance.Location.dimension;
+            Dimension dim = Dimension.Overworld;
+            if (Player.localInstance != null)
+                dim = Player.localInstance.Location.dimension;
+            
             foreach (DimensionSky sky in skyForDimension)
             {
                 sky.skyObject.SetActive(sky.dimension == dim);

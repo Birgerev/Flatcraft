@@ -12,8 +12,6 @@ public class Block : MonoBehaviour
 
     public float blockHealth;
 
-    public BlockData data = new BlockData();
-
     public Location location;
 
     public virtual string texture { get; set; } = "";
@@ -55,6 +53,7 @@ public class Block : MonoBehaviour
 
     public void ScheduleBlockBuildTick()
     {
+        //TODO not called
         StartCoroutine(scheduleBlockBuildTick());
     }
 
@@ -94,11 +93,6 @@ public class Block : MonoBehaviour
                 lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
         }
 
-        if (autoTick || autosave)
-            StartCoroutine(autoTickLoop());
-        if (averageRandomTickDuration != 0)
-            StartCoroutine(randomTickLoop());
-
         if (change_texture_time != 0)
             StartCoroutine(animatedTextureRenderLoop());
 
@@ -114,10 +108,20 @@ public class Block : MonoBehaviour
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
             Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
         
-        if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
+        if ((rotate_x || rotate_y) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
         {
             RotateTowardsPlayer();
         }
+    }
+
+    protected BlockData GetData()
+    {
+        return location.GetData();
+    }
+
+    protected void SetData(BlockData data)
+    {
+        location.SetData(data);
     }
 
     public virtual void GeneratingTick()
@@ -160,34 +164,6 @@ public class Block : MonoBehaviour
             Render();
         }
     }
-    
-    private IEnumerator randomTickLoop()
-    {
-        var r = new Random(SeedGenerator.SeedByLocation(location));
-
-        while (true)
-        {
-            float nextTickDuration = 1;
-            while (r.NextDouble() > 1 / averageRandomTickDuration) 
-                nextTickDuration += 1;
-
-            yield return new WaitForSeconds(nextTickDuration);
-            RandomTick();
-        }
-    }
-
-    private IEnumerator autoTickLoop()
-    {
-        //Wait a random duration, to smooth out ticks across time
-        yield return new WaitForSeconds((float) new Random(SeedGenerator.SeedByLocation(location)).NextDouble() *
-                                        (1f / Chunk.TickRate));
-
-        while (true)
-        {
-            yield return new WaitForSeconds(1 / Chunk.TickRate);
-            Tick();
-        }
-    }
 
     public virtual void UpdateColliders()
     {
@@ -214,8 +190,8 @@ public class Block : MonoBehaviour
         if (rotate_y) rotated_y = Player.localInstance.transform.position.y < location.y;
         if (rotate_x) rotated_x = Player.localInstance.transform.position.x < location.x;
 
-        data.SetData("rotated_x", rotated_x ? "true" : "false");
-        data.SetData("rotated_y", rotated_y ? "true" : "false");
+        SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
+        SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
 
         //Save new rotation
         Autosave();
@@ -227,8 +203,8 @@ public class Block : MonoBehaviour
         var rotated_x = false;
         var rotated_y = false;
 
-        rotated_x = data.GetData("rotated_x") == "true";
-        rotated_y = data.GetData("rotated_y") == "true";
+        rotated_x = GetData().GetTag("rotated_x") == "true";
+        rotated_y = GetData().GetTag("rotated_y") == "true";
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
@@ -238,7 +214,7 @@ public class Block : MonoBehaviour
     {
         time_of_last_autosave = Time.time;
 
-        location.SetData(data);
+        location.SetData(GetData());
     }
 
     public virtual void Hit(float time)
@@ -262,7 +238,8 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Blocks, 0.8f, 1.2f);
 
-        RenderBlockDamage();
+        if(!BreakIndicator.breakIndicators.ContainsKey(location))
+            BreakIndicator.Spawn(location);
 
         if (blockHealth <= 0)
         {
@@ -276,7 +253,6 @@ public class Block : MonoBehaviour
             return;
         }
 
-        RenderBlockDamage();
         StartCoroutine(repairBlockDamageOnceViable());
     }
 
@@ -333,25 +309,6 @@ public class Block : MonoBehaviour
 
     public virtual void Interact()
     {
-    }
-
-    public void ResetBlockDamage()
-    {
-        blockHealth = breakTime;
-        RenderBlockDamage();
-    }
-
-    public virtual void RenderBlockDamage()
-    {
-        var damageIndicator = transform.Find("BreakIndicator");
-
-        if (blockHealth != breakTime)
-        {
-            var sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-            var spriteIndex = (int) (blockHealth / breakTime / (1f / sprites.Length));
-
-            BreakIndicator.instance.UpdateState(spriteIndex, location);
-        }
     }
 
     public virtual void Render()

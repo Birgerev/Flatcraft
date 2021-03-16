@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class WorldManager : MonoBehaviour
+public class WorldManager : NetworkBehaviour
 {
     public static World world;
     public static WorldManager instance;
@@ -19,14 +21,12 @@ public class WorldManager : MonoBehaviour
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
     public GameObject chunkPrefab;
+    public GameObject playerPrefab;
 
     public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
     public float loadingProgress;
 
     public string loadingState = "";
-
-    public Chunk mainChunk;
-    public GameObject player;
 
     // Start is called before the first frame update
     private void Start()
@@ -37,7 +37,8 @@ public class WorldManager : MonoBehaviour
 
     private void Update()
     {
-        world.time += Time.deltaTime;
+        if(loadingProgress == 1)
+            world.time += Time.deltaTime;
     }
 
     private IEnumerator SaveLoop()
@@ -55,16 +56,15 @@ public class WorldManager : MonoBehaviour
         Entity.entities.Clear();
         Time.timeScale = 1;
         chunks.Clear();
-
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
+        
+        //SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
         float steps = 5;
-
+        /*
         loadingState = "Loading Player";
         loadingProgress = 1f / steps;
-
-        Spawn();
         
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(1f);
+
         
         while (amountOfChunksLoading == 0 || chunks.Count == 0)
         {
@@ -89,15 +89,10 @@ public class WorldManager : MonoBehaviour
         loadingState = "Done!";
         loadingProgress = 4f / steps;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f);*/
 
         loadingProgress = 5f / steps;
-        
+        yield return new WaitForSeconds(0.2f);
         StartCoroutine(SaveLoop());
-    }
-
-    public void Spawn()
-    {
-        var obj = Instantiate(player);
     }
 }

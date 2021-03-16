@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 
 public class DroppedItem : Entity
 {
@@ -7,29 +8,26 @@ public class DroppedItem : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(false)] public bool canPickup = true;
-    [EntityDataTag(true)] public ItemStack item = new ItemStack();
+    [EntityDataTag(false)] [SyncVar]
+    public bool canPickup = true;
+    [EntityDataTag(true)] [SyncVar]
+    public ItemStack item = new ItemStack();
 
-    // Start is called before the first frame update
-    public override void Start()
+    [Server]
+    public override void Initialize()
     {
-        base.Start();
-
         if (item.material == Material.Air || item.amount <= 0)
             Die();
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        
+        base.Initialize();
     }
 
-    // Update is called once per frame
-    public override void Update()
+    [Server]
+    public override void Tick()
     {
-        base.Update();
-        GetRenderer().sprite = item.GetSprite();
-
-        //Bobbing
-        GetRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
-        cosIndex += 2f * Time.deltaTime;
+        base.Tick();
         
         //Despawn
         if (age > 60)
@@ -39,9 +37,22 @@ public class DroppedItem : Entity
             GetComponent<Rigidbody2D>().velocity *= 0.95f;
     }
 
+    [Client]
+    public override void ClientUpdate()
+    {
+        GetRenderer().sprite = item.GetSprite();
+
+        //Bobbing
+        GetRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
+        cosIndex += 2f * Time.deltaTime;
+        
+        base.ClientUpdate();
+    }
+
+    [ServerCallback]
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (!canPickup || age < 0.5f)
+        if (!canPickup || age < 0.5f || !isServer)
             return;
 
         if (col.GetComponent<DroppedItem>() != null)
@@ -67,7 +78,8 @@ public class DroppedItem : Entity
             }
     }
 
-    public override void Hit(float damage)
+    [Server]
+    public override void Hit(float damage, Entity source)
     {
         //Disabling Hit
     }

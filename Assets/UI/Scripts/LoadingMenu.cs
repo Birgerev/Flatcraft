@@ -26,6 +26,7 @@ public class LoadingMenu : MonoBehaviour
         loadingState.text = worldManager.loadingState;
         loadingBar.fillAmount = worldManager.loadingProgress;
 
-        if (worldManager.loadingProgress >= 1) SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("Loading"));
+        if (worldManager.loadingProgress >= 1) 
+            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("Loading"));
     }
 }
