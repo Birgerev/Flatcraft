@@ -20,11 +20,11 @@ public class Chest : InventoryContainer
         return Inventory.Create("Inventory", 27, "Chest");
     }
     
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         StartCoroutine(ChestEffects());
 
-        base.Interact();
+        base.Interact(player);
     }
 
     IEnumerator ChestEffects()

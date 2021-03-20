@@ -17,6 +17,9 @@ public class Player : HumanEntity
     //TODO block breaking indicator
     //TODO block breaking
     //TODO eating
+    //TODO update pointer Slot in player menu doesnt work after clicking crafting result slot, SetItem possibly
+    //TODO build tick
+    //TODO falling sand stacks
     //TODO particles dont appear on client (run particles)
     public static float interactionsPerPerSecond = 4.5f;
 
@@ -259,7 +262,7 @@ public class Player : HumanEntity
     [Command]
     private void RequestOpenInventory()
     {
-        GetInventory().Open(playerInstance);
+        GetInventory().Open(playerInstance.GetComponent<PlayerInstance>());
     }
     
     [Command]
@@ -464,30 +467,30 @@ public class Player : HumanEntity
         {
             if (Input.GetMouseButtonDown(1))
             {
-                RequestInteract(1, true);
+                RequestInteract(GetBlockedMouseLocation(), 1, true);
                 lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(1))
             {
-                RequestInteract(1, false);
+                RequestInteract(GetBlockedMouseLocation(), 1, false);
                 lastBlockInteractionTime = Time.time;
             }
 
             if (Input.GetMouseButtonDown(0))
             {
-                RequestInteract(0, true);
+                RequestInteract(GetBlockedMouseLocation(), 0, true);
                 lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(0))
             {
-                RequestInteract(0, false);
+                RequestInteract(GetBlockedMouseLocation(), 0, false);
                 lastBlockInteractionTime = Time.time;
             }
         }
     }
 
     [Command]
-    public void RequestInteract(int mouseButton, bool firstFrameDown)
+    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses
@@ -497,7 +500,9 @@ public class Player : HumanEntity
         else
             itemType = (Item)Activator.CreateInstance(typeof(Item));
 
-        itemType.Interact(GetBlockedMouseLocation(), mouseButton, firstFrameDown);
+        PlayerInstance player = sender.identity.GetComponent<PlayerInstance>();
+
+        itemType.Interact(player, loc, mouseButton, firstFrameDown);
     }
     
     [Server]

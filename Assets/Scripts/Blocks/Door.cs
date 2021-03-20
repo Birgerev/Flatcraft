@@ -14,13 +14,13 @@ public class Door : Block
         Tick();
     }
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         var open = !GetOpenState();
 
         SetOpenState(open);
 
-        base.Interact();
+        base.Interact(player);
     }
 
     public void SetOpenState(bool open)

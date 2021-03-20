@@ -18,14 +18,14 @@ public class Whole_Door : Door
         base.BuildTick();
     }
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         var otherDoor = (Door) otherBlockLocation.GetBlock();
         var open = !GetOpenState();
 
         otherDoor.SetOpenState(open);
 
-        base.Interact();
+        base.Interact(player);
     }
     public override void PlaySound(bool open)
     {

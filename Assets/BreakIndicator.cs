@@ -7,7 +7,9 @@ public class BreakIndicator : NetworkBehaviour
 {
     public static Dictionary<Location, BreakIndicator> breakIndicators = new Dictionary<Location, BreakIndicator>();
     [SyncVar] public Location loc;
-    private float lastBlockHealth;
+    [SyncVar] public float blockHealth;
+    [SyncVar] public float maxBlockHealth;
+    private float lastFrameBlockHealth = int.MaxValue;
 
     public void Start()
     {
@@ -22,48 +24,51 @@ public class BreakIndicator : NetworkBehaviour
     // Update is called once per frame
     private void Update()
     {
-        transform.position = loc.GetPosition();
-
-        if ((Time.time % 0.2f) - Time.deltaTime <= 0)
+        if (isServer && (Time.time % 0.2f) - Time.deltaTime <= 0)
         {
             Block block = loc.GetBlock();
-
-            if (block == null)
+            if (block != null)
             {
-                if(isServer)
-                    Unspawn();
-
-                return;
+                blockHealth = block.blockHealth;
+                maxBlockHealth = block.breakTime;
             }
             
-            if (block.blockHealth == lastBlockHealth)
-            {
-                if(isServer)
-                    Unspawn();
-            }
-            else
-            {
-                UpdateState();
-            }
+            CheckDespawn();
         }
+        
+        transform.position = loc.GetPosition();
+        UpdateState();
+
+        lastFrameBlockHealth = blockHealth;
     }
+    
     public void UpdateState()
     {
-        Block block = loc.GetBlock();
+        if (maxBlockHealth == 0)
+            return;
+        
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-        int spriteIndex = (int) (block.blockHealth / block.breakTime / (1f / sprites.Length));
-
-        Sprite sprite = null;
-        if (spriteIndex < sprites.Length && spriteIndex >= 0)
-            sprite = sprites[spriteIndex];
+        int spriteIndex = (int) ((blockHealth / maxBlockHealth) * (sprites.Length - 1));
+        Sprite sprite = sprites[spriteIndex];
 
         GetComponent<SpriteRenderer>().sprite = sprite;
     }
-
+    
     [Server]
     public void Unspawn()
     {
         NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
+    public void CheckDespawn()
+    {
+        Block block = loc.GetBlock();
+
+        if (block == null || blockHealth == maxBlockHealth)
+        {
+            Unspawn();
+        }
     }
     
     [Server]

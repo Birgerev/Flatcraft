@@ -28,13 +28,11 @@ public class InventoryContainer : Block
         base.Break(drop);
     }
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
-        base.Interact();
+        base.Interact(player);
 
-        //TODO player instance
-        //TODO inventory location
-        GetInventory().Open(null);
+        GetInventory().Open(player);
     }
 
     public Inventory GetInventory()

@@ -217,12 +217,12 @@ public class Block : MonoBehaviour
         location.SetData(GetData());
     }
 
-    public virtual void Hit(float time)
+    public virtual void Hit(PlayerInstance player, float time)
     {
-        Hit(time, Tool_Type.None, Tool_Level.None);
+        Hit(player, time, Tool_Type.None, Tool_Level.None);
     }
 
-    public virtual void Hit(float time, Tool_Type tool_type, Tool_Level tool_level)
+    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
     {
         time_of_last_hit = Time.time;
 
@@ -307,7 +307,7 @@ public class Block : MonoBehaviour
         return new ItemStack(GetMaterial(), 1);
     }
 
-    public virtual void Interact()
+    public virtual void Interact(PlayerInstance player)
     {
     }
 

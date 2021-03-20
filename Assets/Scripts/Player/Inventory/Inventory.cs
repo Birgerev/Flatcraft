@@ -237,13 +237,13 @@ public class Inventory : NetworkBehaviour
     }
 
     [Server]
-    public void Open(GameObject playerInstance)
+    public void Open(PlayerInstance playerInstance)
     {
         GameObject obj = Instantiate(inventoryMenuPrefab);
         InventoryMenu menu = obj.GetComponent<InventoryMenu>();
         
         menu.inventoryIds.Add(0, id);
-        menu.playerInstance = playerInstance;
+        menu.playerInstance = playerInstance.gameObject;
         
         NetworkServer.Spawn(obj);
         inventoryMenu = obj;

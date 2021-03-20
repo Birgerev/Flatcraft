@@ -22,12 +22,12 @@
 
     public Material otherBlockMaterial => GetMaterial() == Material.Bed_Bottom ? Material.Bed_Top : Material.Bed_Bottom;
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         Player.localEntity.Sleep();
         Player.localEntity.bedLocation = location;
 
-        base.Interact();
+        base.Interact(player);
     }
 
     public override void Tick()
