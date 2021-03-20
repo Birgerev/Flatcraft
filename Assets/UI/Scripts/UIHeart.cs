@@ -18,10 +18,10 @@ public class UIHeart : MonoBehaviour
         float health;
 
 
-        if (Player.localInstance == null)
+        if (Player.localEntity == null)
             health = 0;
         else
-            health = Mathf.Round((Player.localInstance.health + 0.70f) * 2) / 2;
+            health = Mathf.Round((Player.localEntity.health + 0.70f) * 2) / 2;
 
         float heartIndex = transform.GetSiblingIndex();
 

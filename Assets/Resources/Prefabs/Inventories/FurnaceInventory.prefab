@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &9128253063009491069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2381435000660267837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821df31574423314fb9fd2a179ebe07a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  holder:
+    x: 0
+    y: 0
+    dimension: 0
+  invName: 
+  size: 0
+  type: 
+  id: 0
+  inventoryMenu: {fileID: 0}
+  open: 0
+  inventoryMenuPrefab: {fileID: 956173273818362507, guid: 3f573ee865660b84c893fe059e8fc9dc,
+    type: 3}
+  fuelLeft: 0
+  highestFuel: 0
+  smeltingProgress: 0
+--- !u!1001 &5635945317623954515
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9.074657
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 75.41166
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -39.69608
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6961309222007751230, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8014833814793219950, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_Name
+      value: FurnaceInventory
+      objectReference: {fileID: 0}
+    - target: {fileID: 8798241026852745558, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: sceneId
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8798241026852745558, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+        type: 3}
+      propertyPath: m_AssetId
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7614836006779368900, guid: c27486f9f3d406e4ead66cb1a90ebe70, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: c27486f9f3d406e4ead66cb1a90ebe70, type: 3}
+--- !u!1 &2381435000660267837 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8014833814793219950, guid: c27486f9f3d406e4ead66cb1a90ebe70,
+    type: 3}
+  m_PrefabInstance: {fileID: 5635945317623954515}
+  m_PrefabAsset: {fileID: 0}

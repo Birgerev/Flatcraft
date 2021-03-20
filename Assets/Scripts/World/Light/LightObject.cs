@@ -13,7 +13,7 @@ public class LightObject : MonoBehaviour
         lightLevel -= lightLevelDeduct;
         lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.maxLightLevel);
 
-        Player player = Player.localInstance;
+        Player player = Player.localEntity;
         if (player == null)
             return;
         

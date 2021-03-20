@@ -56,10 +56,10 @@ public class LightManager : MonoBehaviour
         }
 
         //Dont create sunlight sources if player is in the nether
-        if (Player.localInstance.Location.dimension == Dimension.Nether)
+        if (Player.localEntity.Location.dimension == Dimension.Nether)
             return;
         
-        Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localInstance.Location.dimension, false);
+        Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localEntity.Location.dimension, false);
         
         //Return in case no block was found in column, may be the case in ex void worlds
         if (topmostBlock == null)

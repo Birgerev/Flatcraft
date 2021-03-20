@@ -1,16 +1,19 @@
-﻿public class CraftingInventory : Inventory
-{
-    public CraftingInventory()
-    {
-        initialize(10, "Crafting");
-    }
+﻿using Mirror;
 
-    public ItemStack[] GetCraftingTable()
+public class CraftingInventory : Inventory
+{
+    [Server]
+    public static Inventory CreatePreset()
+    {
+        return Create("CraftingInventory", 10, "Crafting");
+    }
+    
+    public ItemStack[] GetCraftingTableItems()
     {
         var table = new ItemStack[9];
 
         for (var i = 0; i <= 8; i++) 
-            table[i] = getItem(i);
+            table[i] = GetItem(i);
 
         return table;
     }
@@ -18,27 +21,5 @@
     public int GetCraftingResultSlot()
     {
         return 9;
-    }
-
-    public override void UpdateMenuStatus()
-    {
-        CraftingInventoryMenu invMenu = (CraftingInventoryMenu)GetInventoryMenu();
-        CraftingInventoryMenu.inventories[1] = this;
-        invMenu.active = open;
-    }
-
-    public override InventoryMenu GetInventoryMenu()
-    {
-        return InventoryMenuManager.instance.craftingInventoryMenu;
-    }
-
-    public override void Close()
-    {
-        //Don't drop results slot
-        setItem(GetCraftingResultSlot(), new ItemStack());
-
-        DropAll(holder);
-
-        base.Close();
     }
 }

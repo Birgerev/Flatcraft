@@ -15,14 +15,14 @@ public class HotbarItemSlot : ItemSlot
     // Update is called once per frame
     public override void UpdateSlot()
     {
-        if (Player.localInstance == null)
+        if (Player.localEntity == null)
             return;
 
         base.UpdateSlot();
 
-        item = Player.localInstance.inventory.getHotbar()[transform.GetSiblingIndex()];
+        item = Player.localEntity.GetInventory().GetHotbarItems()[transform.GetSiblingIndex()];
 
-        GetComponent<Image>().sprite = Player.localInstance.inventory.selectedSlot == transform.GetSiblingIndex()
+        GetComponent<Image>().sprite = Player.localEntity.GetInventory().selectedSlot == transform.GetSiblingIndex()
             ? selected
             : normal;
     }

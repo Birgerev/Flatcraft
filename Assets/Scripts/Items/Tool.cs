@@ -16,20 +16,20 @@
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
         {
             loc.SetMaterial(Material.Farmland_Dry).Tick();
-            Player.localInstance.DoToolDurability();
+            Player.localEntity.DoToolDurability();
         }
 
         if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.Air)
         {
             loc.SetMaterial(Material.Fire).Tick();
-            Player.localInstance.DoToolDurability();
+            Player.localEntity.DoToolDurability();
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
 
         if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.TNT)
         {
             ((TNT)loc.GetBlock()).Prime();
-            Player.localInstance.DoToolDurability();
+            Player.localEntity.DoToolDurability();
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
 

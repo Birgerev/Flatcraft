@@ -48,6 +48,16 @@ public class ItemStack
         this.data = data;
         this.durability = durability;
     }
+
+    public ItemStack(string saveString)
+    {
+        string[] values = saveString.Split('*');
+        
+        material = (Material)Enum.Parse(typeof(Material), values[0]);
+        amount = int.Parse(values[1]);
+        data = values[2];
+        durability = int.Parse(values[3]);
+    }
     
     public string GetTexture()
     {
@@ -138,6 +148,11 @@ public class ItemStack
         obj.GetComponent<DroppedItem>().Location = location;
         obj.GetComponent<DroppedItem>().item = this;
         obj.GetComponent<Rigidbody2D>().velocity = velocity;
+    }
+
+    public string GetSaveString()
+    {
+        return material + "*" + amount + "*" + data + "*" + durability;
     }
 
     public ItemStack Clone()

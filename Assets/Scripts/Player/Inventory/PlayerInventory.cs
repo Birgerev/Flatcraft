@@ -1,85 +1,63 @@
 ﻿using System;
+using Mirror;
+using UnityEngine;
 
 [Serializable]
 public class PlayerInventory : Inventory
 {
-    public int baseInventorySize = 36;
+    [SyncVar]
     public int selectedSlot;
 
-    public PlayerInventory()
+    [Server]
+    public static Inventory CreatePreset()
     {
-        initialize(45, "Inventory");
+        return Create("PlayerInventory", 45, "Inventory");
+    }
+    
+    public ItemStack GetSelectedItem()
+    {
+        return GetItem(selectedSlot);
     }
 
-    public ItemStack getSelectedItem()
-    {
-        return getItem(selectedSlot);
-    }
-
-    public ItemStack[] getHotbar()
+    public ItemStack[] GetHotbarItems()
     {
         var hotbar = new ItemStack[9];
 
-        for (var i = 0; i < 9; i++) hotbar[i] = getItem(i);
+        for (var i = 0; i < 9; i++) hotbar[i] = GetItem(i);
 
         return hotbar;
     }
 
-    public ItemStack[] getArmor()
+    public ItemStack[] GetArmorItems()
     {
         var armor = new ItemStack[4];
 
-        for (var i = getFirstArmorSlot(); i <= 39; i++) armor[i] = getItem(i);
+        for (var i = GetFirstArmorSlot(); i <= 39; i++) armor[i] = GetItem(i);
 
         return armor;
     }
 
-    public ItemStack[] getCraftingTable()
+    public ItemStack[] GetCraftingTableItems()
     {
         var table = new ItemStack[4];
 
-        for (var i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot() + 4; i++) table[i - 40] = getItem(i);
+        for (var i = GetFirstCraftingTableSlot(); i < GetFirstCraftingTableSlot() + 4; i++) table[i - 40] = GetItem(i);
 
         return table;
     }
     
-    public int getFirstArmorSlot()
+    public int GetFirstArmorSlot()
     {
         return 36;
     }
 
-    public int getFirstCraftingTableSlot()
+    public int GetFirstCraftingTableSlot()
     {
         return 40;
     }
 
-    public int getCraftingResultSlot()
+    public int GetCraftingResultSlot()
     {
         return 44;
-    }
-
-    public override void UpdateMenuStatus()
-    {
-        PlayerInventoryMenu invMenu = (PlayerInventoryMenu)GetInventoryMenu();
-        invMenu.active = open;
-    }
-
-    public override InventoryMenu GetInventoryMenu()
-    {
-        return InventoryMenuManager.instance.playerInventoryMenu;
-    }
-
-    public override void Close()
-    {
-        for (int i = getFirstCraftingTableSlot(); i < getFirstCraftingTableSlot() + 4; i++)
-        {
-            ItemStack item = getItem(i);
-            if(item != null)
-                item.Drop(holder, true);
-
-            setItem(i, new ItemStack());
-        }
-
-        base.Close();
     }
 }

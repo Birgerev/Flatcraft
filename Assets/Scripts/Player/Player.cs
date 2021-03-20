@@ -11,7 +11,9 @@ public class Player : HumanEntity
     //TODO time of day sync
     //TODO quit game
     //TODO singleplayer
-    //TODO Inventories
+    //TODO wipe inventory on death
+    //TODO punch animation shouldn't be local
+    //TODO block interaction
     //TODO block breaking indicator
     //TODO block breaking
     //TODO eating
@@ -19,9 +21,10 @@ public class Player : HumanEntity
     public static float interactionsPerPerSecond = 4.5f;
 
     //Entity State
-    [Space] public static Player localInstance;
+    public static Player localEntity;
     public static List<Player> players = new List<Player>();
 
+    [SyncVar] public GameObject playerInstance;
     public GameObject crosshair;
     private int framesSinceInventoryOpen;
     private float eatingTime;
@@ -32,8 +35,8 @@ public class Player : HumanEntity
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar]
     public float hunger;
-    //TODO [EntityDataTag(true)]
-    public PlayerInventory inventory;
+    [EntityDataTag(true)] [SyncVar]
+    public int inventoryId;
     public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
@@ -57,7 +60,7 @@ public class Player : HumanEntity
     public override void OnStartAuthority()
     {
         base.OnStartAuthority();
-        localInstance = this;
+        localEntity = this;
         gameObject.AddComponent<AudioListener>();
     }
 
@@ -67,7 +70,9 @@ public class Player : HumanEntity
         base.Spawn();
         
         hunger = maxHunger;
-        inventory = new PlayerInventory();
+        Inventory inv = PlayerInventory.CreatePreset();
+        inventoryId = inv.id;
+        
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Teleport(bedLocation);
         
@@ -96,7 +101,7 @@ public class Player : HumanEntity
             if(!isServer)     //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
         
-            if (InventoryMenuManager.instance.anyInventoryOpen())
+            if (GetInventory().open)
                 framesSinceInventoryOpen = 0;
             else
                 framesSinceInventoryOpen++;
@@ -194,13 +199,10 @@ public class Player : HumanEntity
     [Client]
     private void PerformInput()
     {
-        if (InventoryMenuManager.instance.anyInventoryOpen())
-            return;
-
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
-            inventory.Open(Location);
+            RequestOpenInventory();
 
-        if (Inventory.anyOpen)
+        if (GetInventory().open)
             return;
         
         if (Input.GetKey(KeyCode.A)) 
@@ -236,23 +238,28 @@ public class Player : HumanEntity
         };
         foreach (var keyCode in numpadCodes)
             if (Input.GetKeyDown(keyCode))
-                inventory.selectedSlot = Array.IndexOf(numpadCodes, keyCode);
+                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
         
         
         var scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
         {
-            inventory.selectedSlot += scroll > 0 ? -1 : 1;
-
-            if (inventory.selectedSlot > 8)
-                inventory.selectedSlot = 0;
-            if (inventory.selectedSlot < 0)
-                inventory.selectedSlot = 8;
+            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
+            if (newSelectedSlot > 8) newSelectedSlot = 0;
+            if (newSelectedSlot < 0) newSelectedSlot = 8;
+            
+            SetSelectedInventorySlot(newSelectedSlot);
         }
         lastFrameScroll = scroll;
         
         MouseInput();
+    }
+    
+    [Command]
+    private void RequestOpenInventory()
+    {
+        GetInventory().Open(playerInstance);
     }
     
     [Command]
@@ -266,10 +273,22 @@ public class Player : HumanEntity
     {
         sprinting = sprint;
     }
+    
+    [Command]
+    private void SetSelectedInventorySlot(int slot)
+    {
+        GetInventory().selectedSlot = slot;
+    }
+    
     [Command]
     private void SetSneaking(bool sneak)
     {
         sneaking = sneak;
+    }
+
+    public PlayerInventory GetInventory()
+    {
+        return (PlayerInventory)Inventory.Get(inventoryId);
     }
     
     [Client]
@@ -323,7 +342,7 @@ public class Player : HumanEntity
 
         HitEntityInput();
         BlockPlaceInput();
-        //BlockInteractionInput();
+        BlockInteractionInput();
     }
 
     [Client]
@@ -356,7 +375,7 @@ public class Player : HumanEntity
     [Client]
     private void EatItemInput()
     {
-        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
         {
             if(eatingTime > 1.3f)
             {
@@ -413,13 +432,10 @@ public class Player : HumanEntity
     [Command]
     public void RequestBlockPlace(Location loc)
     {
-        ItemStack item = inventory.getSelectedItem().Clone();
+        ItemStack item = GetInventory().GetSelectedItem().Clone();
         Material heldMat;
-
-        //TODO
-        heldMat = Material.Dirt;
-        /*
-        if (inventory.getSelectedItem().material == Material.Air || inventory.getSelectedItem().amount <= 0)
+        
+        if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().amount <= 0)
             return;
 
         if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
@@ -430,13 +446,14 @@ public class Player : HumanEntity
         {
             heldMat = ((PlaceableItem)Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
         }
-        else return;*/
+        else return;
 
         loc.SetMaterial(heldMat);
+        //TODO
         //loc.GetBlock().ScheduleBlockBuildTick();
         loc.Tick();
 
-        //inventory.setItem(inventory.selectedSlot, new ItemStack(item.material, item.amount - 1));
+        GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
     }
 
     [Client]
@@ -445,56 +462,63 @@ public class Player : HumanEntity
         //TODO
         if (Time.time - lastBlockInteractionTime >= 1f / interactionsPerPerSecond)
         {
-            Item itemType; //if the selected item derives from "Item", create in instance of item, else create basic "Item", without any subclasses
-            if (Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
-                itemType = (Item)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
-            else
-                itemType = (Item)Activator.CreateInstance(typeof(Item));
-
-
             if (Input.GetMouseButtonDown(1))
             {
-                itemType.Interact(GetBlockedMouseLocation(), 1, true);
+                RequestInteract(1, true);
                 lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(1))
             {
-                itemType.Interact(GetBlockedMouseLocation(), 1, false);
+                RequestInteract(1, false);
                 lastBlockInteractionTime = Time.time;
             }
 
             if (Input.GetMouseButtonDown(0))
             {
-                itemType.Interact(GetBlockedMouseLocation(), 0, true);
+                RequestInteract(0, true);
                 lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(0))
             {
-                itemType.Interact(GetBlockedMouseLocation(), 0, false);
+                RequestInteract(0, false);
                 lastBlockInteractionTime = Time.time;
             }
         }
+    }
+
+    [Command]
+    public void RequestInteract(int mouseButton, bool firstFrameDown)
+    {
+        //if the selected item derives from "Item", create in instance of item, else create empty
+        //"Item", without any subclasses
+        Item itemType; 
+        if (Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
+            itemType = (Item)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
+        else
+            itemType = (Item)Activator.CreateInstance(typeof(Item));
+
+        itemType.Interact(GetBlockedMouseLocation(), mouseButton, firstFrameDown);
     }
     
     [Server]
     public void DoToolDurability()
     {
-        if (inventory.getSelectedItem().GetMaxDurability() != -1)
+        if (GetInventory().GetSelectedItem().GetMaxDurability() != -1)
         {
-            inventory.getSelectedItem().durability--;
+            GetInventory().GetSelectedItem().durability--;
 
-            if (inventory.getSelectedItem().durability < 0)
-                inventory.setItem(inventory.selectedSlot, new ItemStack());
+            if (GetInventory().GetSelectedItem().durability < 0)
+                GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack());
         }
     }
 
     [Server]
     private void EatHeldItem()
     {
-        ItemStack selectedItemStack = inventory.getSelectedItem();
+        ItemStack selectedItemStack = GetInventory().GetSelectedItem();
 
         //Add hunger
-        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(inventory.getSelectedItem().material.ToString()));
+        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
         int foodPoints = foodItemType.food_points;
         hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
 
@@ -506,7 +530,7 @@ public class Player : HumanEntity
         
         //Subtract food item from inventory
         selectedItemStack.amount -= 1;
-        inventory.setItem(inventory.selectedSlot, selectedItemStack);
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
     }
 
     [Command]
@@ -514,7 +538,7 @@ public class Player : HumanEntity
     {
         Entity entity = entityObj.GetComponent<Entity>();
         bool criticalHit = false;
-        float damage = inventory.getSelectedItem().GetItemEntityDamage();
+        float damage = GetInventory().GetSelectedItem().GetItemEntityDamage();
 
         
         if (GetVelocity().y < -0.5f)
@@ -526,7 +550,7 @@ public class Player : HumanEntity
             entity.CriticalDamageEffect();
         }
 
-        if (inventory.getSelectedItem().durability != -1)
+        if (GetInventory().GetSelectedItem().durability != -1)
             DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
@@ -537,7 +561,7 @@ public class Player : HumanEntity
     {
         var result = new List<ItemStack>();
 
-        result.AddRange(inventory.items);
+        result.AddRange(GetInventory().items);
 
         return result;
     }
@@ -545,15 +569,17 @@ public class Player : HumanEntity
     [Server]
     public void DropSelected()
     {
-        var item = inventory.getSelectedItem().Clone();
+        ItemStack selectedItem = GetInventory().GetSelectedItem().Clone();
+        ItemStack droppedItem = selectedItem.Clone();
+        droppedItem.amount = 1;
+        selectedItem.amount --;
 
-        if (item.amount <= 0)
+        if (droppedItem.amount <= 0)
             return;
 
-        item.amount = 1;
-        inventory.getSelectedItem().amount--;
 
-        item.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
 
     [Server]
@@ -561,7 +587,7 @@ public class Player : HumanEntity
     {
         base.DropAllDrops();
 
-        inventory.Clear();
+        GetInventory().Clear();
     }
 
     [Server]
@@ -682,9 +708,9 @@ public class Player : HumanEntity
 
         var anim = GetComponent<Animator>();
 
-        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(inventory.getSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger <= maxHunger - 1);
+        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger <= maxHunger - 1);
         anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
-        anim.SetBool("holding-item", inventory.getSelectedItem().material != Material.Air);
+        anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
         anim.SetBool("grounded", isOnGround);
 

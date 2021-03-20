@@ -344,7 +344,7 @@ public class Chunk : NetworkBehaviour
         var timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            if (Player.localInstance != null && Player.localInstance.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
+            if (Player.localEntity != null && Player.localEntity.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
             {
                 DestroyChunk();
             }
@@ -408,7 +408,7 @@ public class Chunk : NetworkBehaviour
             foreach (Block block in blocks.Values)
             {
                 if (block.autoTick || block.autosave)
-                {
+                {//TODO remove
                     block.Tick();
                 }
             }

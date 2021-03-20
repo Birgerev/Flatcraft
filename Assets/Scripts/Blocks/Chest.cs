@@ -15,38 +15,25 @@ public class Chest : InventoryContainer
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override Type inventoryType { get; } = typeof(Inventory);
-
-    public override void Tick()
+    public override Inventory NewInventory()
     {
-        if (inventory == null)
-        {
-            base.Tick();
-            return;
-        }
-
-        inventory.name = "Chest";
-        base.Tick();
+        return Inventory.Create("Inventory", 27, "Chest");
     }
-
-    private Inventory getInventory()
-    {
-        return inventory;
-    }
+    
     public override void Interact()
     {
-        StartCoroutine(awaitInventoryClosed());
+        StartCoroutine(ChestEffects());
 
         base.Interact();
     }
 
-    IEnumerator awaitInventoryClosed()
+    IEnumerator ChestEffects()
     {
         texture = open_texture;
         Render();
         Sound.Play(location, "random/door/door_open", SoundType.Blocks, 0.8f, 1.3f);
         yield return new WaitForSeconds(0.5f);
-        while (getInventory().open)
+        while (GetInventory().open)
             yield return new WaitForSeconds(0.2f);
 
         Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);

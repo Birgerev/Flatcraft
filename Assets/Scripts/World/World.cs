@@ -79,6 +79,8 @@ public class World
             Directory.CreateDirectory(getPath() + "\\region\\Overworld");
         if (!Directory.Exists(getPath() + "\\players"))
             Directory.CreateDirectory(getPath() + "\\players");
+        if (!Directory.Exists(getPath() + "\\inventories"))
+            Directory.CreateDirectory(getPath() + "\\inventories");
 
         if (!File.Exists(getPath() + "\\level.dat"))
             File.Create(getPath() + "\\level.dat").Close();

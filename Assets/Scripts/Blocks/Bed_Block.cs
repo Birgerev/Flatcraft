@@ -24,8 +24,8 @@
 
     public override void Interact()
     {
-        Player.localInstance.Sleep();
-        Player.localInstance.bedLocation = location;
+        Player.localEntity.Sleep();
+        Player.localEntity.bedLocation = location;
 
         base.Interact();
     }

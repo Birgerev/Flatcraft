@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class PlayerInstance : NetworkBehaviour
 {
-    public PlayerInstance localPlayerInstance;
+    public static PlayerInstance localPlayerInstance;
     
     [SyncVar] public string playerName = "null";
     [SyncVar] public GameObject playerEntity;
@@ -47,6 +47,7 @@ public class PlayerInstance : NetworkBehaviour
         NetworkServer.Spawn(player);
         player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
         player.GetComponent<Player>().displayName = playerName;
+        player.GetComponent<Player>().playerInstance = gameObject;
         playerEntity = player;
     }
 }

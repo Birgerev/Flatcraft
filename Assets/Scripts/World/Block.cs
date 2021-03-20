@@ -187,8 +187,8 @@ public class Block : MonoBehaviour
         var rotated_x = false;
         var rotated_y = false;
 
-        if (rotate_y) rotated_y = Player.localInstance.transform.position.y < location.y;
-        if (rotate_x) rotated_x = Player.localInstance.transform.position.x < location.x;
+        if (rotate_y) rotated_y = Player.localEntity.transform.position.y < location.y;
+        if (rotate_x) rotated_x = Player.localEntity.transform.position.x < location.x;
 
         SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
         SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
@@ -248,7 +248,7 @@ public class Block : MonoBehaviour
             else
                 Break(false);
 
-            Player.localInstance.DoToolDurability();
+            Player.localEntity.DoToolDurability();
 
             return;
         }
