@@ -106,7 +106,6 @@ public class Chunk : NetworkBehaviour
             //Generate Tick all block (decay all necessary grass etc)
             StartCoroutine(MobSpawning());
             StartCoroutine(BlockRandomTicking());
-            StartCoroutine(BlockAutoTicking());
         }
 
         yield return new WaitForSeconds(1f);
@@ -401,22 +400,6 @@ public class Chunk : NetworkBehaviour
         }
     }
     
-    private IEnumerator BlockAutoTicking()
-    {
-        while (true)
-        {
-            foreach (Block block in blocks.Values)
-            {
-                if (block.autoTick || block.autosave)
-                {//TODO remove
-                    block.Tick();
-                }
-            }
-            
-            yield return new WaitForSeconds(1);
-        }
-    }
-
     [Server]
     private void TrySpawnMobs()
     {

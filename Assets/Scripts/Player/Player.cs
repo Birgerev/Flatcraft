@@ -13,12 +13,8 @@ public class Player : HumanEntity
     //TODO singleplayer
     //TODO wipe inventory on death
     //TODO punch animation shouldn't be local
-    //TODO block interaction
-    //TODO block breaking indicator
-    //TODO block breaking
     //TODO eating
     //TODO update pointer Slot in player menu doesnt work after clicking crafting result slot, SetItem possibly
-    //TODO build tick
     //TODO falling sand stacks
     //TODO particles dont appear on client (run particles)
     public static float interactionsPerPerSecond = 4.5f;

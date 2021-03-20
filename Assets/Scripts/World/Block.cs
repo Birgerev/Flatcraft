@@ -26,8 +26,6 @@ public class Block : MonoBehaviour
     public virtual bool trigger { get; set; } = false;
     public virtual bool climbable { get; } = false;
     public virtual bool requiresGround { get; } = false;
-    public virtual bool autosave { get; } = false;
-    public virtual bool autoTick { get; } = false;
     public virtual float averageRandomTickDuration { get; } = 0;
     public virtual float breakTime { get; } = 0.75f;
     public virtual bool rotate_x { get; } = false;
@@ -133,13 +131,6 @@ public class Block : MonoBehaviour
         checkGround();
         UpdateColliders();
         RenderRotate();
-
-
-        if (Time.time - time_of_last_autosave > SaveManager.AutosaveDuration && autosave)
-        {
-            Autosave();
-            return;
-        }
 
         age++;
     }
