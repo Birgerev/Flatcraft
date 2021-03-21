@@ -9,7 +9,7 @@ using Mirror;
 public class InventoryMenu : NetworkBehaviour
 {
     public SyncDictionary<int, int> inventoryIds = new SyncDictionary<int, int>();
-    [SyncVar] public ItemStack pointerItem;
+    [SyncVar] public ItemStack pointerItem = new ItemStack();
     [SyncVar] public GameObject playerInstance;
 
     public List<Transform> inventorySlotLists = new List<Transform>();
