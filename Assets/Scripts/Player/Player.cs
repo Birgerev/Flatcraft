@@ -8,8 +8,8 @@ using UnityEngine;
 public class Player : HumanEntity
 {
     //TODO sync sound
-    //TODO time of day sync
     //TODO quit game
+    //TODO world data (world time) doens't save
     //TODO singleplayer
     //TODO wipe inventory on death
     //TODO punch animation shouldn't be local
@@ -622,12 +622,12 @@ public class Player : HumanEntity
     [Server]
     public void Sleep()
     {
-        var currentDay = (int) (WorldManager.world.time / WorldManager.dayLength);
+        var currentDay = (int) (WorldManager.instance.worldTime / WorldManager.dayLength);
         var newTime = (currentDay + 1) * WorldManager.dayLength;
-        var isNight = WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2;
+        var isNight = WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2;
 
         if (isNight) 
-            WorldManager.world.time = newTime;
+            WorldManager.instance.worldTime = newTime;
     }
 
     [Server]

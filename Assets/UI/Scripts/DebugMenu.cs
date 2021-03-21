@@ -56,8 +56,8 @@ public class DebugMenu : MonoBehaviour
             text_biome.text = "biome: " + biome.name;
 
         text_seed.text = "seed: " + WorldManager.world.seed;
-        text_time.text = "time: " + (int) WorldManager.world.time + ", (day " +
-                         (int) (WorldManager.world.time / WorldManager.dayLength) + ")";
+        text_time.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
+                         (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
 
         var location = player.GetBlockedMouseLocation();
         var block = player.GetMouseBlock();

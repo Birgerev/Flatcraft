@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class WorldManager : NetworkBehaviour
 {
-    public static World world;
     public static WorldManager instance;
 
     public static float dayLength = 60 * 20;
@@ -28,17 +27,29 @@ public class WorldManager : NetworkBehaviour
 
     public string loadingState = "";
 
+    public static World world;
+    [SyncVar]
+    public float worldTime;
+    
     // Start is called before the first frame update
     private void Start()
     {
         instance = this;
+        
         StartCoroutine(LoadWorld());
     }
 
     private void Update()
     {
-        if(loadingProgress == 1)
+        if (isServer)
+        {
             world.time += Time.deltaTime;
+            
+            if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+            {
+                worldTime = world.time;
+            }
+        }
     }
 
     private IEnumerator SaveLoop()

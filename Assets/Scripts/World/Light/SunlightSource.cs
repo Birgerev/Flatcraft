@@ -23,7 +23,7 @@ public class SunlightSource : MonoBehaviour
 
     private TimeOfDay GetTimeOfDay()
     {
-        return (WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
+        return (WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
             TimeOfDay.Night : TimeOfDay.Day;
     }
     
