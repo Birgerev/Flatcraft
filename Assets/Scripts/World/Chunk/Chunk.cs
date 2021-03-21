@@ -534,7 +534,7 @@ public class Chunk : NetworkBehaviour
     [ClientRpc]
     public void BlockChange(Location loc, BlockState state)
     {
-        if (!donePlacingGeneratedBlocks)
+        if (!donePlacingGeneratedBlocks || isServer)
             return;
         
         LocalBlockChange(loc, state);
@@ -611,8 +611,6 @@ public class Chunk : NetworkBehaviour
             UpdateBackgroundBlockColumn(loc.x, true);
             StartCoroutine(scheduleBlockLightUpdate(loc));
         }
-
-        return;
     }
 
     IEnumerator scheduleBlockLightUpdate(Location loc)

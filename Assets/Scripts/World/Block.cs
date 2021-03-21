@@ -51,13 +51,12 @@ public class Block : MonoBehaviour
 
     public void ScheduleBlockBuildTick()
     {
-        //TODO not called
         StartCoroutine(scheduleBlockBuildTick());
     }
 
     private IEnumerator scheduleBlockBuildTick()
     {
-        yield return new WaitForSeconds(0.02f);
+        yield return new WaitForSeconds(0.03f);
         BuildTick();
     }
 

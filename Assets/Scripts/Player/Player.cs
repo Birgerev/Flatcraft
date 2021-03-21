@@ -448,9 +448,8 @@ public class Player : HumanEntity
         else return;
 
         loc.SetMaterial(heldMat);
-        //TODO
-        //loc.GetBlock().ScheduleBlockBuildTick();
         loc.Tick();
+        loc.GetBlock().ScheduleBlockBuildTick();
 
         GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
     }
