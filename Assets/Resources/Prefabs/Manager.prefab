@@ -126,6 +126,7 @@ MonoBehaviour:
     type: 3}
   loadingProgress: 0
   loadingState: 
+  worldTime: 0
 --- !u!114 &3047292750534003042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21648cfdf0d6972458ca80ff8dc1020a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   blocksGroup: {fileID: 2917957538123657003, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
   enabled: 0
@@ -159,6 +162,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ae5994a68c4e248a6d66c85367f876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &3047292750534003040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +196,7 @@ MonoBehaviour:
   ambientMusic:
   - sweden
   checkDuration: 600
-  checkChance: 0.3
+  checkChance: 0.5
 --- !u!114 &3047292750534002974
 MonoBehaviour:
   m_ObjectHideFlags: 0
