@@ -449,8 +449,6 @@ public class Chunk : NetworkBehaviour
         }
     }
 
-    //TODO two blocks have to be build in column before background blocks appear on client,
-    //probably since blockchange might be triggered before blockstate list gets updated
     public void UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         Material lastViableMaterial = Material.Air;

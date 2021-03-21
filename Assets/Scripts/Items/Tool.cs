@@ -13,7 +13,6 @@
 
     public override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        //TODO move these interactions into block.Interact()
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
         {
             loc.SetMaterial(Material.Farmland_Dry).Tick();

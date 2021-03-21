@@ -7,16 +7,6 @@ using UnityEngine;
 
 public class Player : HumanEntity
 {
-    //TODO sync sound
-    //TODO quit game
-    //TODO world data (world time) doens't save
-    //TODO singleplayer
-    //TODO wipe inventory on death
-    //TODO punch animation shouldn't be local
-    //TODO eating
-    //TODO update pointer Slot in player menu doesnt work after clicking crafting result slot, SetItem possibly
-    //TODO falling sand stacks
-    //TODO particles dont appear on client (run particles)
     public static float interactionsPerPerSecond = 4.5f;
 
     //Entity State
@@ -333,7 +323,6 @@ public class Player : HumanEntity
         
         UpdateCrosshair();
         
-        //TODO
         //EatItemInput();
 
         if (!isInRange)
@@ -457,7 +446,6 @@ public class Player : HumanEntity
     [Client]
     private void BlockInteractionInput()
     {
-        //TODO
         if (Time.time - lastBlockInteractionTime >= 1f / interactionsPerPerSecond)
         {
             if (Input.GetMouseButtonDown(1))
