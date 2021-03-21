@@ -12,6 +12,8 @@ public class InventoryContainer : Block
             Inventory inv = NewInventory();
             location.SetData(GetData().SetTag("inventoryId", inv.id.ToString()));
         }
+
+        GetInventory();
     }
 
     public virtual Inventory NewInventory()
