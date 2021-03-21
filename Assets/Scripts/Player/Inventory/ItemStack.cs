@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = System.Random;
 
-[Serializable]
 public class ItemStack
 {
     public int amount;
