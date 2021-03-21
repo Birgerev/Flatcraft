@@ -26,7 +26,7 @@ public class Inventory : NetworkBehaviour
     [Server]
     public static Inventory Create(string type, int size, string invName)
     {
-        int id = Directory.GetDirectories(WorldManager.world.getPath() + "\\inventories").Length;
+        int id = UnityEngine.Random.Range(1, 9999999);
         
         return Create(type, size, invName, id);
     }
@@ -41,8 +41,12 @@ public class Inventory : NetworkBehaviour
         inventory.type = type;
         inventory.invName = invName;
         inventory.id = id;
-            
-        inventory.items.AddRange(Enumerable.Repeat(new ItemStack(), size));
+
+        for (int i = 0; i < size; i++)
+        {
+            inventory.items.Add(new ItemStack());
+        }
+
         inventory.SetItem(0, new ItemStack(Material.Oak_Log, 5));
         inventory.SetItem(1, new ItemStack(Material.Cobblestone, 5));
         
@@ -136,6 +140,14 @@ public class Inventory : NetworkBehaviour
         inv.items.AddRange(items);
 
         return inv;
+    }
+
+    [Server]
+    public void Delete()
+    {
+        string path = WorldManager.world.getPath() + "\\inventories\\"+id;
+        Directory.Delete(path, true);
+        NetworkServer.Destroy(gameObject);
     }
     
     [Server]

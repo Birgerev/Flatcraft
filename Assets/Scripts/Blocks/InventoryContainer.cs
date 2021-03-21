@@ -7,6 +7,8 @@ public class InventoryContainer : Block
     {
         base.Initialize();
 
+        Chunk chunk = new ChunkPosition(location).GetChunk();
+        
         if (!GetData().HasTag("inventoryId"))
         {
             Inventory inv = NewInventory();

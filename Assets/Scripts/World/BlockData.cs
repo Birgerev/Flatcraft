@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 
-public class BlockData
+public struct BlockData
 {
-    public List<string> keys = new List<string>();
-    public List<string> values = new List<string>();
-
-    public BlockData()
-    {
-    }
+    public List<string> keys;
+    public List<string> values;
 
     public BlockData(string saveDataString)
     {
+        keys = new List<string>();
+        values = new List<string>();
+        
         foreach (var tagStrings in saveDataString.Split('|'))
             if (tagStrings.Contains("="))
                 SetTag(tagStrings.Split('=')[0], tagStrings.Split('=')[1]);

@@ -24,7 +24,7 @@ public class Player : HumanEntity
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar]
     public float hunger;
-    [EntityDataTag(true)] [SyncVar]
+    [EntityDataTag(false)] [SyncVar]
     public int inventoryId;
     public Location bedLocation = new Location(0, 0);
 
@@ -329,8 +329,8 @@ public class Player : HumanEntity
             return;
 
         HitEntityInput();
-        BlockPlaceInput();
         BlockInteractionInput();
+        BlockPlaceInput();
     }
 
     [Client]
@@ -437,8 +437,8 @@ public class Player : HumanEntity
         else return;
 
         loc.SetMaterial(heldMat);
-        loc.Tick();
-        loc.GetBlock().ScheduleBlockBuildTick();
+        //loc.Tick();
+        //loc.GetBlock().ScheduleBlockBuildTick();
 
         GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
     }
@@ -640,6 +640,7 @@ public class Player : HumanEntity
     {
         base.Die();
         DeathMenuEffect();
+        GetInventory().Delete();
     }
 
     [ClientRpc]

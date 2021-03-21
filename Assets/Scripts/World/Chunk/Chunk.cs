@@ -26,7 +26,7 @@ public class Chunk : NetworkBehaviour
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
 
-    private SyncList<BlockState> blockStates = new SyncList<BlockState>();
+    public SyncList<BlockState> blockStates = new SyncList<BlockState>();
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
@@ -68,8 +68,10 @@ public class Chunk : NetworkBehaviour
         if (isServer)
         {
             int blocksAmountInChunk = Width * Height;
-            BlockState emptyBlockState = new BlockState(Material.Air);
-            blockStates.AddRange(Enumerable.Repeat(emptyBlockState, blocksAmountInChunk));
+            for (int i = 0; i < blocksAmountInChunk; i++)
+            {
+                blockStates.Add(new BlockState(Material.Air));
+            }
         }
         
         //pre-generate chunk biomes

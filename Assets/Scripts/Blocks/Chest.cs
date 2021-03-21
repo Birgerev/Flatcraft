@@ -22,9 +22,9 @@ public class Chest : InventoryContainer
     
     public override void Interact(PlayerInstance player)
     {
-        StartCoroutine(ChestEffects());
-
         base.Interact(player);
+        
+        StartCoroutine(ChestEffects());
     }
 
     IEnumerator ChestEffects()

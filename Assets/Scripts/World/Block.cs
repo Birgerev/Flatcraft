@@ -73,13 +73,13 @@ public class Block : MonoBehaviour
 
     public virtual void Initialize()
     {
+        //Cache position for use in multithreading
+        location = Location.LocationByPosition(transform.position, location.dimension);
+        
         blockHealth = breakTime;
 
         RenderRotate();
         UpdateColliders();
-
-        //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position, location.dimension);
         
         if (glowLevel > 0)
         {
@@ -111,7 +111,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    protected BlockData GetData()
+    public BlockData GetData()
     {
         return location.GetData();
     }

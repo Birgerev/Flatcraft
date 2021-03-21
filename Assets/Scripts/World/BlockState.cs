@@ -16,7 +16,7 @@ public struct BlockState
     public BlockState(Material mat)
     {
         material = mat;
-        data = new BlockData();
+        data = new BlockData("");
     }
 
     public BlockState(Material mat, BlockData data)

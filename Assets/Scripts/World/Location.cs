@@ -55,7 +55,7 @@ public struct Location
     {
         BlockState state = GetState();
         state.material = mat;
-
+        
         SetState(state);
 
         return this;
@@ -74,7 +74,7 @@ public struct Location
     public Location SetState(BlockState state)
     {
         SaveState(state);
-
+        
         Chunk chunk = new ChunkPosition(this).GetChunk();
         if (chunk != null)
         {
@@ -114,7 +114,7 @@ public struct Location
         if (chunk != null)
         {
             BlockState state = chunk.GetBlockState(this);
-
+            
             return state;
         }
 
