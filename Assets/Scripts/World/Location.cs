@@ -73,6 +73,9 @@ public struct Location
 
     public Location SetState(BlockState state)
     {
+        if (state.material == Material.Air)
+            state.data = new BlockData("");
+        
         SaveState(state);
         
         Chunk chunk = new ChunkPosition(this).GetChunk();

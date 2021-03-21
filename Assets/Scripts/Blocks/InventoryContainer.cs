@@ -22,6 +22,7 @@ public class InventoryContainer : Block
     public override void Break(bool drop)
     {
         GetInventory().DropAll(location);
+        GetInventory().Delete();
 
         base.Break(drop);
     }
