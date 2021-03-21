@@ -79,6 +79,7 @@ public struct Location
         if (chunk != null)
         {
             chunk.SetBlockState(this, state);
+            chunk.LocalBlockChange(this, state);
             chunk.BlockChange(this, state);
         }
         
@@ -138,7 +139,7 @@ public struct Location
     {
         var blocks = new List<Block>
         {
-            (this + new Location(0, 0)).GetBlock(),
+            (this).GetBlock(),
             (this + new Location(0, 1)).GetBlock(),
             (this + new Location(0, -1)).GetBlock(),
             (this + new Location(-1, 0)).GetBlock(),
