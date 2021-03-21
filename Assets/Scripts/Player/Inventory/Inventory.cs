@@ -68,11 +68,11 @@ public class Inventory : NetworkBehaviour
         return null;
     }
 
-    public static bool IsAnyOpen()
+    public static bool IsAnyOpen(PlayerInstance playerInstance)
     {
         foreach (Inventory inv in loadedInventories.Values)
         {
-            if (inv.open)
+            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().playerInstance == playerInstance.gameObject)
                 return true;
         }
 

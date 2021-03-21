@@ -90,7 +90,7 @@ public class Player : HumanEntity
             if(!isServer)     //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
         
-            if (GetInventory().open)
+            if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
                 framesSinceInventoryOpen = 0;
             else
                 framesSinceInventoryOpen++;
@@ -191,7 +191,7 @@ public class Player : HumanEntity
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             RequestOpenInventory();
 
-        if (GetInventory().open)
+        if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
             return;
         
         if (Input.GetKey(KeyCode.A)) 
