@@ -12,7 +12,7 @@ public class Whole_Door : Door
         if(otherBlockLocation.GetMaterial() != otherBlockMaterial)
         {
             otherBlockLocation.SetMaterial(otherBlockMaterial);
-            otherBlockLocation.GetBlock().ScheduleBlockBuildTick();
+            otherBlockLocation.GetBlock().BuildTick();
         }
 
         base.BuildTick();

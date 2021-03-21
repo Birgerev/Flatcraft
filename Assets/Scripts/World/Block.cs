@@ -38,39 +38,6 @@ public class Block : MonoBehaviour
 
     public virtual int glowLevel { get; } = 0;
 
-    public void ScheduleBlockInitialization()
-    {
-        StartCoroutine(scheduleBlockInitialization());
-    }
-
-    private IEnumerator scheduleBlockInitialization()
-    {
-        yield return new WaitForSeconds(0.02f);
-        Initialize();
-    }
-
-    public void ScheduleBlockBuildTick()
-    {
-        StartCoroutine(scheduleBlockBuildTick());
-    }
-
-    private IEnumerator scheduleBlockBuildTick()
-    {
-        yield return new WaitForSeconds(0.03f);
-        BuildTick();
-    }
-
-    public void ScheduleBlockTick()
-    {
-        StartCoroutine(scheduleBlockTick());
-    }
-
-    private IEnumerator scheduleBlockTick()
-    {
-        yield return new WaitForSeconds(0.03f);
-        Tick();
-    }
-
     public virtual void Initialize()
     {
         //Cache position for use in multithreading

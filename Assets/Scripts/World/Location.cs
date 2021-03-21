@@ -149,7 +149,7 @@ public struct Location
 
         foreach (var blockToTick in blocks)
             if (blockToTick != null)
-                blockToTick.ScheduleBlockTick();
+                blockToTick.Tick();
     }
 
     public static Location operator +(Location a, Location b)

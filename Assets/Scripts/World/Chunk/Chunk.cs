@@ -593,7 +593,9 @@ public class Chunk : NetworkBehaviour
 
             block.location = loc;
             if (isLoaded)
-                block.ScheduleBlockInitialization();
+            {
+                block.Initialize();
+            }
 
             result = blockObject.GetComponent<Block>();
         }
