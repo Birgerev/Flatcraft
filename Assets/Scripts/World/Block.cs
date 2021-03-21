@@ -63,6 +63,11 @@ public class Block : MonoBehaviour
         Render();
     }
 
+    public virtual void ServerInitialize()
+    {
+
+    }
+    
     public virtual void RandomTick()
     {
     }

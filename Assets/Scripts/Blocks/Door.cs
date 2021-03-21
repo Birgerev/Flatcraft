@@ -7,10 +7,10 @@ public class Door : Block
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
 
-    public override void Initialize()
+    public override void ServerInitialize()
     {
-        base.Initialize();
-
+        base.ServerInitialize();
+        
         Tick();
     }
 

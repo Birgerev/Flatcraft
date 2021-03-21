@@ -336,6 +336,8 @@ public class Chunk : NetworkBehaviour
                 continue;
 
             block.Initialize();
+            if(isServer)
+                block.ServerInitialize();
         }
     }
 
@@ -595,6 +597,8 @@ public class Chunk : NetworkBehaviour
             if (isLoaded)
             {
                 block.Initialize();
+                if (isServer)
+                    block.ServerInitialize();
             }
 
             result = blockObject.GetComponent<Block>();

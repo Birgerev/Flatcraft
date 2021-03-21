@@ -3,11 +3,9 @@ using UnityEngine;
 
 public class InventoryContainer : Block
 {
-    public override void Initialize()
+    public override void ServerInitialize()
     {
-        base.Initialize();
-
-        Chunk chunk = new ChunkPosition(location).GetChunk();
+        base.ServerInitialize();
         
         if (!GetData().HasTag("inventoryId"))
         {
