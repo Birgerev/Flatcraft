@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 956173273818362503}
   - component: {fileID: 956173273818362500}
   - component: {fileID: 956173273818362501}
-  - component: {fileID: 6563416183196255196}
+  - component: {fileID: 4505687680299836145}
   m_Layer: 5
   m_Name: FurnaceInventoryMenu
   m_TagString: Untagged
@@ -119,7 +119,7 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &6563416183196255196
+--- !u!114 &4505687680299836145
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 956173273818362507}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d861db56fbb3d4b47b984a5a3a9654a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c657a7295656af468161345fab8949b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
@@ -145,6 +145,8 @@ MonoBehaviour:
   pointerSlot: {fileID: 4956055016688310847}
   canvasGroup: {fileID: 1111832603576401819}
   inventoryTitle: {fileID: 9065378210002556160}
+  fuelProgress: {fileID: 6264473195988129749}
+  smeltingProgress: {fileID: 2863542073838343727}
 --- !u!1 &2176535632354488261
 GameObject:
   m_ObjectHideFlags: 0

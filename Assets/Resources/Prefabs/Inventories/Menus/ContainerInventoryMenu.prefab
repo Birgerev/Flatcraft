@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 5222194568914996906}
   - component: {fileID: 5222194568914996905}
   - component: {fileID: 5222194568914996904}
-  - component: {fileID: 2172992260016963569}
+  - component: {fileID: 6953769306250848342}
   m_Layer: 5
   m_Name: ContainerInventoryMenu
   m_TagString: Untagged
@@ -422,7 +422,7 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &2172992260016963569
+--- !u!114 &6953769306250848342
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5222194568914996902}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d861db56fbb3d4b47b984a5a3a9654a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 366d981b32db7ff438969ce952276095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
