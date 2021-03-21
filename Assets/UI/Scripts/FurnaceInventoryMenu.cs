@@ -54,16 +54,18 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
     public virtual void OnClickSmeltingResultSlot()
     {
         FurnaceInventory inv = ((FurnaceInventory) Inventory.Get(inventoryIds[0]));
+        ItemStack pointerItemClone = pointerItem.Clone();
         
         if (inv.GetItem(inv.GetResultSlot()).material == Material.Air) 
             return;
-        if (inv.GetItem(inv.GetResultSlot()).material != pointerItem.material && 
+        if (inv.GetItem(inv.GetResultSlot()).material != pointerItemClone.material && 
             pointerSlot.item.material != Material.Air) 
             return;
 
-        pointerItem.material = inv.GetItem(inv.GetResultSlot()).material;
-        pointerItem.amount += inv.GetItem(inv.GetResultSlot()).amount;
+        pointerItemClone.material = inv.GetItem(inv.GetResultSlot()).material;
+        pointerItemClone.amount += inv.GetItem(inv.GetResultSlot()).amount;
         inv.SetItem(inv.GetResultSlot(), new ItemStack());
+        SetPointerItem(pointerItemClone);
         
         UpdateInventory();
     }

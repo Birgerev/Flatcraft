@@ -46,7 +46,7 @@ public class PlayerInventoryMenu : InventoryMenu
         
         if (inventoryIndex == 0 && slotIndex == inv.GetCraftingResultSlot())
         {
-            OnClickCraftingResultSlot(slotIndex, clickType);
+            OnClickCraftingResultSlot(inventoryIndex, slotIndex, clickType);
             return;
         }
 
@@ -54,20 +54,23 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickCraftingResultSlot(int slotIndex, int clickType)
+    public virtual void OnClickCraftingResultSlot(int inventoryIndex, int slotIndex, int clickType)
     {
         PlayerInventory inv = ((PlayerInventory) Inventory.Get(inventoryIds[0]));
+        ItemStack pointerItemClone = pointerItem.Clone();
         
         if (inv.GetItem((inv.GetCraftingResultSlot())).material == Material.Air)
             return;
         
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItem.material &&
-            pointerItem.material != Material.Air)
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItemClone.material &&
+            pointerItemClone.material != Material.Air)
             return;
+        
 
-        pointerItem.material = inv.GetItem(inv.GetCraftingResultSlot()).material;
-        pointerItem.amount += inv.GetItem(inv.GetCraftingResultSlot()).amount;
+        pointerItemClone.material = inv.GetItem(inv.GetCraftingResultSlot()).material;
+        pointerItemClone.amount += inv.GetItem(inv.GetCraftingResultSlot()).amount;
         inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
+        SetPointerItem(pointerItemClone);
 
         for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
         {

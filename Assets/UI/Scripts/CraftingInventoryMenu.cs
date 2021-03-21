@@ -48,10 +48,9 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             pointerItem.material != Material.Air) 
             return;
 
-        pointerItem.material = inv.GetItem(inv.GetCraftingResultSlot()).material;
-        pointerItem.amount += inv.GetItem(inv.GetCraftingResultSlot()).amount;
-        pointerItem.data = inv.GetItem(inv.GetCraftingResultSlot()).data;
-        pointerItem.durability = inv.GetItem(inv.GetCraftingResultSlot()).durability;
+        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot()).Clone();
+        newPointerItem.amount = pointerItem.amount + inv.GetItem(inv.GetCraftingResultSlot()).amount;
+        SetPointerItem(newPointerItem);
 
         //Clear Crafting slot
         inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
