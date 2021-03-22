@@ -305,12 +305,15 @@ public class Player : HumanEntity
     public Entity GetMouseEntity()
     {
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var hitEntity = Physics2D.Raycast(mousePosition, Vector2.zero);
+        var rays = Physics2D.RaycastAll(mousePosition, Vector2.zero);
 
-        if (hitEntity.collider == null || hitEntity.transform.GetComponent<Entity>() == null)
-            return null;
-
-        return hitEntity.transform.GetComponent<Entity>();
+        foreach (RaycastHit2D ray in rays)
+        {
+            if (ray.collider != null && ray.transform.GetComponent<Entity>() != null)
+                return ray.transform.GetComponent<Entity>();
+        }
+        
+        return null;
     }
 
     [Client]
