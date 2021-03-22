@@ -686,6 +686,11 @@ public class Player : HumanEntity
                 
     }
     
+    public void OnDestroy()
+    {
+        players.Remove(this);
+    }
+    
     [ClientRpc]
     public void PlayEatEffect(Color[] colors)
     {
