@@ -480,8 +480,8 @@ public class Player : HumanEntity
         else return;
 
         loc.SetMaterial(heldMat);
-        //loc.Tick();
-        //loc.GetBlock().ScheduleBlockBuildTick();
+        loc.GetBlock().BuildTick();
+        loc.Tick();
 
         GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
         lastHitTime = NetworkTime.time;
