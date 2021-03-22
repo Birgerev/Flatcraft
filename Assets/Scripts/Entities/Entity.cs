@@ -212,6 +212,7 @@ public class Entity : NetworkBehaviour
 
             if (isInWater)
             {
+                Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
                 WaterSplashEffect();
             }
         }
@@ -612,8 +613,6 @@ public class Entity : NetworkBehaviour
             part.maxAge = 1f + (float) r.NextDouble();
             part.maxBounces = 10;
         }
-
-        Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
     }
 
     [Client]
