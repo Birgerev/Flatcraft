@@ -18,6 +18,10 @@ public class Player : HumanEntity
     private int framesSinceInventoryOpen;
     private float lastBlockInteractionTime;
     private float lastFrameScroll;
+    [SyncVar]
+    private double lastHitTime;
+    [SyncVar]
+    private double lastBlockHitTime;
 
 
     //Entity Data Tags
@@ -480,6 +484,7 @@ public class Player : HumanEntity
         //loc.GetBlock().ScheduleBlockBuildTick();
 
         GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
+        lastHitTime = NetworkTime.time;
     }
 
     [Client]
@@ -525,6 +530,8 @@ public class Player : HumanEntity
         PlayerInstance player = sender.identity.GetComponent<PlayerInstance>();
 
         itemType.Interact(player, loc, mouseButton, firstFrameDown);
+        if(loc.GetMaterial() != Material.Air)
+            lastBlockHitTime = NetworkTime.time;
     }
     
     [Server]
@@ -560,6 +567,7 @@ public class Player : HumanEntity
             DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
+        lastHitTime = NetworkTime.time;
     }
     
     [Server]
@@ -721,7 +729,8 @@ public class Player : HumanEntity
         var anim = GetComponent<Animator>();
 
         anim.SetBool("eating", eatingTime > 0);
-        anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
+        anim.SetBool("punch", 
+            (NetworkTime.time - lastHitTime < 0.05f) || (NetworkTime.time - lastBlockHitTime < 0.3f));
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
         anim.SetBool("grounded", isOnGround);
