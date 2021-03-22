@@ -263,9 +263,10 @@ public class Inventory : NetworkBehaviour
     }
 
     [Server]
-    public void Close()
+    public virtual void Close()
     {
-        inventoryMenu.GetComponent<InventoryMenu>().Close();
+        if(inventoryMenu != null)
+            inventoryMenu.GetComponent<InventoryMenu>().Close();
         open = false;
     }
     

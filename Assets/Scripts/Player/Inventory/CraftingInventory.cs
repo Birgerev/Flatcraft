@@ -18,6 +18,19 @@ public class CraftingInventory : Inventory
         return table;
     }
 
+    [Server]
+    public override void Close()
+    {
+        base.Close();
+        
+        foreach (ItemStack item in GetCraftingTableItems())
+        {
+            item.Drop(holder);
+        }
+        
+        Clear();
+    }
+
     public int GetCraftingResultSlot()
     {
         return 9;

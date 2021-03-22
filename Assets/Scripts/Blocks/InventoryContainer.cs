@@ -34,6 +34,7 @@ public class InventoryContainer : Block
         base.Interact(player);
 
         GetInventory().Open(player);
+        GetInventory().holder = location;
     }
 
     public Inventory GetInventory()

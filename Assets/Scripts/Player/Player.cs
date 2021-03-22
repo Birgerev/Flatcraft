@@ -77,7 +77,8 @@ public class Player : HumanEntity
     public override void Tick()
     {
         base.Tick();
-        
+
+        GetInventory().holder = Location;
         CheckHunger();
         CheckRegenerateHealth();
         CheckStarvationDamage();

@@ -45,7 +45,19 @@ public class PlayerInventory : Inventory
 
         return table;
     }
-    
+
+    [Server]
+    public override void Close()
+    {
+        base.Close();
+
+        for (int slot = GetFirstCraftingTableSlot(); slot < GetFirstCraftingTableSlot() + 4; slot++)
+        {
+            GetItem(slot).Drop(holder);
+            SetItem(slot, new ItemStack());
+        }
+    }
+
     public int GetFirstArmorSlot()
     {
         return 36;
