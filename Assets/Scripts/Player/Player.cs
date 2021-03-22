@@ -16,7 +16,6 @@ public class Player : HumanEntity
     [SyncVar] public GameObject playerInstance;
     public GameObject crosshair;
     private int framesSinceInventoryOpen;
-    private float eatingTime;
     private float lastBlockInteractionTime;
     private float lastFrameScroll;
 
@@ -26,6 +25,8 @@ public class Player : HumanEntity
     public float hunger;
     [EntityDataTag(false)] [SyncVar]
     public int inventoryId;
+    [SyncVar] 
+    public float eatingTime;
     public Location bedLocation = new Location(0, 0);
 
     //Entity Properties
@@ -323,7 +324,7 @@ public class Player : HumanEntity
         
         UpdateCrosshair();
         
-        //EatItemInput();
+        EatItemInput();
 
         if (!isInRange)
             return;
@@ -363,27 +364,62 @@ public class Player : HumanEntity
     [Client]
     private void EatItemInput()
     {
-        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        if (Input.GetMouseButtonUp(1))
         {
-            if(eatingTime > 1.3f)
-            {
-                EatHeldItem();
-                eatingTime = 0;
-                return;
-            }
-
-            if ((eatingTime % 0.2f) - Time.deltaTime <= 0)
-            {
-                System.Random r = new System.Random();
-
-                Sound.Play(Location, "entity/Player/eat"+r.Next(1, 3), SoundType.Entities, 0.85f, 1.15f);
-            }
-
-            eatingTime += Time.deltaTime;
+            RequestResetEatTime();
             return;
         }
         
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && (Time.time % 0.2f) - Time.deltaTime <= 0 &&
+            Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+        {
+            RequestEat();
+        }
+    }
+
+    [Command]
+    public void RequestEat()
+    {
+        if (!Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
+            return;
+        
+        if(eatingTime > 1.3f)
+        {
+            EatHeldItem();
+            eatingTime = 0;
+            return;
+        }
+        
+        Sound.Play(Location, "entity/Player/eat", SoundType.Entities, 0.85f, 1.15f);
+        
+        eatingTime += 0.2f;
+    }
+
+    [Command]
+    public void RequestResetEatTime()
+    {
         eatingTime = 0;
+    }
+    
+    [Server]
+    private void EatHeldItem()
+    {
+        ItemStack selectedItemStack = GetInventory().GetSelectedItem();
+
+        //Add hunger
+        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
+        int foodPoints = foodItemType.food_points;
+        hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
+
+        //Particle Effect
+        PlayEatEffect(selectedItemStack.GetTextureColors());
+
+        //Burp sounds
+        Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
+        
+        //Subtract food item from inventory
+        selectedItemStack.amount -= 1;
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
     }
 
     [Client]
@@ -498,27 +534,6 @@ public class Player : HumanEntity
             if (GetInventory().GetSelectedItem().durability < 0)
                 GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack());
         }
-    }
-
-    [Server]
-    private void EatHeldItem()
-    {
-        ItemStack selectedItemStack = GetInventory().GetSelectedItem();
-
-        //Add hunger
-        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
-        int foodPoints = foodItemType.food_points;
-        hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
-
-        //Particle Effect
-        PlayEatEffect(selectedItemStack.GetTextureColors());
-
-        //Burp sounds
-        Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
-        
-        //Subtract food item from inventory
-        selectedItemStack.amount -= 1;
-        GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
     }
 
     [Command]
@@ -697,7 +712,7 @@ public class Player : HumanEntity
 
         var anim = GetComponent<Animator>();
 
-        anim.SetBool("eating", ((Input.GetMouseButton(1) || Input.GetMouseButtonDown(1)) && Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) && hunger <= maxHunger - 1);
+        anim.SetBool("eating", eatingTime > 0);
         anim.SetBool("punch", Input.GetMouseButton(0) || Input.GetMouseButtonDown(1));
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
