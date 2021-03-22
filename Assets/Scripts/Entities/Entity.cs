@@ -86,6 +86,7 @@ public class Entity : NetworkBehaviour
         
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         isInLiquid = (GetLiquidBlocksForEntity().Length > 0);
+        UpdateCachedPosition();
         
         if(isServer)
             Tick();
@@ -110,8 +111,6 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Tick()
     {
-        UpdateCachedPosition();
-        
         if (ChunkLoadingEntity)
             Chunk.CreateChunksAround(new ChunkPosition(Location), Chunk.RenderDistance);
         
