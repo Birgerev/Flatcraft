@@ -92,6 +92,7 @@ public class InventoryMenu : NetworkBehaviour
     [Server]
     public void Close()
     {
+        pointerItem.Drop(Inventory.Get(inventoryIds[0]).holder);
         NetworkServer.Destroy(gameObject);
     }
 
