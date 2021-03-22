@@ -51,6 +51,7 @@ public class FallingSand : Entity
             else
                 new ItemStack(material, 1).Drop(Location);
 
+            GetComponent<Rigidbody2D>().simulated = false;
             Die();
         }
     }

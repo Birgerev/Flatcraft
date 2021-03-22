@@ -23,6 +23,8 @@ public class Entity : NetworkBehaviour
     [SyncVar] [EntityDataTag(false)] 
     public float fireTime;
     
+    public bool dead;
+    
     [EntityDataTag(false)] 
     public bool facingLeft;
 
@@ -79,6 +81,9 @@ public class Entity : NetworkBehaviour
     
     public virtual void Update()
     {
+        if (dead)
+            return;
+        
         GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         isInLiquid = (GetLiquidBlocksForEntity().Length > 0);
         
@@ -360,10 +365,14 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Die()
     {
+        if (dead)
+            return;
+        
         DropAllDrops();
         DeleteOldSavePath();
-
-        StartCoroutine(ScheduleDestruction(0.5f));
+        dead = true;
+        
+        StartCoroutine(ScheduleDestruction(0.25f));
     }
 
     IEnumerator ScheduleDestruction(float time)

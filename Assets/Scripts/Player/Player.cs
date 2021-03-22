@@ -664,6 +664,9 @@ public class Player : HumanEntity
     [Server]
     public override void Die()
     {
+        if (dead)
+            return;
+        
         base.Die();
         DeathMenuEffect();
         GetInventory().Delete();

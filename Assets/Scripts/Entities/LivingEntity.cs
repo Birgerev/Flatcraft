@@ -374,6 +374,9 @@ public class LivingEntity : Entity
     [Server]
     public override void Die()
     {
+        if (dead)
+            return;
+        
         DeathSound();
         Particle.Spawn_SmallSmoke(transform.position, Color.white);
 
