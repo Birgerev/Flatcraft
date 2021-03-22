@@ -43,21 +43,34 @@ public class Chunk : NetworkBehaviour
 
     public Portal_Frame netherPortal;
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        
+        StartCoroutine(CreateChunk());
+    }
+
     private void Start()
     {
-        WorldManager.instance.chunks.Add(chunkPosition, this);
+        if (isServer)
+        {
+            WorldManager.instance.chunks.Add(chunkPosition, this);
+            StartCoroutine(CreateChunk());
+        }
+    }
 
+    IEnumerator CreateChunk()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        WorldManager.instance.chunks[chunkPosition] = this;
+        
         if(isServer)
             StartCoroutine(SelfDestructionChecker());
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Vector3(chunkPosition.worldX, 0, 0);
 
-        StartCoroutine(CreateChunk());
-    }
-
-    IEnumerator CreateChunk()
-    {
         WorldManager.instance.amountOfChunksLoading++;
         isLoaded = false;
         donePlacingGeneratedBlocks = false;
@@ -124,6 +137,7 @@ public class Chunk : NetworkBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
+            
             if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
                 LightManager.UpdateChunkLight(chunkPosition);
@@ -281,13 +295,17 @@ public class Chunk : NetworkBehaviour
     {
         UnloadEntities();
 
-        WorldManager.instance.chunks.Remove(chunkPosition);
         if (!isLoaded)
             WorldManager.instance.amountOfChunksLoading--;
 
         NetworkServer.Destroy(gameObject);
     }
-    
+
+    public void OnDestroy()
+    {
+        WorldManager.instance.chunks.Remove(chunkPosition);
+    }
+
     [Server]
     public void UnloadEntities()
     {
@@ -352,7 +370,11 @@ public class Chunk : NetworkBehaviour
                 DestroyChunk();
             }
             
-            if (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            {
+                timePassedOutsideRenderDistance = 0f;
+            }
+            else
             {
                 timePassedOutsideRenderDistance += 1f;
                 if (timePassedOutsideRenderDistance > OutsideRenderDistanceUnloadTime)
@@ -360,10 +382,6 @@ public class Chunk : NetworkBehaviour
                     timePassedOutsideRenderDistance = 0f;
                     DestroyChunk();
                 }
-            }
-            else
-            {
-                timePassedOutsideRenderDistance = 0f;
             }
 
             yield return new WaitForSeconds(1f);
@@ -388,7 +406,8 @@ public class Chunk : NetworkBehaviour
         int i = 0;
         while (true)
         {
-            foreach (Block block in blocks.Values)
+            List<Block> blockList = new List<Block>(blocks.Values);
+            foreach (Block block in blockList)
             {
                 if (block.averageRandomTickDuration > 0)
                 {
