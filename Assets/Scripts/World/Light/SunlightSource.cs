@@ -32,7 +32,7 @@ public class SunlightSource : MonoBehaviour
         TimeOfDay lastUpdated = GetTimeOfDay();
         lightSource.UpdateLightLevel(
             GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel, 
-            false);
+            true);
 
         while (true)
         {

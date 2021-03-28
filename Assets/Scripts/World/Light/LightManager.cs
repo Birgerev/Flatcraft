@@ -46,13 +46,17 @@ public class LightManager : MonoBehaviour
         return false;
     }
 
-    public static void UpdateSunlightInColumn(int x)
+    public static void UpdateSunlightInColumn(int x, bool updateLight)
     {
         if (instance.sunlightSources.ContainsKey(x))
         {
             SunlightSource oldSunlightSource = instance.sunlightSources[x];
+            int2 oldSunlightLoc = 
+                new int2((int)oldSunlightSource.transform.position.x, (int)oldSunlightSource.transform.position.y);
             instance.sunlightSources.Remove(x);
             Destroy(oldSunlightSource.gameObject);
+            if(updateLight)
+                UpdateLightInArea(oldSunlightLoc - new int2(15, 15), oldSunlightLoc + new int2(15, 15));
         }
 
         //Dont create sunlight sources if player is in the nether
@@ -60,6 +64,7 @@ public class LightManager : MonoBehaviour
             return;
         
         Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localEntity.Location.dimension, false);
+        int2 newSunlightLoc = new int2(topmostBlock.location.x, topmostBlock.location.y);
         
         //Return in case no block was found in column, may be the case in ex void worlds
         if (topmostBlock == null)
@@ -68,6 +73,8 @@ public class LightManager : MonoBehaviour
         GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
 
         instance.sunlightSources.Add(x, newSunlightSource.GetComponent<SunlightSource>());
+        if(updateLight)
+            UpdateLightInArea(newSunlightLoc - new int2(15, 15), newSunlightLoc + new int2(15, 15));
     }
 
     public static void DestroySource(GameObject source)
@@ -156,7 +163,6 @@ public class LightManager : MonoBehaviour
 
     public static List<LightObject> GetLightObjectsForArea(int2 boundingBoxMin, int2 boundingBoxMax)
     {
-        
         Collider2D[] lightObjectColliders = Physics2D.OverlapAreaAll(
             new Vector2(boundingBoxMin.x, boundingBoxMin.y),
             new Vector2(boundingBoxMax.x, boundingBoxMax.y));

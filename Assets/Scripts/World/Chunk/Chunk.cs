@@ -38,6 +38,7 @@ public class Chunk : NetworkBehaviour
     [SyncVar]
     public bool isGenerated;
     public bool donePlacingGeneratedBlocks;
+    public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
     
 
@@ -74,6 +75,7 @@ public class Chunk : NetworkBehaviour
         WorldManager.instance.amountOfChunksLoading++;
         isLoaded = false;
         donePlacingGeneratedBlocks = false;
+        donePlacingBackgroundBlocks = false;
         if(isServer)
             isGenerated = false;
         
@@ -127,8 +129,8 @@ public class Chunk : NetworkBehaviour
         
         //Initialize all blocks after all blocks have been created
         InitializeAllBlocks();
-        StartCoroutine(GenerateBackgroundBlocks());
-        GenerateSunlight();
+        GenerateBackgroundBlocks();
+        GenerateSunlightSources();
         
         isLoaded = true;
         WorldManager.instance.amountOfChunksLoading--;
@@ -146,6 +148,12 @@ public class Chunk : NetworkBehaviour
         }
     }
 
+    public void GenerateSunlightSources()
+    {
+        for (int x = 0; x < Width; x++)
+            LightManager.UpdateSunlightInColumn(x + chunkPosition.worldX, false);
+    }
+    
     [Server]
     IEnumerator LoadBlocks()
     {
@@ -463,16 +471,17 @@ public class Chunk : NetworkBehaviour
         return blockList;
     }
     
-    IEnumerator GenerateBackgroundBlocks()
+    private void GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
         {
             UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
-            yield return new WaitForSeconds(0.1f);
         }
+
+        donePlacingBackgroundBlocks = true;
     }
 
-    public void UpdateBackgroundBlockColumn(int x, bool updateLight)
+    private void UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         Material lastViableMaterial = Material.Air;
         for (int y = Height - 1; y >= 0; y--)
@@ -514,15 +523,6 @@ public class Chunk : NetworkBehaviour
                     StartCoroutine(scheduleBlockLightUpdate(loc));
             }
         }
-    }
-
-    private void GenerateSunlight()
-    {
-        var minXPos = chunkPosition.worldX;
-        var maxXPos = chunkPosition.worldX + Width - 1;
-
-        for (var x = minXPos; x <= maxXPos; x++) 
-            LightManager.UpdateSunlightInColumn(x);
     }
 
     [Server]
@@ -631,16 +631,27 @@ public class Chunk : NetworkBehaviour
         if (isLoaded)
         {
             if (doesBlockChangeImpactSunlight)
-                LightManager.UpdateSunlightInColumn(loc.x);
-
-            UpdateBackgroundBlockColumn(loc.x, true);
+                StartCoroutine(UpdateSunlightInColumn(loc.x));
+            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(loc.x, true));
             StartCoroutine(scheduleBlockLightUpdate(loc));
         }
     }
 
+    IEnumerator UpdateSunlightInColumn(int x)
+    {
+        yield return new WaitForSeconds(0f);
+        LightManager.UpdateSunlightInColumn(x, true);
+    }
+
+    IEnumerator ScheduleUpdateBackgroundBlockColumn(int x, bool updateLight)
+    {
+        yield return new WaitForSeconds(0f);
+        UpdateBackgroundBlockColumn(x, updateLight);
+    }
+
     IEnumerator scheduleBlockLightUpdate(Location loc)
     {
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0f);
         LightManager.UpdateBlockLight(loc);
     }
 
