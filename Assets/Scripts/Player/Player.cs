@@ -22,6 +22,7 @@ public class Player : HumanEntity
     private double lastHitTime;
     [SyncVar]
     private double lastBlockHitTime;
+    private Material actionBarLastSelectedMaterial;
 
 
     //Entity Data Tags
@@ -92,6 +93,7 @@ public class Player : HumanEntity
         if (hasAuthority)
         {
             PerformInput();
+            CheckActionBarUpdate();
             
             if(!isServer)     //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
@@ -177,6 +179,17 @@ public class Player : HumanEntity
         }
     }
 
+    [Client]
+    private void CheckActionBarUpdate()
+    {
+        Material selectedMaterial = GetInventory().GetSelectedItem().material;
+        
+        if(selectedMaterial != actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
+            ActionBar.message = selectedMaterial.ToString();
+
+        actionBarLastSelectedMaterial = selectedMaterial;
+    }
+    
     [Server]
     private void CheckStarvationDamage()
     {
