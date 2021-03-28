@@ -194,11 +194,17 @@ public class Player : HumanEntity
     [Client]
     private void PerformInput()
     {
+        if (ChatMenu.instance.open)
+            return;
+            
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             RequestOpenInventory();
 
         if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
             return;
+        
+        if (Input.GetKeyDown(KeyCode.T))
+            ChatMenu.instance.open = true;
         
         if (Input.GetKey(KeyCode.A)) 
             Walk(-1);
