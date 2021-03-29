@@ -8,12 +8,12 @@ public class ActionBar : MonoBehaviour
     const float BeginFadeAge = 2f;
     const float FadeTime = 0.5f;
     
-    public static string message;
+    public static string message = "";
     public Text text;
     public CanvasGroup canvasGroup;
 
     private float age;
-    private string lastFrameMessage;
+    private string lastFrameMessage = "";
     
     // Update is called once per frame
     void Update()
