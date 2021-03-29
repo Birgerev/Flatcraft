@@ -18,8 +18,8 @@ public class PlayerInstance : NetworkBehaviour
         
         localPlayerInstance = this;
         ChangeName(GameNetworkManager.PlayerName);
+        RequestJoinMessage();
     }
-
     public void Update()
     {
         if (!isLocalPlayer || ClientScene.readyConnection == null)
@@ -35,6 +35,20 @@ public class PlayerInstance : NetworkBehaviour
     public void ChangeName(string name)
     {
         playerName = name;
+    }
+
+    public override void OnStopServer()
+    {
+        ChatManager.instance.ChatAddMessage(playerName + " left the world");
+            
+        base.OnStopServer();
+    }
+
+    [Command]
+    public void RequestJoinMessage()
+    {
+        if(ChatManager.instance != null)
+            ChatManager.instance.ChatAddMessage(playerName + " joined the world");
     }
 
     [Command]
