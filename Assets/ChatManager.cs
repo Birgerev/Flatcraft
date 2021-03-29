@@ -30,7 +30,25 @@ public class ChatManager : NetworkBehaviour
     [Server]
     public void ExcecuteCommand(string[] args, PlayerInstance player)
     {
-        ChatAddMessage("cool command " + args[0]);
+        if (args[0].Equals("/give"))
+        {
+            try
+            {
+                ItemStack item = new ItemStack((Material) Enum.Parse(typeof(Material), args[1]), int.Parse(args[2]));
+
+                player.playerEntity.GetComponent<Player>().GetInventory().AddItem(item);
+                ChatAddMessage("Gave " + player.playerName + " " + item.amount + " " + item.material + "'s");
+            }
+            catch (Exception e)
+            {
+                ChatAddMessage("/give command failed for item: " + args[1] + ", amount: " + args[2]);
+                Debug.LogError("chat error: " + e.StackTrace);
+            }
+        }
+        if (args[0].Equals("/stork"))
+        {
+            ChatAddMessage("meeeeeee");
+        }
     }
 
     [ClientRpc]
