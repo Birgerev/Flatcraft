@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class GameNetworkManager : Mirror.NetworkManager
 {
-    public List<string> prefabDirectories = new List<string>();
+    public static bool isHost;
+    public static string serverAddress = "player";
     public static string PlayerName = "player";
+    
+    public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     
     public override void Start()
@@ -35,16 +38,12 @@ public class GameNetworkManager : Mirror.NetworkManager
         base.OnStartClient();
     }
 
-    public override void OnServerSceneChanged(string sceneName)
+    public override void OnStartServer()
     {
-        base.OnServerSceneChanged(sceneName);
+        base.OnStartServer();
         
-        if (sceneName.Equals(onlineScene))
-        {
-            GameObject worldManager = Instantiate(WorldManagerPrefab);
-            NetworkServer.Spawn(worldManager);
-            ClientScene.Ready(NetworkClient.connection);
-        }
+        GameObject worldManager = Instantiate(WorldManagerPrefab);
+        NetworkServer.Spawn(worldManager);
     }
     
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
@@ -53,25 +52,5 @@ public class GameNetworkManager : Mirror.NetworkManager
         {
             ClientScene.Ready(NetworkClient.connection);
         }
-    }
-
-    public void ConnectButton()
-    {
-        StartClient();
-    }
-
-    public void HostButton()
-    {
-        StartHost();
-    }
-
-    public void ChangeName(string name)
-    {
-        PlayerName = name;
-    }
-
-    public void ChangeAdress(string ip)
-    {
-        networkAddress = ip;
     }
 }

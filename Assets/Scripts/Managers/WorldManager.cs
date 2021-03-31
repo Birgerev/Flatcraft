@@ -23,7 +23,7 @@ public class WorldManager : NetworkBehaviour
     public GameObject playerPrefab;
 
     public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
-    public float loadingProgress;
+    public float loadingProgress = 1;
 
     public string loadingState = "";
 
@@ -63,7 +63,6 @@ public class WorldManager : NetworkBehaviour
 
     private IEnumerator LoadWorld()
     {
-        SeedGenerator.Reset();
         Entity.entities.Clear();
         Time.timeScale = 1;
         chunks.Clear();
