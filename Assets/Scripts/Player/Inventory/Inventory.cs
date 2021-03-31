@@ -46,9 +46,6 @@ public class Inventory : NetworkBehaviour
         {
             inventory.items.Add(new ItemStack());
         }
-
-        inventory.SetItem(0, new ItemStack(Material.Oak_Log, 5));
-        inventory.SetItem(1, new ItemStack(Material.Cobblestone, 5));
         
         loadedInventories[id] = inventory;
         
