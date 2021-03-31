@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameNetworkManager : Mirror.NetworkManager
 {
     public static bool isHost;
     public static string serverAddress = "player";
-    public static string PlayerName = "player";
+    public static string playerName = "player";
     
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
@@ -49,6 +50,14 @@ public class GameNetworkManager : Mirror.NetworkManager
         }
     }
 
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        
+        SceneManager.LoadScene("MainMenu");
+        Destroy(gameObject);
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -63,5 +72,13 @@ public class GameNetworkManager : Mirror.NetworkManager
         {
             ClientScene.Ready(NetworkClient.connection);
         }
+    }
+
+    public static void Disconnect()
+    {
+        if(isHost) 
+            singleton.StopHost();
+        else
+            singleton.StopClient();
     }
 }

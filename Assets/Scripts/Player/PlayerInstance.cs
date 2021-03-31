@@ -17,7 +17,7 @@ public class PlayerInstance : NetworkBehaviour
         base.OnStartLocalPlayer();
         
         localPlayerInstance = this;
-        ChangeName(GameNetworkManager.PlayerName);
+        ChangeName(GameNetworkManager.playerName);
         RequestJoinMessage();
     }
     public void Update()

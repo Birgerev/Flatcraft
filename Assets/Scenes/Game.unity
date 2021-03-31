@@ -3865,7 +3865,7 @@ PrefabInstance:
     - target: {fileID: 9203636280091448051, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Name
-      value: Button (2)
+      value: Options
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
@@ -6529,7 +6529,7 @@ PrefabInstance:
     - target: {fileID: 9203636280091448051, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Name
-      value: Button (1)
+      value: Quit
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
@@ -8586,7 +8586,7 @@ PrefabInstance:
     - target: {fileID: 9203636280091448051, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Name
-      value: Button
+      value: Back to game
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}

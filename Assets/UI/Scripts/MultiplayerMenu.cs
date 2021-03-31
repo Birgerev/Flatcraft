@@ -17,7 +17,7 @@ public class MultiplayerMenu : MonoBehaviour
     private void Update()
     {
         GameNetworkManager.serverAddress = addressField.text;
-        GameNetworkManager.PlayerName = nameField.text;
+        GameNetworkManager.playerName = nameField.text;
     }
     
     public void Cancel()
