@@ -36,6 +36,19 @@ public class GameNetworkManager : Mirror.NetworkManager
         }
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        
+        if (!isHost)
+        {
+            World world = new World("multiplayer", 1);
+            world.versionId = VersionController.CurrentVersionId;
+
+            WorldManager.world = world;
+        }
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();

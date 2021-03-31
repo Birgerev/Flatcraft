@@ -23,9 +23,7 @@ public class WorldManager : NetworkBehaviour
     public GameObject playerPrefab;
 
     public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
-    public float loadingProgress = 1;
-
-    public string loadingState = "";
+    public float loadingProgress = 1; //TODO Remove
 
     public static World world;
     [SyncVar]
@@ -57,7 +55,8 @@ public class WorldManager : NetworkBehaviour
         while (true)
         {
             yield return new WaitForSeconds(SaveManager.AutosaveDuration);
-            world.SaveData();
+            if(isServer)
+                world.SaveData();
         }
     }
 
