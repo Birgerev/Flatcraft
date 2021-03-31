@@ -24,18 +24,16 @@ public class GameNetworkManager : Mirror.NetworkManager
                 ClientScene.RegisterPrefab(prefab);
             }
         }
-    }
-    public override void OnStartClient()
-    {
-        transform.GetChild(0).gameObject.SetActive(false);
-        
-        World world = new World("multiplayer", 1);
-        world.versionId = VersionController.CurrentVersionId;
-        world.SaveData();
-        
-        WorldManager.world = world;
-        
-        base.OnStartClient();
+
+        if (isHost)
+        {
+            StartHost();
+        }
+        else
+        {
+            networkAddress = serverAddress;
+            StartClient();
+        }
     }
 
     public override void OnStartServer()
