@@ -14,7 +14,7 @@ using Random = System.Random;
 public class Chunk : NetworkBehaviour
 {
     public const int Width = 16, Height = 256;
-    public const int DimensionSeparationSpace = 256;
+    public const int DimensionSeparationSpace = 512;
     public const int RenderDistance = 6;
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
