@@ -73,10 +73,10 @@ public class World
     {
         if (!Directory.Exists(getPath()))
             Directory.CreateDirectory(getPath());
-        if (!Directory.Exists(getPath() + "\\region"))
-            Directory.CreateDirectory(getPath() + "\\region");
-        if (!Directory.Exists(getPath() + "\\region\\Overworld"))
-            Directory.CreateDirectory(getPath() + "\\region\\Overworld");
+        if (!Directory.Exists(getPath() + "\\chunks"))
+            Directory.CreateDirectory(getPath() + "\\chunks");
+        if (!Directory.Exists(getPath() + "\\chunks\\Overworld"))
+            Directory.CreateDirectory(getPath() + "\\chunks\\Overworld");
         if (!Directory.Exists(getPath() + "\\players"))
             Directory.CreateDirectory(getPath() + "\\players");
 

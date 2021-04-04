@@ -380,7 +380,7 @@ public class Entity : MonoBehaviour
 
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "/region/" + Location.dimension + "/" +
+        return WorldManager.world.getPath() + "/chunks/" + Location.dimension + "/" +
                new ChunkPosition(Location).chunkX + "/entities/" + id + "." + GetType().Name;
     }
 

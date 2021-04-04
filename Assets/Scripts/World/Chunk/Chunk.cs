@@ -229,7 +229,7 @@ public class Chunk : MonoBehaviour
         if (chunkPosition.HasBeenGenerated())
         {
             //Load blocks
-            var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+            var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                        chunkPosition.chunkX + "\\blocks";
             if (File.Exists(path))
             {
@@ -294,7 +294,7 @@ public class Chunk : MonoBehaviour
             GeneratingTickAllBlocks();
 
             //Mark chunk as Generated
-            var chunkDataPath = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+            var chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                                 chunkPosition.chunkX + "\\chunk";
             var chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
             chunkDataLines.Add("hasBeenGenerated=true");
@@ -387,7 +387,7 @@ public class Chunk : MonoBehaviour
 
     private void LoadAllEntities()
     {
-        var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
+        var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
                    "\\entities";
 
         if (!Directory.Exists(path))
