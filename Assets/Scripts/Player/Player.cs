@@ -340,8 +340,8 @@ public class Player : HumanEntity
         return null;
     }
     
+    //TODO portals broken from nether to overworld
     //TODO skies
-    //TODO debug menu broken
 
     [Client]
     private void MouseInput()
