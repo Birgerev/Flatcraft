@@ -339,8 +339,6 @@ public class Player : HumanEntity
         
         return null;
     }
-    
-    //TODO portals broken from nether to overworld
 
     [Client]
     private void MouseInput()
