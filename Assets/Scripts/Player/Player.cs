@@ -341,7 +341,6 @@ public class Player : HumanEntity
     }
     
     //TODO portals broken from nether to overworld
-    //TODO skies
 
     [Client]
     private void MouseInput()
