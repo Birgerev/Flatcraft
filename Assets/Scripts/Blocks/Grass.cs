@@ -42,8 +42,8 @@ public class Grass : Block
     {
         var r = new Random();
 
-        var targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1));
-        var blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
+        Location targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1 + 1));
+        Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
         if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.solid))
             targetLoc.SetMaterial(Material.Grass);
     }
