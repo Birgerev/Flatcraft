@@ -74,6 +74,7 @@ public class Sound : MonoBehaviour
         obj.transform.position = loc.GetPosition();
         source.pitch = pitch;
         source.maxDistance = distance;
+        source.dopplerLevel = 0;
         DontDestroyOnLoad(obj);
 
 
