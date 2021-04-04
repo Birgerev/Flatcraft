@@ -66,7 +66,12 @@ public class Block : MonoBehaviour
 
     public virtual void ServerInitialize()
     {
-
+        if (averageRandomTickDuration != 0)
+        {
+            Chunk chunk = new ChunkPosition(location).GetChunk();
+            
+            chunk.randomTickBlocks.Add(this);
+        }
     }
     
     public virtual void RandomTick()

@@ -27,6 +27,7 @@ public class Chunk : NetworkBehaviour
     public GameObject backgroundBlockPrefab;
 
     public SyncList<BlockState> blockStates = new SyncList<BlockState>();
+    public List<Block> randomTickBlocks = new List<Block>();
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
@@ -410,24 +411,21 @@ public class Chunk : NetworkBehaviour
     
     private IEnumerator BlockRandomTicking()
     {
+        float updateSpeed = 1f;
         int i = 0;
         while (true)
         {
-            //TODO
-            /*List<Block> blockList = new List<Block>(blocks.Values);
+            List<Block> blockList = new List<Block>(randomTickBlocks);
             foreach (Block block in blockList)
             {
-                if (block.averageRandomTickDuration > 0)
-                {
-                    var r = new Random(block.location.GetHashCode() + i);
-                    
-                    if(r.NextDouble() > 1 / block.averageRandomTickDuration) 
-                        block.RandomTick();
-                }
+                var r = new Random(block.location.GetHashCode() + i);
+                
+                if(r.NextDouble() < updateSpeed / block.averageRandomTickDuration) 
+                    block.RandomTick();
             }
 
-            i++;*/
-            yield return new WaitForSeconds(1);
+            i++;
+            yield return new WaitForSeconds(updateSpeed);
         }
     }
     
