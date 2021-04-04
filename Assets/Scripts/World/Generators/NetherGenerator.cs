@@ -13,13 +13,20 @@ public class NetherGenerator : WorldGenerator
         Biome biome = Biome.GetBiomeAt(cPos);
         
         Material mat = Material.Air;
+        
+        //TODO
+        /*
         float noiseValue = biome.GetLandscapeNoiseAt(loc);
+        
         
         if (noiseValue > 0.1f)
             mat = Material.Netherrack;
 
         if (mat == Material.Air && loc.y <= LavaLevel) 
-            mat = Material.Lava;
+            mat = Material.Lava;*/
+
+        if (loc.y <= 40)
+            mat = Material.Netherrack;
 
 
         //-Lower Bedrock Generation-//

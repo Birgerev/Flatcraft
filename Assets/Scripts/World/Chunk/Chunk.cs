@@ -14,6 +14,7 @@ using Random = System.Random;
 public class Chunk : NetworkBehaviour
 {
     public const int Width = 16, Height = 256;
+    public const int DimensionSeparationSpace = 256;
     public const int RenderDistance = 6;
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
@@ -21,7 +22,6 @@ public class Chunk : NetworkBehaviour
 
     private static readonly float mobSpawningChance = 0.005f;
     private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
-    public int age;
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
@@ -70,7 +70,7 @@ public class Chunk : NetworkBehaviour
             StartCoroutine(SelfDestructionChecker());
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
-        transform.position = new Vector3(chunkPosition.worldX, 0, 0);
+        transform.position = new Location(chunkPosition.worldX , 0, chunkPosition.dimension).GetPosition();
 
         WorldManager.instance.amountOfChunksLoading++;
         isLoaded = false;
@@ -354,7 +354,7 @@ public class Chunk : NetworkBehaviour
     private void InitializeAllBlocks()
     {
         //Initialize Blocks
-        var blockList = transform.GetComponentsInChildren<Block>();
+        var blockList = blocks.Values;
 
         foreach (var block in blockList)
         {
@@ -404,7 +404,6 @@ public class Chunk : NetworkBehaviour
             //Update neighbor chunks
             TrySpawnMobs();
 
-            age++;
             yield return new WaitForSeconds(1f / TickRate);
         }
     }
@@ -414,7 +413,8 @@ public class Chunk : NetworkBehaviour
         int i = 0;
         while (true)
         {
-            List<Block> blockList = new List<Block>(blocks.Values);
+            //TODO
+            /*List<Block> blockList = new List<Block>(blocks.Values);
             foreach (Block block in blockList)
             {
                 if (block.averageRandomTickDuration > 0)
@@ -426,7 +426,7 @@ public class Chunk : NetworkBehaviour
                 }
             }
 
-            i++;
+            i++;*/
             yield return new WaitForSeconds(1);
         }
     }
@@ -561,9 +561,9 @@ public class Chunk : NetworkBehaviour
         LocalBlockChange(loc, state);
     }
     
-    public void LocalBlockChange(Location loc, BlockState state)
+    public void LocalBlockChange(Location location, BlockState state)
     {
-        int2 pos = new int2(loc.GetPosition());
+        int2 coordinates = new int2(location.x, location.y);
         Material mat = state.material;
         BlockData data = state.data;
         
@@ -571,25 +571,25 @@ public class Chunk : NetworkBehaviour
         if (!type.IsSubclassOf(typeof(Block)))
             return;
 
-        if (!IsBlockLocal(loc))
+        if (!IsBlockLocal(location))
         {
-            Debug.LogWarning("Tried setting local block outside of chunk (" + loc.x + ", " + loc.y +
+            Debug.LogWarning("Tried setting local block outside of chunk (" + location.x + ", " + location.y +
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension +
                              "]");
             return;
         }
 
         //Before any blocks are removed or added, check wether current block is a sunlight source
-        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(loc.GetPosition()));
+        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(location.GetPosition()));
 
         //remove old block
-        if (GetLocalBlock(loc) != null)
+        if (GetLocalBlock(location) != null)
         {
-            if (isLoaded && GetLocalBlock(loc).GetComponentInChildren<LightSource>() != null)
-                LightManager.DestroySource(GetLocalBlock(loc).GetComponentInChildren<LightSource>().gameObject);
+            if (isLoaded && GetLocalBlock(location).GetComponentInChildren<LightSource>() != null)
+                LightManager.DestroySource(GetLocalBlock(location).GetComponentInChildren<LightSource>().gameObject);
 
-            Destroy(GetLocalBlock(loc).gameObject);
-            blocks.Remove(pos);
+            Destroy(GetLocalBlock(location).gameObject);
+            blocks.Remove(coordinates);
         }
 
         Block result = null;
@@ -604,15 +604,15 @@ public class Chunk : NetworkBehaviour
             //Attach it to the object
             var block = (Block) blockObject.AddComponent(type);
 
-            blockObject.transform.position = loc.GetPosition();
+            blockObject.transform.position = location.GetPosition();
 
             //Add the block to block list
-            if (blocks.ContainsKey(pos))
-                blocks[pos] = block;
+            if (blocks.ContainsKey(coordinates))
+                blocks[coordinates] = block;
             else
-                blocks.Add(pos, block);
+                blocks.Add(coordinates, block);
 
-            block.location = loc;
+            block.location = location;
             if (isLoaded)
             {
                 block.Initialize();
@@ -631,9 +631,9 @@ public class Chunk : NetworkBehaviour
         if (isLoaded)
         {
             if (doesBlockChangeImpactSunlight)
-                StartCoroutine(UpdateSunlightInColumn(loc.x));
-            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(loc.x, true));
-            StartCoroutine(scheduleBlockLightUpdate(loc));
+                StartCoroutine(UpdateSunlightInColumn(location.x));
+            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(location.x, true));
+            StartCoroutine(scheduleBlockLightUpdate(location));
         }
     }
 

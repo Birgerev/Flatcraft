@@ -41,7 +41,7 @@ public class Block : MonoBehaviour
     public virtual void Initialize()
     {
         //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position, location.dimension);
+        location = Location.LocationByPosition(transform.position);
         
         blockHealth = breakTime;
 
@@ -53,8 +53,9 @@ public class Block : MonoBehaviour
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
             lightSource.transform.localPosition = Vector3.zero;
 
-            if (new ChunkPosition(location).IsChunkLoaded())
-                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
+            //TODO
+            //if (new ChunkPosition(location).IsChunkLoaded())
+                //lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
         }
 
         if (change_texture_time != 0)

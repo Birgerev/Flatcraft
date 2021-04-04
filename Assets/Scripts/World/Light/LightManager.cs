@@ -141,7 +141,6 @@ public class LightManager : MonoBehaviour
         if (LightManager.instance.doLight)
             foreach (LightSource source in possibleLightSources)
             {
-                
                 Vector3 sourceLoc = source.transform.position;
                 float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
                 if(objectDistance > maxLightLevel)
@@ -154,6 +153,9 @@ public class LightManager : MonoBehaviour
                 {
                     brightestRecordedLightLevel = objectBrightness;
                 }
+
+                if (brightestRecordedLightLevel == maxLightLevel)
+                    break;
             }
         else
             brightestRecordedLightLevel = 15;

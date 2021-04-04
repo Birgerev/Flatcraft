@@ -14,8 +14,6 @@ public class Entity : NetworkBehaviour
 
     public static int MaxLivingAmount = 4;
     private Vector2 _cachedposition;
-    [SyncVar]
-    private Dimension _dimension;
 
     //Entity data tags
     [EntityDataTag(false)] 
@@ -59,11 +57,10 @@ public class Entity : NetworkBehaviour
 
     public Location Location
     {
-        get => Location.LocationByPosition(_cachedposition, _dimension);
+        get => Location.LocationByPosition(_cachedposition);
         set
         {
-            transform.position = new Vector3(value.x, value.y);
-            _dimension = value.dimension;
+            transform.position = value.GetPosition();
         }
     }
 

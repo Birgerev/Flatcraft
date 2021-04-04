@@ -308,8 +308,8 @@ public class Player : HumanEntity
     [Client]
     public Location GetBlockedMouseLocation()
     {
-        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var blockedMouseLocation = Location.LocationByPosition(mousePosition, Location.dimension);
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Location blockedMouseLocation = Location.LocationByPosition(mousePosition);
         
         return blockedMouseLocation;
     }
@@ -339,6 +339,9 @@ public class Player : HumanEntity
         
         return null;
     }
+    
+    //TODO skies
+    //TODO debug menu broken
 
     [Client]
     private void MouseInput()
@@ -498,7 +501,7 @@ public class Player : HumanEntity
             heldMat = ((PlaceableItem)Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
         }
         else return;
-
+        
         loc.SetMaterial(heldMat);
         loc.GetBlock().BuildTick();
         loc.Tick();

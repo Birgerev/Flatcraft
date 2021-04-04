@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using Unity.Mathematics;
 using UnityEngine;
 
 [Serializable]
@@ -27,14 +24,25 @@ public struct Location
         this.dimension = dimension;
     }
 
-    public static Location LocationByPosition(Vector3 pos, Dimension dimension)
+    public static Location LocationByPosition(Vector3 pos)
     {
-        return new Location(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), dimension);
+        Dimension dimension = Dimension.Overworld;
+        
+        foreach (Dimension dim in Enum.GetValues(typeof(Dimension)))
+        {
+            if (pos.y >= (int) dim * Chunk.DimensionSeparationSpace)
+                dimension = dim;
+
+        }
+        
+        return new Location(Mathf.RoundToInt(pos.x), 
+            Mathf.RoundToInt(pos.y) - ((int) dimension * Chunk.DimensionSeparationSpace), 
+            dimension);
     }
 
     public Vector2 GetPosition()
     {
-        return new Vector2(x, y);
+        return new Vector2(x, y + ((int)dimension * Chunk.DimensionSeparationSpace));
     }
 
     public Material GetMaterial()

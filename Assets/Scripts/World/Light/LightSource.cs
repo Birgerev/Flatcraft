@@ -13,16 +13,13 @@ public class LightSource : MonoBehaviour
         LightManager.UpdateLightInArea(location - new int2(15, 15), location + new int2(15, 15));
     }
     
-    public void UpdateLightLevel(int value)
-    {
-        UpdateLightLevel(value, true);
-    }
-    
     public void UpdateLightLevel(int value, bool updateLight)
     {
         lightLevel = value;
 
-        if (updateLight)
+        bool chunkLoaded = new ChunkPosition(Location.LocationByPosition(transform.position)).IsChunkLoaded();
+        
+        if (updateLight && chunkLoaded)
             UpdateLight();
     }
 }
