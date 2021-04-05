@@ -152,7 +152,8 @@ public class Chunk : NetworkBehaviour
     public void GenerateSunlightSources()
     {
         for (int x = 0; x < Width; x++)
-            LightManager.UpdateSunlightInColumn(x + chunkPosition.worldX, false);
+            LightManager.UpdateSunlightInColumn(new BlockColumn(chunkPosition.worldX + x, chunkPosition.dimension),
+                false);
     }
     
     [Server]
@@ -578,13 +579,13 @@ public class Chunk : NetworkBehaviour
         }
 
         //Before any blocks are removed or added, check wether current block is a sunlight source
-        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(location.GetPosition()));
+        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(location);
 
         //remove old block
         if (GetLocalBlock(location) != null)
         {
             if (isLoaded && GetLocalBlock(location).GetComponentInChildren<LightSource>() != null)
-                LightManager.DestroySource(GetLocalBlock(location).GetComponentInChildren<LightSource>().gameObject);
+                LightManager.DestroySource(GetLocalBlock(location).GetComponentInChildren<LightSource>());
 
             Destroy(GetLocalBlock(location).gameObject);
             blocks.Remove(coordinates);
@@ -635,10 +636,11 @@ public class Chunk : NetworkBehaviour
         }
     }
 
+    //TODO try removing scheduling
     IEnumerator UpdateSunlightInColumn(int x)
     {
         yield return new WaitForSeconds(0f);
-        LightManager.UpdateSunlightInColumn(x, true);
+        LightManager.UpdateSunlightInColumn(new BlockColumn(x, chunkPosition.dimension), true);
     }
 
     IEnumerator ScheduleUpdateBackgroundBlockColumn(int x, bool updateLight)

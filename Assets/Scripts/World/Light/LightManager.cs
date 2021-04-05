@@ -17,7 +17,7 @@ public class LightManager : MonoBehaviour
     private bool doLightLastFrame = true;
     public GameObject lightSourcePrefab;
     public GameObject sunlightSourcePrefab;
-    public Dictionary<int, SunlightSource> sunlightSources = new Dictionary<int, SunlightSource>();
+    public Dictionary<BlockColumn, SunlightSource> sunlightSources = new Dictionary<BlockColumn, SunlightSource>();
     
     void Start()
     {
@@ -37,34 +37,37 @@ public class LightManager : MonoBehaviour
         }
     }
 
-    public static bool DoesBlockInfluenceSunlight(int2 location)
+    public static bool DoesBlockInfluenceSunlight(Location loc)
     {
-        if (instance.sunlightSources.ContainsKey(location.x))
-            if (location.y >= instance.sunlightSources[location.x].transform.position.y)
+        BlockColumn column = new BlockColumn(loc.x, loc.dimension);
+        
+        if (instance.sunlightSources.ContainsKey(column))
+            if (loc.y >= instance.sunlightSources[column].transform.position.y)
                 return true;
 
         return false;
     }
 
-    public static void UpdateSunlightInColumn(int x, bool updateLight)
+    public static void UpdateSunlightInColumn(BlockColumn column, bool updateLight)
     {
-        if (instance.sunlightSources.ContainsKey(x))
+        if (instance.sunlightSources.ContainsKey(column))
         {
-            SunlightSource oldSunlightSource = instance.sunlightSources[x];
-            int2 oldSunlightLoc = 
-                new int2((int)oldSunlightSource.transform.position.x, (int)oldSunlightSource.transform.position.y);
-            instance.sunlightSources.Remove(x);
+            SunlightSource oldSunlightSource = instance.sunlightSources[column];
+            Location oldSunlightLoc = oldSunlightSource.GetLocation();
+            instance.sunlightSources.Remove(column);
             Destroy(oldSunlightSource.gameObject);
-            if(updateLight)
-                UpdateLightInArea(oldSunlightLoc - new int2(15, 15), oldSunlightLoc + new int2(15, 15));
+
+            //TODO why is 15 used, and not maxLightLevel const
+            if (updateLight)
+                UpdateLightInArea(oldSunlightLoc + new Location(-15, -15), oldSunlightLoc + new Location(15, 15));
         }
 
         //Dont create sunlight sources if player is in the nether
-        if (Player.localEntity.Location.dimension == Dimension.Nether)
+        if (column.dimension == Dimension.Nether)
             return;
         
-        Block topmostBlock = Chunk.GetTopmostBlock(x, Player.localEntity.Location.dimension, false);
-        int2 newSunlightLoc = new int2(topmostBlock.location.x, topmostBlock.location.y);
+        Block topmostBlock = Chunk.GetTopmostBlock(column.x, column.dimension, false);
+        Location newSunlightLoc = topmostBlock.location;
         
         //Return in case no block was found in column, may be the case in ex void worlds
         if (topmostBlock == null)
@@ -72,32 +75,35 @@ public class LightManager : MonoBehaviour
         
         GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
 
-        instance.sunlightSources.Add(x, newSunlightSource.GetComponent<SunlightSource>());
+        instance.sunlightSources.Add(column, newSunlightSource.GetComponent<SunlightSource>());
         if(updateLight)
-            UpdateLightInArea(newSunlightLoc - new int2(15, 15), newSunlightLoc + new int2(15, 15));
+            UpdateLightInArea(newSunlightLoc + new Location(-15, -15), newSunlightLoc + new Location(15, 15));
     }
 
-    public static void DestroySource(GameObject source)
+    public static void DestroySource(LightSource source)
     {
-        int2 location = new int2((int)source.transform.position.x, (int)source.transform.position.y);
-        LightManager.UpdateLightInArea(location - new int2(15, 15), location + new int2(15, 15));
-        Destroy(source);
+        Location loc = source.GetLocation();
+        LightManager.UpdateLightInArea(loc + new Location(-15, -15), loc + new Location(15, 15));
+        Destroy(source.gameObject);
     }
 
-    public static void UpdateBlockLight(Location block)
+    public static void UpdateBlockLight(Location loc)
     {
-        UpdateLightInArea(new int2(block.x, block.y), new int2(block.x, block.y));
+        UpdateLightInArea(loc, loc);
     }
     
     public static void UpdateChunkLight(ChunkPosition chunk)
     {
-        UpdateLightInArea(new int2(chunk.worldX, 0), new int2(chunk.worldX + Chunk.Width, Chunk.Height));
+        UpdateLightInArea(new Location(chunk.worldX, 0, chunk.dimension), 
+            new Location(chunk.worldX + Chunk.Width, Chunk.Height, chunk.dimension));
     }
     
-    public static void UpdateLightInArea(int2 min, int2 max)
+    public static void UpdateLightInArea(Location min, Location max)
     {
         List<LightObject> lightObjects = GetLightObjectsForArea(min, max);
-        List<LightSource> lightSources = GetLightSourcesForArea(min - new int2(maxLightLevel, maxLightLevel), max + new int2(maxLightLevel, maxLightLevel));
+        List<LightSource> lightSources = GetLightSourcesForArea(
+            min + new Location(-maxLightLevel, -maxLightLevel), 
+            max + new Location(maxLightLevel, maxLightLevel));
         
         foreach(LightObject lightObject in lightObjects)
         {
@@ -111,38 +117,38 @@ public class LightManager : MonoBehaviour
 
         foreach (LightSource source in sources)
         {
-            Vector3 sourcePos = source.transform.position;
+            Location sourceLoc = source.GetLocation();
             lightObjects.UnionWith(GetLightObjectsForArea(
-                new int2((int)sourcePos.x - maxLightLevel, (int)sourcePos.y - maxLightLevel),
-                new int2((int)sourcePos.x + maxLightLevel, (int)sourcePos.y + maxLightLevel)));
+                sourceLoc + new Location(-maxLightLevel, -maxLightLevel),
+                sourceLoc + new Location(maxLightLevel, maxLightLevel)));
         }
         
         foreach(LightObject lightObject in lightObjects)
         {
-            
             UpdateLight(lightObject, sources);
         }
     }
 
     public static void UpdateLightObject(LightObject lightObj)
     {
-        Vector2 pos = lightObj.transform.position;
-        int2 loc = new int2((int)pos.x, (int)pos.y);
-        List<LightSource> lightSources = GetLightSourcesForArea(loc - new int2(maxLightLevel, maxLightLevel), loc + new int2(maxLightLevel, maxLightLevel));
+        Location loc = lightObj.GetLocation();
+        List<LightSource> lightSources = GetLightSourcesForArea(
+            loc + new Location(-maxLightLevel, -maxLightLevel), 
+            loc + new Location(maxLightLevel, maxLightLevel));
 
         UpdateLight(lightObj, lightSources);
     }
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        Vector3 objectLoc = lightObject.transform.position;
+        Vector3 objectPos = lightObject.transform.position;
         int brightestRecordedLightLevel = 0;
 
         if (LightManager.instance.doLight)
             foreach (LightSource source in possibleLightSources)
             {
-                Vector3 sourceLoc = source.transform.position;
-                float objectDistance = Vector3.Distance(sourceLoc, objectLoc);
+                Vector3 sourcePos = source.transform.position;
+                float objectDistance = Vector3.Distance(sourcePos, objectPos);
                 if(objectDistance > maxLightLevel)
                     continue;
                 
@@ -163,12 +169,13 @@ public class LightManager : MonoBehaviour
         lightObject.UpdateLightLevel(brightestRecordedLightLevel);
     }
 
-    public static List<LightObject> GetLightObjectsForArea(int2 boundingBoxMin, int2 boundingBoxMax)
+    public static List<LightObject> GetLightObjectsForArea(Location boundingBoxMin, Location boundingBoxMax)
     {
         Collider2D[] lightObjectColliders = Physics2D.OverlapAreaAll(
-            new Vector2(boundingBoxMin.x, boundingBoxMin.y),
-            new Vector2(boundingBoxMax.x, boundingBoxMax.y));
+            boundingBoxMin.GetPosition(),
+            boundingBoxMax.GetPosition());
         List<LightObject> lightObjects = new List<LightObject>();
+        
         foreach (Collider2D lightObjectCollider in lightObjectColliders)
         {
             LightObject lightObject = lightObjectCollider.GetComponent<LightObject>();
@@ -180,18 +187,31 @@ public class LightManager : MonoBehaviour
         return lightObjects;
     }
 
-    public static List<LightSource> GetLightSourcesForArea(int2 boundingBoxMin, int2 boundingBoxMax)
+    public static List<LightSource> GetLightSourcesForArea(Location boundingBoxMin, Location boundingBoxMax)
     {
         Collider2D[] lightSourceColliders = Physics2D.OverlapAreaAll(
-            new Vector2(boundingBoxMin.x, boundingBoxMin.y),
-            new Vector2(boundingBoxMax.x, boundingBoxMax.y),
+            boundingBoxMin.GetPosition(),
+            boundingBoxMax.GetPosition(),
             LayerMask.GetMask("LightSource"));
         List<LightSource> lightSources = new List<LightSource>();
+        
         foreach (Collider2D lightSourceCollider in lightSourceColliders)
         {
             lightSources.Add(lightSourceCollider.GetComponent<LightSource>());
         }
 
         return lightSources;
+    }
+}
+
+public struct BlockColumn
+{
+    public int x;
+    public Dimension dimension;
+
+    public BlockColumn(int x, Dimension dim)
+    {
+        this.x = x;
+        this.dimension = dim;
     }
 }

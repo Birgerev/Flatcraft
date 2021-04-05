@@ -5,7 +5,7 @@ using UnityEngine;
 public class SunlightSource : MonoBehaviour
 {
     public static Transform SunlightSourceParent;
-    private LightSource lightSource;
+    public LightSource lightSource;
 
     private void Start()
     {
@@ -46,6 +46,11 @@ public class SunlightSource : MonoBehaviour
 
             yield return new WaitForSeconds(5);
         }
+    }
+    
+    public Location GetLocation()
+    {
+        return Location.LocationByPosition(transform.position);
     }
 }
 

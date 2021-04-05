@@ -52,10 +52,9 @@ public class Block : MonoBehaviour
         {
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
             lightSource.transform.localPosition = Vector3.zero;
-
-            //TODO
-            //if (new ChunkPosition(location).IsChunkLoaded())
-                //lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
+            
+            if (new ChunkPosition(location).IsChunkLoaded())
+                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
         }
 
         if (change_texture_time != 0)
@@ -260,7 +259,7 @@ public class Block : MonoBehaviour
         }
 
         if (GetComponentInChildren<LightSource>() != null)
-            LightManager.DestroySource(GetComponentInChildren<LightSource>().gameObject);
+            LightManager.DestroySource(GetComponentInChildren<LightSource>());
 
         location.SetMaterial(Material.Air).Tick();
     }
