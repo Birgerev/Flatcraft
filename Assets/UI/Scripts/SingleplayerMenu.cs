@@ -50,6 +50,7 @@ public class SingleplayerMenu : MonoBehaviour
         WorldManager.world = worlds[selectedWorld];
         SceneManager.LoadScene("Game");
         GameNetworkManager.isHost = true;
+        LoadingMenu.Create(LoadingMenuType.LoadWorld);
     }
 
     public void Delete()

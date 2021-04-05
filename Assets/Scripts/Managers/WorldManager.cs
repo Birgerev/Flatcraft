@@ -10,7 +10,6 @@ public class WorldManager : NetworkBehaviour
     public static WorldManager instance;
 
     public static float dayLength = 60 * 20;
-    public int amountOfChunksLoading;
     
     public HashSet<Location> caveHollowBlocks = new HashSet<Location>();
     public List<int> caveGeneratedRegions = new List<int>();
@@ -20,10 +19,8 @@ public class WorldManager : NetworkBehaviour
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
     public GameObject chunkPrefab;
-    public GameObject playerPrefab;
 
     public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
-    public float loadingProgress = 1; //TODO Remove
 
     public static World world;
     [SyncVar]
@@ -33,8 +30,10 @@ public class WorldManager : NetworkBehaviour
     private void Start()
     {
         instance = this;
-        
-        StartCoroutine(LoadWorld());
+        Entity.entities.Clear();
+        Time.timeScale = 1;
+        chunks.Clear();
+        StartCoroutine(SaveLoop());
     }
 
     private void Update()
@@ -58,50 +57,5 @@ public class WorldManager : NetworkBehaviour
             if(isServer)
                 world.SaveData();
         }
-    }
-
-    private IEnumerator LoadWorld()
-    {
-        Entity.entities.Clear();
-        Time.timeScale = 1;
-        chunks.Clear();
-        
-        //SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
-        float steps = 5;
-        /*
-        loadingState = "Loading Player";
-        loadingProgress = 1f / steps;
-        
-        yield return new WaitForSeconds(1f);
-
-        
-        while (amountOfChunksLoading == 0 || chunks.Count == 0)
-        {
-            loadingState = "Creating Chunks";
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        loadingState = "Generating Spawn Chunk: 0";
-        loadingProgress = 2f / steps;
-
-        while (amountOfChunksLoading > 0 || chunks.Count < 3)
-        {
-            loadingState = "Building Terrain: " + amountOfChunksLoading + " Chunks Left";
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        loadingState = "Waiting For Light";
-        loadingProgress = 3f / steps;
-
-        yield return new WaitForSeconds(1f);
-
-        loadingState = "Done!";
-        loadingProgress = 4f / steps;
-
-        yield return new WaitForSeconds(0.2f);*/
-
-        loadingProgress = 5f / steps;
-        yield return new WaitForSeconds(0.2f);
-        StartCoroutine(SaveLoop());
     }
 }

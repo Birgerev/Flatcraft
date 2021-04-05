@@ -12,6 +12,7 @@ public class MultiplayerMenu : MonoBehaviour
     {
         GameNetworkManager.isHost = false;
         SceneManager.LoadScene("Game");
+        LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 
     private void Update()

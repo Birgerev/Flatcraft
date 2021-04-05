@@ -41,6 +41,7 @@ public class Chunk : NetworkBehaviour
     public bool donePlacingGeneratedBlocks;
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
+    public bool isLightGenerated;
     
 
     public Portal_Frame netherPortal;
@@ -73,10 +74,10 @@ public class Chunk : NetworkBehaviour
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Location(chunkPosition.worldX , 0, chunkPosition.dimension).GetPosition();
 
-        WorldManager.instance.amountOfChunksLoading++;
         isLoaded = false;
         donePlacingGeneratedBlocks = false;
         donePlacingBackgroundBlocks = false;
+        isLightGenerated = false;
         if(isServer)
             isGenerated = false;
         
@@ -134,7 +135,6 @@ public class Chunk : NetworkBehaviour
         GenerateSunlightSources();
         
         isLoaded = true;
-        WorldManager.instance.amountOfChunksLoading--;
         
         //Wait until neighboring chunks are loaded to initialize light
         while (true)
@@ -144,6 +144,7 @@ public class Chunk : NetworkBehaviour
             if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
                 LightManager.UpdateChunkLight(chunkPosition);
+                isLightGenerated = true;
                 break;
             }
         }
@@ -304,10 +305,6 @@ public class Chunk : NetworkBehaviour
     public void DestroyChunk()
     {
         UnloadEntities();
-
-        if (!isLoaded)
-            WorldManager.instance.amountOfChunksLoading--;
-
         NetworkServer.Destroy(gameObject);
     }
 

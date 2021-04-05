@@ -184,13 +184,6 @@ public class Entity : NetworkBehaviour
 
     public virtual bool IsChunkLoaded()
     {
-        if (WorldManager.instance == null)
-            return true;
-        
-        //Freeze if no chunk is found
-        if (WorldManager.instance.loadingProgress != 1)
-            return false;
-        
         return new ChunkPosition(Location).IsChunkLoaded();
     }
     

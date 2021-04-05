@@ -343,7 +343,7 @@ public class Player : HumanEntity
     [Client]
     private void MouseInput()
     {
-        if (WorldManager.instance.loadingProgress != 1)
+        if (!IsChunkLoaded())
             return;
         
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
