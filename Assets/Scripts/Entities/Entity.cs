@@ -565,7 +565,10 @@ public class Entity : NetworkBehaviour
         //Load chunk in the other dimension
         Teleport(newLocation);                 //teleport player so chunk doesn't unload
         ChunkPosition cPos = new ChunkPosition(newLocation);
-        Chunk chunk = cPos.CreateChunk();
+        Chunk chunk = cPos.GetChunk();
+
+        if (chunk == null)
+            chunk = cPos.CreateChunk();
 
         //Wait for chunk to load
         while (!chunk.isLoaded)
