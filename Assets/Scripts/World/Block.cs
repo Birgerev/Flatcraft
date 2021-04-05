@@ -210,7 +210,7 @@ public class Block : MonoBehaviour
             else
                 Break(false);
 
-            Player.localEntity.DoToolDurability();
+            player.playerEntity.GetComponent<Player>().DoToolDurability();
 
             return;
         }
