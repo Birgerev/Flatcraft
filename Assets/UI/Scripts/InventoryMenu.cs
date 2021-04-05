@@ -221,8 +221,15 @@ public class InventoryMenu : NetworkBehaviour
         ItemStack slotItem = GetItem(inventoryIndex, slotIndex).Clone();
         ItemStack pointerItemClone = pointerItem.Clone();
 
-        slotItem.material = pointerItem.material;
-        slotItem.amount++;
+        if (slotItem.material == pointerItemClone.material)
+        {
+            slotItem.amount++;
+        }
+        else
+        {
+            slotItem = pointerItem.Clone();
+            slotItem.amount = 1;
+        }
         SetItem(inventoryIndex, slotIndex, slotItem);
         
         pointerItemClone.amount--;
@@ -235,12 +242,11 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void SlotAction_Halve(int inventoryIndex, int slotIndex)
     {
         ItemStack slotItem = GetItem(inventoryIndex, slotIndex).Clone();
-        ItemStack pointerItemClone = pointerItem.Clone();
 
         int pointerAmount = Mathf.CeilToInt(slotItem.amount / 2f);
         int slotAmount = Mathf.FloorToInt(slotItem.amount / 2f);
 
-        pointerItemClone.material = slotItem.material;
+        ItemStack pointerItemClone = slotItem.Clone();
         pointerItemClone.amount = pointerAmount;
         SetPointerItem(pointerItemClone);
         
