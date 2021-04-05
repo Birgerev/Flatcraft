@@ -28,7 +28,7 @@ public class DeathMenu : MonoBehaviour
 
     public void Respawn()
     {
-        ClientScene.AddPlayer(NetworkClient.connection);
+        //Respawning the player is taken care of in PlayerInstance, once DeathMenu is disabled
         active = false;
     }
 }
