@@ -375,11 +375,6 @@ public class Chunk : NetworkBehaviour
         var timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            if (Player.localEntity != null && Player.localEntity.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
-            {
-                DestroyChunk();
-            }
-            
             if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
             {
                 timePassedOutsideRenderDistance = 0f;
