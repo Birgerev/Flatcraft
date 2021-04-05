@@ -12,7 +12,7 @@ public class Explosion : MonoBehaviour
     void Start()
     {
         System.Random r = new System.Random();
-        Location loc = Location.LocationByPosition(transform.position, Player.localEntity.Location.dimension);
+        Location loc = Location.LocationByPosition(transform.position);
         Collider2D[] objects = Physics2D.OverlapCircleAll(transform.position, radius);
         List<Block> blocks = new List<Block>();
         List<Entity> entities = new List<Entity>();

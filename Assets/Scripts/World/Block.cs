@@ -41,7 +41,7 @@ public class Block : MonoBehaviour
     public virtual void Initialize()
     {
         //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position, location.dimension);
+        location = Location.LocationByPosition(transform.position);
         
         blockHealth = breakTime;
 
@@ -52,9 +52,9 @@ public class Block : MonoBehaviour
         {
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
             lightSource.transform.localPosition = Vector3.zero;
-
+            
             if (new ChunkPosition(location).IsChunkLoaded())
-                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
+                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
         }
 
         if (change_texture_time != 0)
@@ -65,7 +65,12 @@ public class Block : MonoBehaviour
 
     public virtual void ServerInitialize()
     {
-
+        if (averageRandomTickDuration != 0)
+        {
+            Chunk chunk = new ChunkPosition(location).GetChunk();
+            
+            chunk.randomTickBlocks.Add(this);
+        }
     }
     
     public virtual void RandomTick()
@@ -254,7 +259,7 @@ public class Block : MonoBehaviour
         }
 
         if (GetComponentInChildren<LightSource>() != null)
-            LightManager.DestroySource(GetComponentInChildren<LightSource>().gameObject);
+            LightManager.DestroySource(GetComponentInChildren<LightSource>());
 
         location.SetMaterial(Material.Air).Tick();
     }

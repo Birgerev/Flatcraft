@@ -126,7 +126,6 @@ MonoBehaviour:
   playerPrefab: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61,
     type: 3}
   loadingProgress: 0
-  loadingState: 
   worldTime: 0
 --- !u!114 &3047292750534003042
 MonoBehaviour:
@@ -227,3 +226,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08f634d9ae97ba45b1cd63fcd615ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1

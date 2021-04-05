@@ -17,13 +17,17 @@ public class LightObject : MonoBehaviour
         if (player == null)
             return;
         
-        Dimension dim = player.Location.dimension;
-        if (dim == Dimension.Nether)
+        if (GetLocation().dimension == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
         
         float lightLevelFactor = (float)lightLevel / (float)LightManager.maxLightLevel;
         Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         GetComponent<SpriteRenderer>().color = color;
+    }
+    
+    public Location GetLocation()
+    {
+        return Location.LocationByPosition(transform.position);
     }
 }

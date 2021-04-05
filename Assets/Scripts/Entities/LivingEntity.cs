@@ -223,6 +223,7 @@ public class LivingEntity : Entity
         if (!isOnGround) //Return if player isn't grounded
             return;
 
+        /*TODO better stair check
         var blockInFront = Location
             .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), Location.dimension)
             .GetBlock(); //Get block in front of player acording to walk direction
@@ -240,7 +241,7 @@ public class LivingEntity : Entity
             //if the stairs are rotated correctly
             if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x))
                 transform.position += new Vector3(0, 1);
-        }
+        }*/
     }
 
     [Server]

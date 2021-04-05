@@ -47,11 +47,12 @@ public class DebugMenu : MonoBehaviour
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;
 
-        var player = Player.localEntity;
-        text_x.text = "x: " + player.transform.position.x;
-        text_y.text = "y: " + player.transform.position.y;
+        Player player = Player.localEntity;
+        text_x.text = "x: " + player.Location.x;
+        text_y.text = "y: " + player.Location.y;
         text_dimension.text = "dimension: " + player.Location.dimension;
-        var biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
+        
+        Biome biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
         if (biome != null)
             text_biome.text = "biome: " + biome.name;
 
@@ -59,10 +60,10 @@ public class DebugMenu : MonoBehaviour
         text_time.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
                          (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
 
-        var location = player.GetBlockedMouseLocation();
-        var block = player.GetMouseBlock();
-        var material = Material.Air;
-        var data = "{}";
+        Location location = player.GetBlockedMouseLocation();
+        Block block = player.GetMouseBlock();
+        Material material = Material.Air;
+        string data = "{}";
         if(block != null)
         {
             material = block.GetMaterial();
