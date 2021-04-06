@@ -72,6 +72,14 @@ public class Block : MonoBehaviour
             chunk.randomTickBlocks.Add(this);
         }
     }
+
+    public void OnDestroy()
+    {
+        Chunk chunk = new ChunkPosition(location).GetChunk();
+
+        if (chunk.randomTickBlocks.Contains(this))
+            chunk.randomTickBlocks.Remove(this);
+    }
     
     public virtual void RandomTick()
     {
