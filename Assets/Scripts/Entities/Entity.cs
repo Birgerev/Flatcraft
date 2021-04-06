@@ -545,23 +545,21 @@ public class Entity : NetworkBehaviour
             if (col.GetComponent<Portal_Frame>() != null)
                 portals.Add(col.GetComponent<Portal_Frame>());
 
-        if (portals.Count > 0)
+        if (portals.Count == 0)
         {
-            if (!portalCooldown)
-            {
-                portalTime += Time.deltaTime;
-
-                if (portalTime >= 3)
-                {
-                    StartCoroutine(teleportNetherPortal());
-                    portalTime = 0;
-                    portalCooldown = true;
-                }
-            }
-        }
-        else
-        {
+            portalTime = 0;
             portalCooldown = false;
+        }
+        else if (!portalCooldown)
+        {
+            portalTime += Time.deltaTime;
+
+            if (portalTime >= 3)
+            {
+                StartCoroutine(teleportNetherPortal());
+                portalTime = 0;
+                portalCooldown = true;
+            }
         }
     }
 
