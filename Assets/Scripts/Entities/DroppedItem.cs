@@ -30,7 +30,7 @@ public class DroppedItem : Entity
         base.Tick();
         
         //Despawn
-        if (age > 60)
+        if (age > 60 * 5)
             Die();
 
         if (isOnGround)
