@@ -38,6 +38,7 @@ public class Entity : NetworkBehaviour
     [SyncVar] 
     public float portalTime;
     public bool portalCooldown;
+    [SyncVar]
     public bool teleportingDimension;
     
     public Vector2 lastFramePosition;
