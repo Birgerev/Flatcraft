@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 using UnityEngine.Audio;
 
-public class Sound : MonoBehaviour
+public class Sound : NetworkBehaviour
 {
     public static Sound instance;
     public AudioMixerGroup blocksGroup;
@@ -35,9 +36,12 @@ public class Sound : MonoBehaviour
 
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance)
     {
-        var obj = new GameObject("sound " + sound);
-        var source = obj.AddComponent<AudioSource>();
-
+        if (instance == null)
+        {
+            Debug.LogError("Sound manager instance not set, cant play sound: " + sound);
+            return;
+        }
+        
         var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
         if (clips.Length == 0)
         {
@@ -45,8 +49,20 @@ public class Sound : MonoBehaviour
             return;
         }
         
-        var clip = clips[new System.Random().Next(0, clips.Length)];
+        int soundIndex = new System.Random().Next(0, clips.Length);
+        var pitch = Random.Range(minPitch, maxPitch);
+        
+        instance.ClientsPlay(loc, sound, soundIndex, type, pitch, distance);
+    }
 
+    [ClientRpc]
+    public void ClientsPlay(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance)
+    {
+        var obj = new GameObject("sound " + sound);
+        var source = obj.AddComponent<AudioSource>();
+        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        var clip = clips[soundIndex];
+        
         AudioMixerGroup group = null;
         switch (type)
         {
@@ -64,8 +80,6 @@ public class Sound : MonoBehaviour
                 break;
         }
 
-        var pitch = Random.Range(minPitch, maxPitch);
-
         source.spatialBlend = 1;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.playOnAwake = false;
@@ -74,8 +88,8 @@ public class Sound : MonoBehaviour
         obj.transform.position = loc.GetPosition();
         source.pitch = pitch;
         source.maxDistance = distance;
+        source.dopplerLevel = 0;
         DontDestroyOnLoad(obj);
-
 
         source.Play();
 

@@ -19,7 +19,6 @@ public class ItemSlot : MonoBehaviour
         if (canvasGroup == null)
         {
             canvasGroup = GetComponentInParent<CanvasGroup>();
-            return;
         }
     }
 
@@ -62,7 +61,7 @@ public class ItemSlot : MonoBehaviour
     public virtual void Click()
     {
         InventoryMenu menu = GetComponentInParent<InventoryMenu>();
-        int inventoryId = menu.GetSlotInventoryId(this);
+        int inventoryId = menu.GetSlotInventoryIndex(this);
         int slotId = menu.GetSlotIndex(this);
 
         GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryId, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);

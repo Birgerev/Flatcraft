@@ -34,8 +34,6 @@ public class PauseMenu : MonoBehaviour
     public void SetMenuActive(bool setActive)
     {
         active = setActive;
-        
-        Time.timeScale = active ? 0 : 1;
 
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = active;
@@ -44,7 +42,6 @@ public class PauseMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        Time.timeScale = 1;
-        SceneManager.LoadScene("MainMenu");
+        GameNetworkManager.Disconnect();
     }
 }

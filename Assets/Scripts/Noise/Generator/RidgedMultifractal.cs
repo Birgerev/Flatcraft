@@ -41,8 +41,8 @@ namespace LibNoise.Generator
             z *= Frequency;
             var value = 0.0;
             var weight = 1.0;
-            var offset = 1.0; // TODO: Review why Offset is never assigned
-            var gain = 2.0; // TODO: Review why gain is never assigned
+            var offset = 1.0;
+            var gain = 2.0;
             for (var i = 0; i < _octaveCount; i++)
             {
                 var nx = Utils.MakeInt32Range(x);

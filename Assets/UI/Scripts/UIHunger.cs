@@ -15,10 +15,10 @@ public class UIHunger : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Player.localInstance == null)
+        if (Player.localEntity == null)
             return;
 
-        var hunger = Mathf.CeilToInt(Player.localInstance.hunger * 2) / 2;
+        var hunger = Mathf.CeilToInt(Player.localEntity.hunger * 2) / 2;
         float hungerIndex = transform.GetSiblingIndex();
 
         GetComponent<Image>().sprite = full;

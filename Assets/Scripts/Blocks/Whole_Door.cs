@@ -12,20 +12,20 @@ public class Whole_Door : Door
         if(otherBlockLocation.GetMaterial() != otherBlockMaterial)
         {
             otherBlockLocation.SetMaterial(otherBlockMaterial);
-            otherBlockLocation.GetBlock().ScheduleBlockBuildTick();
+            otherBlockLocation.GetBlock().BuildTick();
         }
 
         base.BuildTick();
     }
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         var otherDoor = (Door) otherBlockLocation.GetBlock();
         var open = !GetOpenState();
 
         otherDoor.SetOpenState(open);
 
-        base.Interact();
+        base.Interact(player);
     }
     public override void PlaySound(bool open)
     {

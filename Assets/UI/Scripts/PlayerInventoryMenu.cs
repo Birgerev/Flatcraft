@@ -1,70 +1,89 @@
-﻿public class PlayerInventoryMenu : InventoryMenu
+﻿using Mirror;
+
+public class PlayerInventoryMenu : InventoryMenu
 {
     private CraftingRecipe _curRecipe;
 
+    [Server]
     public override void UpdateInventory()
     {
-        base.UpdateInventory();
-
         CheckCraftingRecepies();
+        base.UpdateInventory();
     }
 
-    public override void OnClickSlot(int inventory, int slotIndex, int clickType)
+    public override void OpenPlayerInventory()
     {
-        if (inventory == 0 && slotIndex >= ((PlayerInventory) inventories[0]).getFirstArmorSlot() && slotIndex < ((PlayerInventory) inventories[0]).getFirstArmorSlot() + 4)
-        {
-            OnClickArmorSlot(slotIndex, clickType);
-            base.OnClickSlot(inventory, slotIndex, -1);
-            return;
-        }
         
-        if (inventory == 0 && slotIndex == ((PlayerInventory) inventories[0]).getCraftingResultSlot())
-        {
-            OnClickCraftingResultSlot(slotIndex, clickType);
-            base.OnClickSlot(inventory, slotIndex, -1);
-            return;
-        }
-
-        base.OnClickSlot(inventory, slotIndex, clickType);
     }
 
+    [Server]
     public void CheckCraftingRecepies()
     {
-        CraftingRecipe newRecipe = CraftingRecipe.FindRecipeByItems(((PlayerInventory) inventories[0]).getCraftingTable());
-
-        if (_curRecipe != newRecipe)
-            ScheduleUpdateInventory();
-
-        _curRecipe = newRecipe;
+        PlayerInventory inv = ((PlayerInventory) Inventory.Get(inventoryIds[0]));
+        CraftingRecipe newRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
 
         if (newRecipe == null)
         {
-            inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), new ItemStack());
+            inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), newRecipe.result);
+        inv.SetItem(inv.GetCraftingResultSlot(), newRecipe.result);
+
+        _curRecipe = newRecipe;
     }
 
-    public virtual void OnClickCraftingResultSlot(int slotIndex, int clickType)
+    [Client]
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
     {
-        if (inventories[0].getItem(((PlayerInventory) inventories[0]).getCraftingResultSlot()).material == Material.Air)
+        PlayerInventory inv = ((PlayerInventory) Inventory.Get(inventoryIds[0]));
+        
+        if (inventoryIndex == 0 && slotIndex >= inv.GetFirstArmorSlot() && slotIndex < inv.GetFirstArmorSlot() + 4)
+        {
+            OnClickArmorSlot(slotIndex, clickType);
             return;
-        if (inventories[0].getItem(((PlayerInventory) inventories[0]).getCraftingResultSlot()).material != pointerSlot.item.material &&
-            pointerSlot.item.material != Material.Air)
+        }
+        
+        if (inventoryIndex == 0 && slotIndex == inv.GetCraftingResultSlot())
+        {
+            OnClickCraftingResultSlot(inventoryIndex, slotIndex, clickType);
             return;
+        }
 
-        pointerSlot.item.material = inventories[0].getItem(((PlayerInventory) inventories[0]).getCraftingResultSlot()).material;
-        pointerSlot.item.amount += inventories[0].getItem(((PlayerInventory) inventories[0]).getCraftingResultSlot()).amount;
-        inventories[0].setItem(((PlayerInventory) inventories[0]).getCraftingResultSlot(), new ItemStack());
+        base.OnClickSlot(inventoryIndex, slotIndex, clickType);
+    }
 
-        foreach (var craftingItem in ((PlayerInventory) inventories[0]).getCraftingTable())
-            if (craftingItem.amount > 0)
-                craftingItem.amount--;
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickCraftingResultSlot(int inventoryIndex, int slotIndex, int clickType)
+    {
+        PlayerInventory inv = ((PlayerInventory) Inventory.Get(inventoryIds[0]));
+        ItemStack pointerItemClone = pointerItem.Clone();
+        
+        if (inv.GetItem((inv.GetCraftingResultSlot())).material == Material.Air)
+            return;
+        
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItemClone.material &&
+            pointerItemClone.material != Material.Air)
+            return;
+        
 
-        CheckCraftingRecepies();
+        pointerItemClone.material = inv.GetItem(inv.GetCraftingResultSlot()).material;
+        pointerItemClone.amount += inv.GetItem(inv.GetCraftingResultSlot()).amount;
+        inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
+        SetPointerItem(pointerItemClone);
+
+        for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
+        {
+            ItemStack newItem = inv.GetItem(slot).Clone();
+            newItem.amount--;
+            
+            inv.SetItem(slot, newItem);
+        }
+        
+        UpdateInventory();
     }
     
+    [Command(requiresAuthority = false)]
     public virtual void OnClickArmorSlot(int slotIndex, int clickType)
     {
         

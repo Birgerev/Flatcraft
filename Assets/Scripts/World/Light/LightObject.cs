@@ -13,13 +13,21 @@ public class LightObject : MonoBehaviour
         lightLevel -= lightLevelDeduct;
         lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.maxLightLevel);
 
-        Dimension dim = Player.localInstance.Location.dimension;
-        if (dim == Dimension.Nether)
+        Player player = Player.localEntity;
+        if (player == null)
+            return;
+        
+        if (GetLocation().dimension == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
         
         float lightLevelFactor = (float)lightLevel / (float)LightManager.maxLightLevel;
         Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         GetComponent<SpriteRenderer>().color = color;
+    }
+    
+    public Location GetLocation()
+    {
+        return Location.LocationByPosition(transform.position);
     }
 }

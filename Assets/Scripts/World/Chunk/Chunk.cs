@@ -4,67 +4,316 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using LibNoise;
-using LibNoise.Generator;
+using Mirror;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = System.Random;
 
 [BurstCompile]
-public class Chunk : MonoBehaviour
+public class Chunk : NetworkBehaviour
 {
-    public const int Width = 16, Height = 255;
+    public const int Width = 16, Height = 256;
+    public const int DimensionSeparationSpace = 512;
     public const int RenderDistance = 6;
     public const int AmountOfChunksInRegion = 16;
-    public const int SpawnChunkDistance = 0;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
     private static readonly float mobSpawningChance = 0.005f;
     private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
-    public int age;
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
 
+    public SyncList<BlockState> blockStates = new SyncList<BlockState>();
+    public List<Block> randomTickBlocks = new List<Block>();
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
     public WorldGenerator worldGenerator;
 
+    [SyncVar]
     public ChunkPosition chunkPosition;
+    
+    [SyncVar]
+    public bool isGenerated;
+    public bool donePlacingGeneratedBlocks;
+    public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
-    public bool isLoading;
-    public bool isSpawnChunk;
+    public bool isLightGenerated;
+    
 
     public Portal_Frame netherPortal;
 
-    private void Start()
+    public override void OnStartClient()
     {
-        isSpawnChunk = chunkPosition.chunkX >= -SpawnChunkDistance && chunkPosition.chunkX <= SpawnChunkDistance;
-
-        WorldManager.instance.chunks.Add(chunkPosition, this);
-
-        StartCoroutine(SelfDestructionChecker());
-
-        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
-        transform.position = new Vector3(chunkPosition.worldX, 0, 0);
-
-        StartCoroutine(GenerateChunk());
+        base.OnStartClient();
+        
+        StartCoroutine(CreateChunk());
     }
 
+    private void Start()
+    {
+        if (isServer)
+        {
+            WorldManager.instance.chunks.Add(chunkPosition, this);
+            StartCoroutine(CreateChunk());
+        }
+    }
+
+    IEnumerator CreateChunk()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        WorldManager.instance.chunks[chunkPosition] = this;
+
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
+        transform.position = new Location(chunkPosition.worldX , 0, chunkPosition.dimension).GetPosition();
+
+        isLoaded = false;
+        donePlacingGeneratedBlocks = false;
+        donePlacingBackgroundBlocks = false;
+        isLightGenerated = false;
+        if(isServer)
+            isGenerated = false;
+        
+
+        if (isServer)
+        {
+            int blocksAmountInChunk = Width * Height;
+            for (int i = 0; i < blocksAmountInChunk; i++)
+            {
+                blockStates.Add(new BlockState(Material.Air));
+            }
+        }
+        
+        //pre-generate chunk biomes
+        Biome.GetBiomeAt(chunkPosition);
+        
+        if (isServer)
+        {
+            if (chunkPosition.HasBeenGenerated())
+            {
+                StartCoroutine(LoadBlocks());
+                LoadAllEntities();
+            }
+            else
+            {
+                StartCoroutine(GenerateBlocks());
+            }
+        }
+
+        while (!isGenerated || blockStates.Count == 0)
+            yield return new WaitForSeconds(0.1f);
+        
+        yield return new WaitForSeconds(1f);
+
+        if (isClient)
+        {
+            StartCoroutine(BuildChunk());
+        }
+        
+        while (!donePlacingGeneratedBlocks)
+            yield return new WaitForSeconds(0.1f);
+
+        if (isServer)
+        {
+            //Generate Tick all block (decay all necessary grass etc)
+            StartCoroutine(MobSpawning());
+            StartCoroutine(BlockRandomTicking());
+        }
+
+        yield return new WaitForSeconds(1f);
+        
+        //Initialize all blocks after all blocks have been created
+        InitializeAllBlocks();
+        GenerateBackgroundBlocks();
+        GenerateSunlightSources();
+        
+        isLoaded = true;
+        
+        if(isServer)
+            StartCoroutine(SelfDestructionChecker());
+        
+        //Wait until neighboring chunks are loaded to initialize light
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            
+            if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
+            {
+                LightManager.UpdateChunkLight(chunkPosition);
+                isLightGenerated = true;
+                break;
+            }
+        }
+    }
+
+    public void GenerateSunlightSources()
+    {
+        for (int x = 0; x < Width; x++)
+            LightManager.UpdateSunlightInColumn(new BlockColumn(chunkPosition.worldX + x, chunkPosition.dimension),
+                false);
+    }
+    
+    [Server]
+    IEnumerator LoadBlocks()
+    {
+        var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+                   chunkPosition.chunkX + "\\blocks";
+        
+        var lines = File.ReadAllLines(path);
+        var i = 0;
+        foreach (var line in lines)
+        {
+            Location loc = new Location(
+                int.Parse(line.Split('*')[0].Split(',')[0]),
+                int.Parse(line.Split('*')[0].Split(',')[1]),
+                chunkPosition.dimension);
+            Material mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
+            BlockData data = new BlockData(line.Split('*')[2]);
+            BlockState state = new BlockState(mat, data);
+
+            loc.SetState(state);
+                
+            i++;
+            if (i % 10 == 1) 
+                yield return new WaitForSeconds(0.05f);
+        }
+
+        isGenerated = true;
+    }
+
+    [Server]
+    IEnumerator GenerateBlocks()
+    {
+        if(chunkPosition.dimension == Dimension.Overworld)
+            worldGenerator = new OverworldGenerator();
+        else if(chunkPosition.dimension == Dimension.Nether)
+            worldGenerator = new NetherGenerator();
+
+        chunkPosition.CreateChunkPath();
+            
+        //Generate Caves
+        CaveGenerator.GenerateCavesForRegion(chunkPosition);
+            
+        //Generate Terrain Blocks
+        Dictionary<Location, Material> terrainBlocks = null;
+        var terrainThread = new Thread(() => { terrainBlocks = GenerateChunkTerrain(); });
+        terrainThread.Start();
+
+        while (terrainThread.IsAlive) 
+            yield return new WaitForSeconds(0.1f);
+
+        foreach (KeyValuePair<Location, Material> terrainBlock in terrainBlocks)
+        {
+            BlockState state = new BlockState(terrainBlock.Value);
+            
+            terrainBlock.Key.SetStateNoBlockChange(state);
+        }
+        
+            
+        //Generate Structures
+        Biome biome = GetBiome();
+        for (var y = 1; y < Height; y++)
+        {
+            for (var x = 0; x < Width; x++)
+            {
+                Location loc = new Location(chunkPosition.worldX + x, y, chunkPosition.dimension);
+                BlockState state = worldGenerator.GenerateStructures(loc, biome);
+
+                if (state.material != Material.Air)
+                {
+                    loc.SetStateNoBlockChange(state);
+                }
+            }
+
+            if (y < 80 && y % 4 == 0)
+                yield return new WaitForSeconds(0.05f);
+        }
+        
+
+        //Mark chunk as Generated
+        var chunkDataPath = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+                            chunkPosition.chunkX + "\\chunk";
+        var chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
+        chunkDataLines.Add("hasBeenGenerated=true");
+        File.WriteAllLines(chunkDataPath, chunkDataLines);
+        
+        StartCoroutine(BuildChunk());
+
+        while (!donePlacingGeneratedBlocks)
+            yield return new WaitForSeconds(0.5f);
+        
+        GeneratingTickAllBlocks();
+        
+        isGenerated = true;
+    }
+
+    IEnumerator BuildChunk()
+    {
+        for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                Location loc = new Location(x, y, chunkPosition.dimension);
+                BlockState state = GetBlockState(loc);
+            
+                LocalBlockChange(loc, state);
+                
+                //if (y % 10 == 1) yield return new WaitForSeconds(0.05f);
+            }
+        }
+        
+        yield return new WaitForSeconds(0.05f);
+        donePlacingGeneratedBlocks = true;
+    }
+
+    [Server]
+    public void SetBlockState(Location location, BlockState state)
+    {
+        if (!IsBlockLocal(location))
+        {
+            Debug.LogWarning("Tried setting block change in wrong chunk (" + location.x + ", " + location.y +
+                             ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
+            return;
+        }
+        
+        int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
+        int listIndex = chunkLocation.x + (chunkLocation.y * Width);
+        
+        blockStates[listIndex] = state;
+    }
+    
+    public BlockState GetBlockState(Location location)
+    {
+        if (!IsBlockLocal(location))
+        {
+            Debug.LogWarning("Tried getting block change in wrong chunk (" + location.x + ", " + location.y +
+                             ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
+            return new BlockState(Material.Air);
+        }
+        
+        int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
+        int listIndex = chunkLocation.x + (chunkLocation.y * Width);
+        
+        return blockStates[listIndex];
+    }
+
+    [Server]
     public void DestroyChunk()
     {
         UnloadEntities();
-
-        WorldManager.instance.chunks.Remove(chunkPosition);
-        if (isLoading)
-            WorldManager.instance.amountOfChunksLoading--;
-
-        Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);
     }
-    
+
+    public void OnDestroy()
+    {
+        WorldManager.instance.chunks.Remove(chunkPosition);
+    }
+
+    [Server]
     public void UnloadEntities()
     {
         foreach(Entity entity in GetEntities())
@@ -74,6 +323,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    [Server]
     public static void CreateChunksAround(ChunkPosition loc, int distance)
     {
         for (var i = -distance; i < distance; i++)
@@ -85,6 +335,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    [Server]
     private void GeneratingTickAllBlocks()
     {
         //Tick Blocks
@@ -102,7 +353,7 @@ public class Chunk : MonoBehaviour
     private void InitializeAllBlocks()
     {
         //Initialize Blocks
-        var blockList = transform.GetComponentsInChildren<Block>();
+        var blockList = blocks.Values;
 
         foreach (var block in blockList)
         {
@@ -110,41 +361,22 @@ public class Chunk : MonoBehaviour
                 continue;
 
             block.Initialize();
+            if(isServer)
+                block.ServerInitialize();
         }
     }
 
-    private IEnumerator AutosaveAllBlocks()
-    {
-        var blocks = new List<Block>(this.blocks.Values);
-
-        if (blocks.Count > 0)
-        {
-            var blocksPerBatch = 20;
-            var timePerBatch = 5f / (blocks.Count / (float) blocksPerBatch);
-            foreach (var block in blocks)
-            {
-                yield return new WaitForSeconds(timePerBatch);
-                if (block == null || !block.autosave)
-                    continue;
-
-
-                block.Tick();
-                block.Autosave();
-            }
-        }
-    }
-
+    [Server]
     private IEnumerator SelfDestructionChecker()
     {
         var timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            if (Player.localInstance != null && Player.localInstance.Location.dimension != chunkPosition.dimension)        //If chunk is not in the same dimension as the player, self destruct
+            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
             {
-                DestroyChunk();
+                timePassedOutsideRenderDistance = 0f;
             }
-            
-            if (!chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            else
             {
                 timePassedOutsideRenderDistance += 1f;
                 if (timePassedOutsideRenderDistance > OutsideRenderDistanceUnloadTime)
@@ -153,27 +385,44 @@ public class Chunk : MonoBehaviour
                     DestroyChunk();
                 }
             }
-            else
-            {
-                timePassedOutsideRenderDistance = 0f;
-            }
 
             yield return new WaitForSeconds(1f);
         }
     }
 
-    private IEnumerator Tick()
+    [Server]
+    private IEnumerator MobSpawning()
     {
         while (true)
         {
             //Update neighbor chunks
             TrySpawnMobs();
 
-            age++;
             yield return new WaitForSeconds(1f / TickRate);
         }
     }
+    
+    private IEnumerator BlockRandomTicking()
+    {
+        float updateSpeed = 1f;
+        int i = 0;
+        while (true)
+        {
+            List<Block> blockList = new List<Block>(randomTickBlocks);
+            foreach (Block block in blockList)
+            {
+                var r = new Random(block.location.GetHashCode() + i);
+                
+                if(r.NextDouble() < updateSpeed / block.averageRandomTickDuration) 
+                    block.RandomTick();
+            }
 
+            i++;
+            yield return new WaitForSeconds(updateSpeed);
+        }
+    }
+    
+    [Server]
     private void TrySpawnMobs()
     {
         var r = new Random();
@@ -194,14 +443,14 @@ public class Chunk : MonoBehaviour
         var entityType = entities[r.Next(0, entities.Count)];
 
         var entity = Entity.Spawn(entityType);
-        entity.Location = new Location(x, y, chunkPosition.dimension);
+        entity.Teleport(new Location(x, y, chunkPosition.dimension));
     }
 
     private Dictionary<Location, Material> GenerateChunkTerrain()
     {
         var blockList = new Dictionary<Location, Material>();
 
-        for (var y = 0; y <= Height; y++)
+        for (var y = 0; y < Height; y++)
         for (var x = 0; x < Width; x++)
         {
             var loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
@@ -322,20 +571,21 @@ public class Chunk : MonoBehaviour
             }
         }
     }
-
-    IEnumerator GenerateBackgroundBlocks()
+    
+    private void GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
         {
             UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
-            yield return new WaitForSeconds(0.1f);
         }
+
+        donePlacingBackgroundBlocks = true;
     }
 
-    public void UpdateBackgroundBlockColumn(int x, bool updateLight)
+    private void UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         Material lastViableMaterial = Material.Air;
-        for (int y = Height; y >= 0; y--)
+        for (int y = Height - 1; y >= 0; y--)
         {
             Location loc = new Location(x, y, chunkPosition.dimension);
             Material mat = loc.GetMaterial();
@@ -376,15 +626,7 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    private void GenerateSunlight()
-    {
-        var minXPos = chunkPosition.worldX;
-        var maxXPos = chunkPosition.worldX + Width - 1;
-
-        for (var x = minXPos; x <= maxXPos; x++) 
-            LightManager.UpdateSunlightInColumn(x);
-    }
-
+    [Server]
     private void LoadAllEntities()
     {
         var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
@@ -408,36 +650,47 @@ public class Chunk : MonoBehaviour
 
     private bool IsBlockLocal(Location loc)
     {
-        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y <= Height);
+        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y < Height);
     }
 
-    public Block CreateLocalBlock(Location loc, Material mat, BlockData data)
+    [ClientRpc]
+    public void BlockChange(Location loc, BlockState state)
     {
-        var pos = new int2(loc.GetPosition());
-
+        if (!donePlacingGeneratedBlocks || isServer)
+            return;
+        
+        LocalBlockChange(loc, state);
+    }
+    
+    public void LocalBlockChange(Location location, BlockState state)
+    {
+        int2 coordinates = new int2(location.x, location.y);
+        Material mat = state.material;
+        BlockData data = state.data;
+        
         var type = Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
-            return null;
+            return;
 
-        if (!IsBlockLocal(loc))
+        if (!IsBlockLocal(location))
         {
-            Debug.LogWarning("Tried setting local block outside of chunk (" + loc.x + ", " + loc.y +
+            Debug.LogWarning("Tried setting local block outside of chunk (" + location.x + ", " + location.y +
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension +
                              "]");
-            return null;
+            return;
         }
 
         //Before any blocks are removed or added, check wether current block is a sunlight source
-        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(new int2(loc.GetPosition()));
+        bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(location);
 
         //remove old block
-        if (GetLocalBlock(loc) != null)
+        if (GetLocalBlock(location) != null)
         {
-            if (isLoaded && GetLocalBlock(loc).GetComponentInChildren<LightSource>() != null)
-                LightManager.DestroySource(GetLocalBlock(loc).GetComponentInChildren<LightSource>().gameObject);
+            if (isLoaded && GetLocalBlock(location).GetComponentInChildren<LightSource>() != null)
+                LightManager.DestroySource(GetLocalBlock(location).GetComponentInChildren<LightSource>());
 
-            Destroy(GetLocalBlock(loc).gameObject);
-            blocks.Remove(pos);
+            Destroy(GetLocalBlock(location).gameObject);
+            blocks.Remove(coordinates);
         }
 
         Block result = null;
@@ -452,18 +705,21 @@ public class Chunk : MonoBehaviour
             //Attach it to the object
             var block = (Block) blockObject.AddComponent(type);
 
-            blockObject.transform.position = loc.GetPosition();
+            blockObject.transform.position = location.GetPosition();
 
             //Add the block to block list
-            if (blocks.ContainsKey(pos))
-                blocks[pos] = block;
+            if (blocks.ContainsKey(coordinates))
+                blocks[coordinates] = block;
             else
-                blocks.Add(pos, block);
+                blocks.Add(coordinates, block);
 
-            block.data = data;
-            block.location = loc;
+            block.location = location;
             if (isLoaded)
-                block.ScheduleBlockInitialization();
+            {
+                block.Initialize();
+                if (isServer)
+                    block.ServerInitialize();
+            }
 
             result = blockObject.GetComponent<Block>();
         }
@@ -476,21 +732,32 @@ public class Chunk : MonoBehaviour
         if (isLoaded)
         {
             if (doesBlockChangeImpactSunlight)
-                LightManager.UpdateSunlightInColumn(loc.x);
-
-            UpdateBackgroundBlockColumn(loc.x, true);
-            StartCoroutine(scheduleBlockLightUpdate(loc));
+                StartCoroutine(UpdateSunlightInColumn(location.x));
+            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(location.x, true));
+            StartCoroutine(scheduleBlockLightUpdate(location));
         }
+    }
 
-        return result;
+    //TODO try removing scheduling
+    IEnumerator UpdateSunlightInColumn(int x)
+    {
+        yield return new WaitForSeconds(0f);
+        LightManager.UpdateSunlightInColumn(new BlockColumn(x, chunkPosition.dimension), true);
+    }
+
+    IEnumerator ScheduleUpdateBackgroundBlockColumn(int x, bool updateLight)
+    {
+        yield return new WaitForSeconds(0f);
+        UpdateBackgroundBlockColumn(x, updateLight);
     }
 
     IEnumerator scheduleBlockLightUpdate(Location loc)
     {
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0f);
         LightManager.UpdateBlockLight(loc);
     }
 
+    [Server]
     public Location GeneratePortal(int x)
     {
         //Find an air pocket to place portal at
@@ -550,7 +817,7 @@ public class Chunk : MonoBehaviour
 
     public Block GetLocalTopmostBlock(int x, bool mustBeSolid)
     {
-        for (var y = Height; y > 0; y--)
+        for (var y = Height - 1; y >= 0; y--)
         {
             var block = GetLocalBlock(new Location(x, y, chunkPosition.dimension));
 

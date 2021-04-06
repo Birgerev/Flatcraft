@@ -12,8 +12,6 @@ public class Block : MonoBehaviour
 
     public float blockHealth;
 
-    public BlockData data = new BlockData();
-
     public Location location;
 
     public virtual string texture { get; set; } = "";
@@ -28,8 +26,6 @@ public class Block : MonoBehaviour
     public virtual bool trigger { get; set; } = false;
     public virtual bool climbable { get; } = false;
     public virtual bool requiresGround { get; } = false;
-    public virtual bool autosave { get; } = false;
-    public virtual bool autoTick { get; } = false;
     public virtual float averageRandomTickDuration { get; } = 0;
     public virtual float breakTime { get; } = 0.75f;
     public virtual bool rotate_x { get; } = false;
@@ -42,62 +38,24 @@ public class Block : MonoBehaviour
 
     public virtual int glowLevel { get; } = 0;
 
-    public void ScheduleBlockInitialization()
-    {
-        StartCoroutine(scheduleBlockInitialization());
-    }
-
-    private IEnumerator scheduleBlockInitialization()
-    {
-        yield return new WaitForSeconds(0.02f);
-        Initialize();
-    }
-
-    public void ScheduleBlockBuildTick()
-    {
-        StartCoroutine(scheduleBlockBuildTick());
-    }
-
-    private IEnumerator scheduleBlockBuildTick()
-    {
-        yield return new WaitForSeconds(0.02f);
-        BuildTick();
-    }
-
-    public void ScheduleBlockTick()
-    {
-        StartCoroutine(scheduleBlockTick());
-    }
-
-    private IEnumerator scheduleBlockTick()
-    {
-        yield return new WaitForSeconds(0.03f);
-        Tick();
-    }
-
     public virtual void Initialize()
     {
+        //Cache position for use in multithreading
+        location = Location.LocationByPosition(transform.position);
+        
         blockHealth = breakTime;
 
         RenderRotate();
         UpdateColliders();
-
-        //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position, location.dimension);
         
         if (glowLevel > 0)
         {
             GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
             lightSource.transform.localPosition = Vector3.zero;
-
+            
             if (new ChunkPosition(location).IsChunkLoaded())
-                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel);
+                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
         }
-
-        if (autoTick || autosave)
-            StartCoroutine(autoTickLoop());
-        if (averageRandomTickDuration != 0)
-            StartCoroutine(randomTickLoop());
 
         if (change_texture_time != 0)
             StartCoroutine(animatedTextureRenderLoop());
@@ -105,6 +63,16 @@ public class Block : MonoBehaviour
         Render();
     }
 
+    public virtual void ServerInitialize()
+    {
+        if (averageRandomTickDuration != 0)
+        {
+            Chunk chunk = new ChunkPosition(location).GetChunk();
+            
+            chunk.randomTickBlocks.Add(this);
+        }
+    }
+    
     public virtual void RandomTick()
     {
     }
@@ -114,10 +82,20 @@ public class Block : MonoBehaviour
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
             Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
         
-        if ((rotate_x || rotate_y) && !(data.HasData("rotated_x") || data.HasData("rotated_y")))
+        if ((rotate_x || rotate_y) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
         {
             RotateTowardsPlayer();
         }
+    }
+
+    public BlockData GetData()
+    {
+        return location.GetData();
+    }
+
+    protected void SetData(BlockData data)
+    {
+        location.SetData(data);
     }
 
     public virtual void GeneratingTick()
@@ -129,13 +107,6 @@ public class Block : MonoBehaviour
         checkGround();
         UpdateColliders();
         RenderRotate();
-
-
-        if (Time.time - time_of_last_autosave > SaveManager.AutosaveDuration && autosave)
-        {
-            Autosave();
-            return;
-        }
 
         age++;
     }
@@ -158,34 +129,6 @@ public class Block : MonoBehaviour
         {
             yield return new WaitForSeconds(change_texture_time);
             Render();
-        }
-    }
-    
-    private IEnumerator randomTickLoop()
-    {
-        var r = new Random(SeedGenerator.SeedByLocation(location));
-
-        while (true)
-        {
-            float nextTickDuration = 1;
-            while (r.NextDouble() > 1 / averageRandomTickDuration) 
-                nextTickDuration += 1;
-
-            yield return new WaitForSeconds(nextTickDuration);
-            RandomTick();
-        }
-    }
-
-    private IEnumerator autoTickLoop()
-    {
-        //Wait a random duration, to smooth out ticks across time
-        yield return new WaitForSeconds((float) new Random(SeedGenerator.SeedByLocation(location)).NextDouble() *
-                                        (1f / Chunk.TickRate));
-
-        while (true)
-        {
-            yield return new WaitForSeconds(1 / Chunk.TickRate);
-            Tick();
         }
     }
 
@@ -211,11 +154,11 @@ public class Block : MonoBehaviour
         var rotated_x = false;
         var rotated_y = false;
 
-        if (rotate_y) rotated_y = Player.localInstance.transform.position.y < location.y;
-        if (rotate_x) rotated_x = Player.localInstance.transform.position.x < location.x;
+        if (rotate_y) rotated_y = Player.localEntity.transform.position.y < location.y;
+        if (rotate_x) rotated_x = Player.localEntity.transform.position.x < location.x;
 
-        data.SetData("rotated_x", rotated_x ? "true" : "false");
-        data.SetData("rotated_y", rotated_y ? "true" : "false");
+        SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
+        SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
 
         //Save new rotation
         Autosave();
@@ -227,8 +170,8 @@ public class Block : MonoBehaviour
         var rotated_x = false;
         var rotated_y = false;
 
-        rotated_x = data.GetData("rotated_x") == "true";
-        rotated_y = data.GetData("rotated_y") == "true";
+        rotated_x = GetData().GetTag("rotated_x") == "true";
+        rotated_y = GetData().GetTag("rotated_y") == "true";
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
@@ -238,15 +181,15 @@ public class Block : MonoBehaviour
     {
         time_of_last_autosave = Time.time;
 
-        location.SetData(data);
+        location.SetData(GetData());
     }
 
-    public virtual void Hit(float time)
+    public virtual void Hit(PlayerInstance player, float time)
     {
-        Hit(time, Tool_Type.None, Tool_Level.None);
+        Hit(player, time, Tool_Type.None, Tool_Level.None);
     }
 
-    public virtual void Hit(float time, Tool_Type tool_type, Tool_Level tool_level)
+    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
     {
         time_of_last_hit = Time.time;
 
@@ -262,7 +205,8 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Blocks, 0.8f, 1.2f);
 
-        RenderBlockDamage();
+        if(!BreakIndicator.breakIndicators.ContainsKey(location))
+            BreakIndicator.Spawn(location);
 
         if (blockHealth <= 0)
         {
@@ -271,12 +215,11 @@ public class Block : MonoBehaviour
             else
                 Break(false);
 
-            Player.localInstance.DoToolDurability();
+            player.playerEntity.GetComponent<Player>().DoToolDurability();
 
             return;
         }
 
-        RenderBlockDamage();
         StartCoroutine(repairBlockDamageOnceViable());
     }
 
@@ -316,7 +259,7 @@ public class Block : MonoBehaviour
         }
 
         if (GetComponentInChildren<LightSource>() != null)
-            LightManager.DestroySource(GetComponentInChildren<LightSource>().gameObject);
+            LightManager.DestroySource(GetComponentInChildren<LightSource>());
 
         location.SetMaterial(Material.Air).Tick();
     }
@@ -331,27 +274,8 @@ public class Block : MonoBehaviour
         return new ItemStack(GetMaterial(), 1);
     }
 
-    public virtual void Interact()
+    public virtual void Interact(PlayerInstance player)
     {
-    }
-
-    public void ResetBlockDamage()
-    {
-        blockHealth = breakTime;
-        RenderBlockDamage();
-    }
-
-    public virtual void RenderBlockDamage()
-    {
-        var damageIndicator = transform.Find("BreakIndicator");
-
-        if (blockHealth != breakTime)
-        {
-            var sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-            var spriteIndex = (int) (blockHealth / breakTime / (1f / sprites.Length));
-
-            BreakIndicator.instance.UpdateState(spriteIndex, location);
-        }
     }
 
     public virtual void Render()

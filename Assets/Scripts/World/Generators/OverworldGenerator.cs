@@ -128,100 +128,87 @@ public class OverworldGenerator : WorldGenerator
         return mat;
     }
 
-    public override void GenerateStructures(Location loc)
+    public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        //TODO stop looking through conditions after finding a viable structure placement
         System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
-        Block block = loc.GetBlock();
-        Material mat = Material.Air;
-        Biome biome = Biome.GetBiomeAt(new ChunkPosition(loc)); //TODO biome could be calculated before loop, huge optimization
-        if (block != null)
-            mat = block.GetMaterial();
+        Material mat = loc.GetMaterial();
+        Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
         
         Material[] flowerMaterials = {Material.Red_Flower};
         Material[] vegetationMaterials = {Material.Tall_Grass};
 
-        if ((mat == Material.Grass || mat == Material.Sand) && (loc + new Location(0, 1)).GetBlock() == null)
+        if ((matBeneath == Material.Grass || matBeneath == Material.Sand)  && mat == Material.Air) 
         {
             //Vegetation
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
                 if (r.Next(0, 100) <= 50)
-                    (loc + new Location(0, 1)).SetMaterial(vegetationMaterials[r.Next(0, vegetationMaterials.Length)]);
+                    return new BlockState(vegetationMaterials[r.Next(0, vegetationMaterials.Length)]);
 
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
                 if (r.Next(0, 100) <= 10)
-                    (loc + new Location(0, 1)).SetMaterial(flowerMaterials[r.Next(0, flowerMaterials.Length)]);
+                    return new BlockState(flowerMaterials[r.Next(0, flowerMaterials.Length)]);
 
             //Trees
             if (biome.name == "forest" || biome.name == "forest_hills")
                 if (r.Next(0, 100) <= 20)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Oak_Tree"));
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Oak_Tree"));
 
             //Birch Trees
             if (biome.name == "birch_forest")
                 if (r.Next(0, 100) <= 20)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Birch_Tree"));
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Birch_Tree"));
 
             //Unlikely Trees
             if (biome.name == "plains")
                 if (r.Next(0, 100) <= 3)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Oak_Tree"));
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Oak_Tree"));
 
             //Large Trees
             if (biome.name == "plains")
                 if (r.Next(0, 100) <= 1)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Large_Oak_Tree"));
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Large_Oak_Tree"));
 
             //Dead Bushes
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 8)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Dead_Bush);
+                    return new BlockState(Material.Dead_Bush);
 
             //Cactie
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
-                    (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                        .SetData(new BlockData("structure=Cactus"));
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Cactus"));
         }
 
         //Generate Ores
         if (mat == Material.Stone)
         {
             if (r.NextDouble() < OreDiamondChance && loc.y <= OreDiamondHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Diamond"));
-            else if (r.NextDouble() < OreRedstoneChance && loc.y <= OreRedstoneHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Redstone"));
-            else if (r.NextDouble() < OreLapisChance && loc.y <= OreLapisHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Lapis"));
-            else if (r.NextDouble() < OreGoldChance && loc.y <= OreGoldHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Gold"));
-            else if (r.NextDouble() < OreIronChance && loc.y <= OreIronHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Iron"));
-            else if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
-                (loc + new Location(0, 1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Ore_Coal"));
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Diamond"));
+            if (r.NextDouble() < OreRedstoneChance && loc.y <= OreRedstoneHeight)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Redstone"));
+            if (r.NextDouble() < OreLapisChance && loc.y <= OreLapisHeight)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Lapis"));
+            if (r.NextDouble() < OreGoldChance && loc.y <= OreGoldHeight)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Gold"));
+            if (r.NextDouble() < OreIronChance && loc.y <= OreIronHeight)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Iron"));
+            if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Coal"));
         }
         
         //Generate Liquid Pockets
-        if (loc.y < 40 && mat == Material.Air && r.Next(0, 100) <= 3)
+        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 3)
         {
-            if ((loc + new Location(0, 1)).GetMaterial() == Material.Stone)
+            if (mat == Material.Stone)
             {
                 Material liquidMat = (r.Next(0, 100) < 75 ? Material.Water : Material.Lava);
-                
-                (loc + new Location(0, 1)).SetMaterial(liquidMat);
+
+                return new BlockState(liquidMat);
             }
         }
+
+        return new BlockState(Material.Air);
     }
 }

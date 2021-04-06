@@ -13,7 +13,7 @@
             //other block position is based on whether this block is a bottom or top piece
             var otherBlockXRelative = GetMaterial() == Material.Bed_Bottom ? -1 : 1;
             //if block is flipped, invert side of other block
-            if (data.GetData("rotated_x") == "true")
+            if (GetData().GetTag("rotated_x") == "true")
                 otherBlockXRelative *= -1;
 
             return location + new Location(otherBlockXRelative, 0);
@@ -22,12 +22,12 @@
 
     public Material otherBlockMaterial => GetMaterial() == Material.Bed_Bottom ? Material.Bed_Top : Material.Bed_Bottom;
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
-        Player.localInstance.Sleep();
-        Player.localInstance.bedLocation = location;
+        Player.localEntity.Sleep();
+        Player.localEntity.bedLocation = location;
 
-        base.Interact();
+        base.Interact(player);
     }
 
     public override void Tick()

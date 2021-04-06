@@ -14,7 +14,7 @@ public class PlayerHeldItemRenderer : MonoBehaviour
 
     private void UpdateColor()
     {
-        Material itemInHand = player.inventory.getSelectedItem().material;
+        Material itemInHand = player.GetInventory().GetSelectedItem().material;
 
         if (itemInHand == lastItemInHand) 
             return;

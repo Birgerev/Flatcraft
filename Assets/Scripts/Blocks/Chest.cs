@@ -15,44 +15,64 @@ public class Chest : InventoryContainer
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override Type inventoryType { get; } = typeof(Inventory);
-
-    public override void Tick()
+    public override void Initialize()
     {
-        if (inventory == null)
+        base.Initialize();
+        
+        StartCoroutine(AwaitChestOpenCloseTextureChange());
+    }
+    
+    public override void ServerInitialize()
+    {
+        base.ServerInitialize();
+        
+        StartCoroutine(AwaitChestOpenCloseSound());
+    }
+    
+    public override Inventory NewInventory()
+    {
+        return Inventory.Create("Inventory", 27, "Chest");
+    }
+    
+    private bool IsOpen()
+    {
+        return GetInventory().open;
+    }
+
+    IEnumerator AwaitChestOpenCloseTextureChange()
+    {
+        bool lastCheckOpen = IsOpen();
+        while (true)
         {
-            base.Tick();
-            return;
-        }
-
-        inventory.name = "Chest";
-        base.Tick();
-    }
-
-    private Inventory getInventory()
-    {
-        return inventory;
-    }
-    public override void Interact()
-    {
-        StartCoroutine(awaitInventoryClosed());
-
-        base.Interact();
-    }
-
-    IEnumerator awaitInventoryClosed()
-    {
-        texture = open_texture;
-        Render();
-        Sound.Play(location, "random/door/door_open", SoundType.Blocks, 0.8f, 1.3f);
-        yield return new WaitForSeconds(0.5f);
-        while (getInventory().open)
+            if (lastCheckOpen != IsOpen())
+            {
+                yield return new WaitForSeconds(0.1f);
+                texture = IsOpen() ? open_texture : closed_texture;
+                Render();
+                
+                lastCheckOpen = IsOpen();
+            }
+            
             yield return new WaitForSeconds(0.2f);
+        }
+    }
 
-        Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);
-
-        yield return new WaitForSeconds(0.1f);
-        texture = closed_texture;
-        Render();
+    IEnumerator AwaitChestOpenCloseSound()
+    {
+        bool lastCheckOpen = IsOpen();
+        while (true)
+        {
+            if (lastCheckOpen != IsOpen())
+            {
+                if (IsOpen())
+                    Sound.Play(location, "random/door/door_open", SoundType.Blocks, 0.8f, 1.3f);
+                else
+                    Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);
+                
+                lastCheckOpen = IsOpen();
+            }
+            
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 }

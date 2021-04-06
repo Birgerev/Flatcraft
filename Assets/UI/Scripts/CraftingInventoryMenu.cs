@@ -1,40 +1,68 @@
-﻿public class CraftingInventoryMenu : ContainerInventoryMenu
+﻿using Mirror;
+
+public class CraftingInventoryMenu : ContainerInventoryMenu
 {
-    public override void OnClickSlot(int inventory, int slotIndex, int clickType)
+    public override void UpdateInventory()
     {
-        if (inventory == 1 && slotIndex == ((CraftingInventory) inventories[1]).GetCraftingResultSlot())
+        CheckCraftingRecipes();
+        base.UpdateInventory();
+    }
+
+    [Server]
+    public void CheckCraftingRecipes()
+    {
+        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
+        CraftingRecipe curRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
+
+        if (curRecipe == null)
         {
-            OnClickCraftingResultSlot(inventory, slotIndex, clickType);
-            base.OnClickSlot(inventory, slotIndex, -1);
+            inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        base.OnClickSlot(inventory, slotIndex, clickType);
+        inv.SetItem(inv.GetCraftingResultSlot(), curRecipe.result);
+    }
+    
+    [Client]
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    {
+        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
+        
+        if (inventoryIndex == 0 && slotIndex == inv.GetCraftingResultSlot())
+        {
+            OnClickCraftingResultSlot();
+            return;
+        }
+
+        base.OnClickSlot(inventoryIndex, slotIndex, clickType);
     }
 
-    public virtual void OnClickCraftingResultSlot(int inventory, int slotIndex, int clickType)
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickCraftingResultSlot()
     {
-        if (inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).material == Material.Air) 
+        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
+        
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material == Material.Air) 
             return;
-        if (inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).material != pointerSlot.item.material && 
-            pointerSlot.item.material != Material.Air) 
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItem.material && 
+            pointerItem.material != Material.Air) 
             return;
 
-        pointerSlot.item.material = inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).material;
-        pointerSlot.item.amount += inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).amount;
-        pointerSlot.item.data = inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).data;
-        pointerSlot.item.durability = inventories[1].getItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot()).durability;
+        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot()).Clone();
+        newPointerItem.amount = pointerItem.amount + inv.GetItem(inv.GetCraftingResultSlot()).amount;
+        SetPointerItem(newPointerItem);
 
         //Clear Crafting slot
-        inventories[1].setItem(((CraftingInventory) inventories[1]).GetCraftingResultSlot(), new ItemStack());
+        inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
 
         for (int i = 0; i <= 8; i++)
         {
-            ItemStack newCraftingSlotItem = inventories[1].getItem(i).Clone();
-            if (newCraftingSlotItem.amount > 0)
-                newCraftingSlotItem.amount--;
+            ItemStack newCraftingSlotItem = inv.GetItem(i).Clone();
+            newCraftingSlotItem.amount--;
             
-            inventories[1].setItem(i, newCraftingSlotItem);
+            inv.SetItem(i, newCraftingSlotItem);
         }
+        
+        UpdateInventory();
     }
 }

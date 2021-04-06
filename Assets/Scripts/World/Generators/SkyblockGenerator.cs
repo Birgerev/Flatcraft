@@ -6,9 +6,11 @@ public class SkyblockGenerator : WorldGenerator
         return Material.Air;
     }
 
-    public override void GenerateStructures(Location loc)
+    public override BlockState GenerateStructures(Location loc, Biome biome)
     {
         if(loc.x == 0 && loc.y == 60)
-            loc.SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Sky_Block"));
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Sky_Block"));
+
+        return new BlockState(Material.Air);
     }
 }

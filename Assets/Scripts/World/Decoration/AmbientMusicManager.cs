@@ -33,6 +33,6 @@ public class AmbientMusicManager : MonoBehaviour
         System.Random random = new System.Random();
         string songName = ambientMusic[random.Next(0, ambientMusic.Count)];
 
-        Sound.Play(Player.localInstance.Location, "music/ambient/" + songName + "/" + songName, SoundType.Music, 1f, 1f, 100000);
+        Sound.Play(new Location(), "music/ambient/" + songName + "/" + songName, SoundType.Music, 1f, 1f, int.MaxValue);
     }
 }

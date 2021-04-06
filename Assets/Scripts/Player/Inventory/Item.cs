@@ -11,26 +11,29 @@ public class Item
     public virtual int maxDurabulity { get; } = -1;
     public virtual float entityDamage { get; } = 1;
 
-    public void Interact(Location loc, int mouseType, bool firstFrameDown)
+    public void Interact(PlayerInstance player, Location loc, int mouseType, bool firstFrameDown)
     {
-        if (mouseType == 0) InteractLeft(loc, firstFrameDown);
+        if (mouseType == 0) 
+            InteractLeft(player, loc, firstFrameDown);
 
-        if (mouseType == 1) InteractRight(loc, firstFrameDown);
+        if (mouseType == 1) 
+            InteractRight(player, loc, firstFrameDown);
     }
 
-    public virtual void InteractLeft(Location loc, bool firstFrameDown)
+    public virtual void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         var block = loc.GetBlock();
 
-        if (block != null) block.Hit(1 / Player.interactionsPerPerSecond);
+        if (block != null) 
+            block.Hit(player, 1 / Player.interactionsPerPerSecond);
     }
 
-    public virtual void InteractRight(Location loc, bool firstFrameDown)
+    public virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         var block = loc.GetBlock();
 
         if (firstFrameDown && block != null) 
-            block.Interact();
+            block.Interact(player);
     }
 
     public virtual Sprite getTexture()

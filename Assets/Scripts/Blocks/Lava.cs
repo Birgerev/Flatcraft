@@ -32,6 +32,7 @@
 
             if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
                 (location + new Location(x, y - 1)).GetMaterial() != Material.Air &&
+                (location + new Location(x, y - 1)).GetBlock() != null &&
                 (location + new Location(x, y - 1)).GetBlock().isFlammable)
                 (location + new Location(x, y)).SetMaterial(Material.Fire);
 

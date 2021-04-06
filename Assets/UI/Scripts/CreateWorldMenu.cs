@@ -59,7 +59,9 @@ public class CreateWorldMenu : MonoBehaviour
 
         world.SaveData();
         WorldManager.world = world;
-        SceneManager.LoadScene("Loading");
+        SceneManager.LoadScene("Game");
+        GameNetworkManager.isHost = true;
+        LoadingMenu.Create(LoadingMenuType.LoadWorld);
     }
 
     public void Cancel()
