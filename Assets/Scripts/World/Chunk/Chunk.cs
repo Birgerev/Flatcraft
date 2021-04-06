@@ -67,9 +67,6 @@ public class Chunk : NetworkBehaviour
         yield return new WaitForSeconds(1f);
         
         WorldManager.instance.chunks[chunkPosition] = this;
-        
-        if(isServer)
-            StartCoroutine(SelfDestructionChecker());
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
         transform.position = new Location(chunkPosition.worldX , 0, chunkPosition.dimension).GetPosition();
@@ -135,6 +132,9 @@ public class Chunk : NetworkBehaviour
         GenerateSunlightSources();
         
         isLoaded = true;
+        
+        if(isServer)
+            StartCoroutine(SelfDestructionChecker());
         
         //Wait until neighboring chunks are loaded to initialize light
         while (true)

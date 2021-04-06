@@ -94,6 +94,7 @@ public class Player : HumanEntity
         {
             PerformInput();
             CheckActionBarUpdate();
+            CheckDimensionChangeLoadingScreen();
             
             if(!isServer)     //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
@@ -723,6 +724,15 @@ public class Player : HumanEntity
     public void OnDestroy()
     {
         players.Remove(this);
+    }
+
+    [Client]
+    private void CheckDimensionChangeLoadingScreen()
+    {
+        if (teleportingDimension)
+        {
+            LoadingMenu.Create(LoadingMenuType.Dimension);
+        }
     }
     
     [ClientRpc]

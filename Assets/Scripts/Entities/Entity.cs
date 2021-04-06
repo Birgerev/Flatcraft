@@ -35,6 +35,10 @@ public class Entity : NetworkBehaviour
     public bool isOnGround;
     [SyncVar]
     public bool isOnClimbable;
+    [SyncVar] 
+    public float portalTime;
+    public bool portalCooldown;
+    public bool teleportingDimension;
     
     public Vector2 lastFramePosition;
     public GameObject burningRender;
@@ -118,7 +122,8 @@ public class Entity : NetworkBehaviour
             ReduceFireTime();
             WaterRemoveFireTimeCheck();
         }
-        
+
+        CheckNetherPortal();
         CheckWaterSplash();
         CheckFireDamage();
         CheckVoidDamage();
@@ -147,6 +152,7 @@ public class Entity : NetworkBehaviour
     public virtual void Teleport(Location loc)
     {
         Location = loc;
+        ((LivingEntity)this).highestYlevelsinceground = 0;
     }
     
     [Server]
@@ -532,14 +538,38 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    public virtual void TeleportNetherPortal()
+    public void CheckNetherPortal()
     {
-        StartCoroutine(teleportNetherPortal());
+        List<Portal_Frame> portals = new List<Portal_Frame>();
+        foreach (Collider2D col in Physics2D.OverlapBoxAll(transform.position, GetComponent<BoxCollider2D>().size, 0))
+            if (col.GetComponent<Portal_Frame>() != null)
+                portals.Add(col.GetComponent<Portal_Frame>());
+
+        if (portals.Count > 0)
+        {
+            if (!portalCooldown)
+            {
+                portalTime += Time.deltaTime;
+
+                if (portalTime >= 3)
+                {
+                    StartCoroutine(teleportNetherPortal());
+                    portalTime = 0;
+                    portalCooldown = true;
+                }
+            }
+        }
+        else
+        {
+            portalCooldown = false;
+        }
     }
 
     [Server]
     IEnumerator teleportNetherPortal()
     {
+        teleportingDimension = true;
+        
         //Translate dimension coordinates
         Dimension currentDimension = Location.dimension;
         Location newLocation = new Location(0, 300);
@@ -556,10 +586,8 @@ public class Entity : NetworkBehaviour
         }
 
         //Load chunk in the other dimension
-        Teleport(newLocation);                 //teleport player so chunk doesn't unload
         ChunkPosition cPos = new ChunkPosition(newLocation);
         Chunk chunk = cPos.GetChunk();
-
         if (chunk == null)
             chunk = cPos.CreateChunk();
 
@@ -567,16 +595,16 @@ public class Entity : NetworkBehaviour
         while (!chunk.isLoaded)
             yield return new WaitForSeconds(0.5f);
 
+        //Either get or create a portal in the new dimension
         Location portal;
         if (chunk.netherPortal != null)
             portal = chunk.netherPortal.location;
         else
             portal = chunk.GeneratePortal(newLocation.x);
 
-        //Teleport player to new y value
-        if(this.GetType().IsSubclassOf(typeof(LivingEntity)))
-            ((LivingEntity)this).highestYlevelsinceground = 0;
+        //Teleport player to the portal
         Teleport(portal);
+        teleportingDimension = false;
     }
 
     [Client]

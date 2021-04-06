@@ -14,11 +14,6 @@ public class LoadingMenu : MonoBehaviour
     
     public LoadingMenuType type;
 
-    private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-
     // Update is called once per frame
     private void Update()
     {
@@ -38,9 +33,16 @@ public class LoadingMenu : MonoBehaviour
 
     public static void Create(LoadingMenuType type)
     {
+        if (instance != null)
+            return;
+        
         GameObject prefab = Resources.Load<GameObject>("Prefabs/LoadingMenu");
         GameObject obj = Instantiate(prefab);
-        obj.GetComponent<LoadingMenu>().type = type;
+        LoadingMenu menu = obj.GetComponent<LoadingMenu>();
+        
+        menu.type = type;
+        instance = menu;
+        DontDestroyOnLoad(obj);
     }
 
     public void LoadWorldMenu()
@@ -129,7 +131,24 @@ public class LoadingMenu : MonoBehaviour
 
     public void ChangeDimensionMenu()
     {
-        
+        loadingTitle.text = "Loading Dimension";
+            
+        int steps = 3;
+
+        Chunk playerChunk = new ChunkPosition(Player.localEntity.GetComponent<Player>().Location).GetChunk();
+        if (Player.localEntity.teleportingDimension)
+        {
+            SetState("Loading Chunks", 1f/steps);
+            return;
+        }
+        if (!playerChunk.isLightGenerated)
+        {
+            SetState("Waiting For Light", 2f/steps);
+            return;
+        }
+            
+        SetState("Done!", 1);
+        Destroy(gameObject, 1f);
     }
 }
 
