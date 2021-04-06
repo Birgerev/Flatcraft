@@ -660,8 +660,8 @@ public class Player : HumanEntity
         var newTime = (currentDay + 1) * WorldManager.dayLength;
         var isNight = WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2;
 
-        if (isNight) 
-            WorldManager.instance.worldTime = newTime;
+        if (isNight)
+            WorldManager.world.time = newTime;
     }
 
     [Server]
