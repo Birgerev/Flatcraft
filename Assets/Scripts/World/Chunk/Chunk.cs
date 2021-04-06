@@ -160,7 +160,7 @@ public class Chunk : NetworkBehaviour
     [Server]
     IEnumerator LoadBlocks()
     {
-        var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+        var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                    chunkPosition.chunkX + "\\blocks";
         
         var lines = File.ReadAllLines(path);
@@ -235,7 +235,7 @@ public class Chunk : NetworkBehaviour
         
 
         //Mark chunk as Generated
-        var chunkDataPath = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" +
+        var chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                             chunkPosition.chunkX + "\\chunk";
         var chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
         chunkDataLines.Add("hasBeenGenerated=true");
@@ -519,7 +519,7 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void LoadAllEntities()
     {
-        var path = WorldManager.world.getPath() + "\\region\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
+        var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
                    "\\entities";
 
         if (!Directory.Exists(path))

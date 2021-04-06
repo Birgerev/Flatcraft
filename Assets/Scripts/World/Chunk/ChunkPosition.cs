@@ -29,7 +29,7 @@ public struct ChunkPosition
 
     public bool HasBeenSaved()
     {
-        var path = WorldManager.world.getPath() + "\\region\\" + dimension + "\\" + chunkX;
+        var path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
 
         return Directory.Exists(path);
     }
@@ -39,7 +39,7 @@ public struct ChunkPosition
         if (!HasBeenSaved())
             return false;
 
-        var chunkDataPath = WorldManager.world.getPath() + "\\region\\" + dimension + "\\" + chunkX + "\\chunk";
+        var chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX + "\\chunk";
         var chunkDataLines = File.ReadAllLines(chunkDataPath);
         foreach (var line in chunkDataLines)
             if (line.Contains("hasBeenGenerated"))
@@ -82,7 +82,7 @@ public struct ChunkPosition
 
     public void CreateChunkPath()
     {
-        var path = WorldManager.world.getPath() + "\\region\\" + dimension + "\\" + chunkX;
+        var path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
