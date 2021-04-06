@@ -74,6 +74,13 @@ public class GameNetworkManager : Mirror.NetworkManager
         }
     }
 
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        
+        SceneManager.LoadScene("MultiplayerDisconnectedMenu");
+    }
+
     public static void Disconnect()
     {
         if(isHost) 

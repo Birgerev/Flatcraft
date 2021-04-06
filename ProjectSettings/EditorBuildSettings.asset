@@ -16,7 +16,13 @@ EditorBuildSettings:
     guid: 0f68b62dec9c625428430b589fb2c5bf
   - enabled: 1
     path: Assets/Scenes/MultiplayerMenu.unity
+    guid: c5d7389f2fb8fd2448d344548a743f57
+  - enabled: 1
+    path: Assets/Scenes/MultiplayerDirectConnectMenu.unity
     guid: 5ef3531468d1596419b65631ad748673
+  - enabled: 1
+    path: Assets/Scenes/MultiplayerDisconnectedMenu.unity
+    guid: 378ffd85df4bcc0488d4ad7fbcaf3332
   - enabled: 1
     path: Assets/Scenes/CreateWorldMenu.unity
     guid: 4e2afc93bbaf2834394314d3779f96d8

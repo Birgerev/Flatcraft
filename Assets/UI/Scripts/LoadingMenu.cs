@@ -43,6 +43,7 @@ public class LoadingMenu : MonoBehaviour
         menu.type = type;
         instance = menu;
         DontDestroyOnLoad(obj);
+        Destroy(obj , 15);
     }
 
     public void LoadWorldMenu()

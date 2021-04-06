@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MultiplayerMenu : MonoBehaviour
+public class MultiplayerDirectConnectMenu : MonoBehaviour
 {
     public InputField addressField;
     public InputField nameField;
@@ -23,6 +23,6 @@ public class MultiplayerMenu : MonoBehaviour
     
     public void Cancel()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MultiplayerMenu");
     }
 }
