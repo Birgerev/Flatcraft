@@ -7,19 +7,24 @@ public class LightSource : MonoBehaviour
 {
     public int lightLevel;
 
-    public void UpdateLightLevel(int value)
+    public void UpdateLight()
     {
-        UpdateLightLevel(value, true);
+        Location loc = GetLocation();
+        LightManager.UpdateLightInArea(loc + new Location(-15, -15), loc + new Location(15, 15));
     }
     
     public void UpdateLightLevel(int value, bool updateLight)
     {
         lightLevel = value;
 
-        if (updateLight)
-        {
-            int2 location = new int2((int) transform.position.x, (int) transform.position.y);
-            LightManager.UpdateLightInArea(location - new int2(15, 15), location + new int2(15, 15));
-        }
+        bool chunkLoaded = new ChunkPosition(GetLocation()).IsChunkLoaded();
+        
+        if (updateLight && chunkLoaded)
+            UpdateLight();
+    }
+    
+    public Location GetLocation()
+    {
+        return Location.LocationByPosition(transform.position);
     }
 }

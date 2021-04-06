@@ -7,25 +7,25 @@ public class Door : Block
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
 
-    public override void Initialize()
+    public override void ServerInitialize()
     {
-        base.Initialize();
-
+        base.ServerInitialize();
+        
         Tick();
     }
 
-    public override void Interact()
+    public override void Interact(PlayerInstance player)
     {
         var open = !GetOpenState();
 
         SetOpenState(open);
 
-        base.Interact();
+        base.Interact(player);
     }
 
     public void SetOpenState(bool open)
     {
-        data.SetData("open", open ? "true" : "false");
+        SetData(GetData().SetTag("open", open ? "true" : "false"));
 
         PlaySound(open);
 
@@ -40,14 +40,14 @@ public class Door : Block
 
     public bool GetOpenState()
     {
-        var open = data.GetData("open") == "true";
+        var open = GetData().GetTag("open") == "true";
 
         return open;
     }
 
     public override void Tick()
     {
-        var open = data.GetData("open") == "true";
+        var open = GetData().GetTag("open") == "true";
 
         texture = open ? open_texture : closed_texture;
         solid = !open;

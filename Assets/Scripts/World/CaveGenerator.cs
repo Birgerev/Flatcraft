@@ -59,7 +59,7 @@ public class CaveGenerator : MonoBehaviour
                 
                 float angleRadians = angle * Mathf.Deg2Rad;
                 Vector2 deltaLocation = new Vector2(Mathf.Sin(angleRadians), Mathf.Cos(angleRadians)) * 2;
-                snakeSegmentLocation += Location.LocationByPosition(deltaLocation, Dimension.Overworld);
+                snakeSegmentLocation += Location.LocationByPosition(deltaLocation);
 
                 //Decide new size
             }

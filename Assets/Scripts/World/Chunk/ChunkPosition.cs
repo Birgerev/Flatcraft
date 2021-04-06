@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
+using Mirror;
 using UnityEngine;
 
 public struct ChunkPosition
@@ -52,6 +54,9 @@ public struct ChunkPosition
 
     public bool IsChunkCreated()
     {
+        if (WorldManager.instance == null)
+            return true;
+        
         return WorldManager.instance.chunks.ContainsKey(this);
     }
     
@@ -68,8 +73,9 @@ public struct ChunkPosition
     {
         if (IsChunkCreated())
             return null;
-
+        
         var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
+        NetworkServer.Spawn(newChunk);
         newChunk.GetComponent<Chunk>().chunkPosition = this;
         return newChunk.GetComponent<Chunk>();
     }
@@ -102,17 +108,21 @@ public struct ChunkPosition
 
     public bool IsWithinDistanceOfPlayer(int range)
     {
-        Location playerLocation = new Location(0, 0);
-        if (Player.localInstance != null)
-            playerLocation = Player.localInstance.Location;
+        foreach (Player player in Player.players)
+        {
+            Location loc = player.Location;
+            
+            if (dimension != loc.dimension)
+                continue;
 
-        if (dimension != playerLocation.dimension)
-            return false;
-        if (chunkX == 0)
-            return true;
+            if (chunkX == 0)
+                return true;
+            
+            float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - loc.x);
+            if (distanceFromPlayer < range * Chunk.Width)
+                return true;
+        }
 
-        float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - playerLocation.x);
-
-        return distanceFromPlayer < range * Chunk.Width;
+        return false;
     }
 }

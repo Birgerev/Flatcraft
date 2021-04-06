@@ -21,9 +21,9 @@ public class Clouds : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if (Player.localInstance == null)
+        if (Player.localEntity == null)
             return;
-        Vector2 playerPos = Player.localInstance.transform.position;
+        Vector2 playerPos = Player.localEntity.transform.position;
 
         if (Time.time > nextSpawnTime)
         {
@@ -48,6 +48,6 @@ public class Clouds : MonoBehaviour
         var obj = Instantiate(cloud);
 
         obj.transform.SetParent(transform);
-        obj.transform.position = new Vector2(Player.localInstance.transform.position.x - cloudDistance, cloudHeight);
+        obj.transform.position = new Vector2(Player.localEntity.transform.position.x - cloudDistance, cloudHeight);
     }
 }

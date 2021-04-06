@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DeathMenu : MonoBehaviour
@@ -27,7 +28,7 @@ public class DeathMenu : MonoBehaviour
 
     public void Respawn()
     {
-        WorldManager.instance.Spawn();
+        //Respawning the player is taken care of in PlayerInstance, once DeathMenu is disabled
         active = false;
     }
 }

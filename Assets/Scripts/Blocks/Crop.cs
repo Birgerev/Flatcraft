@@ -7,7 +7,6 @@ public class Crop : Block
     public override float breakTime { get; } = 0.01f;
     public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 100;
-    public override bool autosave { get; } = true;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
@@ -15,6 +14,11 @@ public class Crop : Block
     public virtual Material seed { get; } = Material.Air;
     public virtual Material result { get; } = Material.Air;
 
+    public override void BuildTick()
+    {
+        if (!GetData().HasTag("crop_stage"))
+            SetData(GetData().SetTag("crop_stage", "0"));
+    }
 
     public override void Tick()
     {
@@ -46,7 +50,7 @@ public class Crop : Block
         if (GetStage() >= GetAmountOfStages() - 1)
             return;
 
-        data.SetData("crop_stage", (GetStage() + 1).ToString());
+        location.SetData(GetData().SetTag("crop_stage", (GetStage() + 1).ToString()));
     }
 
     public int GetAmountOfStages()
@@ -56,10 +60,7 @@ public class Crop : Block
 
     public int GetStage()
     {
-        if (!data.HasData("crop_stage"))
-            data.SetData("crop_stage", "0");
-
-        return int.Parse(data.GetData("crop_stage"));
+        return int.Parse(GetData().GetTag("crop_stage"));
     }
 
     public override void Drop()

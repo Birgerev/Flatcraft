@@ -10,8 +10,8 @@ public class WorldGenerator
         return Material.TNT;
     }
 
-    public virtual void GenerateStructures(Location loc)
+    public virtual BlockState GenerateStructures(Location loc, Biome biome)
     {
-        
+        return new BlockState(Material.Air);
     }
 }

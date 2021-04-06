@@ -1,13 +1,15 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Collections;
+using Mirror;
 
 public class FurnaceInventoryMenu : ContainerInventoryMenu
 {
+    
     public Image fuelProgress;
     public Image smeltingProgress;
 
-    private void Start()
+    public override void OnStartServer()
     {
         StartCoroutine(furnaceInvenoryLoop());
     }
@@ -18,46 +20,53 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
         {
             yield return new WaitForSeconds(1f);
 
-            if (active)
-                UpdateInventory();
+            UpdateInventory();
         }
     }
 
     public override void UpdateInventory()
     {
         base.UpdateInventory();
+        
+        FurnaceInventory inv = ((FurnaceInventory) Inventory.Get(inventoryIds[0]));
 
-        if (!(inventories[1] is FurnaceInventory))
-            return;
-
-        fuelProgress.fillAmount = ((FurnaceInventory) inventories[1]).fuelLeft / ((FurnaceInventory) inventories[1]).highestFuel;
-        if (((FurnaceInventory) inventories[1]).highestFuel == 0)
+        fuelProgress.fillAmount = inv.fuelLeft / inv.highestFuel;
+        if (inv.highestFuel == 0)
             fuelProgress.fillAmount = 0;
-        smeltingProgress.fillAmount = ((FurnaceInventory) inventories[1]).smeltingProgress / SmeltingRecipe.smeltTime;
+        smeltingProgress.fillAmount = inv.smeltingProgress / SmeltingRecipe.smeltTime;
     }
 
-    public override void OnClickSlot(int inventory, int slotIndex, int clickType)
+    [Client]
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
     {
-        if (inventory == 1 && slotIndex == ((FurnaceInventory) inventories[1]).getResultSlot())
+        FurnaceInventory inv = ((FurnaceInventory) Inventory.Get(inventoryIds[0]));
+        
+        if (inventoryIndex == 1 && slotIndex == inv.GetResultSlot())
         {
-            OnClickSmeltingResultSlot(slotIndex, clickType);
-            base.OnClickSlot(inventory,slotIndex, -1);
+            OnClickSmeltingResultSlot();
             return;
         }
 
-        base.OnClickSlot(inventory, slotIndex, clickType);
+        base.OnClickSlot(inventoryIndex, slotIndex, clickType);
     }
 
-    public virtual void OnClickSmeltingResultSlot(int slotIndex, int clickType)
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickSmeltingResultSlot()
     {
-        if (inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material == Material.Air) 
+        FurnaceInventory inv = ((FurnaceInventory) Inventory.Get(inventoryIds[0]));
+        ItemStack pointerItemClone = pointerItem.Clone();
+        
+        if (inv.GetItem(inv.GetResultSlot()).material == Material.Air) 
             return;
-        if (inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material != pointerSlot.item.material && 
+        if (inv.GetItem(inv.GetResultSlot()).material != pointerItemClone.material && 
             pointerSlot.item.material != Material.Air) 
             return;
 
-        pointerSlot.item.material = inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).material;
-        pointerSlot.item.amount += inventories[1].getItem(((FurnaceInventory) inventories[1]).getResultSlot()).amount;
-        inventories[1].setItem(((FurnaceInventory) inventories[1]).getResultSlot(), new ItemStack());
+        pointerItemClone.material = inv.GetItem(inv.GetResultSlot()).material;
+        pointerItemClone.amount += inv.GetItem(inv.GetResultSlot()).amount;
+        inv.SetItem(inv.GetResultSlot(), new ItemStack());
+        SetPointerItem(pointerItemClone);
+        
+        UpdateInventory();
     }
 }

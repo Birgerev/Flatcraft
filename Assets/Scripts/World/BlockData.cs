@@ -1,59 +1,69 @@
 using System.Collections.Generic;
 
-public class BlockData
+public struct BlockData
 {
-    public Dictionary<string, string> dataTable = new Dictionary<string, string>();
-
-    public BlockData()
-    {
-    }
-
-    public BlockData(Dictionary<string, string> dataTable)
-    {
-        this.dataTable = dataTable;
-    }
+    public List<string> keys;
+    public List<string> values;
 
     public BlockData(string saveDataString)
     {
-        foreach (var dataPiece in saveDataString.Split('|'))
-            if (dataPiece.Contains("="))
-                dataTable.Add(dataPiece.Split('=')[0], dataPiece.Split('=')[1]);
+        keys = new List<string>();
+        values = new List<string>();
+        
+        foreach (var tagStrings in saveDataString.Split('|'))
+            if (tagStrings.Contains("="))
+                SetTag(tagStrings.Split('=')[0], tagStrings.Split('=')[1]);
     }
 
-    public void RemoveData(string key)
+    public void RemoveTag(string key)
     {
-        dataTable.Remove(key);
+        if (HasTag(key))
+        {
+            int index = keys.IndexOf(key);
+            
+            keys.RemoveAt(index);
+            values.RemoveAt(index);
+        }
     }
 
-    public void SetData(string key, string value)
+    public BlockData SetTag(string key, string value)
     {
-        dataTable[key] = value;
+        if (HasTag(key))
+        {
+            values[keys.IndexOf(key)] = value;
+        }
+        else
+        {
+            keys.Add(key);
+            values.Add(value);
+        }
+        
+        return this;
     }
 
-    public bool HasData(string key)
+    public bool HasTag(string key)
     {
-        return dataTable.ContainsKey(key);
+        return (keys.Contains(key));
     }
 
-    public string GetData(string key)
+    public string GetTag(string key)
     {
-        if (!HasData(key))
+        if (!HasTag(key))
             return "";
 
-        return dataTable[key];
+        return values[keys.IndexOf(key)];
     }
 
     public string GetSaveString()
     {
         var result = "";
 
-        var first = true;
-        foreach (var entry in dataTable)
+        for (int i = 0; i < keys.Count; i++)
         {
-            if (!first)
+            if(i != 0)
                 result += "|";
-            result += entry.Key + "=" + entry.Value;
-            first = false;
+            
+            result += keys[i] + "=" + values[i];
         }
 
         return result;

@@ -1,85 +1,201 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Mirror;
 using UnityEngine;
 
 [Serializable]
-public class Inventory
+public class Inventory : NetworkBehaviour
 {
     public static int MaxStackSize = 64;
-    public static bool anyOpen;
+    public static Dictionary<int, Inventory> loadedInventories = new Dictionary<int, Inventory>();
+    
+    public SyncList<ItemStack> items = new SyncList<ItemStack>();
+    [SyncVar] public Location holder;
+    [SyncVar] public string invName;
+    [SyncVar] public int size;
+    [SyncVar] public string type;
+    [SyncVar] public int id;
+    [SyncVar] public GameObject inventoryMenu;
+    [SyncVar] public bool open;
 
-    public Location holder;
-    public ItemStack[] items;
-    public string name;
-
-    public bool open;
-
-    public int size;
-
-    public Inventory()
+    public GameObject inventoryMenuPrefab;
+    
+    [Server]
+    public static Inventory Create(string type, int size, string invName)
     {
-        initialize(27, "Inventory");
+        int id = UnityEngine.Random.Range(1, 9999999);
+        
+        return Create(type, size, invName, id);
+    }
+    
+    [Server]
+    public static Inventory Create(string type, int size, string invName, int id)
+    {
+        GameObject obj = Instantiate(Resources.Load<GameObject>("Prefabs/Inventories/" + type));
+        Inventory inventory = obj.GetComponent<Inventory>();
+        
+        inventory.size = size;
+        inventory.type = type;
+        inventory.invName = invName;
+        inventory.id = id;
+
+        for (int i = 0; i < size; i++)
+        {
+            inventory.items.Add(new ItemStack());
+        }
+        
+        loadedInventories[id] = inventory;
+        
+        NetworkServer.Spawn(obj);
+
+        return inventory;
+    }
+    
+    public static Inventory Get(int id)
+    {
+        if(loadedInventories.ContainsKey(id))
+            return loadedInventories[id];
+        
+        if (NetworkServer.active && Directory.Exists(WorldManager.world.getPath() + "\\inventories\\" + id))
+            return Load(id);
+
+        return null;
     }
 
-    public Inventory(int size)
+    public static bool IsAnyOpen(PlayerInstance playerInstance)
     {
-        initialize(size, "Inventory");
+        foreach (Inventory inv in loadedInventories.Values)
+        {
+            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().playerInstance == playerInstance.gameObject)
+                return true;
+        }
+
+        return false;
     }
 
-    public Inventory(int size, string name)
+    private void Start()
     {
-        initialize(size, name);
+        loadedInventories[id] = this;
     }
 
-    public virtual void initialize(int size, string name)
+    private void Update()
     {
-        this.size = size;
-        Clear();
-        this.name = name;
+        if ((Time.time % 5f) - Time.deltaTime <= 0 && isServer)
+            Save();
     }
 
-    public void setItem(int slot, ItemStack item)
+    [Server]
+    public void Save()
+    {
+        string path = WorldManager.world.getPath() + "\\inventories\\"+id;
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        if (!File.Exists(path + "\\items.dat"))
+            File.Create(path + "\\items.dat").Close();
+        if (!File.Exists(path + "\\type.dat"))
+            File.Create(path + "\\type.dat").Close();
+        if (!File.Exists(path + "\\invName.dat"))
+            File.Create(path + "\\invName.dat").Close();
+        if (!File.Exists(path + "\\size.dat"))
+            File.Create(path + "\\size.dat").Close();
+        
+        List<string> itemLines = new List<string>();
+        foreach(ItemStack item in items)
+            itemLines.Add(item.GetSaveString());
+        File.WriteAllLines(path + "\\items.dat", itemLines);
+        
+        File.WriteAllLines(path + "\\type.dat", new List<string> { type });
+        
+        File.WriteAllLines(path + "\\invName.dat", new List<string> { invName });
+        
+        File.WriteAllLines(path + "\\size.dat", new List<string> { size.ToString() });
+    }
+
+    [Server]
+    public static Inventory Load(int id)
+    {
+        string path = WorldManager.world.getPath() + "\\inventories\\"+id;
+
+        string[] itemLines = File.ReadAllLines(path + "\\items.dat");
+        List<ItemStack> items = new List<ItemStack>();
+        foreach (string itemLine in itemLines)
+        {
+            items.Add(new ItemStack(itemLine));
+        }
+
+        string type = File.ReadAllLines(path + "\\type.dat")[0];
+        string invName = File.ReadAllLines(path + "\\invName.dat")[0];
+        int size = int.Parse(File.ReadAllLines(path + "\\size.dat")[0]);
+        
+        
+        Inventory inv = Create(type, size, invName, id);
+        inv.items.Clear();
+        inv.items.AddRange(items);
+
+        return inv;
+    }
+
+    [Server]
+    public void Delete()
+    {
+        string path = WorldManager.world.getPath() + "\\inventories\\"+id;
+        Directory.Delete(path, true);
+        NetworkServer.Destroy(gameObject);
+    }
+    
+    [Server]
+    public void SetItem(int slot, ItemStack item)
     {
         if (item.amount <= 0)
         {
-            items[slot] = new ItemStack();
-            return;
+            item = new ItemStack();
         }
         if (item.amount > MaxStackSize)
         {
             item.amount = MaxStackSize;
         }
 
-
         items[slot] = item;
     }
 
-    public ItemStack getItem(int slot)
+    public ItemStack GetItem(int slot)
     {
         if (slot < size)
             return items[slot];
         return null;
     }
 
+    [Server]
     public void Clear()
     {
-        items = new ItemStack[size];
-        for (var i = 0; i < size; i++) items[i] = new ItemStack();
+        for(int slot = 0; slot < size; slot++)
+            items[slot] = new ItemStack();
     }
 
+    [Server]
     public bool AddItem(ItemStack item)
     {
-        foreach (var invItem in items)
+        for (int slot = 0; slot < size; slot++)
+        {
+            ItemStack invItem = GetItem(slot).Clone();
+            
             if (invItem.material == item.material && invItem.amount + item.amount <= MaxStackSize)
             {
                 invItem.amount += item.amount;
+                SetItem(slot, invItem);
                 return true;
             }
+        }
 
-        for (int slot = 0; slot < items.Length; slot++)
+        for (int slot = 0; slot < size; slot++)
         {
-            if (getItem(slot).material == Material.Air)
+            if (GetItem(slot).material == Material.Air)
             {
-                setItem(slot, item);
+                SetItem(slot, item);
                 return true;
             }
         }
@@ -87,6 +203,7 @@ public class Inventory
         return false;
     }
 
+    [Server]
     public ItemStack GetItemOfMaterial(Material mat)
     {
         foreach (var item in items)
@@ -117,14 +234,7 @@ public class Inventory
         return false;
     }
 
-    public bool Contains(Material mat, int amount)
-    {
-        foreach (var item in items)
-            if (item.material == mat && item.amount == amount)
-                return true;
-        return false;
-    }
-
+    [Server]
     public void DropAll(Location dropPosition)
     {
         foreach (var item in items)
@@ -132,34 +242,34 @@ public class Inventory
             item.Drop(dropPosition + new Location(0, 1), true);
         }
 
-        items = new ItemStack[size];
+        Clear();
     }
 
-    public virtual void Open(Location holder)
+    [Server]
+    public void Open(PlayerInstance playerInstance)
     {
-        this.holder = holder;
-
+        GameObject obj = Instantiate(inventoryMenuPrefab);
+        InventoryMenu menu = obj.GetComponent<InventoryMenu>();
+        
+        menu.inventoryIds.Add(0, id);
+        menu.playerInstance = playerInstance.gameObject;
+        
+        NetworkServer.Spawn(obj);
+        inventoryMenu = obj;
         open = true;
-        anyOpen = true;
-        UpdateMenuStatus();
     }
 
+    [Server]
     public virtual void Close()
     {
+        if(inventoryMenu != null)
+            inventoryMenu.GetComponent<InventoryMenu>().Close();
         open = false;
-        anyOpen = false;
-        UpdateMenuStatus();
     }
-
-    public virtual void UpdateMenuStatus()
+    
+    [Command(requiresAuthority = false)]
+    public void RequestClose()
     {
-        ContainerInventoryMenu invMenu = (ContainerInventoryMenu)GetInventoryMenu();
-        ContainerInventoryMenu.inventories[1] = this;
-        invMenu.active = open;
-    }
-
-    public virtual InventoryMenu GetInventoryMenu()
-    {
-        return InventoryMenuManager.instance.containerInventoryMenu;
+        Close();
     }
 }

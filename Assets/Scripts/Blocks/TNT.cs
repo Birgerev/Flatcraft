@@ -19,7 +19,7 @@ public class TNT : Block
         location.SetMaterial(Material.Air).Tick();
         
         PrimedTNT tnt = (PrimedTNT)Entity.Spawn("PrimedTNT");
-        tnt.Location = location;
+        tnt.Teleport(location);
         tnt.fuse = fuse;
     }
 }

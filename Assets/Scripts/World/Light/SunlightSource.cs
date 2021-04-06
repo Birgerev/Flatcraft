@@ -5,7 +5,7 @@ using UnityEngine;
 public class SunlightSource : MonoBehaviour
 {
     public static Transform SunlightSourceParent;
-    private LightSource lightSource;
+    public LightSource lightSource;
 
     private void Start()
     {
@@ -23,7 +23,7 @@ public class SunlightSource : MonoBehaviour
 
     private TimeOfDay GetTimeOfDay()
     {
-        return (WorldManager.world.time % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
+        return (WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
             TimeOfDay.Night : TimeOfDay.Day;
     }
     
@@ -32,19 +32,25 @@ public class SunlightSource : MonoBehaviour
         TimeOfDay lastUpdated = GetTimeOfDay();
         lightSource.UpdateLightLevel(
             GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel, 
-            false);
+            true);
 
         while (true)
         {
             if(GetTimeOfDay() != lastUpdated)
             {
                 lightSource.UpdateLightLevel(
-                    GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel);
+                    GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
+                    true);
                 lastUpdated = GetTimeOfDay();
             }
 
             yield return new WaitForSeconds(5);
         }
+    }
+    
+    public Location GetLocation()
+    {
+        return Location.LocationByPosition(transform.position);
     }
 }
 

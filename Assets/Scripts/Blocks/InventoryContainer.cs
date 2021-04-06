@@ -3,47 +3,43 @@ using UnityEngine;
 
 public class InventoryContainer : Block
 {
-    public Inventory inventory;
-    public override bool autosave { get; } = true;
-    public virtual Type inventoryType { get; } = typeof(Inventory);
-    public override bool autoTick { get; } = true;
-
-    public override void Initialize()
+    public override void ServerInitialize()
     {
-        base.Initialize();
+        base.ServerInitialize();
+        
+        if (!GetData().HasTag("inventoryId"))
+        {
+            Inventory inv = NewInventory();
+            location.SetData(GetData().SetTag("inventoryId", inv.id.ToString()));
+        }
 
-        if (data.GetData("inventory") != "")
-            inventory = (Inventory) JsonUtility.FromJson(data.GetData("inventory"), inventoryType);
-        else inventory = (Inventory) Activator.CreateInstance(inventoryType);
+        GetInventory();
     }
 
-    public override void Tick()
+    public virtual Inventory NewInventory()
     {
-        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
-
-        base.Tick();
+        return Inventory.Create("Inventory", 0, "inventory name not set");
     }
 
     public override void Break(bool drop)
     {
-        inventory.DropAll(location);
+        GetInventory().DropAll(location);
+        GetInventory().Delete();
 
         base.Break(drop);
     }
 
-    public override void Autosave()
+    public override void Interact(PlayerInstance player)
     {
-        data.SetData("inventory", JsonUtility.ToJson(Convert.ChangeType(inventory, inventoryType)));
+        base.Interact(player);
 
-        if (inventory == null || inventory.open) return;
-
-        base.Autosave();
+        GetInventory().Open(player);
+        GetInventory().holder = location;
     }
 
-    public override void Interact()
+    public Inventory GetInventory()
     {
-        base.Interact();
-
-        inventory.Open(location);
+        int invId = int.Parse(GetData().GetTag("inventoryId"));
+        return Inventory.Get(invId);
     }
 }

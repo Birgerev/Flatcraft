@@ -47,25 +47,27 @@ public class DebugMenu : MonoBehaviour
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;
 
-        var player = Player.localInstance;
-        text_x.text = "x: " + player.transform.position.x;
-        text_y.text = "y: " + player.transform.position.y;
+        Player player = Player.localEntity;
+        text_x.text = "x: " + player.Location.x;
+        text_y.text = "y: " + player.Location.y;
         text_dimension.text = "dimension: " + player.Location.dimension;
-        var biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
+        
+        Biome biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
         if (biome != null)
             text_biome.text = "biome: " + biome.name;
 
         text_seed.text = "seed: " + WorldManager.world.seed;
-        text_time.text = "time: " + (int) WorldManager.world.time + ", (day " +
-                         (int) (WorldManager.world.time / WorldManager.dayLength) + ")";
+        text_time.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
+                         (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
 
-        var block = player.GetMouseBlock();
-        var material = Material.Air;
-        var data = "{}";
+        Location location = player.GetBlockedMouseLocation();
+        Block block = player.GetMouseBlock();
+        Material material = Material.Air;
+        string data = "{}";
         if(block != null)
         {
             material = block.GetMaterial();
-            data = block.data.GetSaveString();
+            data = location.GetData().GetSaveString();
         }
         text_blockInfo.text = "Material." + material.ToString() + " " + data;
     }
