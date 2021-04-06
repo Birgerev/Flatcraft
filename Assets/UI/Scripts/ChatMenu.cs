@@ -41,7 +41,7 @@ public class ChatMenu : MonoBehaviour
         {
             open = false;
             
-            string text = inputField.text;
+            string text = inputField.text.Trim();
 
             if (!String.IsNullOrWhiteSpace(text))
             {
