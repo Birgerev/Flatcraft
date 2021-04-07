@@ -30,7 +30,7 @@ public class CaveGenerator : MonoBehaviour
         int maxX = minX + (Chunk.AmountOfChunksInRegion * Chunk.Width); //last block of the region
 
         //Random, with a seed unique to the chunk position and the world seed
-        System.Random r = new System.Random(chunkPos.GetHashCode() + WorldManager.world.seed);
+        System.Random r = new System.Random((region + ", " + WorldManager.world.seed).GetHashCode());
 
         for (int snakeAmount = 0; snakeAmount < perlinSnakeAmount; snakeAmount++)
         {
