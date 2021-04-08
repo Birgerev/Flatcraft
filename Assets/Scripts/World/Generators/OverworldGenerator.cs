@@ -45,7 +45,6 @@ public class OverworldGenerator : WorldGenerator
     
     public override Material GenerateTerrainBlock(Location loc)
     {
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
         ChunkPosition cPos = new ChunkPosition(loc);
         
         Material mat = Material.Air;
@@ -118,6 +117,8 @@ public class OverworldGenerator : WorldGenerator
         //-Bedrock Generation-//
         if (loc.y <= 4)
         {
+            System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
+            
             //Fill layer 0 and then progressively less chance of bedrock further up
             if (loc.y == 0)
                 mat = Material.Bedrock;
