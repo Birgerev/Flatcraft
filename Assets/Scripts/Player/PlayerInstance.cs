@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public class PlayerInstance : NetworkBehaviour
