@@ -294,6 +294,8 @@ public class Chunk : NetworkBehaviour
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
             return new BlockState(Material.Air);
         }
+        if (blockStates.Count == 0)
+            return new BlockState(Material.Air);
         
         int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
         int listIndex = chunkLocation.x + (chunkLocation.y * Width);
