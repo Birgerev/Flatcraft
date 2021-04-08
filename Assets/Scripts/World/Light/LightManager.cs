@@ -28,9 +28,9 @@ public class LightManager : MonoBehaviour
     {
         if (doLight != doLightLastFrame)
         {
-            foreach (var chunkPos in WorldManager.instance.chunks.Keys)
+            foreach (object chunkPos in WorldManager.instance.chunks.Keys)
             {
-                UpdateChunkLight(chunkPos);
+                UpdateChunkLight((ChunkPosition)chunkPos);
             }
 
             doLightLastFrame = doLight;
