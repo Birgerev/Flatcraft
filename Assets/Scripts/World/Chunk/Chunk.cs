@@ -229,7 +229,7 @@ public class Chunk : NetworkBehaviour
                 }
             }
 
-            if (y < 80 && y % 4 == 0)
+            if (y < 80 && y % 2 == 0)
                 yield return new WaitForSeconds(0.05f);
         }
         
@@ -253,20 +253,18 @@ public class Chunk : NetworkBehaviour
 
     IEnumerator BuildChunk()
     {
-        for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
+        for (int y = 0; y < Height; y++)
         {
-            for (int y = 0; y < Height; y++)
+            for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
             {
                 Location loc = new Location(x, y, chunkPosition.dimension);
                 BlockState state = GetBlockState(loc);
             
                 LocalBlockChange(loc, state);
-                
-                //if (y % 10 == 1) yield return new WaitForSeconds(0.05f);
             }
+            yield return new WaitForSeconds(0f);
         }
         
-        yield return new WaitForSeconds(0.05f);
         donePlacingGeneratedBlocks = true;
     }
 
@@ -299,7 +297,7 @@ public class Chunk : NetworkBehaviour
         
         int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
         int listIndex = chunkLocation.x + (chunkLocation.y * Width);
-        
+
         return blockStates[listIndex];
     }
 
