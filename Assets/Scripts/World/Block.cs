@@ -77,7 +77,7 @@ public class Block : MonoBehaviour
     {
         Chunk chunk = new ChunkPosition(location).GetChunk();
 
-        if (chunk.randomTickBlocks.Contains(this))
+        if (chunk != null && chunk.randomTickBlocks.Contains(this))
             chunk.randomTickBlocks.Remove(this);
     }
     
