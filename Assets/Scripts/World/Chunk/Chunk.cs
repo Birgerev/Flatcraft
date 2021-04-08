@@ -109,7 +109,7 @@ public class Chunk : NetworkBehaviour
         
         yield return new WaitForSeconds(1f);
 
-        if (isClient)
+        if (isClient && !isServer)
         {
             StartCoroutine(BuildChunk());
         }
