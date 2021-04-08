@@ -556,9 +556,8 @@ public class Chunk : NetworkBehaviour
     {
         int2 coordinates = new int2(location.x, location.y);
         Material mat = state.material;
-        BlockData data = state.data;
         
-        var type = Type.GetType(mat.ToString());
+        Type type = Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
             return;
 
