@@ -124,12 +124,7 @@ public class Block : MonoBehaviour
             if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
                 Break();
     }
-
-    public float getRandomChance()
-    {
-        return (float) new Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
-    }
-
+    
     private IEnumerator animatedTextureRenderLoop()
     {
         while (true)
