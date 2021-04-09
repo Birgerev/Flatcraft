@@ -45,7 +45,11 @@ public class Liquid : Block
     public override void Tick()
     {
         if (!GetData().HasTag("liquid_level"))
+        {
             SetData(GetData().SetTag("liquid_level", max_liquid_level.ToString()));
+            location.Tick();
+            return;
+        }
 
         if(CheckSource())
             CheckFlow();
@@ -161,6 +165,7 @@ public class Liquid : Block
         newData.SetTag("source_block", "true");
         newData.SetTag("liquid_level", max_liquid_level.ToString());
         SetData(newData);
+        location.Tick();
     }
     
     public virtual void LiquidEncounterFlow(Location relativeLocation)
@@ -219,16 +224,15 @@ public class Liquid : Block
         
         foreach (var possibleSource in possibleSourceBlocks)
         {
-            var possibleSourceMaterial = possibleSource.GetMaterial();
-            var currentMaterial = GetMaterial();
+            BlockState possibleSourceState = possibleSource.GetState();
+            Material currentMaterial = GetMaterial();
             
-            if (possibleSourceMaterial == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
+            if (possibleSourceState.material == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
             {
-                var possibleSourceData = possibleSource.GetData();
-                if (possibleSourceData.HasTag("liquid_level"))
+                if (possibleSourceState.data.HasTag("liquid_level"))
                 {
-                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
-                    var currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
+                    int possibleSourceLiquidLevel = int.Parse(possibleSourceState.data.GetTag("liquid_level"));
+                    int currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
                     if (possibleSourceLiquidLevel < currentLiquidLevel || possibleSourceLiquidLevel == max_liquid_level) //Make sure the source is of a lower liquid level, or a full block (result of liquid flowing down)
                     {
