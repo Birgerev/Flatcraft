@@ -63,7 +63,7 @@ public class LoadingMenu : MonoBehaviour
             SetState("Creating Chunks", 2f/steps);
             return;
         }
-        if (!playerChunk.isGenerated)
+        if (!playerChunk.areBlocksGenerated)
         {
             SetState("Generating Chunks", 3f/steps);
             return;

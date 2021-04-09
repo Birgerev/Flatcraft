@@ -15,7 +15,7 @@ public class Chunk : NetworkBehaviour
 {
     public const int Width = 16, Height = 256;
     public const int DimensionSeparationSpace = 512;
-    public const int RenderDistance = 6;
+    public const int RenderDistance = 7;
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
@@ -37,7 +37,7 @@ public class Chunk : NetworkBehaviour
     public ChunkPosition chunkPosition;
     
     [SyncVar]
-    public bool isGenerated;
+    public bool areBlocksGenerated;
     public bool donePlacingGeneratedBlocks;
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
@@ -79,7 +79,7 @@ public class Chunk : NetworkBehaviour
         blocksInitialized = false;
         
         if(isServer)
-            isGenerated = false;
+            areBlocksGenerated = false;
         
 
         if (isServer)
@@ -107,7 +107,7 @@ public class Chunk : NetworkBehaviour
             }
         }
 
-        while (!isGenerated || blockStates.Count == 0)
+        while (!areBlocksGenerated || blockStates.Count == 0)
             yield return new WaitForSeconds(0.1f);
         
         yield return new WaitForSeconds(1f);
@@ -187,7 +187,7 @@ public class Chunk : NetworkBehaviour
                 yield return new WaitForSeconds(0.05f);
         }
 
-        isGenerated = true;
+        areBlocksGenerated = true;
     }
 
     [Server]
@@ -251,7 +251,7 @@ public class Chunk : NetworkBehaviour
         
         GeneratingTickAllBlocks();
         
-        isGenerated = true;
+        areBlocksGenerated = true;
     }
 
     IEnumerator BuildChunk()
