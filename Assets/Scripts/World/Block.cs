@@ -168,8 +168,6 @@ public class Block : MonoBehaviour
         SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
         SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
 
-        //Save new rotation
-        Autosave();
         RenderRotate();
     }
 
@@ -183,13 +181,6 @@ public class Block : MonoBehaviour
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
-    }
-
-    public virtual void Autosave()
-    {
-        time_of_last_autosave = Time.time;
-
-        location.SetData(GetData());
     }
 
     public virtual void Hit(PlayerInstance player, float time)
