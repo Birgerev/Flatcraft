@@ -65,8 +65,6 @@ public class Chunk : NetworkBehaviour
 
     IEnumerator CreateChunk()
     {
-        yield return new WaitForSeconds(1f);
-        
         WorldManager.instance.chunks[chunkPosition] = this;
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
@@ -81,7 +79,6 @@ public class Chunk : NetworkBehaviour
         if(isServer)
             areBlocksGenerated = false;
         
-
         if (isServer)
         {
             int blocksAmountInChunk = Width * Height;
@@ -109,8 +106,6 @@ public class Chunk : NetworkBehaviour
 
         while (!areBlocksGenerated || blockStates.Count == 0)
             yield return new WaitForSeconds(0.1f);
-        
-        yield return new WaitForSeconds(1f);
 
         if (isClient && !isServer)
         {
@@ -144,7 +139,7 @@ public class Chunk : NetworkBehaviour
         //Wait until neighboring chunks are loaded to initialize light
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.2f);
             
             if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
@@ -186,6 +181,8 @@ public class Chunk : NetworkBehaviour
             if (i % 10 == 1) 
                 yield return new WaitForSeconds(0.05f);
         }
+        
+        StartCoroutine(BuildChunk());
 
         areBlocksGenerated = true;
     }
