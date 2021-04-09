@@ -495,9 +495,9 @@ public class Chunk : NetworkBehaviour
                 backgroundBlocks.Remove(new int2(loc.x, loc.y));
             }
 
-            if (BackgroundBlock.viableMaterials.Contains(mat))
+            if (BackgroundBlock.viableMaterials.ContainsKey(mat))
             {
-                lastViableMaterial = mat;
+                lastViableMaterial = BackgroundBlock.viableMaterials[mat];
             }
 
             bool placeBackground = false;
