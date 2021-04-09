@@ -82,7 +82,7 @@ public class LightManager : MonoBehaviour
 
     public static void DestroySource(LightSource source)
     {
-        Location loc = source.GetLocation();
+        Location loc = source.location;
         LightManager.UpdateLightInArea(loc + new Location(-15, -15), loc + new Location(15, 15));
         Destroy(source.gameObject);
     }
@@ -117,7 +117,7 @@ public class LightManager : MonoBehaviour
 
         foreach (LightSource source in sources)
         {
-            Location sourceLoc = source.GetLocation();
+            Location sourceLoc = source.location;
             lightObjects.UnionWith(GetLightObjectsForArea(
                 sourceLoc + new Location(-maxLightLevel, -maxLightLevel),
                 sourceLoc + new Location(maxLightLevel, maxLightLevel)));
@@ -141,13 +141,13 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        Vector3 objectPos = lightObject.transform.position;
+        Vector3 objectPos = lightObject.GetPosition();
         int brightestRecordedLightLevel = 0;
 
         if (LightManager.instance.doLight)
             foreach (LightSource source in possibleLightSources)
             {
-                Vector3 sourcePos = source.transform.position;
+                Vector3 sourcePos = source.position;
                 float objectDistance = Vector3.Distance(sourcePos, objectPos);
                 if(objectDistance > maxLightLevel)
                     continue;
