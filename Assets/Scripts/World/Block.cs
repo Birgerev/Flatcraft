@@ -15,7 +15,6 @@ public class Block : MonoBehaviour
     public Location location;
 
     public virtual string texture { get; set; } = "";
-    private float time_of_last_autosave;
 
     private float time_of_last_hit;
     public virtual string[] alternative_textures { get; } = { };
@@ -159,14 +158,16 @@ public class Block : MonoBehaviour
 
     public void RotateTowardsPlayer()
     {
-        var rotated_x = false;
-        var rotated_y = false;
+        bool rotated_x = false;
+        bool rotated_y = false;
 
         if (rotate_y) rotated_y = Player.localEntity.transform.position.y < location.y;
         if (rotate_x) rotated_x = Player.localEntity.transform.position.x < location.x;
 
-        SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
-        SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
+        BlockData newData = GetData();
+        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
+        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
+        SetData(newData);
 
         RenderRotate();
     }
