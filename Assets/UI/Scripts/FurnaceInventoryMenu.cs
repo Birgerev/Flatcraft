@@ -5,12 +5,13 @@ using Mirror;
 
 public class FurnaceInventoryMenu : ContainerInventoryMenu
 {
-    
     public Image fuelProgress;
     public Image smeltingProgress;
 
     public override void OnStartServer()
     {
+        base.OnStartServer();
+        
         StartCoroutine(furnaceInvenoryLoop());
     }
 
@@ -24,9 +25,10 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
         }
     }
 
-    public override void UpdateInventory()
+    [Client]
+    public override void ClientInventoryUpdate()
     {
-        base.UpdateInventory();
+        base.ClientInventoryUpdate();
         
         FurnaceInventory inv = ((FurnaceInventory) Inventory.Get(inventoryIds[0]));
 
@@ -35,7 +37,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
             fuelProgress.fillAmount = 0;
         smeltingProgress.fillAmount = inv.smeltingProgress / SmeltingRecipe.smeltTime;
     }
-
+    
     [Client]
     public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
     {
