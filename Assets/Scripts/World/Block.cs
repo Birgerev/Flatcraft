@@ -111,14 +111,14 @@ public class Block : MonoBehaviour
 
     public virtual void Tick()
     {
-        checkGround();
+        CheckGround();
         UpdateColliders();
         RenderRotate();
 
         age++;
     }
 
-    private void checkGround()
+    private void CheckGround()
     {
         if (requiresGround)
             if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
