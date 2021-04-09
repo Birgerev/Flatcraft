@@ -42,6 +42,7 @@ public class Chunk : NetworkBehaviour
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
     public bool isLightGenerated;
+    public bool blocksInitialized;
     
 
     public Portal_Frame netherPortal;
@@ -75,6 +76,8 @@ public class Chunk : NetworkBehaviour
         donePlacingGeneratedBlocks = false;
         donePlacingBackgroundBlocks = false;
         isLightGenerated = false;
+        blocksInitialized = false;
+        
         if(isServer)
             isGenerated = false;
         
@@ -123,11 +126,13 @@ public class Chunk : NetworkBehaviour
             StartCoroutine(MobSpawning());
             StartCoroutine(BlockRandomTicking());
         }
-
-        yield return new WaitForSeconds(1f);
         
         //Initialize all blocks after all blocks have been created
-        InitializeAllBlocks();
+        StartCoroutine(InitializeAllBlocks());
+
+        while (!blocksInitialized)
+            yield return new WaitForSeconds(0.1f);
+        
         GenerateBackgroundBlocks();
         GenerateSunlightSources();
         
@@ -228,9 +233,7 @@ public class Chunk : NetworkBehaviour
                     loc.SetStateNoBlockChange(state);
                 }
             }
-
-            if (y < 80 && y % 2 == 0)
-                yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0f);
         }
         
 
@@ -350,11 +353,12 @@ public class Chunk : NetworkBehaviour
         }
     }
     
-    private void InitializeAllBlocks()
+    IEnumerator InitializeAllBlocks()
     {
         //Initialize Blocks
-        var blockList = blocks.Values;
-
+        List<Block> blockList = new List<Block>(blocks.Values);
+        int i = 0;
+        
         foreach (var block in blockList)
         {
             if (block == null || block.transform == null)
@@ -363,7 +367,15 @@ public class Chunk : NetworkBehaviour
             block.Initialize();
             if(isServer)
                 block.ServerInitialize();
+            
+            i++;
+            if (i % 20 == 0)
+            {
+                yield return new WaitForSeconds(0);
+            }
         }
+
+        blocksInitialized = true;
     }
 
     [Server]
@@ -466,13 +478,13 @@ public class Chunk : NetworkBehaviour
     {
         for (int x = 0; x < Width; x++)
         {
-            UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
+            StartCoroutine(UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false));
         }
 
         donePlacingBackgroundBlocks = true;
     }
 
-    private void UpdateBackgroundBlockColumn(int x, bool updateLight)
+    IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         Material lastViableMaterial = Material.Air;
         for (int y = Height - 1; y >= 0; y--)
@@ -513,6 +525,9 @@ public class Chunk : NetworkBehaviour
                 if (updateLight)
                     StartCoroutine(scheduleBlockLightUpdate(loc));
             }
+            
+            if(!isLoaded && y % 10 == 0)
+                yield return new WaitForSeconds(0);
         }
     }
 
@@ -622,7 +637,7 @@ public class Chunk : NetworkBehaviour
         {
             if (doesBlockChangeImpactSunlight)
                 StartCoroutine(UpdateSunlightInColumn(location.x));
-            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(location.x, true));
+            StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
             StartCoroutine(scheduleBlockLightUpdate(location));
         }
     }
@@ -634,11 +649,6 @@ public class Chunk : NetworkBehaviour
         LightManager.UpdateSunlightInColumn(new BlockColumn(x, chunkPosition.dimension), true);
     }
 
-    IEnumerator ScheduleUpdateBackgroundBlockColumn(int x, bool updateLight)
-    {
-        yield return new WaitForSeconds(0f);
-        UpdateBackgroundBlockColumn(x, updateLight);
-    }
 
     IEnumerator scheduleBlockLightUpdate(Location loc)
     {
