@@ -109,4 +109,5 @@
     Rotten_Flesh,
     Bread,
     Gunpowder,
+    Glass,
 }
