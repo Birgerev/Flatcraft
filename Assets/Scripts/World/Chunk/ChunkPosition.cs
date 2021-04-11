@@ -94,10 +94,8 @@ public struct ChunkPosition
 
     public Chunk GetChunk()
     {
-        Chunk chunk;
-
-        WorldManager.instance.chunks.TryGetValue(this, out chunk);
-
+        Chunk chunk = (Chunk)WorldManager.instance.chunks[this];
+        
         return chunk;
     }
 

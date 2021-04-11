@@ -15,7 +15,6 @@ public class Block : MonoBehaviour
     public Location location;
 
     public virtual string texture { get; set; } = "";
-    private float time_of_last_autosave;
 
     private float time_of_last_hit;
     public virtual string[] alternative_textures { get; } = { };
@@ -77,7 +76,7 @@ public class Block : MonoBehaviour
     {
         Chunk chunk = new ChunkPosition(location).GetChunk();
 
-        if (chunk.randomTickBlocks.Contains(this))
+        if (chunk != null && chunk.randomTickBlocks.Contains(this))
             chunk.randomTickBlocks.Remove(this);
     }
     
@@ -112,25 +111,20 @@ public class Block : MonoBehaviour
 
     public virtual void Tick()
     {
-        checkGround();
+        CheckGround();
         UpdateColliders();
         RenderRotate();
 
         age++;
     }
 
-    private void checkGround()
+    private void CheckGround()
     {
         if (requiresGround)
             if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
                 Break();
     }
-
-    public float getRandomChance()
-    {
-        return (float) new Random(SeedGenerator.SeedByLocation(location) + age).NextDouble();
-    }
-
+    
     private IEnumerator animatedTextureRenderLoop()
     {
         while (true)
@@ -159,17 +153,17 @@ public class Block : MonoBehaviour
 
     public void RotateTowardsPlayer()
     {
-        var rotated_x = false;
-        var rotated_y = false;
+        bool rotated_x = false;
+        bool rotated_y = false;
 
         if (rotate_y) rotated_y = Player.localEntity.transform.position.y < location.y;
         if (rotate_x) rotated_x = Player.localEntity.transform.position.x < location.x;
 
-        SetData(GetData().SetTag("rotated_x", rotated_x ? "true" : "false"));
-        SetData(GetData().SetTag("rotated_y", rotated_y ? "true" : "false"));
+        BlockData newData = GetData();
+        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
+        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
+        SetData(newData);
 
-        //Save new rotation
-        Autosave();
         RenderRotate();
     }
 
@@ -183,13 +177,6 @@ public class Block : MonoBehaviour
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
-    }
-
-    public virtual void Autosave()
-    {
-        time_of_last_autosave = Time.time;
-
-        location.SetData(GetData());
     }
 
     public virtual void Hit(PlayerInstance player, float time)

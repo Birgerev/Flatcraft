@@ -33,8 +33,10 @@ public class FurnaceInventory : Inventory
         return 2;
     }
 
-    public void Update()
+    public override void Update()
     {
+        base.Update();
+        
         if ((Time.time % 1f) - Time.deltaTime <= 0)
         {
             CheckFuels();

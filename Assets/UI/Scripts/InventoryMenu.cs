@@ -46,7 +46,7 @@ public class InventoryMenu : NetworkBehaviour
 
     public virtual void OpenPlayerInventory()
     {
-        inventoryIds.Add(1,
+        inventoryIds.Add(1, 
             playerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
     }
     

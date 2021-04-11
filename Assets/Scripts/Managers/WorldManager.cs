@@ -20,7 +20,7 @@ public class WorldManager : NetworkBehaviour
 
     public GameObject chunkPrefab;
 
-    public Dictionary<ChunkPosition, Chunk> chunks = new Dictionary<ChunkPosition, Chunk>();
+    public Hashtable chunks = new Hashtable();
 
     public static World world;
     [SyncVar]

@@ -45,7 +45,6 @@ public class OverworldGenerator : WorldGenerator
     
     public override Material GenerateTerrainBlock(Location loc)
     {
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
         ChunkPosition cPos = new ChunkPosition(loc);
         
         Material mat = Material.Air;
@@ -60,15 +59,15 @@ public class OverworldGenerator : WorldGenerator
         if (biome != rightBiome)
         {
             primaryBiomeWeight = 
-                0.5f - (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Chunk.Width) / Chunk.Width / 2f;
+                1 - ((float)Mathf.Abs(loc.x - new ChunkPosition(loc).worldX) / (float)Chunk.Width);
             noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
         }
-        else if (biome != leftBiome)
+        /*else if (biome != leftBiome)
         {
             primaryBiomeWeight = 
                 0.5f + (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Chunk.Width) / Chunk.Width / 2f;
             noiseValue = Biome.BlendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
-        }
+        }*/
         else
         {
             noiseValue = biome.GetLandscapeNoiseAt(loc);
@@ -118,6 +117,8 @@ public class OverworldGenerator : WorldGenerator
         //-Bedrock Generation-//
         if (loc.y <= 4)
         {
+            System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
+            
             //Fill layer 0 and then progressively less chance of bedrock further up
             if (loc.y == 0)
                 mat = Material.Bedrock;
@@ -199,7 +200,7 @@ public class OverworldGenerator : WorldGenerator
         }
         
         //Generate Liquid Pockets
-        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 3)
+        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
         {
             if (mat == Material.Stone)
             {
@@ -207,6 +208,11 @@ public class OverworldGenerator : WorldGenerator
 
                 return new BlockState(liquidMat);
             }
+        }
+
+        if (loc.y < LavaHeight && mat == Material.Air)
+        {
+            return new BlockState(Material.Lava);
         }
 
         return new BlockState(Material.Air);

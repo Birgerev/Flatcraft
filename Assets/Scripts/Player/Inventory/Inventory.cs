@@ -81,7 +81,7 @@ public class Inventory : NetworkBehaviour
         loadedInventories[id] = this;
     }
 
-    private void Update()
+    public virtual void Update()
     {
         if ((Time.time % 5f) - Time.deltaTime <= 0 && isServer)
             Save();

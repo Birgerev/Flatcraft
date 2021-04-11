@@ -133,11 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0
-  pointerItem:
-    amount: 0
-    data: 
-    durability: 0
-    material: 0
   playerInstance: {fileID: 0}
   inventorySlotLists:
   - {fileID: 2513988825844295962}
@@ -145,8 +140,8 @@ MonoBehaviour:
   pointerSlot: {fileID: 4956055016688310847}
   canvasGroup: {fileID: 1111832603576401819}
   inventoryTitle: {fileID: 9065378210002556160}
-  fuelProgress: {fileID: 6264473195988129749}
-  smeltingProgress: {fileID: 2863542073838343727}
+  fuelProgress: {fileID: 677453412105776652}
+  smeltingProgress: {fileID: 2582235243011274600}
 --- !u!1 &2176535632354488261
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +154,7 @@ GameObject:
   - component: {fileID: 6589300852333341850}
   - component: {fileID: 677453412105776652}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: FuelFiller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -475,7 +470,7 @@ GameObject:
   - component: {fileID: 5066811441654418145}
   - component: {fileID: 6264473195988129749}
   m_Layer: 5
-  m_Name: BurnTimeIcon
+  m_Name: FuelIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -626,7 +621,7 @@ GameObject:
   - component: {fileID: 8719526559256759273}
   - component: {fileID: 2582235243011274600}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: ProgressFiller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -684,7 +679,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.277
+  m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

@@ -96,7 +96,7 @@ public class Biome
             else if (dimension == Dimension.Nether)
                 biome = WorldManager.instance.netherBiome;
 
-            int biomeChunkSize = r.Next(biome.biomeMinimumChunkSize, biome.biomeMaximumChunkSize); //how many chunks will this biome cover
+            int biomeChunkSize = r.Next(biome.biomeMinimumChunkSize, biome.biomeMaximumChunkSize + 1); //how many chunks will this biome cover
             int biomeBeginningChunk = currentChunk; //where the biome starts
 
             while (currentChunk <= biomeBeginningChunk + biomeChunkSize) //Assign this biome to every one of these chunks

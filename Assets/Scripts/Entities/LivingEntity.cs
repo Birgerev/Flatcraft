@@ -222,26 +222,23 @@ public class LivingEntity : Entity
             return;
         if (!isOnGround) //Return if player isn't grounded
             return;
-
-        /*TODO better stair check
-        var blockInFront = Location
-            .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), Location.dimension)
-            .GetBlock(); //Get block in front of player acording to walk direction
+        
+        //Get block in front of player acording to walk direction
+        Block blockInFront = Location.LocationByPosition(
+                (Vector2) transform.position + new Vector2(direction * 0.5f, -0.5f)).GetBlock(); 
 
         if (blockInFront == null) return;
 
         if (Type.GetType(blockInFront.GetMaterial().ToString()).IsSubclassOf(typeof(Stairs)))
         {
-            var rotated_x = false;
-            var rotated_y = false;
-
-            rotated_x = blockInFront.location.GetData().GetTag("rotated_x") == "true";
-            rotated_y = blockInFront.location.GetData().GetTag("rotated_y") == "true";
+            bool rotated_x = blockInFront.location.GetData().GetTag("rotated_x") == "true";
+            bool rotated_y = blockInFront.location.GetData().GetTag("rotated_y") == "true";
             
             //if the stairs are rotated correctly
-            if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x))
-                transform.position += new Vector3(0, 1);
-        }*/
+            if (rotated_y == false && 
+                ((direction == -1 && rotated_x == false) || (direction == 1 && rotated_x)))
+                transform.position += new Vector3(direction * 0.2f, 1);
+        }
     }
 
     [Server]

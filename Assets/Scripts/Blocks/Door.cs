@@ -28,9 +28,6 @@ public class Door : Block
         SetData(GetData().SetTag("open", open ? "true" : "false"));
 
         PlaySound(open);
-
-        Tick();
-        Autosave();
     }
 
     public virtual void PlaySound(bool open)

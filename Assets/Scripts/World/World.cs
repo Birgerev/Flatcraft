@@ -40,7 +40,8 @@ public class World
         var world = new World(name, 0);
         var worldData = new Dictionary<string, string>();
         var data = File.ReadAllLines(world.getPath() + "\\level.dat");
-        foreach (var dataLine in data) worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
+        foreach (var dataLine in data) 
+            worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
 
         world.seed = int.Parse(worldData["seed"]);
         world.time = float.Parse(worldData["time"]);

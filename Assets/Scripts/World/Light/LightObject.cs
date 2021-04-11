@@ -7,6 +7,31 @@ using Unity.Mathematics;
 public class LightObject : MonoBehaviour
 {
     public int lightLevelDeduct;
+    public bool staticObject;
+    private Vector3 position;
+    private Location location;
+
+    public void Start()
+    {
+        position = transform.position;
+        location = Location.LocationByPosition(position);
+    }
+
+    public Vector3 GetPosition()
+    {
+        if (staticObject)
+            return position;
+        
+        return position = transform.position;
+    }
+
+    public Location GetLocation()
+    {
+        if (staticObject)
+            return location;
+        
+        return location = Location.LocationByPosition(position);
+    }
 
     public void UpdateLightLevel(int lightLevel)
     {
@@ -17,17 +42,12 @@ public class LightObject : MonoBehaviour
         if (player == null)
             return;
         
-        if (GetLocation().dimension == Dimension.Nether)
+        if (location.dimension == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
         
         float lightLevelFactor = (float)lightLevel / (float)LightManager.maxLightLevel;
         Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         GetComponent<SpriteRenderer>().color = color;
-    }
-    
-    public Location GetLocation()
-    {
-        return Location.LocationByPosition(transform.position);
     }
 }

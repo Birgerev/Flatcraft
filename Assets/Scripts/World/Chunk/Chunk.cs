@@ -15,7 +15,7 @@ public class Chunk : NetworkBehaviour
 {
     public const int Width = 16, Height = 256;
     public const int DimensionSeparationSpace = 512;
-    public const int RenderDistance = 6;
+    public const int RenderDistance = 7;
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
@@ -37,11 +37,12 @@ public class Chunk : NetworkBehaviour
     public ChunkPosition chunkPosition;
     
     [SyncVar]
-    public bool isGenerated;
+    public bool areBlocksGenerated;
     public bool donePlacingGeneratedBlocks;
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
     public bool isLightGenerated;
+    public bool blocksInitialized;
     
 
     public Portal_Frame netherPortal;
@@ -64,8 +65,6 @@ public class Chunk : NetworkBehaviour
 
     IEnumerator CreateChunk()
     {
-        yield return new WaitForSeconds(1f);
-        
         WorldManager.instance.chunks[chunkPosition] = this;
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
@@ -75,10 +74,11 @@ public class Chunk : NetworkBehaviour
         donePlacingGeneratedBlocks = false;
         donePlacingBackgroundBlocks = false;
         isLightGenerated = false;
-        if(isServer)
-            isGenerated = false;
+        blocksInitialized = false;
         
-
+        if(isServer)
+            areBlocksGenerated = false;
+        
         if (isServer)
         {
             int blocksAmountInChunk = Width * Height;
@@ -104,12 +104,10 @@ public class Chunk : NetworkBehaviour
             }
         }
 
-        while (!isGenerated || blockStates.Count == 0)
+        while (!areBlocksGenerated || blockStates.Count == 0)
             yield return new WaitForSeconds(0.1f);
-        
-        yield return new WaitForSeconds(1f);
 
-        if (isClient)
+        if (isClient && !isServer)
         {
             StartCoroutine(BuildChunk());
         }
@@ -123,11 +121,13 @@ public class Chunk : NetworkBehaviour
             StartCoroutine(MobSpawning());
             StartCoroutine(BlockRandomTicking());
         }
-
-        yield return new WaitForSeconds(1f);
         
         //Initialize all blocks after all blocks have been created
-        InitializeAllBlocks();
+        StartCoroutine(InitializeAllBlocks());
+
+        while (!blocksInitialized)
+            yield return new WaitForSeconds(0.1f);
+        
         GenerateBackgroundBlocks();
         GenerateSunlightSources();
         
@@ -139,7 +139,7 @@ public class Chunk : NetworkBehaviour
         //Wait until neighboring chunks are loaded to initialize light
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.2f);
             
             if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
@@ -181,8 +181,10 @@ public class Chunk : NetworkBehaviour
             if (i % 10 == 1) 
                 yield return new WaitForSeconds(0.05f);
         }
+        
+        StartCoroutine(BuildChunk());
 
-        isGenerated = true;
+        areBlocksGenerated = true;
     }
 
     [Server]
@@ -228,9 +230,7 @@ public class Chunk : NetworkBehaviour
                     loc.SetStateNoBlockChange(state);
                 }
             }
-
-            if (y < 80 && y % 4 == 0)
-                yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0f);
         }
         
 
@@ -248,25 +248,23 @@ public class Chunk : NetworkBehaviour
         
         GeneratingTickAllBlocks();
         
-        isGenerated = true;
+        areBlocksGenerated = true;
     }
 
     IEnumerator BuildChunk()
     {
-        for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
+        for (int y = 0; y < Height; y++)
         {
-            for (int y = 0; y < Height; y++)
+            for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
             {
                 Location loc = new Location(x, y, chunkPosition.dimension);
                 BlockState state = GetBlockState(loc);
             
                 LocalBlockChange(loc, state);
-                
-                //if (y % 10 == 1) yield return new WaitForSeconds(0.05f);
             }
+            yield return new WaitForSeconds(0f);
         }
         
-        yield return new WaitForSeconds(0.05f);
         donePlacingGeneratedBlocks = true;
     }
 
@@ -294,10 +292,12 @@ public class Chunk : NetworkBehaviour
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
             return new BlockState(Material.Air);
         }
+        if (blockStates.Count == 0)
+            return new BlockState(Material.Air);
         
         int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
         int listIndex = chunkLocation.x + (chunkLocation.y * Width);
-        
+
         return blockStates[listIndex];
     }
 
@@ -350,11 +350,12 @@ public class Chunk : NetworkBehaviour
         }
     }
     
-    private void InitializeAllBlocks()
+    IEnumerator InitializeAllBlocks()
     {
         //Initialize Blocks
-        var blockList = blocks.Values;
-
+        List<Block> blockList = new List<Block>(blocks.Values);
+        int i = 0;
+        
         foreach (var block in blockList)
         {
             if (block == null || block.transform == null)
@@ -363,7 +364,15 @@ public class Chunk : NetworkBehaviour
             block.Initialize();
             if(isServer)
                 block.ServerInitialize();
+            
+            i++;
+            if (i % 20 == 0)
+            {
+                yield return new WaitForSeconds(0);
+            }
         }
+
+        blocksInitialized = true;
     }
 
     [Server]
@@ -466,13 +475,13 @@ public class Chunk : NetworkBehaviour
     {
         for (int x = 0; x < Width; x++)
         {
-            UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false);
+            StartCoroutine(UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false));
         }
 
         donePlacingBackgroundBlocks = true;
     }
 
-    private void UpdateBackgroundBlockColumn(int x, bool updateLight)
+    IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         Material lastViableMaterial = Material.Air;
         for (int y = Height - 1; y >= 0; y--)
@@ -486,9 +495,9 @@ public class Chunk : NetworkBehaviour
                 backgroundBlocks.Remove(new int2(loc.x, loc.y));
             }
 
-            if (BackgroundBlock.viableMaterials.Contains(mat))
+            if (BackgroundBlock.viableMaterials.ContainsKey(mat))
             {
-                lastViableMaterial = mat;
+                lastViableMaterial = BackgroundBlock.viableMaterials[mat];
             }
 
             bool placeBackground = false;
@@ -513,6 +522,9 @@ public class Chunk : NetworkBehaviour
                 if (updateLight)
                     StartCoroutine(scheduleBlockLightUpdate(loc));
             }
+            
+            if(!isLoaded && y % 10 == 0)
+                yield return new WaitForSeconds(0);
         }
     }
 
@@ -556,9 +568,8 @@ public class Chunk : NetworkBehaviour
     {
         int2 coordinates = new int2(location.x, location.y);
         Material mat = state.material;
-        BlockData data = state.data;
         
-        var type = Type.GetType(mat.ToString());
+        Type type = Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
             return;
 
@@ -623,7 +634,7 @@ public class Chunk : NetworkBehaviour
         {
             if (doesBlockChangeImpactSunlight)
                 StartCoroutine(UpdateSunlightInColumn(location.x));
-            StartCoroutine(ScheduleUpdateBackgroundBlockColumn(location.x, true));
+            StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
             StartCoroutine(scheduleBlockLightUpdate(location));
         }
     }
@@ -635,11 +646,6 @@ public class Chunk : NetworkBehaviour
         LightManager.UpdateSunlightInColumn(new BlockColumn(x, chunkPosition.dimension), true);
     }
 
-    IEnumerator ScheduleUpdateBackgroundBlockColumn(int x, bool updateLight)
-    {
-        yield return new WaitForSeconds(0f);
-        UpdateBackgroundBlockColumn(x, updateLight);
-    }
 
     IEnumerator scheduleBlockLightUpdate(Location loc)
     {
