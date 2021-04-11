@@ -3199,9 +3199,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
   autoStartServerBuild: 1
-  showDebugMessages: 0
   serverTickRate: 60
   serverBatching: 0
   serverBatchInterval: 0
@@ -8046,7 +8046,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cloud: {fileID: 676520064880169441, guid: 8c12a6ec65b364146a823f5dfb5da7cc, type: 3}
+  cloudPrefab: {fileID: 37325397081918069, guid: 8c12a6ec65b364146a823f5dfb5da7cc,
+    type: 3}
+  clouds: []
+  color: {r: 1, g: 1, b: 1, a: 1}
+  cloudWidth: 64
+  cloudSpeed: 0.1
 --- !u!4 &1961574951
 Transform:
   m_ObjectHideFlags: 0
@@ -8055,8 +8060,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1961574949}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 765.75977, y: 444.65253, z: -2738.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 72, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children: []
   m_Father: {fileID: 177703412}
   m_RootOrder: 0
