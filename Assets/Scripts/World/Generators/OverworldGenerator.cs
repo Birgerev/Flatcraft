@@ -59,15 +59,15 @@ public class OverworldGenerator : WorldGenerator
         if (biome != rightBiome)
         {
             primaryBiomeWeight = 
-                0.5f - (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Chunk.Width) / Chunk.Width / 2f;
+                1 - ((float)Mathf.Abs(loc.x - new ChunkPosition(loc).worldX) / (float)Chunk.Width);
             noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
         }
-        else if (biome != leftBiome)
+        /*else if (biome != leftBiome)
         {
             primaryBiomeWeight = 
                 0.5f + (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Chunk.Width) / Chunk.Width / 2f;
             noiseValue = Biome.BlendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
-        }
+        }*/
         else
         {
             noiseValue = biome.GetLandscapeNoiseAt(loc);
