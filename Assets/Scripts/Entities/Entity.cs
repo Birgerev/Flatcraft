@@ -215,7 +215,6 @@ public class Entity : NetworkBehaviour
         }
     }
 
-
     [Server]
     private void WaterRemoveFireTimeCheck()
     {
