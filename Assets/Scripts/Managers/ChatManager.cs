@@ -49,6 +49,22 @@ public class ChatManager : NetworkBehaviour
         {
             ChatAddMessage("meeeeeee");
         }
+        if (args[0].Equals("/spawn"))
+        {
+            try
+            {
+                string entityType = args[1];
+
+                Entity entity = Entity.Spawn(entityType);
+                entity.transform.position = player.playerEntity.transform.position;
+                ChatAddMessage("Spawned " + player.playerName);
+            }
+            catch (Exception e)
+            {
+                ChatAddMessage("/spawn command failed for entity: " + args[1]);
+                Debug.LogError("chat error: " + e.StackTrace);
+            }
+        }
     }
 
     [ClientRpc]
