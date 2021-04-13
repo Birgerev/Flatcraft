@@ -66,63 +66,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.r
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.g
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.b
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
         value: 0.05490196
         inSlope: 0
         outSlope: 0
@@ -235,6 +178,63 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.r
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.g
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.b
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
         value: 0.59607846
         inSlope: 0
         outSlope: 0
@@ -246,7 +246,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: color.a
-    path: Clouds
+    path: FollowY/Clouds
     classID: 114
     script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
   m_PPtrCurves: []
@@ -269,27 +269,6 @@ AnimationClip:
       attribute: 304273561
       script: {fileID: 0}
       typeID: 212
-      customType: 0
-      isPPtrCurve: 0
-    - serializedVersion: 2
-      path: 2637070566
-      attribute: 57601170
-      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-      typeID: 114
-      customType: 0
-      isPPtrCurve: 0
-    - serializedVersion: 2
-      path: 2637070566
-      attribute: 1857226873
-      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-      typeID: 114
-      customType: 0
-      isPPtrCurve: 0
-    - serializedVersion: 2
-      path: 2637070566
-      attribute: 517602550
-      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-      typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
@@ -321,7 +300,28 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2637070566
+      path: 3716914849
+      attribute: 57601170
+      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+      typeID: 114
+      customType: 0
+      isPPtrCurve: 0
+    - serializedVersion: 2
+      path: 3716914849
+      attribute: 1857226873
+      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+      typeID: 114
+      customType: 0
+      isPPtrCurve: 0
+    - serializedVersion: 2
+      path: 3716914849
+      attribute: 517602550
+      script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+      typeID: 114
+      customType: 0
+      isPPtrCurve: 0
+    - serializedVersion: 2
+      path: 3716914849
       attribute: 2278600012
       script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
       typeID: 114
@@ -457,63 +457,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.r
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.g
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.0754717
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: color.b
-    path: Clouds
-    classID: 114
-    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
         value: 0.05490196
         inSlope: 0
         outSlope: 0
@@ -626,6 +569,63 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.r
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.g
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.0754717
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: color.b
+    path: FollowY/Clouds
+    classID: 114
+    script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
         value: 0.59607846
         inSlope: 0
         outSlope: 0
@@ -637,7 +637,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: color.a
-    path: Clouds
+    path: FollowY/Clouds
     classID: 114
     script: {fileID: 11500000, guid: 463ed2809862c734ca45bae3e5824e8b, type: 3}
   m_EulerEditorCurves: []
