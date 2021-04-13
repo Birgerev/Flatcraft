@@ -65,6 +65,12 @@ public class ChatManager : NetworkBehaviour
                 Debug.LogError("chat error: " + e.StackTrace);
             }
         }
+        if (args[0].Equals("/help"))
+        {
+            ChatAddMessage("---- Commands ----");
+            ChatAddMessage("/give <Material> <Amount>");
+            ChatAddMessage("/spawn <Entity Type>");
+        }
     }
 
     [ClientRpc]
