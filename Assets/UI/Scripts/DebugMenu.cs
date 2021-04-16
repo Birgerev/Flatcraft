@@ -61,14 +61,8 @@ public class DebugMenu : MonoBehaviour
                          (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
 
         Location location = player.GetBlockedMouseLocation();
-        Block block = player.GetMouseBlock();
-        Material material = Material.Air;
-        string data = "{}";
-        if(block != null)
-        {
-            material = block.GetMaterial();
-            data = location.GetData().GetSaveString();
-        }
-        text_blockInfo.text = "Material." + material.ToString() + " " + data;
+        BlockState state = location.GetState();
+        
+        text_blockInfo.text = "{" + state.data.GetSaveString() + "}   " + "Material." + state.material;
     }
 }
