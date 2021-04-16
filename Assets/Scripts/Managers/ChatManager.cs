@@ -57,7 +57,7 @@ public class ChatManager : NetworkBehaviour
 
                 Entity entity = Entity.Spawn(entityType);
                 entity.transform.position = player.playerEntity.transform.position;
-                ChatAddMessage("Spawned " + player.playerName);
+                ChatAddMessage("Spawned " + entityType);
             }
             catch (Exception e)
             {
