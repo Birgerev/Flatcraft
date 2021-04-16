@@ -75,8 +75,9 @@ public struct ChunkPosition
             return null;
         
         var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
-        NetworkServer.Spawn(newChunk);
         newChunk.GetComponent<Chunk>().chunkPosition = this;
+        NetworkServer.Spawn(newChunk);
+        
         return newChunk.GetComponent<Chunk>();
     }
 
