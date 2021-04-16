@@ -164,7 +164,6 @@ public class Chunk : NetworkBehaviour
                    chunkPosition.chunkX + "\\blocks";
         
         var lines = File.ReadAllLines(path);
-        var i = 0;
         foreach (var line in lines)
         {
             Location loc = new Location(
@@ -175,15 +174,14 @@ public class Chunk : NetworkBehaviour
             BlockData data = new BlockData(line.Split('*')[2]);
             BlockState state = new BlockState(mat, data);
 
-            loc.SetState(state);
-                
-            i++;
-            if (i % 10 == 1) 
-                yield return new WaitForSeconds(0.05f);
+            loc.SetStateNoBlockChange(state);
         }
         
         StartCoroutine(BuildChunk());
 
+        while (!donePlacingGeneratedBlocks)
+            yield return new WaitForSeconds(0.1f);
+        
         areBlocksGenerated = true;
     }
 
@@ -244,7 +242,7 @@ public class Chunk : NetworkBehaviour
         StartCoroutine(BuildChunk());
 
         while (!donePlacingGeneratedBlocks)
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
         
         GeneratingTickAllBlocks();
         
