@@ -153,7 +153,6 @@ public class Entity : NetworkBehaviour
     public virtual void Teleport(Location loc)
     {
         Location = loc;
-        ((LivingEntity)this).highestYlevelsinceground = 0;
     }
     
     [Server]
