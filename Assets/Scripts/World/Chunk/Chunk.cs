@@ -43,24 +43,18 @@ public class Chunk : NetworkBehaviour
     public bool isLoaded;
     public bool isLightGenerated;
     public bool blocksInitialized;
-    
 
     public Portal_Frame netherPortal;
 
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-        
-        StartCoroutine(CreateChunk());
-    }
 
     private void Start()
     {
         if (isServer)
         {
             WorldManager.instance.chunks.Add(chunkPosition, this);
-            StartCoroutine(CreateChunk());
         }
+        
+        StartCoroutine(CreateChunk());
     }
 
     IEnumerator CreateChunk()
