@@ -86,7 +86,8 @@ public class Entity : NetworkBehaviour
         if (dead)
             return;
         
-        GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
+        if(GetComponent<Rigidbody2D>() != null)
+            GetComponent<Rigidbody2D>().simulated = IsChunkLoaded();
         isInLiquid = (GetLiquidBlocksForEntity().Length > 0);
         UpdateCachedPosition();
         
