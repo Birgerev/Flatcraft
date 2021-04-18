@@ -30,7 +30,7 @@ public class Entity : NetworkBehaviour
 
     //Entity State
     [SyncVar]
-    public int id;
+    public string uuid;
     public bool isInLiquid;
     public bool isOnGround;
     [SyncVar]
@@ -100,7 +100,6 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Initialize()
     {
-        Load();
         if (!HasBeenSaved())
             Spawn();
     }
@@ -155,9 +154,16 @@ public class Entity : NetworkBehaviour
     {
         Location = loc;
     }
-    
+
     [Server]
     public static Entity Spawn(string type)
+    {
+        //TODO ids arent assigned before loading data
+        return Spawn(type, CreateUUID(), Vector2.zero);
+    }
+
+    [Server]
+    public static Entity Spawn(string type, string uuid, Vector2 pos)
     {
         if (Resources.Load("Entities/" + type) == null)
         {
@@ -166,12 +172,16 @@ public class Entity : NetworkBehaviour
         }
 
         GameObject obj = Instantiate((GameObject) Resources.Load("Entities/" + type));
+        Entity entity = obj.GetComponent<Entity>();
+
+        entity.transform.position = pos;
+        entity.UpdateCachedPosition();
+        entity.uuid = uuid;
+        entity.Load();
+        
         NetworkServer.Spawn(obj);
-        var result = obj.GetComponent<Entity>();
 
-        result.id = CreateId();
-
-        return result;
+        return entity;
     }
     
     public virtual void LateUpdate()
@@ -441,7 +451,7 @@ public class Entity : NetworkBehaviour
     public virtual string SavePath()
     {
         return WorldManager.world.getPath() + "/chunks/" + Location.dimension + "/" +
-               new ChunkPosition(Location).chunkX + "/entities/" + id + "." + GetType().Name;
+               new ChunkPosition(Location).chunkX + "/entities/" + uuid + "." + GetType().Name;
     }
 
     [Server]
@@ -532,9 +542,14 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    public static int CreateId()
+    public static string CreateUUID()
     {
-        return UnityEngine.Random.Range(1, 99999);
+        Random random = new Random();
+        int uuidLength = 32;
+        const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        
+        return new string(Enumerable.Range(1, uuidLength)
+            .Select(_ => chars[random.Next(chars.Length)]).ToArray());
     }
 
     [Server]

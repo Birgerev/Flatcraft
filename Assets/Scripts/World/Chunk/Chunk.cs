@@ -523,22 +523,19 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void LoadAllEntities()
     {
-        var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
+        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
                    "\\entities";
 
         if (!Directory.Exists(path))
             return;
 
-        foreach (var entityPath in Directory.GetFiles(path))
+        foreach (string entityPath in Directory.GetFiles(path))
         {
-            var entityFile = entityPath.Split('\\')[entityPath.Split('\\').Length - 1];
-            var entityType = entityFile.Split('.')[1];
-            var entityId = int.Parse(entityFile.Split('.')[0]);
+            string entityFile = entityPath.Split('\\')[entityPath.Split('\\').Length - 1];
+            string entityType = entityFile.Split('.')[1];
+            string entityUuid = entityFile.Split('.')[0];
 
-            var entity = Entity.Spawn(entityType);
-            entity.id = entityId;
-            //Make sure the newly created entity is in the chunk, to make loading work correctly (setting actual position happens inside Entity class)
-            entity.transform.position = transform.position + new Vector3(1, 1);
+            Entity.Spawn(entityType, entityUuid, transform.position + new Vector3(1, 0));
         }
     }
 

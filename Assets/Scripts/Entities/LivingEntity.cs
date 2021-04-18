@@ -113,10 +113,10 @@ public class LivingEntity : Entity
     public void AmbientSoundCheck()
     {
         int checkDuration = 4;
-        float timeOffset = (float)new System.Random(id).NextDouble() * checkDuration;    //Uses a static seed (id)
+        float timeOffset = (float)new System.Random(uuid.GetHashCode()).NextDouble() * checkDuration;    //Uses a static seed (id)
         
         if (((Time.time + timeOffset) % checkDuration) - Time.deltaTime <= 0)
-            if(new System.Random(Time.time.GetHashCode() + id).NextDouble() < 0.5f)
+            if(new System.Random(Time.time.GetHashCode() + uuid.GetHashCode()).NextDouble() < 0.5f)
                 AmbientSound();
     }
     

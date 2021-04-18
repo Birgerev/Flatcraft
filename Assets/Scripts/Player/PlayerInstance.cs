@@ -56,8 +56,7 @@ public class PlayerInstance : NetworkBehaviour
         if (playerEntity != null)
             return;
         
-        GameObject player = Entity.Spawn("Player").gameObject;
-        NetworkServer.Spawn(player);
+        GameObject player = Entity.Spawn("Player", playerName, Vector2.zero).gameObject;
         player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
         player.GetComponent<Player>().displayName = playerName;
         player.GetComponent<Player>().playerInstance = gameObject;

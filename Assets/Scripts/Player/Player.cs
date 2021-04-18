@@ -29,7 +29,7 @@ public class Player : HumanEntity
     [EntityDataTag(false)] [SyncVar]
     public float hunger;
     [EntityDataTag(false)] [SyncVar]
-    public int inventoryId;
+    public int inventoryId; //TODO Isn't synched at start
     [SyncVar] 
     public float eatingTime;
     public Location bedLocation = new Location(0, 0);
@@ -667,7 +667,7 @@ public class Player : HumanEntity
     [Server]
     public override string SavePath()
     {
-        return WorldManager.world.getPath() + "\\players\\"+displayName+"\\entity.dat";
+        return WorldManager.world.getPath() + "\\players\\"+uuid+"\\entity.dat";
     }
 
     [Server]
