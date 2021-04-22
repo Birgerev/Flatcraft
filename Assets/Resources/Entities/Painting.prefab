@@ -73,15 +73,15 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: a194dffe23143eb4ea6ad1b2f7f6b6c8, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1.5}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &485495881532099679
@@ -114,10 +114,10 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.25, y: 0.25}
+    oldSize: {x: 2, y: 2}
+    newSize: {x: 2, y: 2}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 9138007669377458848}
   - component: {fileID: 2770942309841006311}
   - component: {fileID: 1787503247778759595}
-  m_Layer: 14
+  m_Layer: 17
   m_Name: Painting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,7 +152,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9097888217539523289}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -45.974075, y: 15.384993, z: -738.2287}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5524202913329726579}
@@ -171,7 +171,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f1fd97dec30dfc4f849fa16cd8fd4fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paintingId: 0
+  syncMode: 0
+  syncInterval: 0.1
+  age: 0
+  fireTime: 0
+  dead: 0
+  facingLeft: 0
+  uuid: 
+  isInLiquid: 0
+  isOnGround: 0
+  isOnClimbable: 0
+  portalTime: 0
+  portalCooldown: 0
+  teleportingDimension: 0
+  lastFramePosition: {x: 0, y: 0}
+  burningRender: {fileID: 0}
+  paintingId: 
 --- !u!61 &9138007669377458848
 BoxCollider2D:
   m_ObjectHideFlags: 0
