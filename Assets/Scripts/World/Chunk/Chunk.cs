@@ -101,7 +101,7 @@ public class Chunk : NetworkBehaviour
         while (!areBlocksGenerated || blockStates.Count == 0)
             yield return new WaitForSeconds(0.1f);
 
-        if (isClient && !isServer)
+        if (!isServer)
         {
             StartCoroutine(BuildChunk());
         }
