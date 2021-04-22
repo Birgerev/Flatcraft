@@ -8,8 +8,6 @@ public class DroppedItem : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(false)] [SyncVar]
-    public bool canPickup = true;
     [EntityDataTag(true)] [SyncVar]
     public ItemStack item = new ItemStack();
 
@@ -52,7 +50,7 @@ public class DroppedItem : Entity
     [ServerCallback]
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (!canPickup || age < 0.5f || !isServer)
+        if (dead || age < 0.5f || !isServer)
             return;
 
         if (col.GetComponent<DroppedItem>() != null)
@@ -60,11 +58,8 @@ public class DroppedItem : Entity
             {
                 if (age < col.GetComponent<DroppedItem>().age)
                     return;
-                if (!col.GetComponent<DroppedItem>().canPickup)
-                    return;
 
                 item.amount += col.GetComponent<DroppedItem>().item.amount;
-                col.GetComponent<DroppedItem>().canPickup = false;
                 col.GetComponent<DroppedItem>().Die();
                 return;
             }
@@ -73,7 +68,6 @@ public class DroppedItem : Entity
             if (col.GetComponent<Player>().GetInventory().AddItem(item))
             {
                 Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
-                canPickup = false;
                 Die();
             }
     }
