@@ -110,4 +110,5 @@
     Bread,
     Gunpowder,
     Glass,
+    Painting,
 }

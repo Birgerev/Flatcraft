@@ -5,7 +5,7 @@ using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Painting : Entity
+public class PaintingEntity : Entity
 {
     private static Dictionary<string, Vector2> paintingTextures = new Dictionary<string, Vector2>()
     {
