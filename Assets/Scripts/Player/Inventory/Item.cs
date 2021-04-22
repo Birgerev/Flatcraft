@@ -20,28 +20,28 @@ public class Item
             InteractRight(player, loc, firstFrameDown);
     }
 
-    public virtual void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected virtual void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        var block = loc.GetBlock();
+        Block block = loc.GetBlock();
 
         if (block != null) 
             block.Hit(player, 1 / Player.interactionsPerPerSecond);
     }
 
-    public virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        var block = loc.GetBlock();
+        Block block = loc.GetBlock();
 
         if (firstFrameDown && block != null) 
             block.Interact(player);
     }
 
-    public virtual Sprite getTexture()
+    public virtual Sprite GetTexture()
     {
         return Resources.Load<Sprite>("Sprites/" + texture);
     }
 
-    public Material GetMateral()
+    public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
     }

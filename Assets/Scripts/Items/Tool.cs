@@ -3,7 +3,7 @@
     public virtual Tool_Type tool_type { get; } = Tool_Type.None;
     public virtual Tool_Level tool_level { get; } = Tool_Level.None;
 
-    public override void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected override void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         var block = loc.GetBlock();
 
@@ -11,7 +11,7 @@
             block.Hit(player, 1 / Player.interactionsPerPerSecond, tool_type, tool_level);
     }
 
-    public override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         if (tool_type == Tool_Type.Hoe && (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt))
         {

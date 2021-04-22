@@ -460,14 +460,12 @@ public class Entity : NetworkBehaviour
     {
         DeleteOldSavePath();
 
-        var path = SavePath();
+        string path = SavePath();
 
         if (!File.Exists(path))
             File.Create(path).Close();
 
-        var lines = new List<string>();
-
-        lines = GetSaveStrings();
+        List<string> lines =  GetSaveStrings();
 
         File.WriteAllLines(path, lines);
     }

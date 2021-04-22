@@ -17,7 +17,7 @@ public struct ChunkPosition
 
     public ChunkPosition(Location loc)
     {
-        var chunkX = 0;
+        int chunkX = 0;
         if (loc.x >= 0)
             chunkX = (int) (loc.x / (float) Chunk.Width);
         else
