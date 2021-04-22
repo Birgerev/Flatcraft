@@ -49,11 +49,9 @@ public class Block : MonoBehaviour
         
         if (glowLevel > 0)
         {
-            GameObject lightSource = Instantiate(LightManager.instance.lightSourcePrefab, transform);
-            lightSource.transform.localPosition = Vector3.zero;
+            LightSource source = LightSource.Create(transform);
             
-            if (new ChunkPosition(location).IsChunkLoaded())
-                lightSource.GetComponent<LightSource>().UpdateLightLevel(glowLevel, true);
+            source.UpdateLightLevel(glowLevel, true);
         }
 
         if (change_texture_time != 0)

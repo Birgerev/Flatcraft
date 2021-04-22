@@ -51,7 +51,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  amountOfChunksLoading: 0
   caveGeneratedRegions: 
   overworldBiomes:
   - biomeMinimumChunkSize: 3
@@ -123,9 +122,6 @@ MonoBehaviour:
     stoneLayerNoiseValue: 0
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}
-  playerPrefab: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61,
-    type: 3}
-  loadingProgress: 0
   worldTime: 0
 --- !u!114 &3047292750534003042
 MonoBehaviour:
@@ -179,7 +175,7 @@ MonoBehaviour:
   doLight: 1
   lightSourcePrefab: {fileID: 5354969073293725047, guid: 4eeacdb360394e240982d55895125233,
     type: 3}
-  sunlightSourcePrefab: {fileID: 3202872062129521457, guid: de52d119504ed4d40931792fc1765247,
+  sunlightSourcePrefab: {fileID: 153642762726311654, guid: 8958c9f71c6032743a046624bcda7b26,
     type: 3}
 --- !u!114 &3047292750534002975
 MonoBehaviour:

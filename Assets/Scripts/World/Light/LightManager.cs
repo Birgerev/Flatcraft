@@ -73,9 +73,10 @@ public class LightManager : MonoBehaviour
             return;
         
         Location newSunlightLoc = topmostBlock.location;
-        GameObject newSunlightSource = Instantiate(instance.sunlightSourcePrefab, topmostBlock.transform.position, Quaternion.identity);
+        SunlightSource newSunlightSource = 
+            SunlightSource.Create(Location.LocationByPosition(topmostBlock.transform.position));
 
-        instance.sunlightSources.Add(column, newSunlightSource.GetComponent<SunlightSource>());
+        instance.sunlightSources.Add(column, newSunlightSource);
         if(updateLight)
             UpdateLightInArea(newSunlightLoc + new Location(-15, -15), newSunlightLoc + new Location(15, 15));
     }

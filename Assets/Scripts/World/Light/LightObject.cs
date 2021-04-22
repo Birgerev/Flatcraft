@@ -9,28 +9,23 @@ public class LightObject : MonoBehaviour
     public int lightLevelDeduct;
     public bool staticObject;
     private Vector3 position;
-    private Location location;
-
-    public void Start()
-    {
-        position = transform.position;
-        location = Location.LocationByPosition(position);
-    }
 
     public Vector3 GetPosition()
     {
         if (staticObject)
+        {
+            if (position == Vector3.zero)
+                position = transform.position;
+            
             return position;
+        }
         
         return position = transform.position;
     }
 
     public Location GetLocation()
     {
-        if (staticObject)
-            return location;
-        
-        return location = Location.LocationByPosition(position);
+        return Location.LocationByPosition(GetPosition());
     }
 
     public void UpdateLightLevel(int lightLevel)
@@ -42,7 +37,7 @@ public class LightObject : MonoBehaviour
         if (player == null)
             return;
         
-        if (location.dimension == Dimension.Nether)
+        if (GetLocation().dimension == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
         
         float lightLevelFactor = (float)lightLevel / (float)LightManager.maxLightLevel;
