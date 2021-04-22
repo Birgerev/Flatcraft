@@ -158,7 +158,6 @@ public class Entity : NetworkBehaviour
     [Server]
     public static Entity Spawn(string type)
     {
-        //TODO ids arent assigned before loading data
         return Spawn(type, CreateUUID(), Vector2.zero);
     }
 
