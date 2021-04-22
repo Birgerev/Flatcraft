@@ -74,7 +74,7 @@ public struct ChunkPosition
         if (IsChunkCreated())
             return null;
         
-        var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
+        GameObject newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
         newChunk.GetComponent<Chunk>().chunkPosition = this;
         NetworkServer.Spawn(newChunk);
         
