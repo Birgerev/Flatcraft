@@ -56,7 +56,7 @@ public class ChatManager : NetworkBehaviour
                 string entityType = args[1];
 
                 Entity entity = Entity.Spawn(entityType);
-                entity.transform.position = player.playerEntity.transform.position;
+                entity.Teleport(player.playerEntity.GetComponent<Player>().Location);
                 ChatAddMessage("Spawned " + entityType);
             }
             catch (Exception e)
