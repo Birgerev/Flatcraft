@@ -135,6 +135,7 @@ public class Entity : NetworkBehaviour
     [Client]
     public virtual void ClientInitialize()
     {
+        UpdateClientLight();
     }
 
     [Client]
@@ -153,6 +154,7 @@ public class Entity : NetworkBehaviour
     public virtual void Teleport(Location loc)
     {
         Location = loc;
+        UpdateCachedPosition();
     }
 
     [Server]
