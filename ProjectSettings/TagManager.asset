@@ -50,6 +50,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Painting
+    uniqueID: 6474793
+    locked: 0
   - name: Entity
     uniqueID: 3276645917
     locked: 0
