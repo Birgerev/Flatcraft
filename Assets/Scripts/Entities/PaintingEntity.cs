@@ -22,7 +22,7 @@ public class PaintingEntity : Entity
     [EntityDataTag(false)] [SyncVar] 
     public string paintingId = "";
 
-    private bool isTextureAssigned = false;
+    private bool isInitialized = false;
     
     [Server]
     public override void Spawn()
@@ -51,27 +51,23 @@ public class PaintingEntity : Entity
         }
     }
 
-    [Server]
+    [Client]
+    public override void ClientInitialize()
+    {
+        base.ClientInitialize();
+        
+        Sprite sprite = Resources.Load<Sprite>("Sprites/" + paintingId);
+        GetRenderer().sprite = sprite;
+        
+        SetColliderToDimensions();
+    }
+    
+    [Client]
     public override void Initialize()
     {
         base.Initialize();
-
-        if(!string.IsNullOrEmpty(paintingId))
-            SetColliderToDimensions();
-    }
-
-    [Client]
-    public override void ClientUpdate()
-    {
-        base.ClientUpdate();
         
-        if (!isTextureAssigned && !string.IsNullOrEmpty(paintingId))
-        {
-            Sprite sprite = Resources.Load<Sprite>("Sprites/" + paintingId);
-            GetRenderer().sprite = sprite;
-            SetColliderToDimensions();
-            isTextureAssigned = true;
-        }
+        SetColliderToDimensions();
     }
 
     [Server]
@@ -87,9 +83,9 @@ public class PaintingEntity : Entity
     {
         if ((Time.time % 3f) - Time.deltaTime <= 0)
         {
-            Vector3 pos = transform.position;
-            
-            if (GetComponent<BoxCollider2D>().OverlapCollider(GetFilter(), new Collider2D[1]) > 0)
+            Collider2D[] paintingColliders = new Collider2D[1];
+            GetComponent<BoxCollider2D>().OverlapCollider(GetFilter(), paintingColliders);
+            if (paintingColliders[0] != null)
             {
                 Die();
             }
