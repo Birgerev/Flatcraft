@@ -2397,16 +2397,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dampTime: 0.15
-  maxOffset: 0.5
-  maxRoll: 10
-  offsetX: 0
-  offsetY: 0
-  roll: 0
-  shake: 0
-  shakedropoffPerFrame: 0.8
-  shakeforce: 1.5
   target: {fileID: 0}
+  offsetX: 0
+  offsetY: -0
+  roll: -0
+  shake: 0
+  shakeDropoffPerFrame: 0.7
+  shakeSpeed: 6
+  maxOffset: 3
+  maxRoll: 3
   zoomDampTime: 2
+  roofCheckMaxDistance: 5
+  normalFov: 15
+  zoomedFov: 11
 --- !u!1001 &590901020
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8060,7 +8063,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1961574949}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 13.5, z: 0}
+  m_LocalPosition: {x: 0, y: 7.45, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children: []
   m_Father: {fileID: 321445636}

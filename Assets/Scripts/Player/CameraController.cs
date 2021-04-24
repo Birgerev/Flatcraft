@@ -2,84 +2,106 @@
 
 public class CameraController : MonoBehaviour
 {
-    public const float normalFov = 20f;
-    public const float zoomedFov = 16f;
     public static CameraController instance;
-    public static float targetFov = 20f;
-
+    
     //Camera target variables
+    [Header("Targeting Values")]
     public float dampTime = 0.15f;
-    public float maxOffset = 0.5f;
+    public Transform target;
+    private Vector3 currentTargetSmoothVelocity;
 
-    //Camera shake variables
-    public float maxRoll = 10;
+    //Camera transform variables
+    [Header("Transform Values")]
     public float offsetX;
     public float offsetY;
-
     public float roll;
 
-    private int seed;
+    //Shake
+    [Header("Shake Values")]
     public float shake;
-    public float shakedropoffPerFrame = 0.8f;
-    public float shakeforce = 1.5f;
+    public float shakeDropoffPerFrame = 0.8f;
+    public float shakeSpeed = 0.8f;
+    public float maxOffset = 0.5f;
+    public float maxRoll = 10;
 
-    private float startZ = -0.1f;
-    public Transform target;
-    private float vel;
-    private Vector3 velocity = Vector3.zero;
+    [Header("Zoom Values")]
     public float zoomDampTime = 2f;
+    private float currentSmoothZoomVelocity;
+    public int roofCheckMaxDistance = 5;
+    public float normalFov = 11f;
+    public float zoomedFov = 8f;
+    public static float targetFov;
 
+    
     // Start is called before the first frame update
     private void Start()
     {
         instance = this;
-
-        if (startZ == -0.1f) startZ = transform.position.z;
     }
-
-    private void ShakeCalc()
-    {
-        //Seeds needs to use fractal numbers
-        roll = maxRoll * shake * Mathf.PerlinNoise(seed + 0.4f, seed + 0.4f);
-        offsetX = maxOffset * shake * Mathf.PerlinNoise(seed + 1.4f, seed + 1.4f);
-        offsetY = maxOffset * shake * Mathf.PerlinNoise(seed + 2.4f, seed + 2.4f);
-
-        seed += 1;
-
-        shake *= shakedropoffPerFrame;
-        if (shake < 0.001f)
-            shake = 0;
-    }
-
 
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if (Player.localEntity == null)
-            return;
         if (target == null)
-            target = Player.localEntity.transform;
-
+            return;
+        
         //Smoothly target player
-        transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, dampTime);
+        CalculateShake();
+        SetTranslation();
+        CalculateTargetZoom();
+        SetSmoothTargetZoom();
+    }
+    
+    private void CalculateShake()
+    {
+        //Seeds needs to use fractal numbers
+        roll = maxRoll * shake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
+        offsetX = maxOffset * shake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
+        offsetY = maxOffset * shake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
 
-        var currentFov = GetComponent<Camera>().orthographicSize;
+        shake *= shakeDropoffPerFrame;
+        if (shake < 0.001f)
+            shake = 0;
+    }
 
+    private void CalculateTargetZoom()
+    {
+        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+        {
+            targetFov = normalFov;
+            
+            for (int y = 0; y < roofCheckMaxDistance; y++)
+            {
+                Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
 
-        GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(currentFov, targetFov, ref vel, zoomDampTime);
+                if (block != null && block.solid)
+                {
+                    targetFov = zoomedFov;
 
+                    break;
+                }
+            }
+        }
+    }
 
-        ShakeCalc();
+    private void SetSmoothTargetZoom()
+    {
+        float currentFov = GetComponent<Camera>().orthographicSize;
+        
+        GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(
+            currentFov, 
+            targetFov, 
+            ref currentSmoothZoomVelocity, 
+            zoomDampTime);
+    }
 
-        var pos = transform.position;
-        float angle = 0;
-
-        pos += new Vector3(offsetX, offsetY);
-        angle = roll;
-
-        pos.z = startZ;
-
-        transform.position = pos;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+    private void SetTranslation()
+    {
+        transform.position = Vector3.SmoothDamp(
+            transform.position, 
+            target.position + new Vector3(offsetX, offsetY, -10), 
+            ref currentTargetSmoothVelocity, 
+            dampTime);
+        transform.rotation = Quaternion.Euler(0, 0, roll);
     }
 }

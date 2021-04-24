@@ -57,6 +57,7 @@ public class Player : HumanEntity
         base.OnStartAuthority();
         localEntity = this;
         gameObject.AddComponent<AudioListener>();
+        CameraController.instance.target = transform;
     }
 
     [Server]
@@ -733,6 +734,21 @@ public class Player : HumanEntity
         {
             LoadingMenu.Create(LoadingMenuType.Dimension);
         }
+    }
+    
+    [Server]
+    public override void Damage(float damage)
+    {
+        base.Damage(damage);
+
+        PlayClientCameraShakeEffect();
+    }
+
+    [ClientRpc]
+    public void PlayClientCameraShakeEffect()
+    {
+        if(hasAuthority)
+            CameraController.instance.shake = 5;
     }
     
     [ClientRpc]
