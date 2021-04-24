@@ -1,0 +1,11 @@
+mirror*0*0
+Painting*1*
+Stick*0,0*
+Stick*1,0*
+Stick*2,0*
+Stick*0,1*
+Wool_Block*1,1*
+Stick*2,1*
+Stick*0,2*
+Stick*1,2*
+Stick*2,2*
