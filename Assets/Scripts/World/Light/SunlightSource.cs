@@ -8,15 +8,9 @@ public class SunlightSource : MonoBehaviour
     public static Transform SunlightSourceParent;
     public LightSource lightSource;
 
-    public void Start()
+    public void StartTimeOfDayLoop()
     {
         StartCoroutine(UpdateTimeOfDayLoop());
-    }
-
-    private TimeOfDay GetTimeOfDay()
-    {
-        return (WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
-            TimeOfDay.Night : TimeOfDay.Day;
     }
     
     IEnumerator UpdateTimeOfDayLoop()
@@ -45,6 +39,12 @@ public class SunlightSource : MonoBehaviour
         return Location.LocationByPosition(transform.position);
     }
 
+    private TimeOfDay GetTimeOfDay()
+    {
+        return (WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
+            TimeOfDay.Night : TimeOfDay.Day;
+    }
+    
     public static SunlightSource Create(Location loc)
     {
         if (SunlightSourceParent == null)
@@ -57,6 +57,7 @@ public class SunlightSource : MonoBehaviour
         
         obj.transform.position = loc.GetPosition();
         source.lightSource = LightSource.Create(obj.transform);
+        source.StartTimeOfDayLoop();
         
         return source;
     }
