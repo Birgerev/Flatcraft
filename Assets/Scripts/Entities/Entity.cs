@@ -74,9 +74,14 @@ public class Entity : NetworkBehaviour
         UpdateCachedPosition();
         gameObject.name = "Entity [" + GetType().Name + "]";
         entities.Add(this);
-        
-        if(isServer)
+
+        if (isServer)
+        {
+            if (!HasBeenSaved())
+                Spawn();
+            
             Initialize();
+        }
         if(isClient)
             ClientInitialize();
     }
@@ -100,8 +105,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Initialize()
     {
-        if (!HasBeenSaved())
-            Spawn();
+        
     }
 
     [Server]
