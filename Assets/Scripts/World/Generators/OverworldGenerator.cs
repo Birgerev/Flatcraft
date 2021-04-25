@@ -13,18 +13,17 @@ public class OverworldGenerator : WorldGenerator
     private const float CaveLacunarity = 0.6f;
     private const float CavePercistance = 2;
     private const int CaveOctaves = 4;
-    private const float CaveHollowValue = 2.2f;
     private const int LavaHeight = 10;
 
     
     private const int OreCoalHeight = 128;
-    private const double OreCoalChance = 0.004f;
+    private const double OreCoalChance = 0.0035f;
 
     private const int OreIronHeight = 64;
-    private const double OreIronChance = 0.002f;
+    private const double OreIronChance = 0.0025f;
 
     private const int OreGoldHeight = 32;
-    private const double OreGoldChance = 0.001f;
+    private const double OreGoldChance = 0.0008f;
 
     private const int OreLapisHeight = 32;
     private const double OreLapisChance = 0.001f;
@@ -33,7 +32,7 @@ public class OverworldGenerator : WorldGenerator
     private const double OreRedstoneChance = 0.002f;
 
     private const int OreDiamondHeight = 16;
-    private const double OreDiamondChance = 0.0004f;
+    private const double OreDiamondChance = 0.0005f;
     
     public OverworldGenerator()
     {
@@ -62,12 +61,6 @@ public class OverworldGenerator : WorldGenerator
                 1 - ((float)Mathf.Abs(loc.x - new ChunkPosition(loc).worldX) / (float)Chunk.Width);
             noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
         }
-        /*else if (biome != leftBiome)
-        {
-            primaryBiomeWeight = 
-                0.5f + (float)Mathf.Abs(loc.x - new ChunkPosition(loc).chunkX * Chunk.Width) / Chunk.Width / 2f;
-            noiseValue = Biome.BlendNoiseValues(loc, biome, leftBiome, primaryBiomeWeight);
-        }*/
         else
         {
             noiseValue = biome.GetLandscapeNoiseAt(loc);
