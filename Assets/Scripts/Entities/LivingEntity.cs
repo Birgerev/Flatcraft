@@ -19,14 +19,14 @@ public class LivingEntity : Entity
     [EntityDataTag(false)] [SyncVar] public string displayName;
 
     private float airDrag = 4.3f;
-    private float climbSpeed = 0.5f;
+    private float climbableFriction = 10f;
+    private float climbAcceleration = 55.0f;
     private float groundFriction = 5f;
     private float jumpVelocity = 8.5f;
-    private float ladderFriction = 10f;
     private float liquidDrag = 10f;
     private float sneakSpeed = 1.3f;
     private float sprintSpeed = 5.6f;
-    private float swimUpSpeed = 2f;
+    private float swimUpAcceleration = 45.0f;
     private float swimJumpVelocity = 2f;
     private float walkSpeed = 4.3f;
 
@@ -158,7 +158,7 @@ public class LivingEntity : Entity
         if (isInLiquid)
             SetVelocity(GetVelocity() * (1 / (1 + (liquidDrag * Time.deltaTime))));
         if (isOnClimbable)
-            SetVelocity(GetVelocity() * (1 / (1 + (ladderFriction * Time.deltaTime))));
+            SetVelocity(GetVelocity() * (1 / (1 + (climbableFriction * Time.deltaTime))));
         if (!isInLiquid && !isOnClimbable && !isOnGround)
             SetVelocity(new Vector3(GetVelocity().x * (1 / (1 + (airDrag * Time.deltaTime))), GetVelocity().y));
         if (!isInLiquid && !isOnClimbable && isOnGround)
@@ -196,24 +196,21 @@ public class LivingEntity : Entity
     }
 
     public void Jump()
-    {
+    { 
         if (!hasAuthority)
             return;
 
-        if (isOnGround)
+        if (isOnGround && Time.time - last_jump_time >= 0.3f)
         {
-            if (Time.time - last_jump_time < 0.3f)
-                return;
-
             SetVelocity(new Vector2(GetVelocity().x, jumpVelocity));
             last_jump_time = Time.time;
         }
 
-        if (isInLiquid && GetVelocity().y < swimUpSpeed) 
-            SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
+        if (isInLiquid) 
+            SetVelocity(GetVelocity() + new Vector2(0, swimUpAcceleration * Time.deltaTime));
 
         if (isOnClimbable) 
-            SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
+            SetVelocity(GetVelocity() + new Vector2(0, climbAcceleration * Time.deltaTime));
     }
 
     public void StairCheck(int direction)
