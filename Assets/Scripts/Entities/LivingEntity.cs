@@ -53,6 +53,7 @@ public class LivingEntity : Entity
         base.Update();
 
         CalculateFlip();
+        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -89,8 +90,6 @@ public class LivingEntity : Entity
         
         ProcessMovement();
         FallDamageCheck();
-        
-        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
