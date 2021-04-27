@@ -690,8 +690,8 @@ public class Player : HumanEntity
             return;
         
         base.Die();
-        DeathMenuEffect();
         GetInventory().Delete();
+        DeathMenuEffect();
     }
 
     [ClientRpc]

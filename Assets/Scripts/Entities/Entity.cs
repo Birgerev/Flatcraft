@@ -382,6 +382,7 @@ public class Entity : NetworkBehaviour
         DropAllDrops();
         DeleteOldSavePath();
         dead = true;
+        entities.Remove(this);
         
         StartCoroutine(ScheduleDestruction(0.25f));
     }
@@ -395,7 +396,6 @@ public class Entity : NetworkBehaviour
 
     public void OnDestroy()
     {
-        entities.Remove(this);
     }
 
     [Server]
