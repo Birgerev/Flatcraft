@@ -25,7 +25,7 @@ public class GameNetworkManager : Mirror.NetworkManager
                 ClientScene.RegisterPrefab(prefab);
             }
         }
-
+        
         if (isHost)
         {
             StartHost();

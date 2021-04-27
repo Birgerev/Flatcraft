@@ -394,10 +394,6 @@ public class Entity : NetworkBehaviour
         NetworkServer.Destroy(gameObject);
     }
 
-    public void OnDestroy()
-    {
-    }
-
     [Server]
     public virtual void Damage(float damage)
     {
