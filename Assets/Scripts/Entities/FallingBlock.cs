@@ -1,7 +1,7 @@
 ﻿using Mirror;
 using UnityEngine;
 
-public class FallingSand : Entity
+public class FallingBlock : Entity
 {
     //Entity Properties
 

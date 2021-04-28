@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7332492137403674706}
   - component: {fileID: 7769584507077202104}
   m_Layer: 14
-  m_Name: FallingSand
+  m_Name: FallingBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,18 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a6d3f8169bc0bb47881a446fdab4bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  age: 0
-  fireTime: 0
-  facingLeft: 0
-  id: 0
-  isInLiquid: 0
-  isOnGround: 0
-  isOnClimbable: 0
-  lastFramePosition: {x: 0, y: 0}
-  burningRender: {fileID: 0}
-  material: 18
 --- !u!114 &6591052542201027870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,6 +131,9 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
+  compressRotation: 0
+  interpolateScale: 1
+  syncScale: 1
 --- !u!114 &7769584507077202104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,7 +227,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1018321379
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -262,6 +253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightLevelDeduct: 0
+  staticObject: 0
 --- !u!61 &5545143177090054919
 BoxCollider2D:
   m_ObjectHideFlags: 0

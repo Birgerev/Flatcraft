@@ -18,7 +18,7 @@
     {
         if ((location + new Location(0, -1)).GetMaterial() == Material.Air)
         {
-            var fs = (FallingSand) Entity.Spawn("FallingSand");
+            var fs = (FallingBlock) Entity.Spawn("FallingBlock");
             fs.transform.position = location.GetPosition();
             fs.material = GetMaterial();
 
