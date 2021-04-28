@@ -10,7 +10,6 @@ using UnityEngine;
 public class Inventory : NetworkBehaviour
 {
     public static int MaxStackSize = 64;
-    public static Dictionary<int, Inventory> loadedInventories = new Dictionary<int, Inventory>();
     
     public SyncList<ItemStack> items = new SyncList<ItemStack>();
     [SyncVar] public Location holder;
@@ -47,7 +46,7 @@ public class Inventory : NetworkBehaviour
             inventory.items.Add(new ItemStack());
         }
         
-        loadedInventories[id] = inventory;
+        WorldManager.instance.loadedInventories[id] = inventory;
         
         NetworkServer.Spawn(obj);
 
@@ -56,8 +55,8 @@ public class Inventory : NetworkBehaviour
     
     public static Inventory Get(int id)
     {
-        if(loadedInventories.ContainsKey(id))
-            return loadedInventories[id];
+        if(WorldManager.instance.loadedInventories.ContainsKey(id))
+            return WorldManager.instance.loadedInventories[id];
         
         if (NetworkServer.active && Directory.Exists(WorldManager.world.getPath() + "\\inventories\\" + id))
             return Load(id);
@@ -67,7 +66,7 @@ public class Inventory : NetworkBehaviour
 
     public static bool IsAnyOpen(PlayerInstance playerInstance)
     {
-        foreach (Inventory inv in loadedInventories.Values)
+        foreach (Inventory inv in WorldManager.instance.loadedInventories.Values)
         {
             if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().playerInstance == playerInstance.gameObject)
                 return true;
@@ -78,7 +77,7 @@ public class Inventory : NetworkBehaviour
 
     private void Start()
     {
-        loadedInventories[id] = this;
+        WorldManager.instance.loadedInventories[id] = this;
     }
 
     public virtual void Update()

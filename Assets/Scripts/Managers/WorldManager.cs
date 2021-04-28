@@ -17,6 +17,8 @@ public class WorldManager : NetworkBehaviour
     public List<Biome> overworldBiomes = new List<Biome>();
     public Biome netherBiome;
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
+    
+    public Dictionary<int, Inventory> loadedInventories = new Dictionary<int, Inventory>();
 
     public GameObject chunkPrefab;
 
