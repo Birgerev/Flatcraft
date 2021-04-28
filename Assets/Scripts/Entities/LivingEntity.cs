@@ -39,6 +39,8 @@ public class LivingEntity : Entity
     protected bool sprinting;
     [SyncVar]
     protected bool sneaking;
+    private bool ladderSneaking;
+    
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
@@ -251,9 +253,15 @@ public class LivingEntity : Entity
 
     public void CrouchOnLadderCheck()
     {
-        if (isOnClimbable && sneaking)
+        bool isLadderSneakingThisFrame = (isOnClimbable && sneaking);
+        if (isLadderSneakingThisFrame && !ladderSneaking)
         {
-            SetVelocity(new Vector2(GetVelocity().x, 0.45f));        //y should be 0, but 0.45 prevents any downwards movement
+            GetComponent<Rigidbody2D>().gravityScale = 0;
+            ladderSneaking = true;
+        }else if (!isLadderSneakingThisFrame && ladderSneaking)
+        {
+            GetComponent<Rigidbody2D>().gravityScale = 1;
+            ladderSneaking = false;
         }
     }
 

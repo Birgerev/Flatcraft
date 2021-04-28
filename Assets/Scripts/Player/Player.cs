@@ -29,7 +29,7 @@ public class Player : HumanEntity
     [EntityDataTag(false)] [SyncVar]
     public float hunger;
     [EntityDataTag(false)] [SyncVar]
-    public int inventoryId; //TODO Isn't synched at start
+    public int inventoryId;
     [SyncVar] 
     public float eatingTime;
     public Location bedLocation = new Location(0, 0);
