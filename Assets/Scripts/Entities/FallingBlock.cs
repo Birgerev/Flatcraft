@@ -43,7 +43,7 @@ public class FallingBlock : Entity
             GetComponent<Rigidbody2D>().simulated = true;
 
 
-        if ((isOnGround || isInLiquid) && GetComponent<Rigidbody2D>().velocity.y == 0 && age > 1f)
+        if ((isOnGround || isInLiquid) && GetComponent<Rigidbody2D>().velocity.y == 0 && age > 0.1f)
         {
             Block overlappingBlock = Location.GetBlock();
             if (overlappingBlock == null || overlappingBlock is Liquid)
