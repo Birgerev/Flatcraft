@@ -475,6 +475,8 @@ public class Chunk : NetworkBehaviour
 
     IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
+        yield return new WaitForSeconds(0);
+        
         Material lastViableMaterial = Material.Air;
         for (int y = Height - 1; y >= 0; y--)
         {
@@ -621,6 +623,7 @@ public class Chunk : NetworkBehaviour
 
         if (isLoaded)
         {
+            //Schedule all follow up methods for next frame, since block data lists get synced late on clients
             if (doesBlockChangeImpactSunlight)
                 StartCoroutine(UpdateSunlightInColumn(location.x));
             StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
@@ -628,7 +631,6 @@ public class Chunk : NetworkBehaviour
         }
     }
 
-    //TODO try removing scheduling
     IEnumerator UpdateSunlightInColumn(int x)
     {
         yield return new WaitForSeconds(0f);
