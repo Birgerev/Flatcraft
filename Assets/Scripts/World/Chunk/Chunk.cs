@@ -514,7 +514,7 @@ public class Chunk : NetworkBehaviour
                 backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
 
                 if (updateLight)
-                    StartCoroutine(scheduleBlockLightUpdate(loc));
+                    StartCoroutine(ScheduleBlockLightUpdate(loc));
             }
             
             if(!isLoaded && y % 10 == 0)
@@ -558,7 +558,8 @@ public class Chunk : NetworkBehaviour
     
     IEnumerator ScheduleLocalBlockChange(Location location, BlockState state)
     {
-        yield return new WaitForSeconds(0.1f);
+        //Schedule block change for next frame, since block data lists get synced late on clients
+        yield return new WaitForSeconds(0f);
         LocalBlockChange(location, state);
     }
     
@@ -630,22 +631,14 @@ public class Chunk : NetworkBehaviour
 
         if (isLoaded)
         {
-            //Schedule all follow up methods for next frame, since block data lists get synced late on clients
             if (doesBlockChangeImpactSunlight)
-                StartCoroutine(UpdateSunlightInColumn(location.x));
+                LightManager.UpdateSunlightInColumn(new BlockColumn(location.x, chunkPosition.dimension), true);
             StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
-            StartCoroutine(scheduleBlockLightUpdate(location));
+            StartCoroutine(ScheduleBlockLightUpdate(location));
         }
     }
 
-    IEnumerator UpdateSunlightInColumn(int x)
-    {
-        yield return new WaitForSeconds(0f);
-        LightManager.UpdateSunlightInColumn(new BlockColumn(x, chunkPosition.dimension), true);
-    }
-
-
-    IEnumerator scheduleBlockLightUpdate(Location loc)
+    IEnumerator ScheduleBlockLightUpdate(Location loc)
     {
         yield return new WaitForSeconds(0f);
         LightManager.UpdateBlockLight(loc);
