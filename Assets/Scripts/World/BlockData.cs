@@ -5,6 +5,12 @@ public struct BlockData
     public List<string> keys;
     public List<string> values;
 
+    public BlockData(BlockData cloneData)
+    {
+        keys = new List<string>(cloneData.keys);
+        values = new List<string>(cloneData.values);
+    }
+    
     public BlockData(string saveDataString)
     {
         keys = new List<string>();

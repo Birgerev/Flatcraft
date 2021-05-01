@@ -552,7 +552,14 @@ public class Chunk : NetworkBehaviour
         if (!donePlacingGeneratedBlocks || isServer)
             return;
         
-        LocalBlockChange(loc, state);
+        StartCoroutine(ScheduleLocalBlockChange(loc, state));
+    }
+    
+    
+    IEnumerator ScheduleLocalBlockChange(Location location, BlockState state)
+    {
+        yield return new WaitForSeconds(0.1f);
+        LocalBlockChange(location, state);
     }
     
     public void LocalBlockChange(Location location, BlockState state)

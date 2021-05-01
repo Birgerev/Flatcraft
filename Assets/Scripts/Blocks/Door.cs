@@ -14,6 +14,19 @@ public class Door : Block
         Tick();
     }
 
+    public override void Initialize()
+    {
+        bool open = GetData().GetTag("open") == "true";
+
+        texture = open ? open_texture : closed_texture;
+        solid = !open;
+
+        Render();
+        UpdateColliders();
+        
+        base.Initialize();
+    }
+
     public override void Interact(PlayerInstance player)
     {
         var open = !GetOpenState();
@@ -37,21 +50,8 @@ public class Door : Block
 
     public bool GetOpenState()
     {
-        var open = GetData().GetTag("open") == "true";
+        bool open = GetData().GetTag("open") == "true";
 
         return open;
-    }
-
-    public override void Tick()
-    {
-        var open = GetData().GetTag("open") == "true";
-
-        texture = open ? open_texture : closed_texture;
-        solid = !open;
-
-        Render();
-        UpdateColliders();
-
-        base.Tick();
     }
 }

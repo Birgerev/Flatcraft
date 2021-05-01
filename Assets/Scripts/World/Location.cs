@@ -55,8 +55,9 @@ public struct Location
     public BlockData GetData()
     {
         BlockState state = GetState();
+        BlockData data = new BlockData(state.data);
         
-        return state.data;
+        return data;
     }
     
     public Location SetMaterial(Material mat)
