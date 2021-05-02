@@ -28,10 +28,12 @@ public class GameNetworkManager : Mirror.NetworkManager
         
         if (isHost)
         {
+            Debug.Log("Starting host");
             StartHost();
         }
         else
         {
+            Debug.Log("Starting client");
             networkAddress = serverAddress;
             StartClient();
         }

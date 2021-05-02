@@ -30,6 +30,8 @@ public class ChatManager : NetworkBehaviour
     [Server]
     public void ExcecuteCommand(string[] args, PlayerInstance player)
     {
+        Debug.Log("executing command> " + args[0]);
+        
         if (args[0].Equals("/give"))
         {
             try
@@ -76,6 +78,7 @@ public class ChatManager : NetworkBehaviour
     [ClientRpc]
     public void ChatAddMessage(string text)
     {
+        Debug.Log("Chat> " + text);
         ChatMenu.instance.AddMessage(text);
     }
 }

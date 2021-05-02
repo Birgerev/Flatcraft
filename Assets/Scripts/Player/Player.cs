@@ -46,6 +46,7 @@ public class Player : HumanEntity
     
     public override void Start()
     {
+        Debug.Log("Spawning player '" + uuid + "'");
         players.Add(this);
         
         base.Start();

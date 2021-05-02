@@ -15,6 +15,7 @@ public class PlayerInstance : NetworkBehaviour
     {
         base.OnStartLocalPlayer();
         
+        Debug.Log("Starting local player instance");
         localPlayerInstance = this;
         ChangeName(GameNetworkManager.playerName);
         RequestJoinMessage();
@@ -56,6 +57,7 @@ public class PlayerInstance : NetworkBehaviour
         if (playerEntity != null)
             return;
         
+        Debug.Log("Spawning local player");
         GameObject player = Entity.Spawn("Player", playerName, new Vector2(0, 80)).gameObject;
         player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
         player.GetComponent<Player>().displayName = playerName;

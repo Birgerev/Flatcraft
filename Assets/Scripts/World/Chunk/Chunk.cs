@@ -54,6 +54,8 @@ public class Chunk : NetworkBehaviour
             WorldManager.instance.chunks.Add(chunkPosition, this);
         }
         
+        Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] has been created");
+        
         StartCoroutine(CreateChunk());
     }
 
@@ -89,11 +91,13 @@ public class Chunk : NetworkBehaviour
         {
             if (chunkPosition.HasBeenGenerated())
             {
+                Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is loading...");
                 StartCoroutine(LoadBlocks());
                 LoadAllEntities();
             }
             else
             {
+                Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is generating...");
                 StartCoroutine(GenerateBlocks());
             }
         }
@@ -126,6 +130,7 @@ public class Chunk : NetworkBehaviour
         GenerateSunlightSources();
         
         isLoaded = true;
+        Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is done...");
         
         if(isServer)
             StartCoroutine(SelfDestructionChecker());
@@ -296,6 +301,7 @@ public class Chunk : NetworkBehaviour
     [Server]
     public void DestroyChunk()
     {
+        Debug.Log("Unloading chunk Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
         UnloadEntities();
         NetworkServer.Destroy(gameObject);
     }
