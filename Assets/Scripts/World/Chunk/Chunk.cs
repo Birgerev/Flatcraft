@@ -165,15 +165,22 @@ public class Chunk : NetworkBehaviour
         var lines = File.ReadAllLines(path);
         foreach (var line in lines)
         {
-            Location loc = new Location(
-                int.Parse(line.Split('*')[0].Split(',')[0]),
-                int.Parse(line.Split('*')[0].Split(',')[1]),
-                chunkPosition.dimension);
-            Material mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
-            BlockData data = new BlockData(line.Split('*')[2]);
-            BlockState state = new BlockState(mat, data);
+            try
+            {
+                Location loc = new Location(
+                    int.Parse(line.Split('*')[0].Split(',')[0]),
+                    int.Parse(line.Split('*')[0].Split(',')[1]),
+                    chunkPosition.dimension);
+                Material mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
+                BlockData data = new BlockData(line.Split('*')[2]);
+                BlockState state = new BlockState(mat, data);
 
-            loc.SetStateNoBlockChange(state);
+                loc.SetStateNoBlockChange(state);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error in chunk loading block, block save line: '"+ line +"' error: " + e.Message);
+            }
         }
         
         StartCoroutine(BuildChunk());
@@ -254,10 +261,17 @@ public class Chunk : NetworkBehaviour
         {
             for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
             {
-                Location loc = new Location(x, y, chunkPosition.dimension);
-                BlockState state = GetBlockState(loc);
-            
-                LocalBlockChange(loc, state);
+                try
+                {
+                    Location loc = new Location(x, y, chunkPosition.dimension);
+                    BlockState state = GetBlockState(loc);
+
+                    LocalBlockChange(loc, state);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error chunk build block: " + e.Message);
+                }
             }
             yield return new WaitForSeconds(0f);
         }
@@ -359,10 +373,17 @@ public class Chunk : NetworkBehaviour
             if (block == null || block.transform == null)
                 continue;
 
-            block.Initialize();
-            if(isServer)
-                block.ServerInitialize();
-            
+            try
+            {
+                block.Initialize();
+                if (isServer)
+                    block.ServerInitialize();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error in Block:Initialize(): " + e.Message);
+            }
+
             i++;
             if (i % 20 == 0)
             {
@@ -419,9 +440,18 @@ public class Chunk : NetworkBehaviour
             foreach (Block block in blockList)
             {
                 var r = new Random(block.location.GetHashCode() + i);
-                
-                if(r.NextDouble() < updateSpeed / block.averageRandomTickDuration) 
-                    block.RandomTick();
+
+                if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
+                {
+                    try
+                    {
+                        block.RandomTick();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Error in Block:RandomTick(): " + e.Message);
+                    }
+                }
             }
 
             i++;
