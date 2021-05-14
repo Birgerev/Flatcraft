@@ -2408,8 +2408,8 @@ MonoBehaviour:
   maxRoll: 3
   zoomDampTime: 2
   roofCheckMaxDistance: 5
-  normalFov: 15
-  zoomedFov: 11
+  normalFov: 13
+  zoomedFov: 9
 --- !u!1 &541134325
 GameObject:
   m_ObjectHideFlags: 0
