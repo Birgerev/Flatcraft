@@ -9,8 +9,8 @@ public class Pig : PassiveEntity
     public override List<ItemStack> GetDrops()
     {
         //Drop a random amount of a certain item
-        var result = new List<ItemStack>();
-        var r = new Random(SeedGenerator.SeedByLocation(Location));
+        List<ItemStack> result = new List<ItemStack>();
+        Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
         result.Add(new ItemStack(Material.Raw_Porkchop, r.Next(1, 3 + 1)));
 

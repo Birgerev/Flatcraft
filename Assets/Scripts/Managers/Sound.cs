@@ -7,7 +7,6 @@ public class Sound : NetworkBehaviour
     public static Sound instance;
     public AudioMixerGroup blocksGroup;
 
-    public bool enabled;
     public AudioMixerGroup entitiesGroup;
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup weatherGroup;
