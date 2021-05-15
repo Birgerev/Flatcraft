@@ -66,13 +66,12 @@ public class Sound : NetworkBehaviour
         instance.PlayOnClients(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
     }
 
-    [ClientRpc] //TODO separate function for sending to clients
+    [ClientRpc]
     public void PlayOnClients(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance, bool spacialPanning)
     {
         PlayLocal(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
     }
 
-    [Client]//TODO separate function for sending to clients
     public static void PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance, bool spacialPanning)
     {
         var obj = new GameObject("sound " + sound);
