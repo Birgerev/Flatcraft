@@ -7,16 +7,17 @@ public class Sound : NetworkBehaviour
     public static Sound instance;
     public AudioMixerGroup blocksGroup;
 
-    public bool enabled;
     public AudioMixerGroup entitiesGroup;
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup weatherGroup;
 
+    [Server]
     public void Start()
     {
         instance = this;
     }
 
+    [Server]
     public static bool Exists(string sound)
     {
         var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
@@ -24,17 +25,26 @@ public class Sound : NetworkBehaviour
         return (clips.Length > 0);
     }
     
+    [Server]
     public static void Play(Location loc, string sound, SoundType type)
     {
         Play(loc, sound, type, 1, 1);
     }
 
+    [Server]
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch)
     {
-        Play(loc, sound, type, minPitch, maxPitch, 15);
+        Play(loc, sound, type, minPitch, maxPitch, 15, true);
     }
 
+    [Server]
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance)
+    {
+        Play(loc, sound, type, minPitch, maxPitch, distance, true);
+    }
+
+    [Server]
+    public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance, bool spacialPanning)
     {
         if (instance == null)
         {
@@ -52,11 +62,16 @@ public class Sound : NetworkBehaviour
         int soundIndex = new System.Random().Next(0, clips.Length);
         var pitch = Random.Range(minPitch, maxPitch);
         
-        instance.ClientsPlay(loc, sound, soundIndex, type, pitch, distance);
+        instance.PlayOnClients(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
     }
 
     [ClientRpc]
-    public void ClientsPlay(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance)
+    public void PlayOnClients(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance, bool spacialPanning)
+    {
+        PlayLocal(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
+    }
+
+    public static void PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance, bool spacialPanning)
     {
         var obj = new GameObject("sound " + sound);
         var source = obj.AddComponent<AudioSource>();
@@ -80,7 +95,7 @@ public class Sound : NetworkBehaviour
                 break;
         }
 
-        source.spatialBlend = 1;
+        source.spatialBlend = (spacialPanning ? 1 : 0);
         source.rolloffMode = AudioRolloffMode.Linear;
         source.playOnAwake = false;
         source.outputAudioMixerGroup = group;

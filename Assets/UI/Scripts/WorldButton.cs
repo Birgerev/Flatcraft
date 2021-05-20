@@ -37,7 +37,8 @@ public class WorldButton : MonoBehaviour
     {
         GetComponentInParent<SingleplayerMenu>().selectedWorld = transform.GetSiblingIndex();
 
-        if (Time.time - lastClickTime < 0.3f) GetComponentInParent<SingleplayerMenu>().Play();
+        if (Time.time - lastClickTime < 0.3f) 
+            GetComponentInParent<SingleplayerMenu>().Play();
 
         lastClickTime = Time.time;
     }

@@ -168,7 +168,7 @@ public class LivingEntity : Entity
 
     public void Walk(int direction)
     {
-        if (!hasAuthority)
+        if (!hasAuthority && !isServer)
             return;
         
         float maxSpeed;
@@ -198,7 +198,7 @@ public class LivingEntity : Entity
 
     public void Jump()
     { 
-        if (!hasAuthority)
+        if (!hasAuthority && !isServer)
             return;
 
         if (isOnGround && Time.time - last_jump_time >= 0.3f)
@@ -422,7 +422,7 @@ public class LivingEntity : Entity
     {
         direction.Normalize();
 
-        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 3f, 4f);
+        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 5f, 6f);
     }
 
     [ClientRpc]

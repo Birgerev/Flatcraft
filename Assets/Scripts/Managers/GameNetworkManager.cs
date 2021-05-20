@@ -22,7 +22,7 @@ public class GameNetworkManager : Mirror.NetworkManager
             GameObject[] prefabs = Resources.LoadAll<GameObject>(dir + "/");
             foreach (GameObject prefab in prefabs)
             {
-                ClientScene.RegisterPrefab(prefab);
+                NetworkClient.RegisterPrefab(prefab);
             }
         }
         
@@ -72,7 +72,7 @@ public class GameNetworkManager : Mirror.NetworkManager
     {
         if (newSceneName.Equals(onlineScene))
         {
-            ClientScene.Ready(NetworkClient.connection);
+            NetworkClient.Ready();
         }
     }
 
