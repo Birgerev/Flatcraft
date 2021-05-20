@@ -40,6 +40,8 @@ public class Entity : NetworkBehaviour
     public bool portalCooldown;
     [SyncVar]
     public bool teleportingDimension;
+
+    public Entity lastDamager;
     
     public Vector2 lastFramePosition;
     public GameObject burningRender;
@@ -403,6 +405,8 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Hit(float damage, Entity source)
     {
+        lastDamager = source;
+        
         TakeHitDamage(damage);
     }
 
