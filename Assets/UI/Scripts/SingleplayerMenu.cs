@@ -47,6 +47,7 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void Play()
     {
+        Sound.PlayLocal(new Location(), "menu/click", 0, SoundType.Menu, 1f, 100000f, false);
         WorldManager.world = worlds[selectedWorld];
         SceneManager.LoadScene("Game");
         GameNetworkManager.isHost = true;

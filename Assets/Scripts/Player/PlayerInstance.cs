@@ -22,7 +22,7 @@ public class PlayerInstance : NetworkBehaviour
     }
     public void Update()
     {
-        if (!isLocalPlayer || ClientScene.readyConnection == null)
+        if (!isLocalPlayer || !NetworkClient.ready)
             return;
         
         if (playerEntity == null && !DeathMenu.active)

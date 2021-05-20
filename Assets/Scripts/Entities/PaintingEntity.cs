@@ -21,8 +21,6 @@ public class PaintingEntity : Entity
     
     [EntityDataTag(false)] [SyncVar] 
     public string paintingId = "";
-
-    private bool isInitialized = false;
     
     [Server]
     public override void Spawn()
