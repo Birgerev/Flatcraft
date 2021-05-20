@@ -56,7 +56,7 @@ public class DroppedItem : Entity
         if (col.GetComponent<DroppedItem>() != null)
             if (col.GetComponent<DroppedItem>().item.material == item.material)
             {
-                if (age < col.GetComponent<DroppedItem>().age)
+                if (age < col.GetComponent<DroppedItem>().age || col.GetComponent<DroppedItem>().dead)
                     return;
 
                 item.amount += col.GetComponent<DroppedItem>().item.amount;
