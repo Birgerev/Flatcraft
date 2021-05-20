@@ -15,7 +15,7 @@ public class AmbientMusicManager : NetworkBehaviour
         if(isServer)
             StartCoroutine(ambientMusicLoop());
     }
-//TODO fix main menu sound
+    
     IEnumerator ambientMusicLoop()
     {
         System.Random random = new System.Random();
