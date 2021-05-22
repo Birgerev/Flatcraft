@@ -9,7 +9,6 @@ public class LivingEntity : Entity
     //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
 
-    [Header("Movement Properties")] public float acceleration = 4f;
 
     public Nameplate nameplate;
     EntityController controller;
@@ -18,6 +17,8 @@ public class LivingEntity : Entity
     [EntityDataTag(false)] [SyncVar] public float health;
     [EntityDataTag(false)] [SyncVar] public string displayName;
 
+    [Header("Movement Properties")] 
+    private float acceleration = 4f;
     private float airDrag = 4.3f;
     private float climbableFriction = 10f;
     private float climbAcceleration = 55.0f;
@@ -32,7 +33,7 @@ public class LivingEntity : Entity
 
 
     //Entity State
-    public float highestYlevelsinceground;
+    protected float highestYlevelsinceground;
     protected float last_jump_time;
     protected bool inLiquidLastFrame;
     [SyncVar]
