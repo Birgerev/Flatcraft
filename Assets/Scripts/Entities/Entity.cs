@@ -365,9 +365,8 @@ public class Entity : NetworkBehaviour
             {
                 var random = new Random((transform.position + "" + i).GetHashCode());
                 var maxVelocity = new Vector2(2, 2);
-                var dropPosition = Location + new Location(0, 2);
 
-                item.Drop(dropPosition,
+                item.Drop(Location,
                     new Vector2((float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
                         (float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
 

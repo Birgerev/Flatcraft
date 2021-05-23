@@ -9,7 +9,6 @@ public class LivingEntity : Entity
     //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
 
-
     public Nameplate nameplate;
     EntityController controller;
 
@@ -19,28 +18,23 @@ public class LivingEntity : Entity
 
     [Header("Movement Properties")] 
     private float acceleration = 4f;
+    protected float speed;
+    protected virtual float walkSpeed { get; } = 4.3f;
+    
     private float airDrag = 4.3f;
+    private float liquidDrag = 10f;
     private float climbableFriction = 10f;
     private float climbAcceleration = 55.0f;
     private float groundFriction = 5f;
     private float jumpVelocity = 8.5f;
-    private float liquidDrag = 10f;
-    private float sneakSpeed = 1.3f;
-    private float sprintSpeed = 5.6f;
     private float swimUpAcceleration = 45.0f;
     private float swimJumpVelocity = 2f;
-    private float walkSpeed = 4.3f;
 
 
     //Entity State
     protected float highestYlevelsinceground;
     protected float last_jump_time;
     protected bool inLiquidLastFrame;
-    [SyncVar]
-    protected bool sprinting;
-    [SyncVar]
-    protected bool sneaking;
-    private bool ladderSneaking;
     
     public virtual float maxHealth { get; } = 20;
 
@@ -49,6 +43,7 @@ public class LivingEntity : Entity
         base.Start();
         
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        speed = walkSpeed;
     }
 
     public override void Update()
@@ -78,18 +73,9 @@ public class LivingEntity : Entity
         if(controller != null)
             controller.Tick();
         
-        
-        //Sprinting particles    
-        if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
-        {
-            float chances;
-            if (sprinting)
-                chances = 0.2f;
-            else
-                chances = 0.02f;
-
-            MovementParticlesEffect(chances);
-        }
+        //Walking particles    
+        if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
+            MovementParticlesEffect(0.05f);
         
         ProcessMovement();
         FallDamageCheck();
@@ -115,10 +101,10 @@ public class LivingEntity : Entity
     public void AmbientSoundCheck()
     {
         int checkDuration = 4;
-        float timeOffset = (float)new System.Random(uuid.GetHashCode()).NextDouble() * checkDuration;    //Uses a static seed (id)
+        float timeOffset = (float)new Random(uuid.GetHashCode()).NextDouble() * checkDuration;    //Uses a static seed (id)
         
         if (((Time.time + timeOffset) % checkDuration) - Time.deltaTime <= 0)
-            if(new System.Random(Time.time.GetHashCode() + uuid.GetHashCode()).NextDouble() < 0.5f)
+            if(new Random(Time.time.GetHashCode() + uuid.GetHashCode()).NextDouble() < 0.5f)
                 AmbientSound();
     }
     
@@ -152,7 +138,6 @@ public class LivingEntity : Entity
             SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
         
         ApplyFriction();
-        CrouchOnLadderCheck();
     }
 
     public void ApplyFriction()
@@ -172,22 +157,14 @@ public class LivingEntity : Entity
         if (!hasAuthority && !isServer)
             return;
         
-        float maxSpeed;
-        if (sprinting)
-            maxSpeed = sprintSpeed;
-        else if (sneaking)
-            maxSpeed = sneakSpeed;
-        else
-            maxSpeed = walkSpeed;
-
-        if (GetVelocity().x < maxSpeed && GetVelocity().x > -maxSpeed)
+        if (GetVelocity().x < speed && GetVelocity().x > -speed)
         {
             float targetXVelocity = 0;
 
             if (direction == -1)
-                targetXVelocity -= maxSpeed;
+                targetXVelocity -= speed;
             else if (direction == 1)
-                targetXVelocity += maxSpeed;
+                targetXVelocity += speed;
             else targetXVelocity = 0;
 
             GetComponent<Rigidbody2D>().velocity +=
@@ -252,19 +229,6 @@ public class LivingEntity : Entity
             facingLeft = GetVelocity().x < 0;
     }
 
-    public void CrouchOnLadderCheck()
-    {
-        bool isLadderSneakingThisFrame = (isOnClimbable && sneaking);
-        if (isLadderSneakingThisFrame && !ladderSneaking)
-        {
-            GetComponent<Rigidbody2D>().gravityScale = 0;
-            ladderSneaking = true;
-        }else if (!isLadderSneakingThisFrame && ladderSneaking)
-        {
-            GetComponent<Rigidbody2D>().gravityScale = 1;
-            ladderSneaking = false;
-        }
-    }
 
     [Server]
     private void FallDamageCheck()
@@ -318,7 +282,7 @@ public class LivingEntity : Entity
     }
 
     [ClientRpc]
-    private void MovementParticlesEffect(float chances)
+    protected void MovementParticlesEffect(float chances)
     {
         var r = new Random();
 
