@@ -23,8 +23,7 @@ public class Player : HumanEntity
     [SyncVar]
     private double lastBlockHitTime;
     private Material actionBarLastSelectedMaterial;
-
-
+    
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar]
     public float hunger;
@@ -43,6 +42,13 @@ public class Player : HumanEntity
     private float sprintHungerCost = 0.03f;
     private float jumpHungerCost = 0.1f;
     private float healthRegenerationHungerCost = 0.4f;
+    private float sneakSpeed = 1.3f;
+    private float sprintSpeed = 5.6f;
+    [SyncVar]
+    public bool sprinting;
+    [SyncVar]
+    public bool sneaking;
+    private bool ladderSneaking;
     
     public override void Start()
     {
@@ -86,6 +92,10 @@ public class Player : HumanEntity
         CheckRegenerateHealth();
         CheckStarvationDamage();
         ClimbableSound();
+        
+        //Sprint particles    
+        if (sprinting && isOnGround)
+            MovementParticlesEffect(0.2f);
     }
 
     [Client]
@@ -128,8 +138,25 @@ public class Player : HumanEntity
 
     public override void ProcessMovement()
     {
-        if(hasAuthority)
-            base.ProcessMovement();
+        if (!hasAuthority)
+            return;
+        
+        base.ProcessMovement();
+        CrouchOnLadderCheck();
+    }
+
+    public void CrouchOnLadderCheck()
+    {
+        bool isLadderSneakingThisFrame = (isOnClimbable && sneaking);
+        if (isLadderSneakingThisFrame && !ladderSneaking)
+        {
+            GetComponent<Rigidbody2D>().gravityScale = 0;
+            ladderSneaking = true;
+        }else if (!isLadderSneakingThisFrame && ladderSneaking)
+        {
+            GetComponent<Rigidbody2D>().gravityScale = 1;
+            ladderSneaking = false;
+        }
     }
     
     [Client]
@@ -213,34 +240,52 @@ public class Player : HumanEntity
         if (ChatMenu.instance.open)
             return;
             
+        //Open inventory
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             RequestOpenInventory();
 
         if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
             return;
         
+        //Open chat
         if (Input.GetKeyDown(KeyCode.T))
             ChatMenu.instance.open = true;
         
+        //Walking
         if (Input.GetKey(KeyCode.A)) 
             Walk(-1);
         if (Input.GetKey(KeyCode.D)) 
             Walk(1);
         
+        //Jumping
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space)) 
             Jump();
 
-        if((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
-            SetSneaking(false);
-        if((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S)) && !sneaking)
-            SetSneaking(true);
-        
-        
-        if(Input.GetKeyDown(KeyCode.LeftControl) && hunger > 6)
-            SetSprinting(true);
-        if(Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 3f || sneaking || hunger <= 6)
-            SetSprinting(false);
+        //Sneaking
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S)))
+        {
+            SetServerSneaking(true);
+            speed = sneakSpeed;
+        }
+        if (sneaking && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
+        {
+            SetServerSneaking(false);
+            speed = walkSpeed;
+        }
 
+        //Sprinting
+        if (Input.GetKeyDown(KeyCode.LeftControl) && hunger > 6)
+        {
+            SetServerSprinting(true);
+            speed = sprintSpeed;
+        }
+        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 3f || sneaking || hunger <= 6))
+        {
+            SetServerSprinting(false);
+            speed = walkSpeed;
+        }
+
+        //Debug disable lighting
         if (Input.GetKeyDown(KeyCode.F4))
             LightManager.instance.doLight = !LightManager.instance.doLight;
 
@@ -286,7 +331,7 @@ public class Player : HumanEntity
     }
     
     [Command]
-    private void SetSprinting(bool sprint)
+    private void SetServerSprinting(bool sprint)
     {
         sprinting = sprint;
     }
@@ -298,7 +343,7 @@ public class Player : HumanEntity
     }
     
     [Command]
-    private void SetSneaking(bool sneak)
+    private void SetServerSneaking(bool sneak)
     {
         sneaking = sneak;
     }

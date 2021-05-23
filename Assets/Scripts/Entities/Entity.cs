@@ -330,7 +330,7 @@ public class Entity : NetworkBehaviour
     public Liquid[] GetLiquidBlocksForEntity()
     {
         List<Liquid> liquids = new List<Liquid>();
-        foreach (Collider2D col in Physics2D.OverlapBoxAll(transform.position, GetComponent<BoxCollider2D>().size, 0))
+        foreach (Collider2D col in Physics2D.OverlapBoxAll((Vector2)transform.position + GetComponent<BoxCollider2D>().offset, GetComponent<BoxCollider2D>().size, 0))
             if (col.GetComponent<Liquid>() != null)
                 liquids.Add(col.GetComponent<Liquid>());
 
@@ -365,9 +365,8 @@ public class Entity : NetworkBehaviour
             {
                 var random = new Random((transform.position + "" + i).GetHashCode());
                 var maxVelocity = new Vector2(2, 2);
-                var dropPosition = Location + new Location(0, 2);
 
-                item.Drop(dropPosition,
+                item.Drop(Location,
                     new Vector2((float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
                         (float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x));
 
@@ -534,13 +533,13 @@ public class Entity : NetworkBehaviour
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.transform.position.y + 1f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
+        if (col.transform.position.y + 0.5f < transform.position.y && Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
             isOnGround = true;
     }
     
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.transform.position.y + 1f < transform.position.y)
+        if (col.transform.position.y + 0.5f < transform.position.y)
             isOnGround = false;
     }
 
