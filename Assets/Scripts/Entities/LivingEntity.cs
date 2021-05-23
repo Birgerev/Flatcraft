@@ -32,7 +32,7 @@ public class LivingEntity : Entity
 
 
     //Entity State
-    public float highestYlevelsinceground;
+    protected float highestYlevelsinceground;
     protected float last_jump_time;
     protected bool inLiquidLastFrame;
     
