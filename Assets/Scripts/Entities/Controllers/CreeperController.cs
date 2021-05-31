@@ -22,7 +22,7 @@ public class CreeperController : MonsterController
     
     protected virtual void CheckIgniteState()
     {
-        bool ignited = false;
+        bool setIgnited = false;
         
         if (target != null)
         {
@@ -30,11 +30,12 @@ public class CreeperController : MonsterController
 
             if (distance <= 2.5f)
             {
-                ignited = true;
+                setIgnited = true;
             }
         }
         
-        ((Creeper) instance).SetIgnited(ignited);
+        if(((Creeper) instance).ignited != setIgnited)
+            ((Creeper) instance).SetIgnited(setIgnited);
     }
     
     protected override void Walking()

@@ -42,8 +42,14 @@ public class Creeper : Monster
     {
         this.ignited = ignited;
 
-        if(!ignited)
+        if (ignited)
+        {
+            Sound.Play(Location, "entity/Creeper/fuse", SoundType.Entities, 0.8f, 1.2f);
+        }
+        else
+        {
             fuse = 0;
+        }
     }
 
     [Server]
