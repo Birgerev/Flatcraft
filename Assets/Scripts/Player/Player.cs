@@ -63,7 +63,6 @@ public class Player : HumanEntity
     {
         base.OnStartAuthority();
         localEntity = this;
-        gameObject.AddComponent<AudioListener>();
         CameraController.instance.target = transform;
     }
 
@@ -821,7 +820,7 @@ public class Player : HumanEntity
     {
         base.UpdateAnimatorValues();
 
-        var anim = GetComponent<Animator>();
+        Animator anim = GetComponent<Animator>();
 
         anim.SetBool("eating", eatingTime > 0);
         anim.SetBool("punch", 

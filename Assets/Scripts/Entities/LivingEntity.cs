@@ -111,7 +111,7 @@ public class LivingEntity : Entity
     [Client]
     public virtual void UpdateAnimatorValues()
     {
-        var anim = GetComponent<Animator>();
+        Animator anim = GetComponent<Animator>();
 
         if (anim == null)
             return;
