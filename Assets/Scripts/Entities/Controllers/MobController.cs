@@ -39,7 +39,7 @@ public class MobController : EntityController
         
         Walking();
         Swim();
-        if (hitTargetDamage != 0)
+        if (hitTargetDamage > 0)
             TryHit();
     }
 
