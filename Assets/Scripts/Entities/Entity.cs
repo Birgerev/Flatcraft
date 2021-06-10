@@ -461,6 +461,9 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Save()
     {
+        if (dead)
+            return;
+        
         DeleteOldSavePath();
 
         string path = SavePath();
