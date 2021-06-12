@@ -7,7 +7,7 @@ public class CreeperController : MonsterController
     }
 
     protected override bool targetDamagerIfAttacked { get; } = true;
-    protected override float targetRange { get; } = 16;
+    protected override float targetRange { get; } = 12;
 
     protected override float pathfindingKeepDistanceToTarget { get; } = 2;
 
