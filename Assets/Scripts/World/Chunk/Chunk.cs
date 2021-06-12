@@ -20,7 +20,7 @@ public class Chunk : NetworkBehaviour
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
-    private static readonly float animalGenerationChance = 0.2f;
+    private static readonly float animalGenerationChance = 0.1f;
     private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
     
     private static readonly int monsterSpawningLightLevel = 7;
