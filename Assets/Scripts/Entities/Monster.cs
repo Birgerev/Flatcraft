@@ -10,7 +10,34 @@ public class Monster : LivingEntity
 
         if (burnUnderSun)
             TryBurnUnderSun();
+        TryDespawn();
     }
+    
+    private void TryDespawn()
+    {
+        if (Time.time % 10f - Time.deltaTime > 0)
+            return;
+        
+        foreach (Player player in Player.players)
+        {
+            Location playerLoc = player.Location;
+
+            if (Location.dimension != playerLoc.dimension)
+                continue;
+
+            float distanceFromPlayer = Vector2.Distance(Location.GetPosition(), playerLoc.GetPosition());
+            if (distanceFromPlayer < 60)
+                return;
+        }
+        
+        Unload();
+    }
+
+    public override void Save()
+    {
+        
+    }
+
 
     private void TryBurnUnderSun()
     {
@@ -19,7 +46,7 @@ public class Monster : LivingEntity
                 
         Block topmostBlock = Chunk.GetTopmostBlock(Location.x, Location.dimension, true);
 
-        if (topmostBlock == null || Location.y > topmostBlock.location.y)
+        if (topmostBlock == null || Location.y < topmostBlock.location.y)
             return;
         
         fireTime = 10;
