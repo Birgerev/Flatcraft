@@ -17,7 +17,9 @@ namespace Mirror.Weaver
             {
                 // value types cant inherit from SyncObject
                 if (typeRef.IsValueType)
+                {
                     return false;
+                }
 
                 return typeRef.Resolve().ImplementsInterface<SyncObject>();
             }
@@ -33,7 +35,7 @@ namespace Mirror.Weaver
             // generates code like:
             this.InitSyncObject(m_sizes);
         */
-        private static void GenerateSyncObjectRegistration(ILProcessor worker, FieldDefinition fd)
+        static void GenerateSyncObjectRegistration(ILProcessor worker, FieldDefinition fd)
         {
             worker.Emit(OpCodes.Ldarg_0);
             worker.Emit(OpCodes.Ldarg_0);

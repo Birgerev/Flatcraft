@@ -5,18 +5,9 @@ namespace Mirror
     /// <summary>Pooled NetworkReader, automatically returned to pool when using 'using'</summary>
     public sealed class PooledNetworkReader : NetworkReader, IDisposable
     {
-        internal PooledNetworkReader(byte[] bytes) : base(bytes)
-        {
-        }
-
-        internal PooledNetworkReader(ArraySegment<byte> segment) : base(segment)
-        {
-        }
-
-        public void Dispose()
-        {
-            NetworkReaderPool.Recycle(this);
-        }
+        internal PooledNetworkReader(byte[] bytes) : base(bytes) {}
+        internal PooledNetworkReader(ArraySegment<byte> segment) : base(segment) {}
+        public void Dispose() => NetworkReaderPool.Recycle(this);
     }
 
     /// <summary>Pool of NetworkReaders to avoid allocations.</summary>
@@ -25,9 +16,12 @@ namespace Mirror
         // reuse Pool<T>
         // we still wrap it in NetworkReaderPool.Get/Recyle so we can reset the
         // position and array before reusing.
-        private static readonly Pool<PooledNetworkReader> Pool = new Pool<PooledNetworkReader>(
+        static readonly Pool<PooledNetworkReader> Pool = new Pool<PooledNetworkReader>(
             // byte[] will be assigned in GetReader
-            () => new PooledNetworkReader(new byte[] { }));
+            () => new PooledNetworkReader(new byte[]{}),
+            // initial capacity to avoid allocations in the first few frames
+            1000
+        );
 
         /// <summary>Get the next reader in the pool. If pool is empty, creates a new Reader</summary>
         public static PooledNetworkReader GetReader(byte[] bytes)

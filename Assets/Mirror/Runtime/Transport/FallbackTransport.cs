@@ -1,45 +1,51 @@
 // uses the first available transport for server and client.
 // example: to use Apathy if on Windows/Mac/Linux and fall back to Telepathy
 //          otherwise.
-
 using System;
 using UnityEngine;
 
 namespace Mirror
 {
-    [HelpURL("https://mirror-networking.com/docs/Articles/Transports/Fallback.html")]
+    [HelpURL("https://mirror-networking.gitbook.io/docs/transports/fallback-transport")]
     [DisallowMultipleComponent]
+    [Obsolete("Fallback Transport will be retired. It was only needed for Apathy/Libuv. Use kcp or Telepathy instead, those run everywhere.")]
     public class FallbackTransport : Transport
     {
         public Transport[] transports;
 
         // the first transport that is available on this platform
-        private Transport available;
+        Transport available;
 
         public void Awake()
         {
             if (transports == null || transports.Length == 0)
+            {
                 throw new Exception("FallbackTransport requires at least 1 underlying transport");
+            }
             available = GetAvailableTransport();
             Debug.Log("FallbackTransport available: " + available.GetType());
         }
 
-        private void OnEnable()
+        void OnEnable()
         {
             available.enabled = true;
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             available.enabled = false;
         }
 
         // The client just uses the first transport available
-        private Transport GetAvailableTransport()
+        Transport GetAvailableTransport()
         {
             foreach (Transport transport in transports)
+            {
                 if (transport.Available())
+                {
                     return transport;
+                }
+            }
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -60,7 +66,9 @@ namespace Mirror
         public override void ClientConnect(Uri uri)
         {
             foreach (Transport transport in transports)
+            {
                 if (transport.Available())
+                {
                     try
                     {
                         transport.ClientConnect(uri);
@@ -70,7 +78,8 @@ namespace Mirror
                     {
                         // transport does not support the schema, just move on to the next one
                     }
-
+                }
+            }
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -84,17 +93,14 @@ namespace Mirror
             available.ClientDisconnect();
         }
 
-        public override void ClientSend(int channelId, ArraySegment<byte> segment)
+        public override void ClientSend(ArraySegment<byte> segment, int channelId)
         {
-            available.ClientSend(channelId, segment);
+            available.ClientSend(segment, channelId);
         }
 
         // right now this just returns the first available uri,
         // should we return the list of all available uri?
-        public override Uri ServerUri()
-        {
-            return available.ServerUri();
-        }
+        public override Uri ServerUri() => available.ServerUri();
 
         public override bool ServerActive()
         {
@@ -106,14 +112,14 @@ namespace Mirror
             return available.ServerGetClientAddress(connectionId);
         }
 
-        public override bool ServerDisconnect(int connectionId)
+        public override void ServerDisconnect(int connectionId)
         {
-            return available.ServerDisconnect(connectionId);
+            available.ServerDisconnect(connectionId);
         }
 
-        public override void ServerSend(int connectionId, int channelId, ArraySegment<byte> segment)
+        public override void ServerSend(int connectionId, ArraySegment<byte> segment, int channelId)
         {
-            available.ServerSend(connectionId, channelId, segment);
+            available.ServerSend(connectionId, segment, channelId);
         }
 
         public override void ServerStart()
@@ -154,7 +160,6 @@ namespace Mirror
                 int size = transport.GetMaxPacketSize(channelId);
                 mininumAllowedSize = Mathf.Min(size, mininumAllowedSize);
             }
-
             return mininumAllowedSize;
         }
 
@@ -162,5 +167,6 @@ namespace Mirror
         {
             return available.ToString();
         }
+
     }
 }

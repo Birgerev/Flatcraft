@@ -1,46 +1,46 @@
 ﻿using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.Events;
 using UnityEngine;
 
 namespace Mirror.Discovery
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkDiscoveryHUD")]
-    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkDiscovery.html")]
+    [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-discovery")]
     [RequireComponent(typeof(NetworkDiscovery))]
     public class NetworkDiscoveryHUD : MonoBehaviour
     {
+        readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
+        Vector2 scrollViewPos = Vector2.zero;
+
         public NetworkDiscovery networkDiscovery;
-        private readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
-        private Vector2 scrollViewPos = Vector2.zero;
-
-        private void OnGUI()
-        {
-            if (NetworkManager.singleton == null)
-                return;
-
-            if (NetworkServer.active || NetworkClient.active)
-                return;
-
-            if (!NetworkClient.isConnected && !NetworkServer.active && !NetworkClient.active)
-                DrawGUI();
-        }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (networkDiscovery == null)
             {
                 networkDiscovery = GetComponent<NetworkDiscovery>();
-                UnityEventTools.AddPersistentListener(networkDiscovery.OnServerFound, OnDiscoveredServer);
-                Undo.RecordObjects(new Object[] {this, networkDiscovery}, "Set NetworkDiscovery");
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(networkDiscovery.OnServerFound, OnDiscoveredServer);
+                UnityEditor.Undo.RecordObjects(new Object[] { this, networkDiscovery }, "Set NetworkDiscovery");
             }
         }
 #endif
 
-        private void DrawGUI()
+        void OnGUI()
         {
+            if (NetworkManager.singleton == null)
+                return;
+
+            if (!NetworkClient.isConnected && !NetworkServer.active && !NetworkClient.active)
+                DrawGUI();
+
+            if (NetworkServer.active || NetworkClient.active)
+                StopButtons();
+        }
+
+        void DrawGUI()
+        {
+            GUILayout.BeginArea(new Rect(10, 10, 300, 500));
             GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Find Servers"))
@@ -80,9 +80,42 @@ namespace Mirror.Discovery
                     Connect(info);
 
             GUILayout.EndScrollView();
+            GUILayout.EndArea();
         }
 
-        private void Connect(ServerResponse info)
+        void StopButtons()
+        {
+            GUILayout.BeginArea(new Rect(10, 40, 100, 25));
+
+            // stop host if host mode
+            if (NetworkServer.active && NetworkClient.isConnected)
+            {
+                if (GUILayout.Button("Stop Host"))
+                {
+                    NetworkManager.singleton.StopHost();
+                }
+            }
+            // stop client if client-only
+            else if (NetworkClient.isConnected)
+            {
+                if (GUILayout.Button("Stop Client"))
+                {
+                    NetworkManager.singleton.StopClient();
+                }
+            }
+            // stop server if server-only
+            else if (NetworkServer.active)
+            {
+                if (GUILayout.Button("Stop Server"))
+                {
+                    NetworkManager.singleton.StopServer();
+                }
+            }
+
+            GUILayout.EndArea();
+        }
+
+        void Connect(ServerResponse info)
         {
             NetworkManager.singleton.StartClient(info.uri);
         }

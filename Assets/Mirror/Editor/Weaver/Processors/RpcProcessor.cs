@@ -4,14 +4,14 @@ using Mono.CecilX.Cil;
 namespace Mirror.Weaver
 {
     /// <summary>
-    ///     Processes [Rpc] methods in NetworkBehaviour
+    /// Processes [Rpc] methods in NetworkBehaviour
     /// </summary>
     public static class RpcProcessor
     {
-        public static MethodDefinition ProcessRpcInvoke(TypeDefinition td, MethodDefinition md
-            , MethodDefinition rpcCallFunc)
+        public static MethodDefinition ProcessRpcInvoke(TypeDefinition td, MethodDefinition md, MethodDefinition rpcCallFunc)
         {
-            MethodDefinition rpc = new MethodDefinition(Weaver.InvokeRpcPrefix + md.Name,
+            MethodDefinition rpc = new MethodDefinition(
+                Weaver.InvokeRpcPrefix + md.Name,
                 MethodAttributes.Family | MethodAttributes.Static | MethodAttributes.HideBySig,
                 WeaverTypes.Import(typeof(void)));
 
@@ -58,8 +58,7 @@ namespace Mirror.Weaver
             This way we do not need to modify the code anywhere else,  and this works
             correctly in dependent assemblies
         */
-        public static MethodDefinition ProcessRpcCall(TypeDefinition td, MethodDefinition md
-            , CustomAttribute clientRpcAttr)
+        public static MethodDefinition ProcessRpcCall(TypeDefinition td, MethodDefinition md, CustomAttribute clientRpcAttr)
         {
             MethodDefinition rpc = MethodProcessor.SubstituteMethod(td, md);
 

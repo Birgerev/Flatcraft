@@ -12,7 +12,6 @@ public class Sound : NetworkBehaviour
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup weatherGroup;
 
-    [Server]
     public void Start()
     {
         instance = this;
@@ -77,6 +76,9 @@ public class Sound : NetworkBehaviour
     public static void PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance
         , bool spacialPanning)
     {
+        if (instance == null)
+            return;
+        
         GameObject obj = new GameObject("sound " + sound);
         AudioSource source = obj.AddComponent<AudioSource>();
         AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);

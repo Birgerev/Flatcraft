@@ -10,13 +10,43 @@ namespace Mirror.Examples.NetworkRoom
     {
         public CharacterController characterController;
 
-        [Header("Movement Settings")] public float moveSpeed = 8f;
+        void OnValidate()
+        {
+            if (characterController == null)
+                characterController = GetComponent<CharacterController>();
+        }
 
+        void Start()
+        {
+            characterController.enabled = isLocalPlayer;
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            Camera.main.orthographic = false;
+            Camera.main.transform.SetParent(transform);
+            Camera.main.transform.localPosition = new Vector3(0f, 3f, -8f);
+            Camera.main.transform.localEulerAngles = new Vector3(10f, 0f, 0f);
+        }
+
+        void OnDisable()
+        {
+            if (isLocalPlayer && Camera.main != null)
+            {
+                Camera.main.orthographic = true;
+                Camera.main.transform.SetParent(null);
+                Camera.main.transform.localPosition = new Vector3(0f, 70f, 0f);
+                Camera.main.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
+            }
+        }
+
+        [Header("Movement Settings")]
+        public float moveSpeed = 8f;
         public float turnSensitivity = 5f;
         public float maxTurnSpeed = 150f;
 
-        [Header("Diagnostics")] public float horizontal;
-
+        [Header("Diagnostics")]
+        public float horizontal;
         public float vertical;
         public float turn;
         public float jumpSpeed;
@@ -24,12 +54,7 @@ namespace Mirror.Examples.NetworkRoom
         public bool isFalling;
         public Vector3 velocity;
 
-        private void Start()
-        {
-            characterController.enabled = isLocalPlayer;
-        }
-
-        private void Update()
+        void Update()
         {
             if (!isLocalPlayer)
                 return;
@@ -61,7 +86,7 @@ namespace Mirror.Examples.NetworkRoom
             }
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             if (!isLocalPlayer || characterController == null)
                 return;
@@ -80,31 +105,6 @@ namespace Mirror.Examples.NetworkRoom
 
             isGrounded = characterController.isGrounded;
             velocity = characterController.velocity;
-        }
-
-        private void OnDisable()
-        {
-            if (isLocalPlayer && Camera.main != null)
-            {
-                Camera.main.orthographic = true;
-                Camera.main.transform.SetParent(null);
-                Camera.main.transform.localPosition = new Vector3(0f, 70f, 0f);
-                Camera.main.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
-            }
-        }
-
-        private void OnValidate()
-        {
-            if (characterController == null)
-                characterController = GetComponent<CharacterController>();
-        }
-
-        public override void OnStartLocalPlayer()
-        {
-            Camera.main.orthographic = false;
-            Camera.main.transform.SetParent(transform);
-            Camera.main.transform.localPosition = new Vector3(0f, 3f, -8f);
-            Camera.main.transform.localEulerAngles = new Vector3(10f, 0f, 0f);
         }
     }
 }

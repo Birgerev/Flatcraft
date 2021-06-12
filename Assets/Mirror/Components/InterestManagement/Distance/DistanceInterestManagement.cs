@@ -1,5 +1,4 @@
 // straight forward Vector3.Distance based interest management.
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,30 +11,14 @@ namespace Mirror
 
         [Tooltip("Rebuild all every 'rebuildInterval' seconds.")]
         public float rebuildInterval = 1;
-
-        private double lastRebuildTime;
-
-        private void Update()
-        {
-            // only on server
-            if (!NetworkServer.active)
-                return;
-
-            // rebuild all spawned NetworkIdentity's observers every interval
-            if (NetworkTime.time >= lastRebuildTime + rebuildInterval)
-            {
-                RebuildAll();
-                lastRebuildTime = NetworkTime.time;
-            }
-        }
+        double lastRebuildTime;
 
         public override bool OnCheckObserver(NetworkIdentity identity, NetworkConnection newObserver)
         {
             return Vector3.Distance(identity.transform.position, newObserver.identity.transform.position) <= visRange;
         }
 
-        public override void OnRebuildObservers(NetworkIdentity identity, HashSet<NetworkConnection> newObservers
-            , bool initialize)
+        public override void OnRebuildObservers(NetworkIdentity identity, HashSet<NetworkConnection> newObservers, bool initialize)
         {
             // 'transform.' calls GetComponent, only do it once
             Vector3 position = identity.transform.position;
@@ -48,11 +31,30 @@ namespace Mirror
             //    cast 10k times, we will see a noticeable lag even with physics
             //    layers. but checking to every connection is fast.
             foreach (NetworkConnectionToClient conn in NetworkServer.connections.Values)
+            {
                 // authenticated and joined world with a player?
                 if (conn != null && conn.isAuthenticated && conn.identity != null)
+                {
                     // check distance
                     if (Vector3.Distance(conn.identity.transform.position, position) < visRange)
+                    {
                         newObservers.Add(conn);
+                    }
+                }
+            }
+        }
+
+        void Update()
+        {
+            // only on server
+            if (!NetworkServer.active) return;
+
+            // rebuild all spawned NetworkIdentity's observers every interval
+            if (NetworkTime.time >= lastRebuildTime + rebuildInterval)
+            {
+                RebuildAll();
+                lastRebuildTime = NetworkTime.time;
+            }
         }
     }
 }

@@ -7,9 +7,31 @@ namespace Mirror.Examples.Pong
         public float speed = 30;
         public Rigidbody2D rigidbody2d;
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+
+            // only simulate ball physics on server
+            rigidbody2d.simulated = true;
+
+            // Serve the ball from left player
+            rigidbody2d.velocity = Vector2.right * speed;
+        }
+
+        float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
+        {
+            // ascii art:
+            // ||  1 <- at the top of the racket
+            // ||
+            // ||  0 <- at the middle of the racket
+            // ||
+            // || -1 <- at the bottom of the racket
+            return (ballPos.y - racketPos.y) / racketHeight;
+        }
+
         // only call this on server
         [ServerCallback]
-        private void OnCollisionEnter2D(Collision2D col)
+        void OnCollisionEnter2D(Collision2D col)
         {
             // Note: 'col' holds the collision information. If the
             // Ball collided with a racket, then:
@@ -22,8 +44,8 @@ namespace Mirror.Examples.Pong
             {
                 // Calculate y direction via hit Factor
                 float y = HitFactor(transform.position,
-                    col.transform.position,
-                    col.collider.bounds.size.y);
+                                    col.transform.position,
+                                    col.collider.bounds.size.y);
 
                 // Calculate x direction via opposite collision
                 float x = col.relativeVelocity.x > 0 ? 1 : -1;
@@ -34,28 +56,6 @@ namespace Mirror.Examples.Pong
                 // Set Velocity with dir * speed
                 rigidbody2d.velocity = dir * speed;
             }
-        }
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-
-            // only simulate ball physics on server
-            rigidbody2d.simulated = true;
-
-            // Serve the ball from left player
-            rigidbody2d.velocity = Vector2.right * speed;
-        }
-
-        private float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
-        {
-            // ascii art:
-            // ||  1 <- at the top of the racket
-            // ||
-            // ||  0 <- at the middle of the racket
-            // ||
-            // || -1 <- at the bottom of the racket
-            return (ballPos.y - racketPos.y) / racketHeight;
         }
     }
 }

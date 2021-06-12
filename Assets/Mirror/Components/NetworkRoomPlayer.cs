@@ -3,26 +3,23 @@ using UnityEngine;
 namespace Mirror
 {
     /// <summary>
-    ///     This component works in conjunction with the NetworkRoomManager to make up the multiplayer room system.
-    ///     <para>
-    ///         The RoomPrefab object of the NetworkRoomManager must have this component on it. This component holds basic
-    ///         room player data required for the room to function. Game specific data for room players can be put in other
-    ///         components on the RoomPrefab or in scripts derived from NetworkRoomPlayer.
-    ///     </para>
+    /// This component works in conjunction with the NetworkRoomManager to make up the multiplayer room system.
+    /// <para>The RoomPrefab object of the NetworkRoomManager must have this component on it. This component holds basic room player data required for the room to function. Game specific data for room players can be put in other components on the RoomPrefab or in scripts derived from NetworkRoomPlayer.</para>
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkRoomPlayer")]
-    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkRoomPlayer.html")]
+    [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-room-player")]
     public class NetworkRoomPlayer : NetworkBehaviour
     {
         /// <summary>
-        ///     This flag controls whether the default UI is shown for the room player.
-        ///     <para>As this UI is rendered using the old GUI system, it is only recommended for testing purposes.</para>
+        /// This flag controls whether the default UI is shown for the room player.
+        /// <para>As this UI is rendered using the old GUI system, it is only recommended for testing purposes.</para>
         /// </summary>
         [Tooltip("This flag controls whether the default UI is shown for the room player")]
         public bool showRoomGUI = true;
 
         [Header("Diagnostics")]
+
         /// <summary>
         /// Diagnostic flag indicating whether this player is ready for the game to begin.
         /// <para>Invoke CmdChangeReadyState method on the client to set this flag.</para>
@@ -33,28 +30,16 @@ namespace Mirror
         public bool readyToBegin;
 
         /// <summary>
-        ///     Diagnostic index of the player, e.g. Player1, Player2, etc.
+        /// Diagnostic index of the player, e.g. Player1, Player2, etc.
         /// </summary>
-        [Tooltip("Diagnostic index of the player, e.g. Player1, Player2, etc.")] [SyncVar(hook = nameof(IndexChanged))]
+        [Tooltip("Diagnostic index of the player, e.g. Player1, Player2, etc.")]
+        [SyncVar(hook = nameof(IndexChanged))]
         public int index;
-
-        #region Commands
-
-        [Command]
-        public void CmdChangeReadyState(bool readyState)
-        {
-            readyToBegin = readyState;
-            NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
-            if (room != null)
-                room.ReadyStatusChanged();
-        }
-
-        #endregion
 
         #region Unity Callbacks
 
         /// <summary>
-        ///     Do not use Start - Override OnStartHost / OnStartClient instead!
+        /// Do not use Start - Override OnStartHost / OnStartClient instead!
         /// </summary>
         public void Start()
         {
@@ -74,11 +59,7 @@ namespace Mirror
                 if (NetworkClient.active)
                     room.CallOnClientEnterRoom();
             }
-            else
-            {
-                Debug.LogError(
-                    "RoomPlayer could not find a NetworkRoomManager. The RoomPlayer requires a NetworkRoomManager object to function. Make sure that there is one in the scene.");
-            }
+            else Debug.LogError("RoomPlayer could not find a NetworkRoomManager. The RoomPlayer requires a NetworkRoomManager object to function. Make sure that there is one in the scene.");
         }
 
         public virtual void OnDisable()
@@ -94,51 +75,58 @@ namespace Mirror
 
         #endregion
 
+        #region Commands
+
+        [Command]
+        public void CmdChangeReadyState(bool readyState)
+        {
+            readyToBegin = readyState;
+            NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
+            if (room != null)
+            {
+                room.ReadyStatusChanged();
+            }
+        }
+
+        #endregion
+
         #region SyncVar Hooks
 
         /// <summary>
-        ///     This is a hook that is invoked on clients when the index changes.
+        /// This is a hook that is invoked on clients when the index changes.
         /// </summary>
         /// <param name="oldIndex">The old index value</param>
         /// <param name="newIndex">The new index value</param>
-        public virtual void IndexChanged(int oldIndex, int newIndex)
-        {
-        }
+        public virtual void IndexChanged(int oldIndex, int newIndex) {}
 
         /// <summary>
-        ///     This is a hook that is invoked on clients when a RoomPlayer switches between ready or not ready.
-        ///     <para>This function is called when the a client player calls CmdChangeReadyState.</para>
+        /// This is a hook that is invoked on clients when a RoomPlayer switches between ready or not ready.
+        /// <para>This function is called when the a client player calls CmdChangeReadyState.</para>
         /// </summary>
         /// <param name="newReadyState">New Ready State</param>
-        public virtual void ReadyStateChanged(bool oldReadyState, bool newReadyState)
-        {
-        }
+        public virtual void ReadyStateChanged(bool oldReadyState, bool newReadyState) {}
 
         #endregion
 
         #region Room Client Virtuals
 
         /// <summary>
-        ///     This is a hook that is invoked on clients for all room player objects when entering the room.
-        ///     <para>Note: isLocalPlayer is not guaranteed to be set until OnStartLocalPlayer is called.</para>
+        /// This is a hook that is invoked on clients for all room player objects when entering the room.
+        /// <para>Note: isLocalPlayer is not guaranteed to be set until OnStartLocalPlayer is called.</para>
         /// </summary>
-        public virtual void OnClientEnterRoom()
-        {
-        }
+        public virtual void OnClientEnterRoom() {}
 
         /// <summary>
-        ///     This is a hook that is invoked on clients for all room player objects when exiting the room.
+        /// This is a hook that is invoked on clients for all room player objects when exiting the room.
         /// </summary>
-        public virtual void OnClientExitRoom()
-        {
-        }
+        public virtual void OnClientExitRoom() {}
 
         #endregion
 
         #region Optional UI
 
         /// <summary>
-        ///     Render a UI for the room.   Override to provide your on UI
+        /// Render a UI for the room.   Override to provide your on UI
         /// </summary>
         public virtual void OnGUI()
         {
@@ -159,9 +147,9 @@ namespace Mirror
             }
         }
 
-        private void DrawPlayerReadyState()
+        void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + index * 100, 200f, 90f, 130f));
+            GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
 
             GUILayout.Label($"Player [{index + 1}]");
 
@@ -170,16 +158,18 @@ namespace Mirror
             else
                 GUILayout.Label("Not Ready");
 
-            if ((isServer && index > 0 || isServerOnly) && GUILayout.Button("REMOVE"))
+            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
+            {
                 // This button only shows on the Host for all players other than the Host
                 // Host and Players can't remove themselves (stop the client instead)
                 // Host can kick a Player this way.
                 GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
+            }
 
             GUILayout.EndArea();
         }
 
-        private void DrawPlayerReadyButton()
+        void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)
             {

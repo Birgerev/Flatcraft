@@ -22,11 +22,10 @@ namespace Mirror.SimpleWeb
             this.sslProtocols = sslProtocols;
         }
     }
-
     internal class ServerSslHelper
     {
-        private readonly X509Certificate2 certificate;
-        private readonly SslConfig config;
+        readonly SslConfig config;
+        readonly X509Certificate2 certificate;
 
         public ServerSslHelper(SslConfig sslConfig)
         {
@@ -51,12 +50,14 @@ namespace Mirror.SimpleWeb
                     return false;
                 }
             }
-
-            conn.stream = stream;
-            return true;
+            else
+            {
+                conn.stream = stream;
+                return true;
+            }
         }
 
-        private Stream CreateStream(NetworkStream stream)
+        Stream CreateStream(NetworkStream stream)
         {
             SslStream sslStream = new SslStream(stream, true, acceptClient);
             sslStream.AuthenticateAsServer(certificate, false, config.sslProtocols, false);
@@ -64,8 +65,7 @@ namespace Mirror.SimpleWeb
             return sslStream;
         }
 
-        private bool acceptClient(object sender, X509Certificate certificate, X509Chain chain
-            , SslPolicyErrors sslPolicyErrors)
+        bool acceptClient(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             // always accept client
             return true;

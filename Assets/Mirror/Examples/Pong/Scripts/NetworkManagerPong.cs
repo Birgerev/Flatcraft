@@ -10,7 +10,7 @@ namespace Mirror.Examples.Pong
     {
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
-        private GameObject ball;
+        GameObject ball;
 
         public override void OnServerAddPlayer(NetworkConnection conn)
         {

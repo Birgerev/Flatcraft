@@ -6,42 +6,52 @@ using UnityEngine.SceneManagement;
 namespace Mirror
 {
     /// <summary>
-    ///     Component that controls visibility of networked objects between scenes.
-    ///     <para>Any object with this component on it will only be visible to other objects in the same scene</para>
-    ///     <para>
-    ///         This would be used when the server has multiple additive subscenes loaded to isolate players to their
-    ///         respective subscenes
-    ///     </para>
+    /// Component that controls visibility of networked objects between scenes.
+    /// <para>Any object with this component on it will only be visible to other objects in the same scene</para>
+    /// <para>This would be used when the server has multiple additive subscenes loaded to isolate players to their respective subscenes</para>
     /// </summary>
     [Obsolete(NetworkVisibilityObsoleteMessage.Message)]
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkSceneChecker")]
     [RequireComponent(typeof(NetworkIdentity))]
-    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkSceneChecker.html")]
+    [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-scene-checker")]
     public class NetworkSceneChecker : NetworkVisibility
     {
-        // Use Scene instead of string scene.name because when additively loading multiples of a subscene the name won't be unique
-        private static readonly Dictionary<Scene, HashSet<NetworkIdentity>> sceneCheckerObjects =
-            new Dictionary<Scene, HashSet<NetworkIdentity>>();
-
         /// <summary>
-        ///     Flag to force this object to be hidden from all observers.
-        ///     <para>If this object is a player object, it will not be hidden for that client.</para>
+        /// Flag to force this object to be hidden from all observers.
+        /// <para>If this object is a player object, it will not be hidden for that client.</para>
         /// </summary>
         [Tooltip("Enable to force this object to be hidden from all observers.")]
         public bool forceHidden;
 
-        private Scene currentScene;
+        // Use Scene instead of string scene.name because when additively loading multiples of a subscene the name won't be unique
+        static readonly Dictionary<Scene, HashSet<NetworkIdentity>> sceneCheckerObjects = new Dictionary<Scene, HashSet<NetworkIdentity>>();
+
+        Scene currentScene;
 
         [ServerCallback]
-        private void Awake()
+        void Awake()
         {
             currentScene = gameObject.scene;
             // Debug.Log($"NetworkSceneChecker.Awake currentScene: {currentScene}");
         }
 
+        public override void OnStartServer()
+        {
+            if (!sceneCheckerObjects.ContainsKey(currentScene))
+                sceneCheckerObjects.Add(currentScene, new HashSet<NetworkIdentity>());
+
+            sceneCheckerObjects[currentScene].Add(netIdentity);
+        }
+
+        public override void OnStopServer()
+        {
+            if (sceneCheckerObjects.ContainsKey(currentScene) && sceneCheckerObjects[currentScene].Remove(netIdentity))
+                RebuildSceneObservers();
+        }
+
         [ServerCallback]
-        private void Update()
+        void Update()
         {
             if (currentScene == gameObject.scene)
                 return;
@@ -69,21 +79,7 @@ namespace Mirror
             RebuildSceneObservers();
         }
 
-        public override void OnStartServer()
-        {
-            if (!sceneCheckerObjects.ContainsKey(currentScene))
-                sceneCheckerObjects.Add(currentScene, new HashSet<NetworkIdentity>());
-
-            sceneCheckerObjects[currentScene].Add(netIdentity);
-        }
-
-        public override void OnStopServer()
-        {
-            if (sceneCheckerObjects.ContainsKey(currentScene) && sceneCheckerObjects[currentScene].Remove(netIdentity))
-                RebuildSceneObservers();
-        }
-
-        private void RebuildSceneObservers()
+        void RebuildSceneObservers()
         {
             foreach (NetworkIdentity networkIdentity in sceneCheckerObjects[currentScene])
                 if (networkIdentity != null)
@@ -91,8 +87,8 @@ namespace Mirror
         }
 
         /// <summary>
-        ///     Callback used by the visibility system to determine if an observer (player) can see this object.
-        ///     <para>If this function returns true, the network connection will be added as an observer.</para>
+        /// Callback used by the visibility system to determine if an observer (player) can see this object.
+        /// <para>If this function returns true, the network connection will be added as an observer.</para>
         /// </summary>
         /// <param name="conn">Network connection of a player.</param>
         /// <returns>True if the player can see this object.</returns>
@@ -105,11 +101,8 @@ namespace Mirror
         }
 
         /// <summary>
-        ///     Callback used by the visibility system to (re)construct the set of observers that can see this object.
-        ///     <para>
-        ///         Implementations of this callback should add network connections of players that can see this object to the
-        ///         observers set.
-        ///     </para>
+        /// Callback used by the visibility system to (re)construct the set of observers that can see this object.
+        /// <para>Implementations of this callback should add network connections of players that can see this object to the observers set.</para>
         /// </summary>
         /// <param name="observers">The new set of observers for this object.</param>
         /// <param name="initialize">True if the set of observers is being built for the first time.</param>

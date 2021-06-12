@@ -55,7 +55,7 @@ MonoBehaviour:
   overworldBiomes:
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 5
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
     landscapeLacunarity: 1
@@ -66,7 +66,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 6.86
   - biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1
@@ -77,7 +77,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 7
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1.05
@@ -88,7 +88,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 4.63
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1.05
@@ -99,7 +99,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 4.63
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
     landscapeLacunarity: 1
@@ -111,7 +111,7 @@ MonoBehaviour:
   netherBiome:
     biomeMinimumChunkSize: 16
     biomeMaximumChunkSize: 16
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -36.29
     landscapeHeightWeight: -0.3
     landscapeLacunarity: 0.81
@@ -139,7 +139,6 @@ MonoBehaviour:
   syncInterval: 0.1
   blocksGroup: {fileID: 2917957538123657003, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
-  enabled: 0
   entitiesGroup: {fileID: -433041381731868617, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
   musicGroup: {fileID: 476619691098867234, guid: 65aeab9a269652646b6795e2912b735a,
@@ -189,10 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca4c94b88cf0d84caf46776746f1cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   ambientMusic:
   - sweden
   - danny
-  checkDuration: 600
+  checkDuration: 400
   checkChance: 0.5
 --- !u!114 &3047292750534002974
 MonoBehaviour:

@@ -8,27 +8,23 @@ namespace Mirror.SimpleWeb
 {
     public class WebSocketServer
     {
-        private readonly BufferPool bufferPool;
-
-        private readonly ConcurrentDictionary<int, Connection>
-            connections = new ConcurrentDictionary<int, Connection>();
-
-        private readonly ServerHandshake handShake;
-        private readonly int maxMessageSize;
         public readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
-        private readonly ServerSslHelper sslHelper;
 
-        private readonly TcpConfig tcpConfig;
+        readonly TcpConfig tcpConfig;
+        readonly int maxMessageSize;
+
+        TcpListener listener;
+        Thread acceptThread;
+        bool serverStopped;
+        readonly ServerHandshake handShake;
+        readonly ServerSslHelper sslHelper;
+        readonly BufferPool bufferPool;
+        readonly ConcurrentDictionary<int, Connection> connections = new ConcurrentDictionary<int, Connection>();
 
 
-        private int _idCounter;
-        private Thread acceptThread;
+        int _idCounter = 0;
 
-        private TcpListener listener;
-        private bool serverStopped;
-
-        public WebSocketServer(TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize, SslConfig sslConfig
-            , BufferPool bufferPool)
+        public WebSocketServer(TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize, SslConfig sslConfig, BufferPool bufferPool)
         {
             this.tcpConfig = tcpConfig;
             this.maxMessageSize = maxMessageSize;
@@ -63,12 +59,14 @@ namespace Mirror.SimpleWeb
             // make copy so that foreach doesn't break if values are removed
             Connection[] connectionsCopy = connections.Values.ToArray();
             foreach (Connection conn in connectionsCopy)
+            {
                 conn.Dispose();
+            }
 
             connections.Clear();
         }
 
-        private void acceptLoop()
+        void acceptLoop()
         {
             try
             {
@@ -102,21 +100,12 @@ namespace Mirror.SimpleWeb
                     throw;
                 }
             }
-            catch (ThreadInterruptedException e)
-            {
-                Log.InfoException(e);
-            }
-            catch (ThreadAbortException e)
-            {
-                Log.InfoException(e);
-            }
-            catch (Exception e)
-            {
-                Log.Exception(e);
-            }
+            catch (ThreadInterruptedException e) { Log.InfoException(e); }
+            catch (ThreadAbortException e) { Log.InfoException(e); }
+            catch (Exception e) { Log.Exception(e); }
         }
 
-        private void HandshakeAndReceiveLoop(Connection conn)
+        void HandshakeAndReceiveLoop(Connection conn)
         {
             try
             {
@@ -155,9 +144,10 @@ namespace Mirror.SimpleWeb
 
                 Thread sendThread = new Thread(() =>
                 {
-                    SendLoop.Config sendConfig = new SendLoop.Config(conn,
-                        Constants.HeaderSize + maxMessageSize,
-                        false);
+                    SendLoop.Config sendConfig = new SendLoop.Config(
+                        conn,
+                        bufferSize: Constants.HeaderSize + maxMessageSize,
+                        setMask: false);
 
                     SendLoop.Loop(sendConfig);
                 });
@@ -167,26 +157,18 @@ namespace Mirror.SimpleWeb
                 sendThread.Name = $"SendLoop {conn.connId}";
                 sendThread.Start();
 
-                ReceiveLoop.Config receiveConfig = new ReceiveLoop.Config(conn,
+                ReceiveLoop.Config receiveConfig = new ReceiveLoop.Config(
+                    conn,
                     maxMessageSize,
-                    true,
+                    expectMask: true,
                     receiveQueue,
                     bufferPool);
 
                 ReceiveLoop.Loop(receiveConfig);
             }
-            catch (ThreadInterruptedException e)
-            {
-                Log.InfoException(e);
-            }
-            catch (ThreadAbortException e)
-            {
-                Log.InfoException(e);
-            }
-            catch (Exception e)
-            {
-                Log.Exception(e);
-            }
+            catch (ThreadInterruptedException e) { Log.InfoException(e); }
+            catch (ThreadAbortException e) { Log.InfoException(e); }
+            catch (Exception e) { Log.Exception(e); }
             finally
             {
                 // close here in case connect fails
@@ -194,7 +176,7 @@ namespace Mirror.SimpleWeb
             }
         }
 
-        private void AfterConnectionDisposed(Connection conn)
+        void AfterConnectionDisposed(Connection conn)
         {
             if (conn.connId != Connection.IdNotSet)
             {
@@ -212,8 +194,7 @@ namespace Mirror.SimpleWeb
             }
             else
             {
-                Log.Warn(
-                    $"Cant send message to {id} because connection was not found in dictionary. Maybe it disconnected.");
+                Log.Warn($"Cant send message to {id} because connection was not found in dictionary. Maybe it disconnected.");
             }
         }
 
@@ -225,10 +206,12 @@ namespace Mirror.SimpleWeb
                 conn.Dispose();
                 return true;
             }
+            else
+            {
+                Log.Warn($"Failed to kick {id} because id not found");
 
-            Log.Warn($"Failed to kick {id} because id not found");
-
-            return false;
+                return false;
+            }
         }
 
         public string GetClientAddress(int id)
@@ -237,9 +220,11 @@ namespace Mirror.SimpleWeb
             {
                 return conn.client.Client.RemoteEndPoint.ToString();
             }
-
-            Log.Error($"Cant close connection to {id} because connection was not found in dictionary");
-            return null;
+            else
+            {
+                Log.Error($"Cant close connection to {id} because connection was not found in dictionary");
+                return null;
+            }
         }
     }
 }

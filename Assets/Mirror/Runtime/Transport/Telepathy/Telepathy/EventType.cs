@@ -2,8 +2,8 @@
 {
     public enum EventType
     {
-        Connected
-        , Data
-        , Disconnected
+        Connected,
+        Data,
+        Disconnected
     }
 }

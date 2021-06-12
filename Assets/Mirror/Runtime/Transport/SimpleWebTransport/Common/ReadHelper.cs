@@ -7,7 +7,7 @@ namespace Mirror.SimpleWeb
     public static class ReadHelper
     {
         /// <summary>
-        ///     Reads exactly length from stream
+        /// Reads exactly length from stream
         /// </summary>
         /// <returns>outOffset + length</returns>
         /// <exception cref="ReadHelperException"></exception>
@@ -20,7 +20,9 @@ namespace Mirror.SimpleWeb
                 {
                     int read = stream.Read(outBuffer, outOffset + received, length - received);
                     if (read == 0)
+                    {
                         throw new ReadHelperException("returned 0");
+                    }
                     received += read;
                 }
             }
@@ -34,13 +36,15 @@ namespace Mirror.SimpleWeb
             }
 
             if (received != length)
+            {
                 throw new ReadHelperException("returned not equal to length");
+            }
 
             return outOffset + received;
         }
 
         /// <summary>
-        ///     Reads and returns results. This should never throw an exception
+        /// Reads and returns results. This should never throw an exception
         /// </summary>
         public static bool TryRead(Stream stream, byte[] outBuffer, int outOffset, int length)
         {
@@ -64,8 +68,7 @@ namespace Mirror.SimpleWeb
             }
         }
 
-        public static int? SafeReadTillMatch(Stream stream, byte[] outBuffer, int outOffset, int maxLength
-            , byte[] endOfHeader)
+        public static int? SafeReadTillMatch(Stream stream, byte[] outBuffer, int outOffset, int maxLength, byte[] endOfHeader)
         {
             try
             {
@@ -84,7 +87,7 @@ namespace Mirror.SimpleWeb
                         return null;
                     }
 
-                    outBuffer[outOffset + read] = (byte) next;
+                    outBuffer[outOffset + read] = (byte)next;
                     read++;
 
                     // if n is match, check n+1 next
@@ -93,7 +96,9 @@ namespace Mirror.SimpleWeb
                         endIndex++;
                         // when all is match return with read length
                         if (endIndex >= endLength)
+                        {
                             return read;
+                        }
                     }
                     // if n not match reset to 0
                     else
@@ -118,9 +123,7 @@ namespace Mirror.SimpleWeb
     [Serializable]
     public class ReadHelperException : Exception
     {
-        public ReadHelperException(string message) : base(message)
-        {
-        }
+        public ReadHelperException(string message) : base(message) {}
 
         protected ReadHelperException(SerializationInfo info, StreamingContext context) : base(info, context)
         {

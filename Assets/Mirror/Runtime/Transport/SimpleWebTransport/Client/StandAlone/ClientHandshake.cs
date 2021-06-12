@@ -6,8 +6,8 @@ using System.Text;
 namespace Mirror.SimpleWeb
 {
     /// <summary>
-    ///     Handles Handshake to the server when it first connects
-    ///     <para>The client handshake does not need buffers to reduce allocations since it only happens once</para>
+    /// Handles Handshake to the server when it first connects
+    /// <para>The client handshake does not need buffers to reduce allocations since it only happens once</para>
     /// </summary>
     internal class ClientHandshake
     {
@@ -32,20 +32,19 @@ namespace Mirror.SimpleWeb
 
                 string expectedResponse = Convert.ToBase64String(keySumHash);
                 string handshake =
-                    "GET /chat HTTP/1.1\r\n" +
+                    $"GET {uri.PathAndQuery} HTTP/1.1\r\n" +
                     $"Host: {uri.Host}:{uri.Port}\r\n" +
-                    "Upgrade: websocket\r\n" +
-                    "Connection: Upgrade\r\n" +
+                    $"Upgrade: websocket\r\n" +
+                    $"Connection: Upgrade\r\n" +
                     $"Sec-WebSocket-Key: {key}\r\n" +
-                    "Sec-WebSocket-Version: 13\r\n" +
+                    $"Sec-WebSocket-Version: 13\r\n" +
                     "\r\n";
                 byte[] encoded = Encoding.ASCII.GetBytes(handshake);
                 stream.Write(encoded, 0, encoded.Length);
 
                 byte[] responseBuffer = new byte[1000];
 
-                int? lengthOrNull = ReadHelper.SafeReadTillMatch(stream, responseBuffer, 0, responseBuffer.Length
-                    , Constants.endOfHandshake);
+                int? lengthOrNull = ReadHelper.SafeReadTillMatch(stream, responseBuffer, 0, responseBuffer.Length, Constants.endOfHandshake);
 
                 if (!lengthOrNull.HasValue)
                 {

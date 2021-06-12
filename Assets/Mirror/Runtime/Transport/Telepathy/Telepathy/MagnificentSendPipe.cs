@@ -20,7 +20,7 @@ namespace Telepathy
         // -> ArraySegment indicates the actual message content
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Queue<ArraySegment<byte>> queue = new Queue<ArraySegment<byte>>();
+        readonly Queue<ArraySegment<byte>> queue = new Queue<ArraySegment<byte>>();
 
         // byte[] pool to avoid allocations
         // Take & Return is beautifully encapsulated in the pipe.
@@ -28,7 +28,7 @@ namespace Telepathy
         // and it can be tested easily.
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Pool<byte[]> pool;
+        Pool<byte[]> pool;
 
         // constructor
         public MagnificentSendPipe(int MaxMessageSize)
@@ -41,25 +41,13 @@ namespace Telepathy
         // the call.
         public int Count
         {
-            get
-            {
-                lock (this)
-                {
-                    return queue.Count;
-                }
-            }
+            get { lock (this) { return queue.Count; } }
         }
 
         // pool count for testing
         public int PoolCount
         {
-            get
-            {
-                lock (this)
-                {
-                    return pool.Count();
-                }
-            }
+            get { lock (this) { return pool.Count(); } }
         }
 
         // enqueue a message
@@ -168,7 +156,9 @@ namespace Telepathy
             {
                 // clear queue, but via dequeue to return each byte[] to pool
                 while (queue.Count > 0)
+                {
                     pool.Return(queue.Dequeue().Array);
+                }
             }
         }
     }

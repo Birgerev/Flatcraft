@@ -3,9 +3,9 @@ using Mono.CecilX;
 namespace Mirror.Weaver
 {
     /// <summary>
-    ///     only shows warnings in case we use SyncVars etc. for MonoBehaviour.
+    /// only shows warnings in case we use SyncVars etc. for MonoBehaviour.
     /// </summary>
-    internal static class MonoBehaviourProcessor
+    static class MonoBehaviourProcessor
     {
         public static void Process(TypeDefinition td)
         {
@@ -13,24 +13,22 @@ namespace Mirror.Weaver
             ProcessMethods(td);
         }
 
-        private static void ProcessSyncVars(TypeDefinition td)
+        static void ProcessSyncVars(TypeDefinition td)
         {
             // find syncvars
             foreach (FieldDefinition fd in td.Fields)
             {
                 if (fd.HasCustomAttribute<SyncVarAttribute>())
-                    Weaver.Error(
-                        $"SyncVar {fd.Name} must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour"
-                        , fd);
+                    Weaver.Error($"SyncVar {fd.Name} must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd);
 
                 if (SyncObjectInitializer.ImplementsSyncObject(fd.FieldType))
-                    Weaver.Error(
-                        $"{fd.Name} is a SyncObject and must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour"
-                        , fd);
+                {
+                    Weaver.Error($"{fd.Name} is a SyncObject and must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd);
+                }
             }
         }
 
-        private static void ProcessMethods(TypeDefinition td)
+        static void ProcessMethods(TypeDefinition td)
         {
             // find command and RPC functions
             foreach (MethodDefinition md in td.Methods)

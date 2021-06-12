@@ -6,7 +6,6 @@
 // => hides all the complexity from telepathy
 // => easy to switch between stack/queue/concurrentqueue/etc.
 // => easy to test
-
 using System;
 using System.Collections.Generic;
 
@@ -14,11 +13,27 @@ namespace Telepathy
 {
     public class MagnificentReceivePipe
     {
+        // queue entry message. only used in here.
+        // -> byte arrays are always of 4 + MaxMessageSize
+        // -> ArraySegment indicates the actual message content
+        struct Entry
+        {
+            public int connectionId;
+            public EventType eventType;
+            public ArraySegment<byte> data;
+            public Entry(int connectionId, EventType eventType, ArraySegment<byte> data)
+            {
+                this.connectionId = connectionId;
+                this.eventType = eventType;
+                this.data = data;
+            }
+        }
+
         // message queue
         // ConcurrentQueue allocates. lock{} instead.
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Queue<Entry> queue = new Queue<Entry>();
+        readonly Queue<Entry> queue = new Queue<Entry>();
 
         // byte[] pool to avoid allocations
         // Take & Return is beautifully encapsulated in the pipe.
@@ -26,7 +41,7 @@ namespace Telepathy
         // and it can be tested easily.
         //
         // IMPORTANT: lock{} all usages!
-        private readonly Pool<byte[]> pool;
+        Pool<byte[]> pool;
 
         // unfortunately having one receive pipe per connetionId is way slower
         // in CCU tests. right now we have one pipe for all connections.
@@ -34,37 +49,13 @@ namespace Telepathy
         //    spamming connection being able to slow down everyone else since
         //    the queue would be full of just this connection's messages forever
         // => let's use a simpler per-connectionId counter for now
-        private readonly Dictionary<int, int> queueCounter = new Dictionary<int, int>();
+        Dictionary<int, int> queueCounter = new Dictionary<int, int>();
 
         // constructor
         public MagnificentReceivePipe(int MaxMessageSize)
         {
             // initialize pool to create max message sized byte[]s each time
             pool = new Pool<byte[]>(() => new byte[MaxMessageSize]);
-        }
-
-        // total count
-        public int TotalCount
-        {
-            get
-            {
-                lock (this)
-                {
-                    return queue.Count;
-                }
-            }
-        }
-
-        // pool count for testing
-        public int PoolCount
-        {
-            get
-            {
-                lock (this)
-                {
-                    return pool.Count();
-                }
-            }
         }
 
         // return amount of queued messages for this connectionId.
@@ -75,9 +66,21 @@ namespace Telepathy
             lock (this)
             {
                 return queueCounter.TryGetValue(connectionId, out int count)
-                    ? count
-                    : 0;
+                       ? count
+                       : 0;
             }
+        }
+
+        // total count
+        public int TotalCount
+        {
+            get { lock (this) { return queue.Count; } }
+        }
+
+        // pool count for testing
+        public int PoolCount
+        {
+            get { lock (this) { return pool.Count(); } }
         }
 
         // enqueue a message
@@ -146,7 +149,6 @@ namespace Telepathy
                     data = entry.data;
                     return true;
                 }
-
                 return false;
             }
         }
@@ -175,7 +177,9 @@ namespace Telepathy
                     // return byte[] to pool (if any).
                     // not all message types have byte[] contents.
                     if (entry.data != default)
+                    {
                         pool.Return(entry.data.Array);
+                    }
 
                     // decrease counter for this connectionId
                     queueCounter[entry.connectionId]--;
@@ -187,7 +191,6 @@ namespace Telepathy
 
                     return true;
                 }
-
                 return false;
             }
         }
@@ -206,28 +209,13 @@ namespace Telepathy
                     // return byte[] to pool (if any).
                     // not all message types have byte[] contents.
                     if (entry.data != default)
+                    {
                         pool.Return(entry.data.Array);
+                    }
                 }
 
                 // clear counter too
                 queueCounter.Clear();
-            }
-        }
-
-        // queue entry message. only used in here.
-        // -> byte arrays are always of 4 + MaxMessageSize
-        // -> ArraySegment indicates the actual message content
-        private struct Entry
-        {
-            public readonly int connectionId;
-            public readonly EventType eventType;
-            public ArraySegment<byte> data;
-
-            public Entry(int connectionId, EventType eventType, ArraySegment<byte> data)
-            {
-                this.connectionId = connectionId;
-                this.eventType = eventType;
-                this.data = data;
             }
         }
     }

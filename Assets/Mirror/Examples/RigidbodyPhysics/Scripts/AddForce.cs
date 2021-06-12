@@ -7,15 +7,17 @@ namespace Mirror.Examples.RigidbodyPhysics
         public Rigidbody rigidbody3d;
         public float force = 500f;
 
-        private void Start()
+        void Start()
         {
             rigidbody3d.isKinematic = !isServer;
         }
 
-        private void Update()
+        void Update()
         {
             if (isServer && Input.GetKeyDown(KeyCode.Space))
+            {
                 rigidbody3d.AddForce(Vector3.up * force);
+            }
         }
     }
 }

@@ -5,22 +5,22 @@ namespace Mirror.Examples.Tanks
 {
     public class Tank : NetworkBehaviour
     {
-        [Header("Components")] public NavMeshAgent agent;
-
+        [Header("Components")]
+        public NavMeshAgent agent;
         public Animator animator;
 
-        [Header("Movement")] public float rotationSpeed = 100;
+        [Header("Movement")]
+        public float rotationSpeed = 100;
 
-        [Header("Firing")] public KeyCode shootKey = KeyCode.Space;
-
+        [Header("Firing")]
+        public KeyCode shootKey = KeyCode.Space;
         public GameObject projectilePrefab;
         public Transform projectileMount;
 
-        private void Update()
+        void Update()
         {
             // movement for local player
-            if (!isLocalPlayer)
-                return;
+            if (!isLocalPlayer) return;
 
             // rotate
             float horizontal = Input.GetAxis("Horizontal");
@@ -34,12 +34,14 @@ namespace Mirror.Examples.Tanks
 
             // shoot
             if (Input.GetKeyDown(shootKey))
+            {
                 CmdFire();
+            }
         }
 
         // this is called on the server
         [Command]
-        private void CmdFire()
+        void CmdFire()
         {
             GameObject projectile = Instantiate(projectilePrefab, projectileMount.position, transform.rotation);
             NetworkServer.Spawn(projectile);
@@ -48,7 +50,7 @@ namespace Mirror.Examples.Tanks
 
         // this is called on the tank that fired for all observers
         [ClientRpc]
-        private void RpcOnFire()
+        void RpcOnFire()
         {
             animator.SetTrigger("Shoot");
         }

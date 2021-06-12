@@ -7,20 +7,29 @@ namespace Mirror.Examples.Benchmark
         public float speed = 1;
         public float movementProbability = 0.5f;
         public float movementDistance = 20;
-        private Vector3 destination;
 
-        private bool moving;
-        private Vector3 start;
+        bool moving;
+        Vector3 start;
+        Vector3 destination;
+
+        public override void OnStartServer()
+        {
+            start = transform.position;
+        }
 
         [ServerCallback]
-        private void Update()
+        void Update()
         {
             if (moving)
             {
                 if (Vector3.Distance(transform.position, destination) <= 0.01f)
+                {
                     moving = false;
+                }
                 else
+                {
                     transform.position = Vector3.MoveTowards(transform.position, destination, speed * Time.deltaTime);
+                }
             }
             else
             {
@@ -40,11 +49,6 @@ namespace Mirror.Examples.Benchmark
                     }
                 }
             }
-        }
-
-        public override void OnStartServer()
-        {
-            start = transform.position;
         }
     }
 }

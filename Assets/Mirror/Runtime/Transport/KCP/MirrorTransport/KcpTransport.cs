@@ -1,10 +1,9 @@
 //#if MIRROR <- commented out because MIRROR isn't defined on first import yet
-
 using System;
 using System.Linq;
 using System.Net;
-using Mirror;
 using UnityEngine;
+using Mirror;
 
 namespace kcp2k
 {
@@ -15,45 +14,38 @@ namespace kcp2k
         public const string Scheme = "kcp";
 
         // common
-        [Header("Transport Configuration")] public ushort Port = 7777;
-
+        [Header("Transport Configuration")]
+        public ushort Port = 7777;
         [Tooltip("NoDelay is recommended to reduce latency. This also scales better without buffers getting full.")]
         public bool NoDelay = true;
-
-        [Tooltip(
-            "KCP internal update interval. 100ms is KCP default, but a lower interval is recommended to minimize latency and to scale to more networked entities.")]
+        [Tooltip("KCP internal update interval. 100ms is KCP default, but a lower interval is recommended to minimize latency and to scale to more networked entities.")]
         public uint Interval = 10;
+        [Tooltip("KCP timeout in milliseconds. Note that KCP sends a ping automatically.")]
+        public int Timeout = 10000;
 
         [Header("Advanced")]
-        [Tooltip(
-            "KCP fastresend parameter. Faster resend for the cost of higher bandwidth. 0 in normal mode, 2 in turbo mode.")]
+        [Tooltip("KCP fastresend parameter. Faster resend for the cost of higher bandwidth. 0 in normal mode, 2 in turbo mode.")]
         public int FastResend = 2;
-
-        [Tooltip(
-            "KCP congestion window. Enabled in normal mode, disabled in turbo mode. Disable this for high scale games if connections get choked regularly.")]
-        public bool
-            CongestionWindow; // KCP 'NoCongestionWindow' is false by default. here we negate it for ease of use.
-
+        [Tooltip("KCP congestion window. Enabled in normal mode, disabled in turbo mode. Disable this for high scale games if connections get choked regularly.")]
+        public bool CongestionWindow = false; // KCP 'NoCongestionWindow' is false by default. here we negate it for ease of use.
         [Tooltip("KCP window size can be modified to support higher loads.")]
         public uint SendWindowSize = 4096; //Kcp.WND_SND; 32 by default. Mirror sends a lot, so we need a lot more.
-
         [Tooltip("KCP window size can be modified to support higher loads.")]
         public uint ReceiveWindowSize = 4096; //Kcp.WND_RCV; 128 by default. Mirror sends a lot, so we need a lot more.
 
-        // debugging
-        [Header("Debug")] public bool debugLog;
+        // server & client
+        KcpServer server;
+        KcpClient client;
 
+        // debugging
+        [Header("Debug")]
+        public bool debugLog;
         // show statistics in OnGUI
         public bool statisticsGUI;
-
         // log statistics for headless servers that can't show them in GUI
         public bool statisticsLog;
-        private KcpClient client;
 
-        // server & client
-        private KcpServer server;
-
-        private void Awake()
+        void Awake()
         {
             // logging
             //   Log.Info should use Debug.Log if enabled, or nothing otherwise
@@ -61,25 +53,30 @@ namespace kcp2k
             if (debugLog)
                 Log.Info = Debug.Log;
             else
-                Log.Info = _ => { };
+                Log.Info = _ => {};
             Log.Warning = Debug.LogWarning;
             Log.Error = Debug.LogError;
 
             // client
-            client = new KcpClient(() => OnClientConnected.Invoke(),
-                message => OnClientDataReceived.Invoke(message, Channels.Reliable),
-                () => OnClientDisconnected.Invoke());
+            client = new KcpClient(
+                () => OnClientConnected.Invoke(),
+                (message) => OnClientDataReceived.Invoke(message, Channels.Reliable),
+                () => OnClientDisconnected.Invoke()
+            );
 
             // server
-            server = new KcpServer(connectionId => OnServerConnected.Invoke(connectionId),
+            server = new KcpServer(
+                (connectionId) => OnServerConnected.Invoke(connectionId),
                 (connectionId, message) => OnServerDataReceived.Invoke(connectionId, message, Channels.Reliable),
-                connectionId => OnServerDisconnected.Invoke(connectionId),
+                (connectionId) => OnServerDisconnected.Invoke(connectionId),
                 NoDelay,
                 Interval,
                 FastResend,
                 CongestionWindow,
                 SendWindowSize,
-                ReceiveWindowSize);
+                ReceiveWindowSize,
+                Timeout
+            );
 
             if (statisticsLog)
                 InvokeRepeating(nameof(OnLogStatistics), 1, 1);
@@ -87,29 +84,174 @@ namespace kcp2k
             Debug.Log("KcpTransport initialized!");
         }
 
+        // all except WebGL
+        public override bool Available() =>
+            Application.platform != RuntimePlatform.WebGLPlayer;
+
+        // client
+        public override bool ClientConnected() => client.connected;
+        public override void ClientConnect(string address)
+        {
+            client.Connect(address, Port, NoDelay, Interval, FastResend, CongestionWindow, SendWindowSize, ReceiveWindowSize, Timeout);
+        }
+        public override void ClientSend(ArraySegment<byte> segment, int channelId)
+        {
+            // switch to kcp channel.
+            // unreliable or reliable.
+            // default to reliable just to be sure.
+            switch (channelId)
+            {
+                case Channels.Unreliable:
+                    client.Send(segment, KcpChannel.Unreliable);
+                    break;
+                default:
+                    client.Send(segment, KcpChannel.Reliable);
+                    break;
+            }
+        }
+        public override void ClientDisconnect() => client.Disconnect();
+        // process incoming in early update
+        public override void ClientEarlyUpdate()
+        {
+            // scene change messages disable transports to stop them from
+            // processing while changing the scene.
+            // -> we need to check enabled here
+            // -> and in kcp's internal loops, see Awake() OnCheckEnabled setup!
+            // (see also: https://github.com/vis2k/Mirror/pull/379)
+            if (enabled) client.TickIncoming();
+        }
+        // process outgoing in late update
+        public override void ClientLateUpdate() => client.TickOutgoing();
+
         // scene change message will disable transports.
         // kcp processes messages in an internal loop which should be
         // stopped immediately after scene change (= after disabled)
         // => kcp has tests to guaranteed that calling .Pause() during the
         //    receive loop stops the receive loop immediately, not after.
-        private void OnEnable()
+        void OnEnable()
         {
             // unpause when enabled again
             client?.Unpause();
             server?.Unpause();
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             // pause immediately when not enabled anymore
             client?.Pause();
             server?.Pause();
         }
 
-        private void OnGUI()
+        // server
+        public override Uri ServerUri()
         {
-            if (!statisticsGUI)
-                return;
+            UriBuilder builder = new UriBuilder();
+            builder.Scheme = Scheme;
+            builder.Host = Dns.GetHostName();
+            builder.Port = Port;
+            return builder.Uri;
+        }
+        public override bool ServerActive() => server.IsActive();
+        public override void ServerStart() => server.Start(Port);
+        public override void ServerSend(int connectionId, ArraySegment<byte> segment, int channelId)
+        {
+            // switch to kcp channel.
+            // unreliable or reliable.
+            // default to reliable just to be sure.
+            switch (channelId)
+            {
+                case Channels.Unreliable:
+                    server.Send(connectionId, segment, KcpChannel.Unreliable);
+                    break;
+                default:
+                    server.Send(connectionId, segment, KcpChannel.Reliable);
+                    break;
+            }
+        }
+        public override void ServerDisconnect(int connectionId) =>  server.Disconnect(connectionId);
+        public override string ServerGetClientAddress(int connectionId) => server.GetClientAddress(connectionId);
+        public override void ServerStop() => server.Stop();
+        public override void ServerEarlyUpdate()
+        {
+            // scene change messages disable transports to stop them from
+            // processing while changing the scene.
+            // -> we need to check enabled here
+            // -> and in kcp's internal loops, see Awake() OnCheckEnabled setup!
+            // (see also: https://github.com/vis2k/Mirror/pull/379)
+            if (enabled) server.TickIncoming();
+        }
+        // process outgoing in late update
+        public override void ServerLateUpdate() => server.TickOutgoing();
+
+        // common
+        public override void Shutdown() {}
+
+        // max message size
+        public override int GetMaxPacketSize(int channelId = Channels.Reliable)
+        {
+            // switch to kcp channel.
+            // unreliable or reliable.
+            // default to reliable just to be sure.
+            switch (channelId)
+            {
+                case Channels.Unreliable:
+                    return KcpConnection.UnreliableMaxMessageSize;
+                default:
+                    return KcpConnection.ReliableMaxMessageSize;
+            }
+        }
+
+        // kcp reliable channel max packet size is MTU * WND_RCV
+        // this allows 144kb messages. but due to head of line blocking, all
+        // other messages would have to wait until the maxed size one is
+        // delivered. batching 144kb messages each time would be EXTREMELY slow
+        // and fill the send queue nearly immediately when using it over the
+        // network.
+        // => instead we always use MTU sized batches.
+        // => people can still send maxed size if needed.
+        public override int GetMaxBatchSize(int channelId) =>
+            KcpConnection.UnreliableMaxMessageSize;
+
+        // server statistics
+        public int GetAverageMaxSendRate() =>
+            server.connections.Count > 0
+                ? server.connections.Values.Sum(conn => (int)conn.MaxSendRate) / server.connections.Count
+                : 0;
+        public int GetAverageMaxReceiveRate() =>
+            server.connections.Count > 0
+                ? server.connections.Values.Sum(conn => (int)conn.MaxReceiveRate) / server.connections.Count
+                : 0;
+        int GetTotalSendQueue() =>
+            server.connections.Values.Sum(conn => conn.SendQueueCount);
+        int GetTotalReceiveQueue() =>
+            server.connections.Values.Sum(conn => conn.ReceiveQueueCount);
+        int GetTotalSendBuffer() =>
+            server.connections.Values.Sum(conn => conn.SendBufferCount);
+        int GetTotalReceiveBuffer() =>
+            server.connections.Values.Sum(conn => conn.ReceiveBufferCount);
+
+        // PrettyBytes function from DOTSNET
+        // pretty prints bytes as KB/MB/GB/etc.
+        // long to support > 2GB
+        // divides by floats to return "2.5MB" etc.
+        public static string PrettyBytes(long bytes)
+        {
+            // bytes
+            if (bytes < 1024)
+                return $"{bytes} B";
+            // kilobytes
+            else if (bytes < 1024L * 1024L)
+                return $"{(bytes / 1024f):F2} KB";
+            // megabytes
+            else if (bytes < 1024 * 1024L * 1024L)
+                return $"{(bytes / (1024f * 1024f)):F2} MB";
+            // gigabytes
+            return $"{(bytes / (1024f * 1024f * 1024f)):F2} GB";
+        }
+
+        void OnGUI()
+        {
+            if (!statisticsGUI) return;
 
             GUILayout.BeginArea(new Rect(5, 110, 300, 300));
 
@@ -143,220 +285,7 @@ namespace kcp2k
             GUILayout.EndArea();
         }
 
-        // all except WebGL
-        public override bool Available()
-        {
-            return Application.platform != RuntimePlatform.WebGLPlayer;
-        }
-
-        // client
-        public override bool ClientConnected()
-        {
-            return client.connected;
-        }
-
-        public override void ClientConnect(string address)
-        {
-            client.Connect(address, Port, NoDelay, Interval, FastResend, CongestionWindow, SendWindowSize
-                , ReceiveWindowSize);
-        }
-
-        public override void ClientSend(int channelId, ArraySegment<byte> segment)
-        {
-            // switch to kcp channel.
-            // unreliable or reliable.
-            // default to reliable just to be sure.
-            switch (channelId)
-            {
-                case Channels.Unreliable:
-                    client.Send(segment, KcpChannel.Unreliable);
-                    break;
-                default:
-                    client.Send(segment, KcpChannel.Reliable);
-                    break;
-            }
-        }
-
-        public override void ClientDisconnect()
-        {
-            client.Disconnect();
-        }
-
-        // process incoming in early update
-        public override void ClientEarlyUpdate()
-        {
-            // scene change messages disable transports to stop them from
-            // processing while changing the scene.
-            // -> we need to check enabled here
-            // -> and in kcp's internal loops, see Awake() OnCheckEnabled setup!
-            // (see also: https://github.com/vis2k/Mirror/pull/379)
-            if (enabled)
-                client.TickIncoming();
-        }
-
-        // process outgoing in late update
-        public override void ClientLateUpdate()
-        {
-            client.TickOutgoing();
-        }
-
-        // server
-        public override Uri ServerUri()
-        {
-            UriBuilder builder = new UriBuilder();
-            builder.Scheme = Scheme;
-            builder.Host = Dns.GetHostName();
-            builder.Port = Port;
-            return builder.Uri;
-        }
-
-        public override bool ServerActive()
-        {
-            return server.IsActive();
-        }
-
-        public override void ServerStart()
-        {
-            server.Start(Port);
-        }
-
-        public override void ServerSend(int connectionId, int channelId, ArraySegment<byte> segment)
-        {
-            // switch to kcp channel.
-            // unreliable or reliable.
-            // default to reliable just to be sure.
-            switch (channelId)
-            {
-                case Channels.Unreliable:
-                    server.Send(connectionId, segment, KcpChannel.Unreliable);
-                    break;
-                default:
-                    server.Send(connectionId, segment, KcpChannel.Reliable);
-                    break;
-            }
-        }
-
-        public override bool ServerDisconnect(int connectionId)
-        {
-            server.Disconnect(connectionId);
-            return true;
-        }
-
-        public override string ServerGetClientAddress(int connectionId)
-        {
-            return server.GetClientAddress(connectionId);
-        }
-
-        public override void ServerStop()
-        {
-            server.Stop();
-        }
-
-        public override void ServerEarlyUpdate()
-        {
-            // scene change messages disable transports to stop them from
-            // processing while changing the scene.
-            // -> we need to check enabled here
-            // -> and in kcp's internal loops, see Awake() OnCheckEnabled setup!
-            // (see also: https://github.com/vis2k/Mirror/pull/379)
-            if (enabled)
-                server.TickIncoming();
-        }
-
-        // process outgoing in late update
-        public override void ServerLateUpdate()
-        {
-            server.TickOutgoing();
-        }
-
-        // common
-        public override void Shutdown()
-        {
-        }
-
-        // max message size
-        public override int GetMaxPacketSize(int channelId = Channels.Reliable)
-        {
-            // switch to kcp channel.
-            // unreliable or reliable.
-            // default to reliable just to be sure.
-            switch (channelId)
-            {
-                case Channels.Unreliable:
-                    return KcpConnection.UnreliableMaxMessageSize;
-                default:
-                    return KcpConnection.ReliableMaxMessageSize;
-            }
-        }
-
-        // kcp reliable channel max packet size is MTU * WND_RCV
-        // this allows 144kb messages. but due to head of line blocking, all
-        // other messages would have to wait until the maxed size one is
-        // delivered. batching 144kb messages each time would be EXTREMELY slow
-        // and fill the send queue nearly immediately when using it over the
-        // network.
-        // => instead we always use MTU sized batches.
-        // => people can still send maxed size if needed.
-        public override int GetMaxBatchSize(int channelId)
-        {
-            return KcpConnection.UnreliableMaxMessageSize;
-        }
-
-        // server statistics
-        public int GetAverageMaxSendRate()
-        {
-            return server.connections.Count > 0
-                ? server.connections.Values.Sum(conn => (int) conn.MaxSendRate) / server.connections.Count
-                : 0;
-        }
-
-        public int GetAverageMaxReceiveRate()
-        {
-            return server.connections.Count > 0
-                ? server.connections.Values.Sum(conn => (int) conn.MaxReceiveRate) / server.connections.Count
-                : 0;
-        }
-
-        private int GetTotalSendQueue()
-        {
-            return server.connections.Values.Sum(conn => conn.SendQueueCount);
-        }
-
-        private int GetTotalReceiveQueue()
-        {
-            return server.connections.Values.Sum(conn => conn.ReceiveQueueCount);
-        }
-
-        private int GetTotalSendBuffer()
-        {
-            return server.connections.Values.Sum(conn => conn.SendBufferCount);
-        }
-
-        private int GetTotalReceiveBuffer()
-        {
-            return server.connections.Values.Sum(conn => conn.ReceiveBufferCount);
-        }
-
-        // PrettyBytes function from DOTSNET
-        // pretty prints bytes as KB/MB/GB/etc.
-        // long to support > 2GB
-        // divides by floats to return "2.5MB" etc.
-        public static string PrettyBytes(long bytes)
-        {
-            // bytes
-            if (bytes < 1024)
-                return $"{bytes} B";
-            // kilobytes
-            if (bytes < 1024L * 1024L)
-                return $"{bytes / 1024f:F2} KB";
-            // megabytes
-            if (bytes < 1024 * 1024L * 1024L)
-                return $"{bytes / (1024f * 1024f):F2} MB";
-            // gigabytes
-            return $"{bytes / (1024f * 1024f * 1024f):F2} GB";
-        }
-
-        private void OnLogStatistics()
+        void OnLogStatistics()
         {
             if (ServerActive())
             {
@@ -384,10 +313,7 @@ namespace kcp2k
             }
         }
 
-        public override string ToString()
-        {
-            return "KCP";
-        }
+        public override string ToString() => "KCP";
     }
 }
 //#endif MIRROR <- commented out because MIRROR isn't defined on first import yet

@@ -6,23 +6,30 @@ namespace Mirror.SimpleWeb
 {
     public enum ClientState
     {
-        NotConnected = 0
-        , Connecting = 1
-        , Connected = 2
-        , Disconnecting = 3
+        NotConnected = 0,
+        Connecting = 1,
+        Connected = 2,
+        Disconnecting = 3,
     }
-
     /// <summary>
-    ///     Client used to control websockets
-    ///     <para>Base class used by WebSocketClientWebGl and WebSocketClientStandAlone</para>
+    /// Client used to control websockets
+    /// <para>Base class used by WebSocketClientWebGl and WebSocketClientStandAlone</para>
     /// </summary>
     public abstract class SimpleWebClient
     {
-        protected readonly BufferPool bufferPool;
-        protected readonly int maxMessageSize;
+        public static SimpleWebClient Create(int maxMessageSize, int maxMessagesPerTick, TcpConfig tcpConfig)
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return new WebSocketClientWebGl(maxMessageSize, maxMessagesPerTick);
+#else
+            return new WebSocketClientStandAlone(maxMessageSize, maxMessagesPerTick, tcpConfig);
+#endif
+        }
 
-        private readonly int maxMessagesPerTick;
+        readonly int maxMessagesPerTick;
+        protected readonly int maxMessageSize;
         protected readonly ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
+        protected readonly BufferPool bufferPool;
 
         protected ClientState state;
 
@@ -34,15 +41,6 @@ namespace Mirror.SimpleWeb
         }
 
         public ClientState ConnectionState => state;
-
-        public static SimpleWebClient Create(int maxMessageSize, int maxMessagesPerTick, TcpConfig tcpConfig)
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            return new WebSocketClientWebGl(maxMessageSize, maxMessagesPerTick);
-#else
-            return new WebSocketClientStandAlone(maxMessageSize, maxMessagesPerTick, tcpConfig);
-#endif
-        }
 
         public event Action onConnect;
         public event Action onDisconnect;
@@ -58,7 +56,7 @@ namespace Mirror.SimpleWeb
                 processedCount < maxMessagesPerTick &&
                 // Dequeue last
                 receiveQueue.TryDequeue(out Message next)
-            )
+                )
             {
                 processedCount++;
 

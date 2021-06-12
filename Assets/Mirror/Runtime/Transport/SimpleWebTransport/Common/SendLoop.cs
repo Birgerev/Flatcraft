@@ -12,9 +12,29 @@ namespace Mirror.SimpleWeb
         public static volatile bool batchSend = false;
         public static volatile bool sleepBeforeSend = false;
     }
-
     internal static class SendLoop
     {
+        public struct Config
+        {
+            public readonly Connection conn;
+            public readonly int bufferSize;
+            public readonly bool setMask;
+
+            public Config(Connection conn, int bufferSize, bool setMask)
+            {
+                this.conn = conn ?? throw new ArgumentNullException(nameof(conn));
+                this.bufferSize = bufferSize;
+                this.setMask = setMask;
+            }
+
+            public void Deconstruct(out Connection conn, out int bufferSize, out bool setMask)
+            {
+                conn = this.conn;
+                bufferSize = this.bufferSize;
+                setMask = this.setMask;
+            }
+        }
+
         public static void Loop(Config config)
         {
             (Connection conn, int bufferSize, bool setMask) = config;
@@ -39,7 +59,9 @@ namespace Mirror.SimpleWeb
                     conn.sendPending.Wait();
                     // wait for 1ms for mirror to send other messages
                     if (SendLoopConfig.sleepBeforeSend)
+                    {
                         Thread.Sleep(1);
+                    }
                     conn.sendPending.Reset();
 
                     if (SendLoopConfig.batchSend)
@@ -48,11 +70,7 @@ namespace Mirror.SimpleWeb
                         while (conn.sendQueue.TryDequeue(out ArrayBuffer msg))
                         {
                             // check if connected before sending message
-                            if (!client.Connected)
-                            {
-                                Log.Info($"SendLoop {conn} not connected");
-                                return;
-                            }
+                            if (!client.Connected) { Log.Info($"SendLoop {conn} not connected"); return; }
 
                             int maxLength = msg.count + Constants.HeaderSize + Constants.MaskSize;
 
@@ -77,11 +95,7 @@ namespace Mirror.SimpleWeb
                         while (conn.sendQueue.TryDequeue(out ArrayBuffer msg))
                         {
                             // check if connected before sending message
-                            if (!client.Connected)
-                            {
-                                Log.Info($"SendLoop {conn} not connected");
-                                return;
-                            }
+                            if (!client.Connected) { Log.Info($"SendLoop {conn} not connected"); return; }
 
                             int length = SendMessage(writeBuffer, 0, msg, setMask, maskHelper);
                             stream.Write(writeBuffer, 0, length);
@@ -92,14 +106,8 @@ namespace Mirror.SimpleWeb
 
                 Log.Info($"{conn} Not Connected");
             }
-            catch (ThreadInterruptedException e)
-            {
-                Log.InfoException(e);
-            }
-            catch (ThreadAbortException e)
-            {
-                Log.InfoException(e);
-            }
+            catch (ThreadInterruptedException e) { Log.InfoException(e); }
+            catch (ThreadAbortException e) { Log.InfoException(e); }
             catch (Exception e)
             {
                 Log.Exception(e);
@@ -113,14 +121,15 @@ namespace Mirror.SimpleWeb
         }
 
         /// <returns>new offset in buffer</returns>
-        private static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask
-            , MaskHelper maskHelper)
+        static int SendMessage(byte[] buffer, int startOffset, ArrayBuffer msg, bool setMask, MaskHelper maskHelper)
         {
             int msgLength = msg.count;
             int offset = WriteHeader(buffer, startOffset, msgLength, setMask);
 
             if (setMask)
+            {
                 offset = maskHelper.WriteMask(buffer, offset);
+            }
 
             msg.CopyTo(buffer, offset);
             offset += msgLength;
@@ -131,14 +140,13 @@ namespace Mirror.SimpleWeb
             if (setMask)
             {
                 int messageOffset = offset - msgLength;
-                MessageProcessor.ToggleMask(buffer, messageOffset, msgLength, buffer
-                    , messageOffset - Constants.MaskSize);
+                MessageProcessor.ToggleMask(buffer, messageOffset, msgLength, buffer, messageOffset - Constants.MaskSize);
             }
 
             return offset;
         }
 
-        private static int WriteHeader(byte[] buffer, int startOffset, int msgLength, bool setMask)
+        static int WriteHeader(byte[] buffer, int startOffset, int msgLength, bool setMask)
         {
             int sendLength = 0;
             const byte finished = 128;
@@ -149,14 +157,14 @@ namespace Mirror.SimpleWeb
 
             if (msgLength <= Constants.BytePayloadLength)
             {
-                buffer[startOffset + 1] = (byte) msgLength;
+                buffer[startOffset + 1] = (byte)msgLength;
                 sendLength++;
             }
             else if (msgLength <= ushort.MaxValue)
             {
                 buffer[startOffset + 1] = 126;
-                buffer[startOffset + 2] = (byte) (msgLength >> 8);
-                buffer[startOffset + 3] = (byte) msgLength;
+                buffer[startOffset + 2] = (byte)(msgLength >> 8);
+                buffer[startOffset + 3] = (byte)msgLength;
                 sendLength += 3;
             }
             else
@@ -165,43 +173,23 @@ namespace Mirror.SimpleWeb
             }
 
             if (setMask)
+            {
                 buffer[startOffset + 1] |= 0b1000_0000;
+            }
 
             return sendLength + startOffset;
         }
 
-        public struct Config
+        sealed class MaskHelper : IDisposable
         {
-            public readonly Connection conn;
-            public readonly int bufferSize;
-            public readonly bool setMask;
-
-            public Config(Connection conn, int bufferSize, bool setMask)
-            {
-                this.conn = conn ?? throw new ArgumentNullException(nameof(conn));
-                this.bufferSize = bufferSize;
-                this.setMask = setMask;
-            }
-
-            public void Deconstruct(out Connection conn, out int bufferSize, out bool setMask)
-            {
-                conn = this.conn;
-                bufferSize = this.bufferSize;
-                setMask = this.setMask;
-            }
-        }
-
-        private sealed class MaskHelper : IDisposable
-        {
-            private readonly byte[] maskBuffer;
-            private readonly RNGCryptoServiceProvider random;
+            readonly byte[] maskBuffer;
+            readonly RNGCryptoServiceProvider random;
 
             public MaskHelper()
             {
                 maskBuffer = new byte[4];
                 random = new RNGCryptoServiceProvider();
             }
-
             public void Dispose()
             {
                 random.Dispose();

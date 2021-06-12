@@ -15,11 +15,11 @@ namespace Mirror.Examples.Chat
             Player.OnMessage += OnPlayerMessage;
         }
 
-        private void OnPlayerMessage(Player player, string message)
+        void OnPlayerMessage(Player player, string message)
         {
-            string prettyMessage = player.isLocalPlayer
-                ? $"<color=red>{player.playerName}: </color> {message}"
-                : $"<color=blue>{player.playerName}: </color> {message}";
+            string prettyMessage = player.isLocalPlayer ?
+                $"<color=red>{player.playerName}: </color> {message}" :
+                $"<color=blue>{player.playerName}: </color> {message}";
             AppendMessage(prettyMessage);
 
             Debug.Log(message);
@@ -45,7 +45,7 @@ namespace Mirror.Examples.Chat
             StartCoroutine(AppendAndScroll(message));
         }
 
-        private IEnumerator AppendAndScroll(string message)
+        IEnumerator AppendAndScroll(string message)
         {
             chatHistory.text += message + "\n";
 

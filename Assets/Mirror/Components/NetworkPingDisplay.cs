@@ -4,23 +4,22 @@ using UnityEngine;
 namespace Mirror
 {
     /// <summary>
-    ///     Component that will display the clients ping in milliseconds
+    /// Component that will display the clients ping in milliseconds
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkPingDisplay")]
-    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkPingDisplay.html")]
+    [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-ping-display")]
     public class NetworkPingDisplay : MonoBehaviour
     {
         public Color color = Color.white;
         public int padding = 2;
-        private readonly int height = 25;
-        private readonly int width = 150;
+        int width = 150;
+        int height = 25;
 
-        private void OnGUI()
+        void OnGUI()
         {
             // only while client is active
-            if (!NetworkClient.active)
-                return;
+            if (!NetworkClient.active) return;
 
             // show rtt in bottom right corner, right aligned
             GUI.color = color;

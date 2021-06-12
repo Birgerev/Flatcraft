@@ -6,13 +6,12 @@ namespace Mirror.SimpleWeb
 {
     public class SimpleWebServer
     {
-        private readonly BufferPool bufferPool;
-        private readonly int maxMessagesPerTick;
+        readonly int maxMessagesPerTick;
 
-        private readonly WebSocketServer server;
+        readonly WebSocketServer server;
+        readonly BufferPool bufferPool;
 
-        public SimpleWebServer(int maxMessagesPerTick, TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize
-            , SslConfig sslConfig)
+        public SimpleWebServer(int maxMessagesPerTick, TcpConfig tcpConfig, int maxMessageSize, int handshakeMaxSize, SslConfig sslConfig)
         {
             this.maxMessagesPerTick = maxMessagesPerTick;
             // use max because bufferpool is used for both messages and handshake
@@ -49,9 +48,10 @@ namespace Mirror.SimpleWeb
 
             // make copy of array before for each, data sent to each client is the same
             foreach (int id in connectionIds)
+            {
                 server.Send(id, buffer);
+            }
         }
-
         public void SendOne(int connectionId, ArraySegment<byte> source)
         {
             ArrayBuffer buffer = bufferPool.Take(source.Count);
@@ -79,7 +79,7 @@ namespace Mirror.SimpleWeb
                 processedCount < maxMessagesPerTick &&
                 // Dequeue last
                 server.receiveQueue.TryDequeue(out Message next)
-            )
+                )
             {
                 processedCount++;
 
