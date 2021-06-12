@@ -83,6 +83,40 @@ public class LightManager : MonoBehaviour
         Destroy(source.gameObject);
     }
 
+    public static int GetLightLevel(Location loc)
+    {
+        List<LightSource> lightSources = GetLightSourcesForArea(
+            loc + new Location(-maxLightLevel, -maxLightLevel), 
+            loc + new Location(maxLightLevel, maxLightLevel));
+
+        return GetLightLevel(loc, lightSources);
+    }
+
+    public static int GetLightLevel(Location loc, List<LightSource> possibleLightSources)
+    {
+        Vector3 objectPos = loc.GetPosition();
+        int brightestRecordedLightLevel = 0;
+        
+        foreach (LightSource source in possibleLightSources)
+        {
+            Vector3 sourcePos = source.position;
+            float objectDistance = Vector3.Distance(sourcePos, objectPos);
+            if (objectDistance > maxLightLevel)
+                continue;
+
+            int sourceBrightness = source.lightLevel;
+            int objectBrightness = sourceBrightness - (int) objectDistance;
+
+            if (objectBrightness > brightestRecordedLightLevel)
+                brightestRecordedLightLevel = objectBrightness;
+
+            if (brightestRecordedLightLevel == maxLightLevel)
+                break;
+        }
+
+        return brightestRecordedLightLevel;
+    }
+
     public static void UpdateBlockLight(Location loc)
     {
         UpdateLightInArea(loc, loc);
@@ -130,30 +164,12 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateLight(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        Vector3 objectPos = lightObject.GetPosition();
-        int brightestRecordedLightLevel = 0;
+        int lightLevel = 15;
 
         if (instance.doLight)
-            foreach (LightSource source in possibleLightSources)
-            {
-                Vector3 sourcePos = source.position;
-                float objectDistance = Vector3.Distance(sourcePos, objectPos);
-                if (objectDistance > maxLightLevel)
-                    continue;
+            lightLevel = GetLightLevel(lightObject.GetLocation(), possibleLightSources);
 
-                int sourceBrightness = source.lightLevel;
-                int objectBrightness = sourceBrightness - (int) objectDistance;
-
-                if (objectBrightness > brightestRecordedLightLevel)
-                    brightestRecordedLightLevel = objectBrightness;
-
-                if (brightestRecordedLightLevel == maxLightLevel)
-                    break;
-            }
-        else
-            brightestRecordedLightLevel = 15;
-
-        lightObject.UpdateLightLevel(brightestRecordedLightLevel);
+        lightObject.UpdateLightLevel(lightLevel);
     }
 
     public static List<LightObject> GetLightObjectsForArea(Location boundingBoxMin, Location boundingBoxMax)
