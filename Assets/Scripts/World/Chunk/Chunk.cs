@@ -20,8 +20,8 @@ public class Chunk : NetworkBehaviour
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
-    private static readonly float animalSpawnChance = 0.1f;
-    private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
+    private static readonly float animalSpawnChance = 0.2f;
+    private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
@@ -72,6 +72,7 @@ public class Chunk : NetworkBehaviour
         donePlacingBackgroundBlocks = false;
         isLightGenerated = false;
         blocksInitialized = false;
+        bool isGeneratingForFirstTime = false;
 
         if (isServer)
             areBlocksGenerated = false;
@@ -96,6 +97,7 @@ public class Chunk : NetworkBehaviour
             }
             else
             {
+                isGeneratingForFirstTime = true;
                 Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is generating...");
                 StartCoroutine(GenerateBlocks());
             }
@@ -112,9 +114,10 @@ public class Chunk : NetworkBehaviour
 
         if (isServer)
         {
-            //Generate Tick all block (decay all necessary grass etc)
+            if(isGeneratingForFirstTime)
+                GenerateAnimals();
             StartCoroutine(MobSpawnCycle());
-            StartCoroutine(BlockRandomTicking());
+            StartCoroutine(BlockRandomTickingCycle());
         }
 
         //Initialize all blocks after all blocks have been created
@@ -123,6 +126,7 @@ public class Chunk : NetworkBehaviour
         while (!blocksInitialized)
             yield return new WaitForSeconds(0.1f);
 
+        
         GenerateBackgroundBlocks();
         GenerateSunlightSources();
 
@@ -407,25 +411,29 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void GenerateAnimals()
     {
-        Random r = new Random();
+        Random r = new Random(SeedGenerator.SeedByLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
 
-        if (!(r.NextDouble() < animalSpawnChance))
+        if ((float) r.NextDouble() > animalSpawnChance)
             return;
 
-        int x = r.Next(0, Width) + chunkPosition.worldX;
-        Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
-
-        //Return in case no block was found in column, may be the case in ex void worlds
-        if (topmostBlock == null)
-            return;
-
-        int y = topmostBlock.location.y + 1;
-        List<string> entities = MobSpawnTypes;
-        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
+        List<string> entities = CommonAnimals;
+        entities.AddRange(GetBiome().biomeSpecificAnimals);
         string entityType = entities[r.Next(0, entities.Count)];
+        
+        for (int amount = 0; amount < 4; amount++)
+        {
+            int x = r.Next(0, Width) + chunkPosition.worldX;
+            Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
 
-        Entity entity = Entity.Spawn(entityType);
-        entity.Teleport(new Location(x, y, chunkPosition.dimension));
+            //Return in case no block was found in column, may be the case in ex void worlds
+            if (topmostBlock == null)
+                continue;
+
+            int y = topmostBlock.location.y + 1;
+
+            Entity entity = Entity.Spawn(entityType);
+            entity.Teleport(new Location(x, y, chunkPosition.dimension));
+        }
     }
     
     [Server]
@@ -440,7 +448,7 @@ public class Chunk : NetworkBehaviour
             {
                 
             }
-                TrySpawnMobs();
+                //TrySpawnMobs();
 
             yield return new WaitForSeconds(1f / TickRate);
         }
@@ -462,15 +470,15 @@ public class Chunk : NetworkBehaviour
             return;
 
         int y = topmostBlock.location.y + 1;
-        List<string> entities = MobSpawnTypes;
-        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
-        string entityType = entities[r.Next(0, entities.Count)];
+        //List<string> entities = MobSpawnTypes;
+        //entities.AddRange(GetBiome().biomeSpecificAnimals);
+        //string entityType = entities[r.Next(0, entities.Count)];
 
-        Entity entity = Entity.Spawn(entityType);
-        entity.Teleport(new Location(x, y, chunkPosition.dimension));
+        //Entity entity = Entity.Spawn(entityType);
+        //entity.Teleport(new Location(x, y, chunkPosition.dimension));
     }
 
-    private IEnumerator BlockRandomTicking()
+    private IEnumerator BlockRandomTickingCycle()
     {
         float updateSpeed = 1f;
         int i = 0;

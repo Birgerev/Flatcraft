@@ -14,7 +14,7 @@ public class Biome
     public int biomeMaximumChunkSize;
 
 
-    [Space] public List<string> biomeSpecificEntitySpawns;
+    [Space] public List<string> biomeSpecificAnimals;
 
     public float landscapeHeightOverSeaLevel = 43;
     public float landscapeHeightWeight = 0.08f;
