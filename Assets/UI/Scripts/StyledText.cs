@@ -17,7 +17,7 @@ public class StyledText : MonoBehaviour
     {
         if (shadowText == null)
         {
-            var obj = Instantiate(gameObject);
+            GameObject obj = Instantiate(gameObject);
 
             obj.transform.SetParent(transform);
             obj.transform.localScale = new Vector3(1, 1, 1);

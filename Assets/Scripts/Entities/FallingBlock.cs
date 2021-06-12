@@ -6,8 +6,7 @@ public class FallingBlock : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(true)] [SyncVar]
-    public Material material = Material.Sand;
+    [EntityDataTag(true)] [SyncVar] public Material material = Material.Sand;
 
     //Entity State
 
@@ -15,8 +14,8 @@ public class FallingBlock : Entity
     public override void Initialize()
     {
         //wait till the block that spawned the sand dissapears to begin simulating physics
-        GetComponent<Rigidbody2D>().simulated = false; 
-        
+        GetComponent<Rigidbody2D>().simulated = false;
+
         if (material == Material.Air)
             Die();
 
@@ -28,7 +27,7 @@ public class FallingBlock : Entity
     {
         GetRenderer().sprite = new ItemStack(material).GetSprite();
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-        
+
         base.ClientInitialize();
     }
 
@@ -39,7 +38,7 @@ public class FallingBlock : Entity
 
         //once the block that spawned the fallingSand is gone, begin simulating physics
         if (!GetComponent<Rigidbody2D>().simulated &&
-            !Physics2D.OverlapBox(Location.GetPosition(), new Vector2(0.2f, 0.2f), 0)) 
+            !Physics2D.OverlapBox(Location.GetPosition(), new Vector2(0.2f, 0.2f), 0))
             GetComponent<Rigidbody2D>().simulated = true;
 
 

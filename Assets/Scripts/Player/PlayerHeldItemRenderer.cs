@@ -1,11 +1,9 @@
-using System;
-using System.Reflection;
 using UnityEngine;
 
 public class PlayerHeldItemRenderer : MonoBehaviour
 {
-    private Material lastItemInHand;
     public Player player;
+    private Material lastItemInHand;
 
     private void Update()
     {
@@ -16,11 +14,11 @@ public class PlayerHeldItemRenderer : MonoBehaviour
     {
         Material itemInHand = player.GetInventory().GetSelectedItem().material;
 
-        if (itemInHand == lastItemInHand) 
+        if (itemInHand == lastItemInHand)
             return;
 
         lastItemInHand = itemInHand;
-        
+
         if (itemInHand == Material.Air)
         {
             SetColor(Color.clear);

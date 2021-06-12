@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using Unity.Mathematics;
 
 public class LightObject : MonoBehaviour
 {
@@ -16,10 +12,10 @@ public class LightObject : MonoBehaviour
         {
             if (position == Vector3.zero)
                 position = transform.position;
-            
+
             return position;
         }
-        
+
         return position = transform.position;
     }
 
@@ -36,11 +32,11 @@ public class LightObject : MonoBehaviour
         Player player = Player.localEntity;
         if (player == null)
             return;
-        
+
         if (GetLocation().dimension == Dimension.Nether)
-            lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, Int32.MaxValue);
-        
-        float lightLevelFactor = (float)lightLevel / (float)LightManager.maxLightLevel;
+            lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, int.MaxValue);
+
+        float lightLevelFactor = lightLevel / (float) LightManager.maxLightLevel;
         Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
 
         GetComponent<SpriteRenderer>().color = color;

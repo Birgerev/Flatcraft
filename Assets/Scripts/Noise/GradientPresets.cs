@@ -16,48 +16,44 @@ namespace LibNoise
         static GradientPresets()
         {
             // Grayscale gradient color keys
-            var grayscaleColorKeys = new List<GradientColorKey>
+            List<GradientColorKey> grayscaleColorKeys = new List<GradientColorKey>
             {
-                new GradientColorKey(Color.black, 0),
-                new GradientColorKey(Color.white, 1)
+                new GradientColorKey(Color.black, 0), new GradientColorKey(Color.white, 1)
             };
 
             // RGB gradient color keys
-            var rgbColorKeys = new List<GradientColorKey>
+            List<GradientColorKey> rgbColorKeys = new List<GradientColorKey>
             {
-                new GradientColorKey(Color.red, 0),
-                new GradientColorKey(Color.green, 0.5f),
-                new GradientColorKey(Color.blue, 1)
+                new GradientColorKey(Color.red, 0), new GradientColorKey(Color.green, 0.5f)
+                , new GradientColorKey(Color.blue, 1)
             };
 
             // RGBA gradient color keys
-            var rgbaColorKeys = new List<GradientColorKey>
+            List<GradientColorKey> rgbaColorKeys = new List<GradientColorKey>
             {
-                new GradientColorKey(Color.red, 0),
-                new GradientColorKey(Color.green, 1 / 3f),
-                new GradientColorKey(Color.blue, 2 / 3f),
-                new GradientColorKey(Color.black, 1)
+                new GradientColorKey(Color.red, 0), new GradientColorKey(Color.green, 1 / 3f)
+                , new GradientColorKey(Color.blue, 2 / 3f), new GradientColorKey(Color.black, 1)
             };
 
             // RGBA gradient alpha keys
-            var rgbaAlphaKeys = new List<GradientAlphaKey>
+            List<GradientAlphaKey> rgbaAlphaKeys = new List<GradientAlphaKey>
                 {new GradientAlphaKey(0, 2 / 3f), new GradientAlphaKey(1, 1)};
 
             // Terrain gradient color keys
-            var terrainColorKeys = new List<GradientColorKey>
+            List<GradientColorKey> terrainColorKeys = new List<GradientColorKey>
             {
-                new GradientColorKey(new Color(0, 0, 0.5f), 0),
-                new GradientColorKey(new Color(0.125f, 0.25f, 0.5f), 0.4f),
-                new GradientColorKey(new Color(0.25f, 0.375f, 0.75f), 0.48f),
-                new GradientColorKey(new Color(0, 0.75f, 0), 0.5f),
-                new GradientColorKey(new Color(0.75f, 0.75f, 0), 0.625f),
-                new GradientColorKey(new Color(0.625f, 0.375f, 0.25f), 0.75f),
-                new GradientColorKey(new Color(0.5f, 1, 1), 0.875f),
-                new GradientColorKey(Color.white, 1)
+                new GradientColorKey(new Color(0, 0, 0.5f), 0)
+                , new GradientColorKey(new Color(0.125f, 0.25f, 0.5f), 0.4f)
+                , new GradientColorKey(new Color(0.25f, 0.375f, 0.75f), 0.48f)
+                , new GradientColorKey(new Color(0, 0.75f, 0), 0.5f)
+                , new GradientColorKey(new Color(0.75f, 0.75f, 0), 0.625f)
+                , new GradientColorKey(new Color(0.625f, 0.375f, 0.25f), 0.75f)
+                , new GradientColorKey(new Color(0.5f, 1, 1), 0.875f), new GradientColorKey(Color.white, 1)
             };
 
             // Generic gradient alpha keys
-            var alphaKeys = new List<GradientAlphaKey> {new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)};
+            List<GradientAlphaKey> alphaKeys = new List<GradientAlphaKey>
+                {new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)};
 
             Empty = new Gradient();
 

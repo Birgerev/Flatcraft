@@ -19,7 +19,7 @@ public class Tall_Grass : Block
     {
         if (new Random().NextDouble() <= 0.25f)
             return new ItemStack(Material.Wheat_Seeds, 1);
-        
+
         return new ItemStack();
     }
 }

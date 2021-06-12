@@ -14,30 +14,28 @@ public class WorldButton : MonoBehaviour
     {
         menuManager = GetComponentInParent<SingleplayerMenu>();
 
-        var world = GetComponentInParent<SingleplayerMenu>().worlds[transform.GetSiblingIndex()];
+        World world = GetComponentInParent<SingleplayerMenu>().worlds[transform.GetSiblingIndex()];
 
         nameText.text = world.name;
-        var fileSize = world.getDiskSize() / 1000;
-        var fileSizeRounded = Mathf.Round(fileSize * 100f) / 100f;
+        float fileSize = world.getDiskSize() / 1000;
+        float fileSizeRounded = Mathf.Round(fileSize * 100f) / 100f;
 
-        var versionName = VersionController.GetVersionName(world.versionId);
+        string versionName = VersionController.GetVersionName(world.versionId);
 
-        descriptionText.text = "Survival Mode (Version: "+ versionName + ", " + fileSizeRounded + "KB)";
+        descriptionText.text = "Survival Mode (Version: " + versionName + ", " + fileSizeRounded + "KB)";
     }
 
     private void Update()
     {
         if (menuManager.selectedWorld == transform.GetSiblingIndex())
-        {
             button.Select();
-        }
     }
 
     public void Click()
     {
         GetComponentInParent<SingleplayerMenu>().selectedWorld = transform.GetSiblingIndex();
 
-        if (Time.time - lastClickTime < 0.3f) 
+        if (Time.time - lastClickTime < 0.3f)
             GetComponentInParent<SingleplayerMenu>().Play();
 
         lastClickTime = Time.time;

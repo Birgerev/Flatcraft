@@ -18,15 +18,15 @@ public class UIHunger : MonoBehaviour
         if (Player.localEntity == null)
             return;
 
-        var hunger = Mathf.CeilToInt(Player.localEntity.hunger * 2) / 2;
+        int hunger = Mathf.CeilToInt(Player.localEntity.hunger * 2) / 2;
         float hungerIndex = transform.GetSiblingIndex();
 
         GetComponent<Image>().sprite = full;
 
-        if ((int) hunger / 2 <= hungerIndex)
+        if (hunger / 2 <= hungerIndex)
             GetComponent<Image>().sprite = empty;
 
-        if ((int) hunger % 2 == 1 && (int) hunger / 2 == hungerIndex)
+        if (hunger % 2 == 1 && hunger / 2 == hungerIndex)
             GetComponent<Image>().sprite = half;
     }
 }

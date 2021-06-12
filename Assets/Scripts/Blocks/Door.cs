@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Door : Block
+﻿public class Door : Block
 {
     public override bool solid { get; set; } = true;
 
@@ -10,7 +8,7 @@ public class Door : Block
     public override void ServerInitialize()
     {
         base.ServerInitialize();
-        
+
         Tick();
     }
 
@@ -23,13 +21,13 @@ public class Door : Block
 
         Render();
         UpdateColliders();
-        
+
         base.Initialize();
     }
 
     public override void Interact(PlayerInstance player)
     {
-        var open = !GetOpenState();
+        bool open = !GetOpenState();
 
         SetOpenState(open);
 

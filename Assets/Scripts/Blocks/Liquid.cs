@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Liquid : Block
@@ -9,7 +9,7 @@ public class Liquid : Block
     public virtual float liquidTickFrequency { get; } = 1;
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
-    
+
     public override ItemStack GetDrop()
     {
         return new ItemStack();
@@ -19,7 +19,7 @@ public class Liquid : Block
     {
         //If block was built by player, it is a liquid source
         MakeIntoLiquidSourceBlock();
-        
+
         base.BuildTick();
     }
 
@@ -27,10 +27,10 @@ public class Liquid : Block
     {
         MakeIntoLiquidSourceBlock();
         Tick();
-        
+
         base.GeneratingTick();
     }
-    
+
     public void ScheduleLiquidTick()
     {
         StartCoroutine(scheduleLiquidTick());
@@ -38,7 +38,7 @@ public class Liquid : Block
 
     private IEnumerator scheduleLiquidTick()
     {
-        yield return new WaitForSeconds((1 / Chunk.TickRate) * liquidTickFrequency);
+        yield return new WaitForSeconds(1 / Chunk.TickRate * liquidTickFrequency);
         Tick();
     }
 
@@ -51,9 +51,9 @@ public class Liquid : Block
             return;
         }
 
-        if(CheckSource())
+        if (CheckSource())
             CheckFlow();
-        
+
         base.Tick();
     }
 
@@ -62,18 +62,18 @@ public class Liquid : Block
         if (IsLiquidSourceBlock())
             return true;
 
-        var source = FindSourceBlock();
+        Location source = FindSourceBlock();
 
         if (source.Equals(new Location(0, 0)))
         {
-            foreach (var sourceResult in FindSourceResultBlocks())    //Tick all neighboring liquids
+            foreach (Location sourceResult in FindSourceResultBlocks()) //Tick all neighboring liquids
             {
-                Liquid liquid = (Liquid)sourceResult.GetBlock();
+                Liquid liquid = (Liquid) sourceResult.GetBlock();
                 liquid.ScheduleLiquidTick();
             }
-            
+
             location.SetMaterial(Material.Air);
-            
+
             return false;
         }
 
@@ -82,22 +82,22 @@ public class Liquid : Block
 
     public void CheckFlow()
     {
-        Location down = (location + new Location(0, -1));
+        Location down = location + new Location(0, -1);
         Material downMat = down.GetMaterial();
-        
+
         if (TryFlow(new Location(0, -1), max_liquid_level))
             return;
-        
+
         if (downMat == GetMaterial())
             return;
-        
-        var liquidLevel = int.Parse(GetData().GetTag("liquid_level"));
-        
+
+        int liquidLevel = int.Parse(GetData().GetTag("liquid_level"));
+
         if (liquidLevel > 1)
         {
-            var flowLeft = true;
-            var flowRight = true;
-            
+            bool flowLeft = true;
+            bool flowRight = true;
+
             for (int x = 1; x < liquidLevel; x++)
             {
                 Location leftIteration = location + new Location(-x, 0);
@@ -105,14 +105,14 @@ public class Liquid : Block
                 Location rightIteration = location + new Location(x, 0);
                 Location rightDownIteration = rightIteration + new Location(0, -1);
 
-                if ((leftIteration.GetMaterial() == Material.Air && leftDownIteration.GetMaterial() == Material.Air) &&
+                if (leftIteration.GetMaterial() == Material.Air && leftDownIteration.GetMaterial() == Material.Air &&
                     !(rightIteration.GetMaterial() == Material.Air && rightDownIteration.GetMaterial() == Material.Air))
                 {
                     flowRight = false;
                     break;
                 }
-                
-                if ((rightIteration.GetMaterial() == Material.Air && rightDownIteration.GetMaterial() == Material.Air) &&
+
+                if (rightIteration.GetMaterial() == Material.Air && rightDownIteration.GetMaterial() == Material.Air &&
                     !(leftIteration.GetMaterial() == Material.Air && leftDownIteration.GetMaterial() == Material.Air))
                 {
                     flowLeft = false;
@@ -123,42 +123,41 @@ public class Liquid : Block
             if (flowLeft)
                 TryFlow(new Location(-1, 0), liquidLevel - 1);
 
-            if (flowRight)            
+            if (flowRight)
                 TryFlow(new Location(1, 0), liquidLevel - 1);
         }
     }
-    
+
     public bool TryFlow(Location relativeLocation, int liquidLevel)
     {
         Location loc = location + relativeLocation;
-        
-        if (loc.GetMaterial() == Material.Air)                //Flow if no block is in the way
+
+        if (loc.GetMaterial() == Material.Air) //Flow if no block is in the way
         {
             BlockState newState = new BlockState(GetMaterial(), new BlockData("liquid_level=" + liquidLevel));
-            
+
             loc.SetState(newState);
-            
+
             Block block = loc.GetBlock();
             if (block != null)
                 ((Liquid) block).ScheduleLiquidTick();
 
             return true;
         }
-        
-        if(loc.GetMaterial() != GetMaterial() 
-           && loc.GetBlock() is Liquid)        //Trigger a liquid encounter if target block is a liquid, but not the same as this block
-        {
+
+        if (loc.GetMaterial() != GetMaterial()
+            && loc.GetBlock() is Liquid
+        ) //Trigger a liquid encounter if target block is a liquid, but not the same as this block
             LiquidEncounterFlow(relativeLocation);
-        }
 
         return false;
     }
-    
+
     public bool IsLiquidSourceBlock()
     {
         return GetData().GetTag("source_block") == "true";
     }
-    
+
     public void MakeIntoLiquidSourceBlock()
     {
         BlockData newData = GetData();
@@ -167,82 +166,80 @@ public class Liquid : Block
         SetData(newData);
         location.Tick();
     }
-    
+
     public virtual void LiquidEncounterFlow(Location relativeLocation)
     {
-        
     }
-    
+
     public virtual void LiquidEncounterEffect(Location location)
     {
         Sound.Play(location, "block/fire/break", SoundType.Blocks, 0.8f, 1.2f);
         Particle.Spawn_SmallSmoke(location.GetPosition(), Color.black);
     }
-    
+
     public Location FindSourceBlock()
     {
-        Location up = location + new Location(0, 1);    //Vertical source check
+        Location up = location + new Location(0, 1); //Vertical source check
         if (up.GetMaterial() == GetMaterial())
-        {
             return up;
-        }
-        
-        
+
+
         //Horizontal source checks
-        List<Location> possibleHorizontalBlocks = new List<Location>() { location + new Location(-1, 0), location + new Location(1, 0)};
-        
-        foreach (var possibleSource in possibleHorizontalBlocks)        
+        List<Location> possibleHorizontalBlocks = new List<Location>
+            {location + new Location(-1, 0), location + new Location(1, 0)};
+
+        foreach (Location possibleSource in possibleHorizontalBlocks)
         {
-            var possibleSourceMaterial = possibleSource.GetMaterial();
-            var currentMaterial = GetMaterial();
-            
-            if (possibleSourceMaterial == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
+            Material possibleSourceMaterial = possibleSource.GetMaterial();
+            Material currentMaterial = GetMaterial();
+
+            if (possibleSourceMaterial == currentMaterial
+            ) //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
             {
-                var possibleSourceData = possibleSource.GetData();
+                BlockData possibleSourceData = possibleSource.GetData();
                 if (possibleSourceData.HasTag("liquid_level"))
                 {
-                    var possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
-                    var currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
+                    int possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
+                    int currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
-                    if (possibleSourceLiquidLevel > currentLiquidLevel         //Make sure the source is of a higher liquid level
-                        && possibleSourceLiquidLevel >= 1)                     //If the source liquid level is less than 1, it's not a viable source
-                    {
+                    if (possibleSourceLiquidLevel >
+                        currentLiquidLevel //Make sure the source is of a higher liquid level
+                        && possibleSourceLiquidLevel >= 1
+                    ) //If the source liquid level is less than 1, it's not a viable source
                         return possibleSource;
-                    }
                 }
             }
         }
-        
 
-        return new Location(0, 0);        //return null
+
+        return new Location(0, 0); //return null
     }
-    
+
     public List<Location> FindSourceResultBlocks()
     {
         List<Location> sourceResults = new List<Location>();
-        List<Location> possibleSourceBlocks = new List<Location>() { location + new Location(-1, 0), location + new Location(1, 0), location + new Location(0, -1)};
-        
-        foreach (var possibleSource in possibleSourceBlocks)
+        List<Location> possibleSourceBlocks = new List<Location>
+            {location + new Location(-1, 0), location + new Location(1, 0), location + new Location(0, -1)};
+
+        foreach (Location possibleSource in possibleSourceBlocks)
         {
             BlockState possibleSourceState = possibleSource.GetState();
             Material currentMaterial = GetMaterial();
-            
-            if (possibleSourceState.material == currentMaterial)     //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
-            {
+
+            if (possibleSourceState.material == currentMaterial
+            ) //Make sure the source is of the same material, otherwise lava and water could use eachother as sources)
                 if (possibleSourceState.data.HasTag("liquid_level"))
                 {
                     int possibleSourceLiquidLevel = int.Parse(possibleSourceState.data.GetTag("liquid_level"));
                     int currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
-                    if (possibleSourceLiquidLevel < currentLiquidLevel || possibleSourceLiquidLevel == max_liquid_level) //Make sure the source is of a lower liquid level, or a full block (result of liquid flowing down)
-                    {
+                    if (possibleSourceLiquidLevel < currentLiquidLevel || possibleSourceLiquidLevel == max_liquid_level
+                    ) //Make sure the source is of a lower liquid level, or a full block (result of liquid flowing down)
                         sourceResults.Add(possibleSource);
-                    }
                 }
-            }
         }
 
-        return sourceResults;        //return list
+        return sourceResults; //return list
     }
 
     public override void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)

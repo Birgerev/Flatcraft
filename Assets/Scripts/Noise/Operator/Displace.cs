@@ -24,9 +24,9 @@ namespace LibNoise.Operator
             Debug.Assert(Modules[1] != null);
             Debug.Assert(Modules[2] != null);
             Debug.Assert(Modules[3] != null);
-            var dx = x + Modules[1].GetValue(x, y, z);
-            var dy = y + Modules[2].GetValue(x, y, z);
-            var dz = z + Modules[3].GetValue(x, y, z);
+            double dx = x + Modules[1].GetValue(x, y, z);
+            double dy = y + Modules[2].GetValue(x, y, z);
+            double dz = z + Modules[3].GetValue(x, y, z);
             return Modules[0].GetValue(dx, dy, dz);
         }
 

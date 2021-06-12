@@ -11,7 +11,7 @@
         get
         {
             //other block position is based on whether this block is a bottom or top piece
-            var otherBlockXRelative = GetMaterial() == Material.Bed_Bottom ? -1 : 1;
+            int otherBlockXRelative = GetMaterial() == Material.Bed_Bottom ? -1 : 1;
             //if block is flipped, invert side of other block
             if (GetData().GetTag("rotated_x") == "true")
                 otherBlockXRelative *= -1;
@@ -32,10 +32,10 @@
 
     public override void Tick()
     {
-        var otherBlock = otherBlockLocation.GetBlock();
+        Block otherBlock = otherBlockLocation.GetBlock();
         if (otherBlock == null)
             Break(false);
-        else if (otherBlock.GetMaterial() != otherBlockMaterial) 
+        else if (otherBlock.GetMaterial() != otherBlockMaterial)
             Break(false);
 
         base.Tick();

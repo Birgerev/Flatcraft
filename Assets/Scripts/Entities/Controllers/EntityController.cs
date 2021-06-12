@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using Random = System.Random;
-
-public class EntityController
+﻿public class EntityController
 {
     protected readonly LivingEntity instance;
 
-    
+
     public EntityController(LivingEntity instance)
     {
         this.instance = instance;
@@ -13,6 +10,5 @@ public class EntityController
 
     public virtual void Tick()
     {
-        
     }
 }

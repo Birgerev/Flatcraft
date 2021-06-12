@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 public class Item
@@ -13,10 +12,10 @@ public class Item
 
     public void Interact(PlayerInstance player, Location loc, int mouseType, bool firstFrameDown)
     {
-        if (mouseType == 0) 
+        if (mouseType == 0)
             InteractLeft(player, loc, firstFrameDown);
 
-        if (mouseType == 1) 
+        if (mouseType == 1)
             InteractRight(player, loc, firstFrameDown);
     }
 
@@ -24,7 +23,7 @@ public class Item
     {
         Block block = loc.GetBlock();
 
-        if (block != null) 
+        if (block != null)
             block.Hit(player, 1 / Player.interactionsPerPerSecond);
     }
 
@@ -32,7 +31,7 @@ public class Item
     {
         Block block = loc.GetBlock();
 
-        if (firstFrameDown && block != null) 
+        if (firstFrameDown && block != null)
             block.Interact(player);
     }
 

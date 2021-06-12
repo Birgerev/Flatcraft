@@ -12,7 +12,7 @@ public class Sand : Block
     {
         if ((location + new Location(0, -1)).GetMaterial() == Material.Air)
         {
-            var fs = (FallingBlock) Entity.Spawn("FallingBlock");
+            FallingBlock fs = (FallingBlock) Entity.Spawn("FallingBlock");
             fs.transform.position = location.GetPosition() - new Vector2(0, 0.5f);
             fs.material = GetMaterial();
 

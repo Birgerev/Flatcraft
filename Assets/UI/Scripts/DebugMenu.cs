@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class DebugMenu : MonoBehaviour
 {
     public static bool active;
-
-    private float deltaTime;
     public Text text_title;
     public Text text_biome;
     public Text text_dimension;
@@ -18,6 +15,8 @@ public class DebugMenu : MonoBehaviour
     public Text text_x;
     public Text text_y;
     public Text text_blockInfo;
+
+    private float deltaTime;
 
     // Update is called once per frame
     private void Update()
@@ -51,7 +50,7 @@ public class DebugMenu : MonoBehaviour
         text_x.text = "x: " + player.Location.x;
         text_y.text = "y: " + player.Location.y;
         text_dimension.text = "dimension: " + player.Location.dimension;
-        
+
         Biome biome = new ChunkPosition(player.Location).GetChunk().GetBiome();
         if (biome != null)
             text_biome.text = "biome: " + biome.name;
@@ -62,7 +61,7 @@ public class DebugMenu : MonoBehaviour
 
         Location location = player.GetBlockedMouseLocation();
         BlockState state = location.GetState();
-        
+
         text_blockInfo.text = "{" + state.data.GetSaveString() + "}   " + "Material." + state.material;
     }
 }

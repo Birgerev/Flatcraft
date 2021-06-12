@@ -1,19 +1,17 @@
 ﻿using System;
 using Mirror;
-using UnityEngine;
 
 [Serializable]
 public class PlayerInventory : Inventory
 {
-    [SyncVar]
-    public int selectedSlot;
+    [SyncVar] public int selectedSlot;
 
     [Server]
     public static Inventory CreatePreset()
     {
         return Create("PlayerInventory", 45, "Inventory");
     }
-    
+
     public ItemStack GetSelectedItem()
     {
         return GetItem(selectedSlot);
@@ -21,27 +19,30 @@ public class PlayerInventory : Inventory
 
     public ItemStack[] GetHotbarItems()
     {
-        var hotbar = new ItemStack[9];
+        ItemStack[] hotbar = new ItemStack[9];
 
-        for (var i = 0; i < 9; i++) hotbar[i] = GetItem(i);
+        for (int i = 0; i < 9; i++)
+            hotbar[i] = GetItem(i);
 
         return hotbar;
     }
 
     public ItemStack[] GetArmorItems()
     {
-        var armor = new ItemStack[4];
+        ItemStack[] armor = new ItemStack[4];
 
-        for (var i = GetFirstArmorSlot(); i <= 39; i++) armor[i] = GetItem(i);
+        for (int i = GetFirstArmorSlot(); i <= 39; i++)
+            armor[i] = GetItem(i);
 
         return armor;
     }
 
     public ItemStack[] GetCraftingTableItems()
     {
-        var table = new ItemStack[4];
+        ItemStack[] table = new ItemStack[4];
 
-        for (var i = GetFirstCraftingTableSlot(); i < GetFirstCraftingTableSlot() + 4; i++) table[i - 40] = GetItem(i);
+        for (int i = GetFirstCraftingTableSlot(); i < GetFirstCraftingTableSlot() + 4; i++)
+            table[i - 40] = GetItem(i);
 
         return table;
     }

@@ -10,10 +10,11 @@ public class Biome
 {
     [Space] [Header("Occourance Frequency")]
     public int biomeMinimumChunkSize;
+
     public int biomeMaximumChunkSize;
 
 
-    [Space] public List<string> biomeSpecificEntitySpawns;
+    [Space] public List<string> biomeSpecificAnimals;
 
     public float landscapeHeightOverSeaLevel = 43;
     public float landscapeHeightWeight = 0.08f;
@@ -28,7 +29,7 @@ public class Biome
 
     public Perlin GetLandscapeNoise()
     {
-        var seed = 0;
+        int seed = 0;
         if (WorldManager.world != null)
             seed = WorldManager.world.seed;
 
@@ -52,20 +53,21 @@ public class Biome
 
     public static float BlendNoiseValues(Location loc, Biome biomeA, Biome biomeB, float weightA)
     {
-        var weightB = 1 - weightA;
+        float weightB = 1 - weightA;
 
         weightA = Mathf.Clamp(weightA, 0, 1);
         weightB = Mathf.Clamp(weightB, 0, 1);
 
-        var landscapeNoiseA = biomeA.GetLandscapeNoiseAt(loc) * weightA;
-        var landscapeNoiseB = biomeB.GetLandscapeNoiseAt(loc) * weightB;
+        float landscapeNoiseA = biomeA.GetLandscapeNoiseAt(loc) * weightA;
+        float landscapeNoiseB = biomeB.GetLandscapeNoiseAt(loc) * weightB;
 
         return landscapeNoiseA + landscapeNoiseB;
     }
 
     public static Biome GetBiomeAt(ChunkPosition cPos)
     {
-        if (WorldManager.instance.chunkBiomes.ContainsKey(cPos)) //If biome value at this location already has been generated, use this value
+        if (WorldManager.instance.chunkBiomes.ContainsKey(cPos)
+        ) //If biome value at this location already has been generated, use this value
             return WorldManager.instance.chunkBiomes[cPos];
 
         //Otherwise, generate the value, save it for later use, and return it
@@ -89,22 +91,30 @@ public class Biome
         int currentChunk = startChunk; //start generating biome values at the first chunk of the region
         while (currentChunk < endChunk) //Keep on iterating until every chunk in the region has a biome
         {
-            Random r = new Random(currentChunk.GetHashCode() + dimension.GetHashCode() + WorldManager.world.seed); //Random, with a seed unique to the chunk x position, the dimension, and the world seed
+            Random r = new Random(currentChunk.GetHashCode() + dimension.GetHashCode() +
+                                  WorldManager.world
+                                      .seed); //Random, with a seed unique to the chunk x position, the dimension, and the world seed
             Biome biome = null;
             if (dimension == Dimension.Overworld)
-                biome = WorldManager.instance.overworldBiomes[r.Next(0, WorldManager.instance.overworldBiomes.Count)]; //determine the biome that will be generated for the next few chunks at random
+                biome = WorldManager.instance.overworldBiomes[
+                    r.Next(0
+                        , WorldManager.instance.overworldBiomes
+                            .Count)]; //determine the biome that will be generated for the next few chunks at random
             else if (dimension == Dimension.Nether)
                 biome = WorldManager.instance.netherBiome;
 
-            int biomeChunkSize = r.Next(biome.biomeMinimumChunkSize, biome.biomeMaximumChunkSize + 1); //how many chunks will this biome cover
+            int biomeChunkSize =
+                r.Next(biome.biomeMinimumChunkSize
+                    , biome.biomeMaximumChunkSize + 1); //how many chunks will this biome cover
             int biomeBeginningChunk = currentChunk; //where the biome starts
 
-            while (currentChunk <= biomeBeginningChunk + biomeChunkSize) //Assign this biome to every one of these chunks
+            while (currentChunk <= biomeBeginningChunk + biomeChunkSize
+            ) //Assign this biome to every one of these chunks
             {
                 if (currentChunk >= endChunk) //if chunk is outside of region, stop generating
                     break;
 
-                var i = new ChunkPosition(currentChunk, dimension);
+                ChunkPosition i = new ChunkPosition(currentChunk, dimension);
                 if (WorldManager.instance.chunkBiomes.ContainsKey(i))
                     WorldManager.instance.chunkBiomes.Remove(i);
 

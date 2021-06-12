@@ -23,11 +23,11 @@
 
     public void TryDecay()
     {
-        var range = 4;
-        var foundSupport = false;
+        int range = 4;
+        bool foundSupport = false;
 
-        for (var x = -range; x < range; x++)
-        for (var y = -range; y < range; y++)
+        for (int x = -range; x < range; x++)
+        for (int y = -range; y < range; y++)
             if (new Location(location.x + x, location.y + y).GetBlock() != null)
                 if (new Location(location.x + x, location.y + y).GetBlock().GetType().IsSubclassOf(typeof(Log)))
                 {
@@ -35,6 +35,7 @@
                     break;
                 }
 
-        if (!foundSupport) Break();
+        if (!foundSupport)
+            Break();
     }
 }

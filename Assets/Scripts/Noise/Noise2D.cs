@@ -29,27 +29,35 @@ namespace LibNoise
             {
                 if (isCropped)
                 {
-                    if (x < 0 && x >= Width) throw new ArgumentOutOfRangeException("Invalid x position");
-                    if (y < 0 && y >= Height) throw new ArgumentOutOfRangeException("Invalid y position");
+                    if (x < 0 && x >= Width)
+                        throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= Height)
+                        throw new ArgumentOutOfRangeException("Invalid y position");
                     return _data[x, y];
                 }
 
-                if (x < 0 && x >= _ucWidth) throw new ArgumentOutOfRangeException("Invalid x position");
-                if (y < 0 && y >= _ucHeight) throw new ArgumentOutOfRangeException("Invalid y position");
+                if (x < 0 && x >= _ucWidth)
+                    throw new ArgumentOutOfRangeException("Invalid x position");
+                if (y < 0 && y >= _ucHeight)
+                    throw new ArgumentOutOfRangeException("Invalid y position");
                 return _ucData[x, y];
             }
             set
             {
                 if (isCropped)
                 {
-                    if (x < 0 && x >= Width) throw new ArgumentOutOfRangeException("Invalid x position");
-                    if (y < 0 && y >= Height) throw new ArgumentOutOfRangeException("Invalid y position");
+                    if (x < 0 && x >= Width)
+                        throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= Height)
+                        throw new ArgumentOutOfRangeException("Invalid y position");
                     _data[x, y] = value;
                 }
                 else
                 {
-                    if (x < 0 && x >= _ucWidth) throw new ArgumentOutOfRangeException("Invalid x position");
-                    if (y < 0 && y >= _ucHeight) throw new ArgumentOutOfRangeException("Invalid y position");
+                    if (x < 0 && x >= _ucWidth)
+                        throw new ArgumentOutOfRangeException("Invalid x position");
+                    if (y < 0 && y >= _ucHeight)
+                        throw new ArgumentOutOfRangeException("Invalid y position");
                     _ucData[x, y] = value;
                 }
             }
@@ -196,9 +204,9 @@ namespace LibNoise
 
             width -= xCrop;
             height -= yCrop;
-            var result = new float[width, height];
-            for (var x = 0; x < width; x++)
-            for (var y = 0; y < height; y++)
+            float[,] result = new float[width, height];
+            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
                 float sample;
                 if (isNormalized)
@@ -217,8 +225,8 @@ namespace LibNoise
         /// <param name="value">The constant value to clear the noise map with.</param>
         public void Clear(float value = 0f)
         {
-            for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
+            for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
                 _data[x, y] = value;
         }
 
@@ -245,16 +253,17 @@ namespace LibNoise
         {
             if (right <= left || bottom <= top)
                 throw new ArgumentException("Invalid right/left or bottom/top combination");
-            if (Generator == null) throw new ArgumentNullException("Generator is null");
-            var xe = right - left;
-            var ze = bottom - top;
-            var xd = xe / ((double) Width - _ucBorder);
-            var zd = ze / ((double) Height - _ucBorder);
-            var xc = left;
-            for (var x = 0; x < _ucWidth; x++)
+            if (Generator == null)
+                throw new ArgumentNullException("Generator is null");
+            double xe = right - left;
+            double ze = bottom - top;
+            double xd = xe / ((double) Width - _ucBorder);
+            double zd = ze / ((double) Height - _ucBorder);
+            double xc = left;
+            for (int x = 0; x < _ucWidth; x++)
             {
-                var zc = top;
-                for (var y = 0; y < _ucHeight; y++)
+                double zc = top;
+                for (int y = 0; y < _ucHeight; y++)
                 {
                     float fv;
                     if (isSeamless)
@@ -263,14 +272,14 @@ namespace LibNoise
                     }
                     else
                     {
-                        var swv = GeneratePlanar(xc, zc);
-                        var sev = GeneratePlanar(xc + xe, zc);
-                        var nwv = GeneratePlanar(xc, zc + ze);
-                        var nev = GeneratePlanar(xc + xe, zc + ze);
-                        var xb = 1.0 - (xc - left) / xe;
-                        var zb = 1.0 - (zc - top) / ze;
-                        var z0 = Utils.InterpolateLinear(swv, sev, xb);
-                        var z1 = Utils.InterpolateLinear(nwv, nev, xb);
+                        double swv = GeneratePlanar(xc, zc);
+                        double sev = GeneratePlanar(xc + xe, zc);
+                        double nwv = GeneratePlanar(xc, zc + ze);
+                        double nev = GeneratePlanar(xc + xe, zc + ze);
+                        double xb = 1.0 - (xc - left) / xe;
+                        double zb = 1.0 - (zc - top) / ze;
+                        double z0 = Utils.InterpolateLinear(swv, sev, xb);
+                        double z1 = Utils.InterpolateLinear(nwv, nev, xb);
                         fv = (float) Utils.InterpolateLinear(z0, z1, zb);
                     }
 
@@ -293,9 +302,9 @@ namespace LibNoise
         /// <returns>The corresponding noise map value.</returns>
         private double GenerateCylindrical(double angle, double height)
         {
-            var x = Math.Cos(angle * Mathf.Deg2Rad);
-            var y = height;
-            var z = Math.Sin(angle * Mathf.Deg2Rad);
+            double x = Math.Cos(angle * Mathf.Deg2Rad);
+            double y = height;
+            double z = Math.Sin(angle * Mathf.Deg2Rad);
             return Generator.GetValue(x, y, z);
         }
 
@@ -310,16 +319,17 @@ namespace LibNoise
         {
             if (angleMax <= angleMin || heightMax <= heightMin)
                 throw new ArgumentException("Invalid angle or height parameters");
-            if (Generator == null) throw new ArgumentNullException("Generator is null");
-            var ae = angleMax - angleMin;
-            var he = heightMax - heightMin;
-            var xd = ae / ((double) Width - _ucBorder);
-            var yd = he / ((double) Height - _ucBorder);
-            var ca = angleMin;
-            for (var x = 0; x < _ucWidth; x++)
+            if (Generator == null)
+                throw new ArgumentNullException("Generator is null");
+            double ae = angleMax - angleMin;
+            double he = heightMax - heightMin;
+            double xd = ae / ((double) Width - _ucBorder);
+            double yd = he / ((double) Height - _ucBorder);
+            double ca = angleMin;
+            for (int x = 0; x < _ucWidth; x++)
             {
-                var ch = heightMin;
-                for (var y = 0; y < _ucHeight; y++)
+                double ch = heightMin;
+                for (int y = 0; y < _ucHeight; y++)
                 {
                     _ucData[x, y] = (float) GenerateCylindrical(ca, ch);
                     if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
@@ -341,7 +351,7 @@ namespace LibNoise
         /// <returns>The corresponding noise map value.</returns>
         private double GenerateSpherical(double lat, double lon)
         {
-            var r = Math.Cos(Mathf.Deg2Rad * lat);
+            double r = Math.Cos(Mathf.Deg2Rad * lat);
             return Generator.GetValue(r * Math.Cos(Mathf.Deg2Rad * lon), Math.Sin(Mathf.Deg2Rad * lat),
                 r * Math.Sin(Mathf.Deg2Rad * lon));
         }
@@ -357,16 +367,17 @@ namespace LibNoise
         {
             if (east <= west || north <= south)
                 throw new ArgumentException("Invalid east/west or north/south combination");
-            if (Generator == null) throw new ArgumentNullException("Generator is null");
-            var loe = east - west;
-            var lae = north - south;
-            var xd = loe / ((double) Width - _ucBorder);
-            var yd = lae / ((double) Height - _ucBorder);
-            var clo = west;
-            for (var x = 0; x < _ucWidth; x++)
+            if (Generator == null)
+                throw new ArgumentNullException("Generator is null");
+            double loe = east - west;
+            double lae = north - south;
+            double xd = loe / ((double) Width - _ucBorder);
+            double yd = lae / ((double) Height - _ucBorder);
+            double clo = west;
+            for (int x = 0; x < _ucWidth; x++)
             {
-                var cla = south;
-                for (var y = 0; y < _ucHeight; y++)
+                double cla = south;
+                for (int y = 0; y < _ucHeight; y++)
                 {
                     _ucData[x, y] = (float) GenerateSpherical(cla, clo);
                     if (x >= _ucBorder && y >= _ucBorder && x < Width + _ucBorder &&
@@ -396,10 +407,10 @@ namespace LibNoise
         /// <returns>The created texture map.</returns>
         public Texture2D GetTexture(Gradient gradient)
         {
-            var texture = new Texture2D(Width, Height);
-            var pixels = new Color[Width * Height];
-            for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
+            Texture2D texture = new Texture2D(Width, Height);
+            Color[] pixels = new Color[Width * Height];
+            for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
             {
                 float sample;
                 if (!float.IsNaN(Border) &&
@@ -423,22 +434,22 @@ namespace LibNoise
         /// <returns>The created normal map.</returns>
         public Texture2D GetNormalMap(float intensity)
         {
-            var texture = new Texture2D(Width, Height);
-            var pixels = new Color[Width * Height];
-            for (var x = 0; x < _ucWidth; x++)
-            for (var y = 0; y < _ucHeight; y++)
+            Texture2D texture = new Texture2D(Width, Height);
+            Color[] pixels = new Color[Width * Height];
+            for (int x = 0; x < _ucWidth; x++)
+            for (int y = 0; y < _ucHeight; y++)
             {
-                var xPos = (_ucData[Mathf.Max(0, x - _ucBorder), y] -
-                            _ucData[Mathf.Min(x + _ucBorder, Height + _ucBorder), y]) / 2;
-                var yPos = (_ucData[x, Mathf.Max(0, y - _ucBorder)] -
-                            _ucData[x, Mathf.Min(y + _ucBorder, Width + _ucBorder)]) / 2;
-                var normalX = new Vector3(xPos * intensity, 0, 1);
-                var normalY = new Vector3(0, yPos * intensity, 1);
+                float xPos = (_ucData[Mathf.Max(0, x - _ucBorder), y] -
+                              _ucData[Mathf.Min(x + _ucBorder, Height + _ucBorder), y]) / 2;
+                float yPos = (_ucData[x, Mathf.Max(0, y - _ucBorder)] -
+                              _ucData[x, Mathf.Min(y + _ucBorder, Width + _ucBorder)]) / 2;
+                Vector3 normalX = new Vector3(xPos * intensity, 0, 1);
+                Vector3 normalY = new Vector3(0, yPos * intensity, 1);
                 // Get normal vector
-                var normalVector = normalX + normalY;
+                Vector3 normalVector = normalX + normalY;
                 normalVector.Normalize();
                 // Get color vector
-                var colorVector = Vector3.zero;
+                Vector3 colorVector = Vector3.zero;
                 colorVector.x = (normalVector.x + 1) / 2;
                 colorVector.y = (normalVector.y + 1) / 2;
                 colorVector.z = (normalVector.z + 1) / 2;
@@ -471,7 +482,8 @@ namespace LibNoise
         /// </summary>
         public void Dispose()
         {
-            if (!IsDisposed) IsDisposed = Disposing();
+            if (!IsDisposed)
+                IsDisposed = Disposing();
             GC.SuppressFinalize(this);
         }
 

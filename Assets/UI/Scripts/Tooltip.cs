@@ -1,22 +1,21 @@
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
 {
-    public Text tooltipTitle;
-    
     public static ItemStack hoveredItem = new ItemStack();
     public static bool isPointerHoldingItem;
+    public Text tooltipTitle;
 
     private CanvasGroup canvasGroup;
-    
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
 
-        canvasGroup.alpha = (hoveredItem.material == Material.Air || isPointerHoldingItem) ? 0 : 1;
+        canvasGroup.alpha = hoveredItem.material == Material.Air || isPointerHoldingItem ? 0 : 1;
         tooltipTitle.text = hoveredItem.material.ToString();
     }
 }

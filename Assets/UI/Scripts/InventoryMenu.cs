@@ -1,15 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using Mirror;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryMenu : NetworkBehaviour
 {
-    public SyncDictionary<int, int> inventoryIds = new SyncDictionary<int, int>();
-    [SyncVar] public ItemStack pointerItem = new ItemStack();
     [SyncVar] public GameObject playerInstance;
 
     public List<Transform> inventorySlotLists = new List<Transform>();
@@ -17,6 +14,22 @@ public class InventoryMenu : NetworkBehaviour
     public CanvasGroup canvasGroup;
     public Text inventoryTitle;
     private float inventoryAge;
+    public SyncDictionary<int, int> inventoryIds = new SyncDictionary<int, int>();
+    [SyncVar] public ItemStack pointerItem = new ItemStack();
+
+    public virtual void Update()
+    {
+        bool ownsInventoryMenu = PlayerInstance.localPlayerInstance.gameObject == playerInstance;
+        canvasGroup.alpha = ownsInventoryMenu ? 1 : 0;
+        canvasGroup.interactable = ownsInventoryMenu;
+        canvasGroup.blocksRaycasts = ownsInventoryMenu;
+        if (ownsInventoryMenu)
+        {
+            CheckClose();
+
+            inventoryAge += Time.deltaTime;
+        }
+    }
 
     public override void OnStartClient()
     {
@@ -30,32 +43,18 @@ public class InventoryMenu : NetworkBehaviour
         OpenPlayerInventory();
     }
 
-    public virtual void Update()
-    {
-        bool ownsInventoryMenu = (PlayerInstance.localPlayerInstance.gameObject == playerInstance);
-        canvasGroup.alpha = ownsInventoryMenu ? 1 : 0;
-        canvasGroup.interactable = ownsInventoryMenu;
-        canvasGroup.blocksRaycasts = ownsInventoryMenu;
-        if (ownsInventoryMenu)
-        {
-            CheckClose();
-        
-            inventoryAge += Time.deltaTime;
-        }
-    }
-
     public virtual void OpenPlayerInventory()
     {
-        inventoryIds.Add(1, 
+        inventoryIds.Add(1,
             playerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
     }
-    
+
     [Command(requiresAuthority = false)]
     public virtual void RequestInventoryUpdate()
     {
         UpdateInventory();
     }
-    
+
     [Server]
     public virtual void UpdateInventory()
     {
@@ -68,12 +67,12 @@ public class InventoryMenu : NetworkBehaviour
         StartCoroutine(awaitInventoryChangesToUpdate());
     }
 
-    IEnumerator awaitInventoryChangesToUpdate()
+    private IEnumerator awaitInventoryChangesToUpdate()
     {
         yield return new WaitForSeconds(0f);
         ClientInventoryUpdate();
     }
-    
+
     [Client]
     public virtual void ClientInventoryUpdate()
     {
@@ -85,7 +84,7 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void CheckClose()
     {
         if ((Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)) && inventoryAge > 0.1f)
-            foreach(int inventoryId in inventoryIds.Values.ToList())
+            foreach (int inventoryId in inventoryIds.Values.ToList())
                 Inventory.Get(inventoryId).RequestClose();
     }
 
@@ -101,7 +100,7 @@ public class InventoryMenu : NetworkBehaviour
     {
         inventoryTitle.text = Inventory.Get(inventoryIds[0]).invName;
     }
-    
+
     [Client]
     public void UpdateSlots()
     {
@@ -146,13 +145,13 @@ public class InventoryMenu : NetworkBehaviour
     {
         Inventory.Get(inventoryIds[inventoryIndex]).SetItem(slot, item);
     }
-    
+
     [Server]
     public void SetPointerItem(ItemStack item)
     {
         pointerItem = item;
     }
-    
+
     [Client]
     public int GetSlotIndex(ItemSlot slot)
     {
@@ -169,8 +168,8 @@ public class InventoryMenu : NetworkBehaviour
             if (slot.transform.IsChildOf(inventorySlotList))
                 return inventoryIndex;
         }
-        
-        Debug.LogError("No tracked inventory was found for slot '" + slot.gameObject.name+"' in " + this.name);
+
+        Debug.LogError("No tracked inventory was found for slot '" + slot.gameObject.name + "' in " + name);
         return -1;
     }
 
@@ -187,16 +186,16 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void OnRightClickSlot(int inventoryIndex, int slotIndex)
     {
         ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
-        
+
         //Right Click to leave one item
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.amount > 0 && slotItem.amount + 1 <= 64) 
+            && pointerItem.amount > 0 && slotItem.amount + 1 <= 64)
         {
             SlotAction_LeaveOne(inventoryIndex, slotIndex);
 
             return;
         }
-        
+
         //Right click to halve
         if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) && slotItem.amount > 0)
             SlotAction_Halve(inventoryIndex, slotIndex);
@@ -205,7 +204,7 @@ public class InventoryMenu : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public virtual void OnLeftClickSlot(int inventoryIndex, int slotIndex)
     {
-        var slotItem = GetItem(inventoryIndex, slotIndex);
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
 
         //Left click to swap
         if (pointerItem.material == Material.Air || pointerItem.material != slotItem.material)
@@ -230,11 +229,12 @@ public class InventoryMenu : NetworkBehaviour
             slotItem = pointerItem.Clone();
             slotItem.amount = 1;
         }
+
         SetItem(inventoryIndex, slotIndex, slotItem);
-        
+
         pointerItemClone.amount--;
         SetPointerItem(pointerItemClone);
-        
+
         UpdateInventory();
     }
 
@@ -249,10 +249,10 @@ public class InventoryMenu : NetworkBehaviour
         ItemStack pointerItemClone = slotItem.Clone();
         pointerItemClone.amount = pointerAmount;
         SetPointerItem(pointerItemClone);
-        
+
         slotItem.amount = slotAmount;
         SetItem(inventoryIndex, slotIndex, slotItem);
-        
+
         UpdateInventory();
     }
 
@@ -264,7 +264,7 @@ public class InventoryMenu : NetworkBehaviour
 
         SetItem(inventoryIndex, slotIndex, pointerItemClone);
         SetPointerItem(slotItem);
-        
+
         UpdateInventory();
     }
 
@@ -281,7 +281,7 @@ public class InventoryMenu : NetworkBehaviour
         slotItem.amount += amountOfItemsFromPointerToMerge;
         SetItem(inventoryIndex, slotIndex, slotItem);
         SetPointerItem(pointerItemClone);
-        
+
         UpdateInventory();
     }
 }

@@ -8,6 +8,12 @@ namespace LibNoise.Generator
     /// </summary>
     public class Billow : ModuleBase
     {
+        #region Fields
+
+        private int _octaveCount = 6;
+
+        #endregion
+
         #region ModuleBase Members
 
         /// <summary>
@@ -19,18 +25,18 @@ namespace LibNoise.Generator
         /// <returns>The resulting output value.</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var value = 0.0;
-            var curp = 1.0;
+            double value = 0.0;
+            double curp = 1.0;
             x *= Frequency;
             y *= Frequency;
             z *= Frequency;
-            for (var i = 0; i < _octaveCount; i++)
+            for (int i = 0; i < _octaveCount; i++)
             {
-                var nx = Utils.MakeInt32Range(x);
-                var ny = Utils.MakeInt32Range(y);
-                var nz = Utils.MakeInt32Range(z);
-                var seed = (Seed + i) & 0xffffffff;
-                var signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
+                double nx = Utils.MakeInt32Range(x);
+                double ny = Utils.MakeInt32Range(y);
+                double nz = Utils.MakeInt32Range(z);
+                long seed = (Seed + i) & 0xffffffff;
+                double signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
                 signal = 2.0 * Math.Abs(signal) - 1.0;
                 value += signal * curp;
                 x *= Lacunarity;
@@ -41,12 +47,6 @@ namespace LibNoise.Generator
 
             return value + 0.5;
         }
-
-        #endregion
-
-        #region Fields
-
-        private int _octaveCount = 6;
 
         #endregion
 

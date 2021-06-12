@@ -4,10 +4,10 @@
 public class anchorTool : MonoBehaviour
 {
     public Rect anchorRect;
-    private Rect anchorRectOld;
     public Vector2 anchorVector;
-    private Vector2 anchorVectorOld;
     public bool manualRefresh = true;
+    private Rect anchorRectOld;
+    private Vector2 anchorVectorOld;
     private Vector2 offsetMaxOld;
     private Vector2 offsetMinOld;
     private RectTransform ownRectTransform;
@@ -57,11 +57,11 @@ public class anchorTool : MonoBehaviour
 
     private void CalculateCurrentXY()
     {
-        var pivotX = anchorRect.width * ownRectTransform.pivot.x;
-        var pivotY = anchorRect.height * (1 - ownRectTransform.pivot.y);
-        var newXY = new Vector2(
-            ownRectTransform.anchorMin.x * parentRectTransform.rect.width + ownRectTransform.offsetMin.x + pivotX -
-            parentRectTransform.rect.width * anchorVector.x,
+        float pivotX = anchorRect.width * ownRectTransform.pivot.x;
+        float pivotY = anchorRect.height * (1 - ownRectTransform.pivot.y);
+        Vector2 newXY = new Vector2(ownRectTransform.anchorMin.x * parentRectTransform.rect.width +
+                                    ownRectTransform.offsetMin.x + pivotX -
+                                    parentRectTransform.rect.width * anchorVector.x,
             -(1 - ownRectTransform.anchorMax.y) * parentRectTransform.rect.height + ownRectTransform.offsetMax.y -
             pivotY + parentRectTransform.rect.height * (1 - anchorVector.y));
         anchorRect.x = newXY.x;
@@ -78,22 +78,22 @@ public class anchorTool : MonoBehaviour
 
     private void AnchorsToCorners()
     {
-        var pivotX = anchorRect.width * ownRectTransform.pivot.x;
-        var pivotY = anchorRect.height * (1 - ownRectTransform.pivot.y);
+        float pivotX = anchorRect.width * ownRectTransform.pivot.x;
+        float pivotY = anchorRect.height * (1 - ownRectTransform.pivot.y);
         ownRectTransform.anchorMin = new Vector2(0f, 1f);
         ownRectTransform.anchorMax = new Vector2(0f, 1f);
         ownRectTransform.offsetMin = new Vector2(anchorRect.x / ownRectTransform.localScale.x,
             anchorRect.y / ownRectTransform.localScale.y - anchorRect.height);
         ownRectTransform.offsetMax = new Vector2(anchorRect.x / ownRectTransform.localScale.x + anchorRect.width,
             anchorRect.y / ownRectTransform.localScale.y);
-        ownRectTransform.anchorMin = new Vector2(
-            ownRectTransform.anchorMin.x + anchorVector.x + (ownRectTransform.offsetMin.x - pivotX) /
-            parentRectTransform.rect.width * ownRectTransform.localScale.x,
+        ownRectTransform.anchorMin = new Vector2(ownRectTransform.anchorMin.x + anchorVector.x +
+                                                 (ownRectTransform.offsetMin.x - pivotX) /
+                                                 parentRectTransform.rect.width * ownRectTransform.localScale.x,
             ownRectTransform.anchorMin.y - (1 - anchorVector.y) + (ownRectTransform.offsetMin.y + pivotY) /
             parentRectTransform.rect.height * ownRectTransform.localScale.y);
-        ownRectTransform.anchorMax = new Vector2(
-            ownRectTransform.anchorMax.x + anchorVector.x + (ownRectTransform.offsetMax.x - pivotX) /
-            parentRectTransform.rect.width * ownRectTransform.localScale.x,
+        ownRectTransform.anchorMax = new Vector2(ownRectTransform.anchorMax.x + anchorVector.x +
+                                                 (ownRectTransform.offsetMax.x - pivotX) /
+                                                 parentRectTransform.rect.width * ownRectTransform.localScale.x,
             ownRectTransform.anchorMax.y - (1 - anchorVector.y) + (ownRectTransform.offsetMax.y + pivotY) /
             parentRectTransform.rect.height * ownRectTransform.localScale.y);
         ownRectTransform.offsetMin =

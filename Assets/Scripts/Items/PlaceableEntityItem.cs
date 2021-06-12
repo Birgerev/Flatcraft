@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class PlaceableEntityItem : Item
 {
     public virtual string entityType { get; } = "PaintingEntity";
@@ -15,7 +11,7 @@ public class PlaceableEntityItem : Item
             //Spawn Entity
             Entity entity = Entity.Spawn(entityType);
             entity.Teleport(loc);
-            
+
             //Remove player item
             PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
             ItemStack selectedItem = inv.GetSelectedItem();

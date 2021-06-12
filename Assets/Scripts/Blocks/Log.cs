@@ -12,7 +12,7 @@
     {
         base.Initialize();
 
-        var leafTexture = GetData().GetTag("leaf_texture") == "true";
+        bool leafTexture = GetData().GetTag("leaf_texture") == "true";
         if (leafTexture)
         {
             texture = "block_logged_leaves";

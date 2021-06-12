@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -16,9 +14,7 @@ public class PauseMenu : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             SetMenuActive(!active);
-        }
     }
 
     public void EnterMenu()

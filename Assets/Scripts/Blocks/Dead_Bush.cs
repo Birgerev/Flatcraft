@@ -1,6 +1,7 @@
 ﻿public class Dead_Bush : Block
 {
     public override string texture { get; set; } = "block_dead_bush_0";
+
     public override string[] alternative_textures { get; } =
         {"block_dead_bush_0", "block_dead_bush_1", "block_dead_bush_2"};
 

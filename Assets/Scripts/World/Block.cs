@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Reflection;
 using Unity.Burst;
 using UnityEngine;
 using Random = System.Random;
@@ -14,9 +13,9 @@ public class Block : MonoBehaviour
 
     public Location location;
 
-    public virtual string texture { get; set; } = "";
-
     private float time_of_last_hit;
+
+    public virtual string texture { get; set; } = "";
     public virtual string[] alternative_textures { get; } = { };
     public virtual float change_texture_time { get; } = 0;
 
@@ -37,20 +36,42 @@ public class Block : MonoBehaviour
 
     public virtual int glowLevel { get; } = 0;
 
+    public void OnDestroy()
+    {
+        Chunk chunk = new ChunkPosition(location).GetChunk();
+
+        if (chunk != null && chunk.randomTickBlocks.Contains(this))
+            chunk.randomTickBlocks.Remove(this);
+    }
+
+    public virtual void OnTriggerExit2D(Collider2D col)
+    {
+        if (climbable)
+            if (col.GetComponent<Entity>() != null)
+                col.GetComponent<Entity>().isOnClimbable = false;
+    }
+
+    public virtual void OnTriggerStay2D(Collider2D col)
+    {
+        if (climbable)
+            if (col.GetComponent<Entity>() != null)
+                col.GetComponent<Entity>().isOnClimbable = true;
+    }
+
     public virtual void Initialize()
     {
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position);
-        
+
         blockHealth = breakTime;
 
         RenderRotate();
         UpdateColliders();
-        
+
         if (glowLevel > 0)
         {
             LightSource source = LightSource.Create(transform);
-            
+
             source.UpdateLightLevel(glowLevel, true);
         }
 
@@ -65,19 +86,11 @@ public class Block : MonoBehaviour
         if (averageRandomTickDuration != 0)
         {
             Chunk chunk = new ChunkPosition(location).GetChunk();
-            
+
             chunk.randomTickBlocks.Add(this);
         }
     }
 
-    public void OnDestroy()
-    {
-        Chunk chunk = new ChunkPosition(location).GetChunk();
-
-        if (chunk != null && chunk.randomTickBlocks.Contains(this))
-            chunk.randomTickBlocks.Remove(this);
-    }
-    
     public virtual void RandomTick()
     {
     }
@@ -85,12 +98,11 @@ public class Block : MonoBehaviour
     public virtual void BuildTick()
     {
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
-        
+            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f
+                , 1.5f);
+
         if ((rotate_x || rotate_y) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
-        {
             RotateTowardsPlayer();
-        }
     }
 
     public BlockData GetData()
@@ -122,7 +134,7 @@ public class Block : MonoBehaviour
             if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
                 Break();
     }
-    
+
     private IEnumerator animatedTextureRenderLoop()
     {
         while (true)
@@ -135,17 +147,20 @@ public class Block : MonoBehaviour
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer((solid || trigger) ? "Block" : "NoCollisionBlock");
+        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollisionBlock");
 
         GetComponent<Collider2D>().isTrigger = trigger;
-        GetComponent<BoxCollider2D>().size = trigger ? new Vector2(0.9f, 0.9f) : new Vector2(1, 1);   //Trigger has to be a little smaller than a block to avoid unintended triggering
+        GetComponent<BoxCollider2D>().size =
+            trigger
+                ? new Vector2(0.9f, 0.9f)
+                : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
 
     public Color GetRandomColourFromTexture()
     {
-        var texture = getTexture().texture;
-        var pixels = texture.GetPixels();
-        var random = new Random(DateTime.Now.GetHashCode());
+        Texture2D texture = getTexture().texture;
+        Color[] pixels = texture.GetPixels();
+        Random random = new Random(DateTime.Now.GetHashCode());
 
         return pixels[random.Next(pixels.Length)];
     }
@@ -155,8 +170,10 @@ public class Block : MonoBehaviour
         bool rotated_x = false;
         bool rotated_y = false;
 
-        if (rotate_y) rotated_y = Player.localEntity.transform.position.y < location.y;
-        if (rotate_x) rotated_x = Player.localEntity.transform.position.x < location.x;
+        if (rotate_y)
+            rotated_y = Player.localEntity.transform.position.y < location.y;
+        if (rotate_x)
+            rotated_x = Player.localEntity.transform.position.x < location.x;
 
         BlockData newData = GetData();
         newData.SetTag("rotated_x", rotated_x ? "true" : "false");
@@ -168,8 +185,8 @@ public class Block : MonoBehaviour
 
     public void RenderRotate()
     {
-        var rotated_x = false;
-        var rotated_y = false;
+        bool rotated_x = false;
+        bool rotated_y = false;
 
         rotated_x = GetData().GetTag("rotated_x") == "true";
         rotated_y = GetData().GetTag("rotated_y") == "true";
@@ -187,7 +204,7 @@ public class Block : MonoBehaviour
     {
         time_of_last_hit = Time.time;
 
-        var properToolStats = false;
+        bool properToolStats = false;
 
         if (tool_level != Tool_Level.None && tool_type == propperToolType && tool_level >= propperToolLevel)
             time *= 2 + (float) tool_level * 2f;
@@ -199,7 +216,7 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Blocks, 0.8f, 1.2f);
 
-        if(!BreakIndicator.breakIndicators.ContainsKey(location))
+        if (!BreakIndicator.breakIndicators.ContainsKey(location))
             BreakIndicator.Spawn(location);
 
         if (blockHealth <= 0)
@@ -238,8 +255,8 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
 
-        var r = new Random();
-        for (var i = 0; i < r.Next(2, 8); i++) //Spawn Particles
+        Random r = new Random();
+        for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
             Particle part = Particle.Spawn();
 
@@ -281,15 +298,15 @@ public class Block : MonoBehaviour
     {
         if (change_texture_time > 0 && alternative_textures.Length > 0)
         {
-            var totalTimePerTextureLoop = change_texture_time * alternative_textures.Length;
-            var textureIndex = (int) (Time.time % totalTimePerTextureLoop / change_texture_time);
+            float totalTimePerTextureLoop = change_texture_time * alternative_textures.Length;
+            int textureIndex = (int) (Time.time % totalTimePerTextureLoop / change_texture_time);
 
             return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
         }
 
         if (alternative_textures.Length > 0)
         {
-            var textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternative_textures.Length);
+            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternative_textures.Length);
 
             return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
         }
@@ -301,32 +318,18 @@ public class Block : MonoBehaviour
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
     }
-
-    public virtual void OnTriggerStay2D(Collider2D col)
-    {
-        if(climbable)
-            if (col.GetComponent<Entity>() != null) 
-                col.GetComponent<Entity>().isOnClimbable = true;
-    }
-
-    public virtual void OnTriggerExit2D(Collider2D col)
-    {
-        if (climbable)
-            if (col.GetComponent<Entity>() != null) 
-                col.GetComponent<Entity>().isOnClimbable = false;
-    }
 }
 
 public enum Block_SoundType
 {
-    Stone,
-    Wood,
-    Sand,
-    Dirt,
-    Grass,
-    Wool,
-    Gravel,
-    Ladder,
-    Glass,
-    Fire,
+    Stone
+    , Wood
+    , Sand
+    , Dirt
+    , Grass
+    , Wool
+    , Gravel
+    , Ladder
+    , Glass
+    , Fire
 }

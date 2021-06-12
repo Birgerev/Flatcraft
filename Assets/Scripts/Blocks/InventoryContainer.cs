@@ -1,12 +1,9 @@
-﻿using System;
-using UnityEngine;
-
-public class InventoryContainer : Block
+﻿public class InventoryContainer : Block
 {
     public override void ServerInitialize()
     {
         base.ServerInitialize();
-        
+
         if (!GetData().HasTag("inventoryId"))
         {
             Inventory inv = NewInventory();

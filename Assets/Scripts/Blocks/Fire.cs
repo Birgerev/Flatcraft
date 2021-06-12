@@ -1,5 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = System.Random;
 
 public class Fire : Block
 {
@@ -16,6 +16,14 @@ public class Fire : Block
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;
 
+    public override void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.GetComponent<Entity>() != null)
+            col.GetComponent<Entity>().fireTime = 7;
+
+        base.OnTriggerStay2D(col);
+    }
+
     public override ItemStack GetDrop()
     {
         return new ItemStack();
@@ -23,24 +31,22 @@ public class Fire : Block
 
     public override void RandomTick()
     {
-        var random = new System.Random();
-        bool ambinetSound = (random.NextDouble() < 0.5d);
-        bool spread = (random.NextDouble() < 0.8d);
+        Random random = new Random();
+        bool ambinetSound = random.NextDouble() < 0.5d;
+        bool spread = random.NextDouble() < 0.8d;
 
         if (ambinetSound)
-        {
             Sound.Play(location, "block/fire/ambient", SoundType.Blocks, 0.8f, 1.2f);
-        }
 
         if (spread)
         {
-            var spreadLocation = new Location();
+            Location spreadLocation = new Location();
 
             int attempts = 0;
             while (spreadLocation.Equals(new Location()))
             {
-                var x = random.Next(-1, 1 + 1);    //+1 because upper bound is exclusive
-                var y = random.Next(-2, 2 + 1);
+                int x = random.Next(-1, 1 + 1); //+1 because upper bound is exclusive
+                int y = random.Next(-2, 2 + 1);
 
                 if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
                     (location + new Location(x, y - 1)).GetMaterial() != Material.Air &&
@@ -56,7 +62,7 @@ public class Fire : Block
         }
         else
         {
-            bool netherrackBelow = ((location + new Location(0, -1)).GetMaterial() == Material.Netherrack);
+            bool netherrackBelow = (location + new Location(0, -1)).GetMaterial() == Material.Netherrack;
 
             if (!netherrackBelow)
             {
@@ -67,12 +73,5 @@ public class Fire : Block
         }
 
         base.RandomTick();
-    }
-    public override void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.GetComponent<Entity>() != null)
-            col.GetComponent<Entity>().fireTime = 7;
-
-        base.OnTriggerStay2D(col);
     }
 }

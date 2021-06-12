@@ -1,4 +1,6 @@
-﻿public class Lava : Liquid
+﻿using System;
+
+public class Lava : Liquid
 {
     public override string texture { get; set; } = "block_lava";
 
@@ -10,25 +12,25 @@
     {
         Location loc = location + relativeLocation;
 
-        if (relativeLocation.y != 0)        // Lava only effects when flowing down to water, which creates regular stone
+        if (relativeLocation.y != 0) // Lava only effects when flowing down to water, which creates regular stone
         {
             LiquidEncounterEffect(loc);
             loc.SetMaterial(Material.Stone).Tick();
-            
+
             base.LiquidEncounterFlow(relativeLocation);
         }
     }
 
     public override void RandomTick()
     {
-        var random = new System.Random();
-        var spreadLocation = new Location();
+        Random random = new Random();
+        Location spreadLocation = new Location();
 
         int attempts = 0;
         while (spreadLocation.Equals(new Location()))
         {
-            var x = random.Next(-1, 1 + 1);    //+1 because upper bound is exclusive
-            var y = random.Next(-2, 2 + 1);
+            int x = random.Next(-1, 1 + 1); //+1 because upper bound is exclusive
+            int y = random.Next(-2, 2 + 1);
 
             if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
                 (location + new Location(x, y - 1)).GetMaterial() != Material.Air &&

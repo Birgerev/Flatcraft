@@ -20,12 +20,12 @@ namespace LibNoise.Operator
         /// <param name="z">The rotation around the z-axis.</param>
         private void SetAngles(double x, double y, double z)
         {
-            var xc = Math.Cos(x * Mathf.Deg2Rad);
-            var yc = Math.Cos(y * Mathf.Deg2Rad);
-            var zc = Math.Cos(z * Mathf.Deg2Rad);
-            var xs = Math.Sin(x * Mathf.Deg2Rad);
-            var ys = Math.Sin(y * Mathf.Deg2Rad);
-            var zs = Math.Sin(z * Mathf.Deg2Rad);
+            double xc = Math.Cos(x * Mathf.Deg2Rad);
+            double yc = Math.Cos(y * Mathf.Deg2Rad);
+            double zc = Math.Cos(z * Mathf.Deg2Rad);
+            double xs = Math.Sin(x * Mathf.Deg2Rad);
+            double ys = Math.Sin(y * Mathf.Deg2Rad);
+            double zs = Math.Sin(z * Mathf.Deg2Rad);
             _x1Matrix = ys * xs * zs + yc * zc;
             _y1Matrix = xc * zs;
             _z1Matrix = ys * zc - yc * xs * zs;
@@ -54,9 +54,9 @@ namespace LibNoise.Operator
         public override double GetValue(double x, double y, double z)
         {
             Debug.Assert(Modules[0] != null);
-            var nx = _x1Matrix * x + _y1Matrix * y + _z1Matrix * z;
-            var ny = _x2Matrix * x + _y2Matrix * y + _z2Matrix * z;
-            var nz = _x3Matrix * x + _y3Matrix * y + _z3Matrix * z;
+            double nx = _x1Matrix * x + _y1Matrix * y + _z1Matrix * z;
+            double ny = _x2Matrix * x + _y2Matrix * y + _z2Matrix * z;
+            double nz = _x3Matrix * x + _y3Matrix * y + _z3Matrix * z;
             return Modules[0].GetValue(nx, ny, nz);
         }
 

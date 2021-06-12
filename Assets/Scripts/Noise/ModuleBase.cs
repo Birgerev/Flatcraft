@@ -12,9 +12,9 @@ namespace LibNoise
     /// </summary>
     public enum QualityMode
     {
-        Low,
-        Medium,
-        High
+        Low
+        , Medium
+        , High
     }
 
     #endregion
@@ -24,10 +24,6 @@ namespace LibNoise
     /// </summary>
     public abstract class ModuleBase : IDisposable
     {
-        #region Fields
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -36,7 +32,8 @@ namespace LibNoise
         /// <param name="count">The number of source modules.</param>
         protected ModuleBase(int count)
         {
-            if (count > 0) Modules = new ModuleBase[count];
+            if (count > 0)
+                Modules = new ModuleBase[count];
         }
 
         #endregion
@@ -56,7 +53,8 @@ namespace LibNoise
                 Debug.Assert(Modules.Length > 0);
                 if (index < 0 || index >= Modules.Length)
                     throw new ArgumentOutOfRangeException("Index out of valid module range");
-                if (Modules[index] == null) throw new ArgumentNullException("Desired element is null");
+                if (Modules[index] == null)
+                    throw new ArgumentNullException("Desired element is null");
                 return Modules[index];
             }
             set
@@ -64,10 +62,15 @@ namespace LibNoise
                 Debug.Assert(Modules.Length > 0);
                 if (index < 0 || index >= Modules.Length)
                     throw new ArgumentOutOfRangeException("Index out of valid module range");
-                if (value == null) throw new ArgumentNullException("Value should not be null");
+                if (value == null)
+                    throw new ArgumentNullException("Value should not be null");
                 Modules[index] = value;
             }
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 
@@ -129,7 +132,8 @@ namespace LibNoise
         /// </summary>
         public void Dispose()
         {
-            if (!IsDisposed) IsDisposed = Disposing();
+            if (!IsDisposed)
+                IsDisposed = Disposing();
             GC.SuppressFinalize(this);
         }
 
@@ -141,7 +145,7 @@ namespace LibNoise
         {
             if (Modules != null)
             {
-                for (var i = 0; i < Modules.Length; i++)
+                for (int i = 0; i < Modules.Length; i++)
                 {
                     Modules[i].Dispose();
                     Modules[i] = null;

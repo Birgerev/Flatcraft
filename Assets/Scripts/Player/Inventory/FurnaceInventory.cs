@@ -5,12 +5,22 @@ using UnityEngine;
 [Serializable]
 public class FurnaceInventory : Inventory
 {
-    [SyncVar]
-    public float fuelLeft;
-    [SyncVar]
-    public float highestFuel;
-    [SyncVar]
-    public int smeltingProgress;
+    [SyncVar] public float fuelLeft;
+
+    [SyncVar] public float highestFuel;
+
+    [SyncVar] public int smeltingProgress;
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (Time.time % 1f - Time.deltaTime <= 0)
+        {
+            CheckFuels();
+            SmeltTick();
+        }
+    }
 
     [Server]
     public static Inventory CreatePreset()
@@ -33,17 +43,6 @@ public class FurnaceInventory : Inventory
         return 2;
     }
 
-    public override void Update()
-    {
-        base.Update();
-        
-        if ((Time.time % 1f) - Time.deltaTime <= 0)
-        {
-            CheckFuels();
-            SmeltTick();
-        }
-    }
-
     public void CheckFuels()
     {
         if (fuelLeft <= 0 && GetItem(GetFuelSlot()) != null && GetRecipe() != null &&
@@ -57,7 +56,7 @@ public class FurnaceInventory : Inventory
 
     public void SmeltTick()
     {
-        var curRecipe = GetRecipe();
+        SmeltingRecipe curRecipe = GetRecipe();
 
         if (fuelLeft <= 0)
             highestFuel = 0;
@@ -69,7 +68,8 @@ public class FurnaceInventory : Inventory
             //subtract fuel
             if (fuelLeft > 0)
                 fuelLeft--;
-            else return;
+            else
+                return;
 
             //Add progress to smeltbar
             smeltingProgress += 1;
@@ -92,7 +92,7 @@ public class FurnaceInventory : Inventory
     public void FillSmeltingResult()
     {
         //Called once smelting is done 
-        var curRecepie = GetRecipe();
+        SmeltingRecipe curRecepie = GetRecipe();
 
         GetItem(GetResultSlot()).material = curRecepie.result.material;
         GetItem(GetResultSlot()).amount += curRecepie.result.amount;
@@ -105,7 +105,7 @@ public class FurnaceInventory : Inventory
     {
         if (GetItem(GetIngredientSlot()).amount <= 0)
             return null;
-        
+
         //Get recepie based on contents of ingredient slot
         return SmeltingRecipe.FindRecipeByIngredient(GetItem(GetIngredientSlot()).material);
     }

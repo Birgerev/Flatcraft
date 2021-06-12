@@ -13,7 +13,7 @@ public class OverworldSky : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        var cameraPosition = CameraController.instance.transform.position;
+        Vector3 cameraPosition = CameraController.instance.transform.position;
 
         playerLockedY.transform.position = new Vector3(transform.position.x, cameraPosition.y);
         skySpinner.transform.rotation = Quaternion.Euler(0, 0, -timeOfDay * 360);

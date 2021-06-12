@@ -5,9 +5,9 @@
 
     protected override void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        var block = loc.GetBlock();
+        Block block = loc.GetBlock();
 
-        if (block != null) 
+        if (block != null)
             block.Hit(player, 1 / Player.interactionsPerPerSecond, tool_type, tool_level);
     }
 
@@ -28,7 +28,7 @@
 
         if (tool_type == Tool_Type.FlintAndSteel && loc.GetMaterial() == Material.TNT)
         {
-            ((TNT)loc.GetBlock()).Prime();
+            ((TNT) loc.GetBlock()).Prime();
             player.playerEntity.GetComponent<Player>().DoToolDurability();
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
@@ -39,21 +39,21 @@
 
 public enum Tool_Type
 {
-    None,
-    Pickaxe,
-    Axe,
-    Shovel,
-    Hoe,
-    Sword,
-    FlintAndSteel,
+    None
+    , Pickaxe
+    , Axe
+    , Shovel
+    , Hoe
+    , Sword
+    , FlintAndSteel
 }
 
 public enum Tool_Level
 {
-    None = 1,
-    Wooden = 2,
-    Stone = 3,
-    Gold = 4,
-    Iron = 5,
-    Diamond = 6
+    None = 1
+    , Wooden = 2
+    , Stone = 3
+    , Gold = 4
+    , Iron = 5
+    , Diamond = 6
 }

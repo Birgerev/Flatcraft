@@ -9,10 +9,6 @@ namespace LibNoise.Operator
     /// </summary>
     public class Exponent : ModuleBase
     {
-        #region Fields
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -34,9 +30,13 @@ namespace LibNoise.Operator
         public override double GetValue(double x, double y, double z)
         {
             Debug.Assert(Modules[0] != null);
-            var v = Modules[0].GetValue(x, y, z);
+            double v = Modules[0].GetValue(x, y, z);
             return Math.Pow(Math.Abs((v + 1.0) / 2.0), Value) * 2.0 - 1.0;
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 

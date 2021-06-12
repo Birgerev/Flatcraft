@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class Zombie : Monster
 {
     public override float maxHealth { get; } = 20;
+    protected override bool burnUnderSun { get; } = true;
 
     public override List<ItemStack> GetDrops()
     {

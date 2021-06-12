@@ -10,13 +10,13 @@ public struct BlockData
         keys = new List<string>(cloneData.keys);
         values = new List<string>(cloneData.values);
     }
-    
+
     public BlockData(string saveDataString)
     {
         keys = new List<string>();
         values = new List<string>();
-        
-        foreach (var tagStrings in saveDataString.Split('|'))
+
+        foreach (string tagStrings in saveDataString.Split('|'))
             if (tagStrings.Contains("="))
                 SetTag(tagStrings.Split('=')[0], tagStrings.Split('=')[1]);
     }
@@ -26,7 +26,7 @@ public struct BlockData
         if (HasTag(key))
         {
             int index = keys.IndexOf(key);
-            
+
             keys.RemoveAt(index);
             values.RemoveAt(index);
         }
@@ -43,13 +43,13 @@ public struct BlockData
             keys.Add(key);
             values.Add(value);
         }
-        
+
         return this;
     }
 
     public bool HasTag(string key)
     {
-        return (keys.Contains(key));
+        return keys.Contains(key);
     }
 
     public string GetTag(string key)
@@ -62,13 +62,13 @@ public struct BlockData
 
     public string GetSaveString()
     {
-        var result = "";
+        string result = "";
 
         for (int i = 0; i < keys.Count; i++)
         {
-            if(i != 0)
+            if (i != 0)
                 result += "|";
-            
+
             result += keys[i] + "=" + values[i];
         }
 

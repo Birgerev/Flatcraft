@@ -38,14 +38,16 @@ namespace LibNoise.Operator
             Debug.Assert(Modules[0] != null);
             if (Minimum > Maximum)
             {
-                var t = Minimum;
+                double t = Minimum;
                 Minimum = Maximum;
                 Maximum = t;
             }
 
-            var v = Modules[0].GetValue(x, y, z);
-            if (v < Minimum) return Minimum;
-            if (v > Maximum) return Maximum;
+            double v = Modules[0].GetValue(x, y, z);
+            if (v < Minimum)
+                return Minimum;
+            if (v > Maximum)
+                return Maximum;
             return v;
         }
 

@@ -1,21 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using LibNoise;
 using LibNoise.Generator;
+using UnityEngine;
+using Random = System.Random;
 
 public class OverworldGenerator : WorldGenerator
 {
-    public static int SeaLevel = 62;
-    public static Perlin caveNoise = null;
-
     private const float CaveFrequency = 5;
     private const float CaveLacunarity = 0.6f;
     private const float CavePercistance = 2;
     private const int CaveOctaves = 4;
     private const int LavaHeight = 10;
 
-    
+
     private const int OreCoalHeight = 128;
     private const double OreCoalChance = 0.0035f;
 
@@ -33,40 +29,42 @@ public class OverworldGenerator : WorldGenerator
 
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005f;
-    
+    public static int SeaLevel = 62;
+    public static Perlin caveNoise;
+
     public OverworldGenerator()
     {
-        if(caveNoise == null)
+        if (caveNoise == null)
             caveNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
                 WorldManager.world.seed, QualityMode.High);
     }
-    
-    
+
+
     public override Material GenerateTerrainBlock(Location loc)
     {
         ChunkPosition cPos = new ChunkPosition(loc);
-        
+
         Material mat = Material.Air;
         float noiseValue;
-        
+
         //Determine wheights for each biome
         Biome biome = Biome.GetBiomeAt(cPos);
         Biome rightBiome = Biome.GetBiomeAt(new ChunkPosition(cPos.chunkX + 1, cPos.dimension));
         Biome leftBiome = Biome.GetBiomeAt(new ChunkPosition(cPos.chunkX - 1, cPos.dimension));
-        
+
         float primaryBiomeWeight;
         if (biome != rightBiome)
         {
-            primaryBiomeWeight = 
-                1 - ((float)Mathf.Abs(loc.x - new ChunkPosition(loc).worldX) / (float)Chunk.Width);
+            primaryBiomeWeight =
+                1 - Mathf.Abs(loc.x - new ChunkPosition(loc).worldX) / (float) Chunk.Width;
             noiseValue = Biome.BlendNoiseValues(loc, biome, rightBiome, primaryBiomeWeight);
         }
         else
         {
             noiseValue = biome.GetLandscapeNoiseAt(loc);
         }
-        
-        
+
+
         //-Terrain-//
         if (noiseValue > 0.1f)
         {
@@ -82,25 +80,25 @@ public class OverworldGenerator : WorldGenerator
                 mat = Material.Grass;
             }
 
-            if (noiseValue > biome.stoneLayerNoiseValue) 
+            if (noiseValue > biome.stoneLayerNoiseValue)
                 mat = Material.Stone;
         }
 
         //-Lakes-//
-        if (mat == Material.Air && loc.y <= SeaLevel) 
+        if (mat == Material.Air && loc.y <= SeaLevel)
             mat = Material.Water;
 
         //-Dirt & Gravel Patches-//
         if (mat == Material.Stone)
         {
-            if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20, (float)loc.y / 20)) > 7.5f)
+            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
                 mat = Material.Dirt;
-            if (Mathf.Abs((float)caveNoise.GetValue((float)loc.x / 20 + 100, (float)loc.y / 20, 200)) > 7.5f)
+            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
                 mat = Material.Gravel;
         }
 
         //-Sea-//
-        if (mat == Material.Air && loc.y <= SeaLevel) 
+        if (mat == Material.Air && loc.y <= SeaLevel)
             mat = Material.Water;
 
         //-Caves-//
@@ -110,28 +108,28 @@ public class OverworldGenerator : WorldGenerator
         //-Bedrock Generation-//
         if (loc.y <= 4)
         {
-            System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
-            
+            Random r = new Random(SeedGenerator.SeedByLocation(loc));
+
             //Fill layer 0 and then progressively less chance of bedrock further up
             if (loc.y == 0)
                 mat = Material.Bedrock;
             else if (r.Next(0, loc.y + 2) <= 1)
                 mat = Material.Bedrock;
         }
-        
+
         return mat;
     }
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByLocation(loc));
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
-        
+
         Material[] flowerMaterials = {Material.Red_Flower};
         Material[] vegetationMaterials = {Material.Tall_Grass};
 
-        if ((matBeneath == Material.Grass || matBeneath == Material.Sand)  && mat == Material.Air) 
+        if ((matBeneath == Material.Grass || matBeneath == Material.Sand) && mat == Material.Air)
         {
             //Vegetation
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
@@ -191,22 +189,18 @@ public class OverworldGenerator : WorldGenerator
             if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
                 return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Coal"));
         }
-        
+
         //Generate Liquid Pockets
         if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
-        {
             if (mat == Material.Stone)
             {
-                Material liquidMat = (r.Next(0, 100) < 75 ? Material.Water : Material.Lava);
+                Material liquidMat = r.Next(0, 100) < 75 ? Material.Water : Material.Lava;
 
                 return new BlockState(liquidMat);
             }
-        }
 
         if (loc.y < LavaHeight && mat == Material.Air)
-        {
             return new BlockState(Material.Lava);
-        }
 
         return new BlockState(Material.Air);
     }
