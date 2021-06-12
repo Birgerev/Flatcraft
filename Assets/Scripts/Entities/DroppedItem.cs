@@ -65,7 +65,7 @@ public class DroppedItem : Entity
         GetRenderer().sprite = item.GetSprite();
 
         //Bobbing
-        GetRenderer().transform.localPosition = new Vector3(0, Mathf.Cos(cosIndex) * 0.1f);
+        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * 0.1f) + 0.4f);
         cosIndex += 2f * Time.deltaTime;
 
         base.ClientUpdate();
