@@ -230,8 +230,7 @@ public class LivingEntity : Entity
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;
     }
-
-
+    
     [Server]
     private void FallDamageCheck()
     {

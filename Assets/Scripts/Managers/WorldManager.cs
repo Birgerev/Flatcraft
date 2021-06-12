@@ -47,6 +47,13 @@ public class WorldManager : NetworkBehaviour
                 worldTime = world.time;
         }
     }
+    
+    public static TimeOfDay GetTimeOfDay()
+    {
+        return instance.worldTime % dayLength > dayLength / 2
+            ? TimeOfDay.Night
+            : TimeOfDay.Day;
+    }
 
     private IEnumerator SaveLoop()
     {

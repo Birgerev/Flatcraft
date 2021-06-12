@@ -411,6 +411,9 @@ public class Entity : NetworkBehaviour
     {
         lastDamager = source;
 
+        if (source.fireTime > 0)
+            fireTime = 7;
+        
         TakeHitDamage(damage);
     }
 

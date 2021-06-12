@@ -13,19 +13,19 @@ public class SunlightSource : MonoBehaviour
 
     private IEnumerator UpdateTimeOfDayLoop()
     {
-        TimeOfDay lastUpdated = GetTimeOfDay();
+        TimeOfDay lastUpdated = WorldManager.GetTimeOfDay();
         lightSource.UpdateLightLevel(
-            GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
+            WorldManager.GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
             false);
 
         while (true)
         {
-            if (GetTimeOfDay() != lastUpdated)
+            if (WorldManager.GetTimeOfDay() != lastUpdated)
             {
                 lightSource.UpdateLightLevel(
-                    GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
+                    WorldManager.GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
                     true);
-                lastUpdated = GetTimeOfDay();
+                lastUpdated = WorldManager.GetTimeOfDay();
             }
 
             yield return new WaitForSeconds(5);
@@ -35,13 +35,6 @@ public class SunlightSource : MonoBehaviour
     public Location GetLocation()
     {
         return Location.LocationByPosition(transform.position);
-    }
-
-    private TimeOfDay GetTimeOfDay()
-    {
-        return WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2
-            ? TimeOfDay.Night
-            : TimeOfDay.Day;
     }
 
     public static SunlightSource Create(Location loc)
@@ -61,10 +54,4 @@ public class SunlightSource : MonoBehaviour
 
         return source;
     }
-}
-
-internal enum TimeOfDay
-{
-    Day
-    , Night
 }
