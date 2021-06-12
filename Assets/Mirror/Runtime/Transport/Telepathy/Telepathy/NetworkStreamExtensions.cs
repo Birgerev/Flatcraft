@@ -52,6 +52,7 @@ namespace Telepathy
                 // otherwise add to bytes read
                 bytesRead += result;
             }
+
             return true;
         }
     }

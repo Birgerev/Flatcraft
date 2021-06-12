@@ -11,7 +11,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     [Server]
     public void CheckCraftingRecipes()
     {
-        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
+        CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
         CraftingRecipe curRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
 
         if (curRecipe == null)
@@ -22,12 +22,12 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
 
         inv.SetItem(inv.GetCraftingResultSlot(), curRecipe.result);
     }
-    
+
     [Client]
     public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
     {
-        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
-        
+        CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
+
         if (inventoryIndex == 0 && slotIndex == inv.GetCraftingResultSlot())
         {
             OnClickCraftingResultSlot();
@@ -40,12 +40,12 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     [Command(requiresAuthority = false)]
     public virtual void OnClickCraftingResultSlot()
     {
-        CraftingInventory inv = ((CraftingInventory) Inventory.Get(inventoryIds[0]));
-        
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material == Material.Air) 
+        CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
+
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material == Material.Air)
             return;
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItem.material && 
-            pointerItem.material != Material.Air) 
+        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItem.material &&
+            pointerItem.material != Material.Air)
             return;
 
         ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot()).Clone();
@@ -59,10 +59,10 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         {
             ItemStack newCraftingSlotItem = inv.GetItem(i).Clone();
             newCraftingSlotItem.amount--;
-            
+
             inv.SetItem(i, newCraftingSlotItem);
         }
-        
+
         UpdateInventory();
     }
 }

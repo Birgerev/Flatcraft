@@ -7,30 +7,26 @@ using UnityEngine.Networking;
 namespace Mirror.Cloud
 {
     /// <summary>
-    /// Methods to create and send UnityWebRequest
+    ///     Methods to create and send UnityWebRequest
     /// </summary>
     public class RequestCreator : IRequestCreator
     {
-        const string GET = "GET";
-        const string POST = "POST";
-        const string PATCH = "PATCH";
-        const string DELETE = "DELETE";
+        private const string GET = "GET";
+        private const string POST = "POST";
+        private const string PATCH = "PATCH";
+        private const string DELETE = "DELETE";
+        public readonly string apiKey;
 
         public readonly string baseAddress;
-        public readonly string apiKey;
-        readonly ICoroutineRunner runner;
+        private readonly ICoroutineRunner runner;
 
         public RequestCreator(string baseAddress, string apiKey, ICoroutineRunner coroutineRunner)
         {
             if (string.IsNullOrEmpty(baseAddress))
-            {
                 throw new ArgumentNullException(nameof(baseAddress));
-            }
 
             if (string.IsNullOrEmpty(apiKey))
-            {
                 throw new ArgumentNullException(nameof(apiKey));
-            }
 
             this.baseAddress = baseAddress;
             this.apiKey = apiKey;
@@ -39,38 +35,8 @@ namespace Mirror.Cloud
         }
 
 
-        Uri CreateUri(string page)
-        {
-            return new Uri(string.Format("{0}/{1}?key={2}", baseAddress, page, apiKey));
-        }
-
-        UnityWebRequest CreateWebRequest(string page, string method, string json = null)
-        {
-            bool hasJson = !string.IsNullOrEmpty(json);
-            Logger.LogRequest(page, method, hasJson, json);
-
-            UnityWebRequest request = new UnityWebRequest(CreateUri(page));
-            request.method = method;
-            if (hasJson)
-            {
-                request.SetRequestHeader("Content-Type", "application/json");
-            }
-
-            request.downloadHandler = new DownloadHandlerBuffer();
-
-            byte[] bodyRaw = hasJson
-                ? Encoding.UTF8.GetBytes(json)
-                : null;
-
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-
-            return request;
-        }
-
-
-
         /// <summary>
-        /// Create Get Request to page
+        ///     Create Get Request to page
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
@@ -80,7 +46,7 @@ namespace Mirror.Cloud
         }
 
         /// <summary>
-        /// Creates Post Request to page with Json body
+        ///     Creates Post Request to page with Json body
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="page"></param>
@@ -93,7 +59,7 @@ namespace Mirror.Cloud
         }
 
         /// <summary>
-        /// Creates Patch Request to page with Json body
+        ///     Creates Patch Request to page with Json body
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="page"></param>
@@ -106,7 +72,7 @@ namespace Mirror.Cloud
         }
 
         /// <summary>
-        /// Create Delete Request to page
+        ///     Create Delete Request to page
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
@@ -121,7 +87,8 @@ namespace Mirror.Cloud
             runner.StartCoroutine(SendRequestEnumerator(request, onSuccess, onFail));
         }
 
-        public IEnumerator SendRequestEnumerator(UnityWebRequest request, RequestSuccess onSuccess = null, RequestFail onFail = null)
+        public IEnumerator SendRequestEnumerator(UnityWebRequest request, RequestSuccess onSuccess = null
+            , RequestFail onFail = null)
         {
             using (UnityWebRequest webRequest = request)
             {
@@ -131,14 +98,37 @@ namespace Mirror.Cloud
                 string text = webRequest.downloadHandler.text;
                 Logger.Verbose(text);
                 if (webRequest.IsOk())
-                {
                     onSuccess?.Invoke(text);
-                }
                 else
-                {
                     onFail?.Invoke(text);
-                }
             }
+        }
+
+
+        private Uri CreateUri(string page)
+        {
+            return new Uri(string.Format("{0}/{1}?key={2}", baseAddress, page, apiKey));
+        }
+
+        private UnityWebRequest CreateWebRequest(string page, string method, string json = null)
+        {
+            bool hasJson = !string.IsNullOrEmpty(json);
+            Logger.LogRequest(page, method, hasJson, json);
+
+            UnityWebRequest request = new UnityWebRequest(CreateUri(page));
+            request.method = method;
+            if (hasJson)
+                request.SetRequestHeader("Content-Type", "application/json");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            byte[] bodyRaw = hasJson
+                ? Encoding.UTF8.GetBytes(json)
+                : null;
+
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+
+            return request;
         }
     }
 }

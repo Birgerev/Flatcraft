@@ -1,19 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 public class NetherGenerator : WorldGenerator
 {
     public const int LavaLevel = 62;
-    
+
     public override Material GenerateTerrainBlock(Location loc)
     {
-        System.Random r = new System.Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByLocation(loc));
         ChunkPosition cPos = new ChunkPosition(loc);
         Biome biome = Biome.GetBiomeAt(cPos);
-        
+
         Material mat = Material.Air;
-        
+
         //TODO
         /*
         float noiseValue = biome.GetLandscapeNoiseAt(loc);
@@ -38,14 +36,14 @@ public class NetherGenerator : WorldGenerator
             else if (r.Next(0, loc.y + 2) <= 1)
                 mat = Material.Bedrock;
         }
-        
+
         //-Upper Bedrock Generation-//
         if (loc.y >= 128 - 4 && loc.y <= 128)
         {
             //Fill layer 256 and then progressively less chance of bedrock further down
             if (loc.y == 128 - 4)
                 mat = Material.Bedrock;
-            else if (r.Next(0, (128 - loc.y) + 2) <= 1)
+            else if (r.Next(0, 128 - loc.y + 2) <= 1)
                 mat = Material.Bedrock;
         }
 

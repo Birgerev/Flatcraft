@@ -2,6 +2,8 @@
 // feature. keeping any global state between sessions will break
 // Mirror and most of our user's projects. don't allow it for now.
 // https://blogs.unity3d.com/2019/11/05/enter-play-mode-faster-in-unity-2019-3/
+
+using Mirror.Weaver;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +12,7 @@ namespace Mirror
     public class EnterPlayModeSettingsCheck : MonoBehaviour
     {
         [InitializeOnLoadMethod]
-        static void OnInitializeOnLoad()
+        private static void OnInitializeOnLoad()
         {
 #if UNITY_2019_3_OR_NEWER
             // We can't support experimental "Enter Play Mode Options" mode
@@ -23,7 +25,7 @@ namespace Mirror
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
 
-        static void OnPlayModeStateChanged(PlayModeStateChange state)
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
             // Per Unity docs, this fires "when exiting edit mode before the Editor is in play mode".
             // This doesn't fire when closing the editor.
@@ -39,7 +41,7 @@ namespace Mirror
             }
         }
 
-        static void CheckSuccessfulWeave()
+        private static void CheckSuccessfulWeave()
         {
             // Check if last weave result was successful
             if (!SessionState.GetBool("MIRROR_WEAVE_SUCCESS", false))
@@ -47,7 +49,7 @@ namespace Mirror
                 // Last weave result was a failure...try to weave again
                 // Faults will show in the console that may have been cleared by "Clear on Play"
                 SessionState.SetBool("MIRROR_WEAVE_SUCCESS", true);
-                Weaver.CompilationFinishedHook.WeaveExistingAssemblies();
+                CompilationFinishedHook.WeaveExistingAssemblies();
 
                 // Did that clear things up for us?
                 if (!SessionState.GetBool("MIRROR_WEAVE_SUCCESS", false))
@@ -60,12 +62,13 @@ namespace Mirror
         }
 
 #if UNITY_2019_3_OR_NEWER
-        static void CheckPlayModeOptions()
+        private static void CheckPlayModeOptions()
         {
             // enabling the checkbox is enough. it controls all the other settings.
             if (EditorSettings.enterPlayModeOptionsEnabled)
             {
-                Debug.LogError("Enter Play Mode Options are not supported by Mirror. Please disable 'ProjectSettings -> Editor -> Enter Play Mode Settings (Experimental)'.");
+                Debug.LogError(
+                    "Enter Play Mode Options are not supported by Mirror. Please disable 'ProjectSettings -> Editor -> Enter Play Mode Settings (Experimental)'.");
                 EditorApplication.isPlaying = false;
             }
         }

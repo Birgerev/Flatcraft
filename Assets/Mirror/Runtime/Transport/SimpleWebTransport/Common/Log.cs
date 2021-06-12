@@ -6,18 +6,18 @@ namespace Mirror.SimpleWeb
 {
     public static class Log
     {
-        // used for Conditional
-        const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
-        const string DEBUG = nameof(DEBUG);
-
         public enum Levels
         {
-            none = 0,
-            error = 1,
-            warn = 2,
-            info = 3,
-            verbose = 4,
+            none = 0
+            , error = 1
+            , warn = 2
+            , info = 3
+            , verbose = 4
         }
+
+        // used for Conditional
+        private const string SIMPLEWEB_LOG_ENABLED = nameof(SIMPLEWEB_LOG_ENABLED);
+        private const string DEBUG = nameof(DEBUG);
 
         public static Levels level = Levels.none;
 
@@ -41,7 +41,8 @@ namespace Mirror.SimpleWeb
             if (level < Levels.verbose)
                 return;
 
-            Debug.Log($"VERBOSE: <color=blue>{label}: {BufferToString(arrayBuffer.array, 0, arrayBuffer.count)}</color>");
+            Debug.Log(
+                $"VERBOSE: <color=blue>{label}: {BufferToString(arrayBuffer.array, 0, arrayBuffer.count)}</color>");
         }
 
         [Conditional(SIMPLEWEB_LOG_ENABLED)]
@@ -69,7 +70,7 @@ namespace Mirror.SimpleWeb
         }
 
         /// <summary>
-        /// An expected Exception was caught, useful for debugging but not important
+        ///     An expected Exception was caught, useful for debugging but not important
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="showColor"></param>
@@ -82,7 +83,8 @@ namespace Mirror.SimpleWeb
             Debug.Log($"INFO_EXCEPTION: <color=blue>{e.GetType().Name}</color> Message: {e.Message}");
         }
 
-        [Conditional(SIMPLEWEB_LOG_ENABLED), Conditional(DEBUG)]
+        [Conditional(SIMPLEWEB_LOG_ENABLED)]
+        [Conditional(DEBUG)]
         public static void Warn(string msg, bool showColor = true)
         {
             if (level < Levels.warn)
@@ -94,7 +96,8 @@ namespace Mirror.SimpleWeb
                 Debug.LogWarning($"WARN: {msg}");
         }
 
-        [Conditional(SIMPLEWEB_LOG_ENABLED), Conditional(DEBUG)]
+        [Conditional(SIMPLEWEB_LOG_ENABLED)]
+        [Conditional(DEBUG)]
         public static void Error(string msg, bool showColor = true)
         {
             if (level < Levels.error)

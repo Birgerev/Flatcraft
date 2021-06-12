@@ -1,22 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ActionBar : MonoBehaviour
 {
-    const float BeginFadeAge = 2f;
-    const float FadeTime = 0.5f;
-    
+    private const float BeginFadeAge = 2f;
+    private const float FadeTime = 0.5f;
+
     public static string message = "";
     public Text text;
     public CanvasGroup canvasGroup;
 
     private float age;
     private string lastFrameMessage = "";
-    
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         age += Time.deltaTime;
         text.text = message;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Clouds : MonoBehaviour
@@ -15,7 +14,7 @@ public class Clouds : MonoBehaviour
         GameObject mainCloud = CreateCloud();
         mainCloud.transform.localPosition = new Vector3(0, 0);
         clouds.Add(mainCloud);
-        
+
         GameObject leftCloud = CreateCloud();
         leftCloud.transform.localPosition = new Vector3(-cloudWidth, 0);
         clouds.Add(leftCloud);
@@ -36,7 +35,7 @@ public class Clouds : MonoBehaviour
             GameObject oldestCloud = clouds[0];
             clouds.Remove(oldestCloud);
             Destroy(oldestCloud);
-            
+
             GameObject newCloud = CreateCloud();
             newCloud.transform.localPosition = new Vector3(-cloudWidth, 0);
             clouds.Add(newCloud);

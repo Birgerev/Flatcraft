@@ -12,12 +12,13 @@
 //
 // Note: normal Debug.Log messages can be shown by building in Debug/Development
 //       mode.
-using UnityEngine;
+
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Mirror
 {
-    struct LogEntry
+    internal struct LogEntry
     {
         public string message;
         public LogType type;
@@ -37,27 +38,53 @@ namespace Mirror
         // and drawing would get slower and slower.
         public int maxLogCount = 50;
 
-        // log as queue so we can remove the first entry easily
-        Queue<LogEntry> log = new Queue<LogEntry>();
-
         // hotkey to show/hide at runtime for easier debugging
         // (sometimes we need to temporarily hide/show it)
         // => F12 makes sense. nobody can find ^ in other games.
         public KeyCode hotKey = KeyCode.F12;
 
-        // GUI
-        bool visible;
-        Vector2 scroll = Vector2.zero;
+        // log as queue so we can remove the first entry easily
+        private readonly Queue<LogEntry> log = new Queue<LogEntry>();
+        private Vector2 scroll = Vector2.zero;
 
-        void Awake()
+        // GUI
+        private bool visible;
+
+        private void Awake()
         {
             Application.logMessageReceived += OnLog;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(hotKey))
+                visible = !visible;
+        }
+
+        private void OnGUI()
+        {
+            if (!visible)
+                return;
+
+            scroll = GUILayout.BeginScrollView(scroll, "Box", GUILayout.Width(Screen.width), GUILayout.Height(height));
+            foreach (LogEntry entry in log)
+            {
+                if (entry.type == LogType.Error || entry.type == LogType.Exception)
+                    GUI.color = Color.red;
+                else if (entry.type == LogType.Warning)
+                    GUI.color = Color.yellow;
+
+                GUILayout.Label(entry.message);
+                GUI.color = Color.white;
+            }
+
+            GUILayout.EndScrollView();
         }
 
         // OnLog logs everything, even Debug.Log messages in release builds
         // => this makes a lot of things easier. e.g. addon initialization logs.
         // => it's really better to have than not to have those
-        void OnLog(string message, string stackTrace, LogType type)
+        private void OnLog(string message, string stackTrace, LogType type)
         {
             // is this important?
             bool isImportant = type == LogType.Error || type == LogType.Exception;
@@ -83,30 +110,6 @@ namespace Mirror
 
             // auto scroll
             scroll.y = float.MaxValue;
-        }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(hotKey))
-                visible = !visible;
-        }
-
-        void OnGUI()
-        {
-            if (!visible) return;
-
-            scroll = GUILayout.BeginScrollView(scroll, "Box", GUILayout.Width(Screen.width), GUILayout.Height(height));
-            foreach (LogEntry entry in log)
-            {
-                if (entry.type == LogType.Error || entry.type == LogType.Exception)
-                    GUI.color = Color.red;
-                else if (entry.type == LogType.Warning)
-                    GUI.color = Color.yellow;
-
-                GUILayout.Label(entry.message);
-                GUI.color = Color.white;
-            }
-            GUILayout.EndScrollView();
         }
     }
 }

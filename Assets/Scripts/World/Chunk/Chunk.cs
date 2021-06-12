@@ -20,24 +20,14 @@ public class Chunk : NetworkBehaviour
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
 
-    private static readonly float mobSpawningChance = 0.005f;
+    private static readonly float animalSpawnChance = 0.1f;
     private static readonly List<string> MobSpawnTypes = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
-
-    public SyncList<BlockState> blockStates = new SyncList<BlockState>();
     public List<Block> randomTickBlocks = new List<Block>();
-    public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
-    public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
 
-    public WorldGenerator worldGenerator;
-
-    [SyncVar]
-    public ChunkPosition chunkPosition;
-    
-    [SyncVar]
-    public bool areBlocksGenerated;
+    [SyncVar] public bool areBlocksGenerated;
     public bool donePlacingGeneratedBlocks;
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
@@ -45,48 +35,57 @@ public class Chunk : NetworkBehaviour
     public bool blocksInitialized;
 
     public Portal_Frame netherPortal;
+    public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
+    public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
+
+    public SyncList<BlockState> blockStates = new SyncList<BlockState>();
+
+    [SyncVar] public ChunkPosition chunkPosition;
+
+    public WorldGenerator worldGenerator;
 
 
     private void Start()
     {
         if (isServer)
-        {
             WorldManager.instance.chunks.Add(chunkPosition, this);
-        }
-        
+
         Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] has been created");
-        
+
         StartCoroutine(CreateChunk());
     }
 
-    IEnumerator CreateChunk()
+    public void OnDestroy()
+    {
+        WorldManager.instance.chunks.Remove(chunkPosition);
+    }
+
+    private IEnumerator CreateChunk()
     {
         WorldManager.instance.chunks[chunkPosition] = this;
 
-        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension+ "]";
-        transform.position = new Location(chunkPosition.worldX , 0, chunkPosition.dimension).GetPosition();
+        gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension + "]";
+        transform.position = new Location(chunkPosition.worldX, 0, chunkPosition.dimension).GetPosition();
 
         isLoaded = false;
         donePlacingGeneratedBlocks = false;
         donePlacingBackgroundBlocks = false;
         isLightGenerated = false;
         blocksInitialized = false;
-        
-        if(isServer)
+
+        if (isServer)
             areBlocksGenerated = false;
-        
+
         if (isServer)
         {
             int blocksAmountInChunk = Width * Height;
             for (int i = 0; i < blocksAmountInChunk; i++)
-            {
                 blockStates.Add(new BlockState(Material.Air));
-            }
         }
-        
+
         //pre-generate chunk biomes
         Biome.GetBiomeAt(chunkPosition);
-        
+
         if (isServer)
         {
             if (chunkPosition.HasBeenGenerated())
@@ -106,41 +105,40 @@ public class Chunk : NetworkBehaviour
             yield return new WaitForSeconds(0.1f);
 
         if (!isServer)
-        {
             StartCoroutine(BuildChunk());
-        }
-        
+
         while (!donePlacingGeneratedBlocks)
             yield return new WaitForSeconds(0.1f);
 
         if (isServer)
         {
             //Generate Tick all block (decay all necessary grass etc)
-            StartCoroutine(MobSpawning());
+            StartCoroutine(MobSpawnCycle());
             StartCoroutine(BlockRandomTicking());
         }
-        
+
         //Initialize all blocks after all blocks have been created
         StartCoroutine(InitializeAllBlocks());
 
         while (!blocksInitialized)
             yield return new WaitForSeconds(0.1f);
-        
+
         GenerateBackgroundBlocks();
         GenerateSunlightSources();
-        
+
         isLoaded = true;
         Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is done...");
-        
-        if(isServer)
+
+        if (isServer)
             StartCoroutine(SelfDestructionChecker());
-        
+
         //Wait until neighboring chunks are loaded to initialize light
         while (true)
         {
             yield return new WaitForSeconds(0.2f);
-            
-            if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() && new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
+
+            if (new ChunkPosition(chunkPosition.chunkX - 1, chunkPosition.dimension).IsChunkLoaded() &&
+                new ChunkPosition(chunkPosition.chunkX + 1, chunkPosition.dimension).IsChunkLoaded())
             {
                 LightManager.UpdateChunkLight(chunkPosition);
                 isLightGenerated = true;
@@ -155,20 +153,18 @@ public class Chunk : NetworkBehaviour
             LightManager.UpdateSunlightInColumn(new BlockColumn(chunkPosition.worldX + x, chunkPosition.dimension),
                 false);
     }
-    
+
     [Server]
-    IEnumerator LoadBlocks()
+    private IEnumerator LoadBlocks()
     {
-        var path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
-                   chunkPosition.chunkX + "\\blocks";
-        
-        var lines = File.ReadAllLines(path);
-        foreach (var line in lines)
-        {
+        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+                      chunkPosition.chunkX + "\\blocks";
+
+        string[] lines = File.ReadAllLines(path);
+        foreach (string line in lines)
             try
             {
-                Location loc = new Location(
-                    int.Parse(line.Split('*')[0].Split(',')[0]),
+                Location loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
                     int.Parse(line.Split('*')[0].Split(',')[1]),
                     chunkPosition.dimension);
                 Material mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
@@ -179,88 +175,85 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in chunk loading block, block save line: '"+ line +"' error: " + e.Message);
+                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message);
             }
-        }
-        
+
         StartCoroutine(BuildChunk());
 
         while (!donePlacingGeneratedBlocks)
             yield return new WaitForSeconds(0.1f);
-        
+
         areBlocksGenerated = true;
     }
 
     [Server]
-    IEnumerator GenerateBlocks()
+    private IEnumerator GenerateBlocks()
     {
-        if(chunkPosition.dimension == Dimension.Overworld)
+        if (chunkPosition.dimension == Dimension.Overworld)
             worldGenerator = new OverworldGenerator();
-        else if(chunkPosition.dimension == Dimension.Nether)
+        else if (chunkPosition.dimension == Dimension.Nether)
             worldGenerator = new NetherGenerator();
 
         chunkPosition.CreateChunkPath();
-            
+
         //Generate Caves
         CaveGenerator.GenerateCavesForRegion(chunkPosition);
-            
+
         //Generate Terrain Blocks
         Dictionary<Location, Material> terrainBlocks = null;
-        var terrainThread = new Thread(() => { terrainBlocks = GenerateChunkTerrain(); });
+        Thread terrainThread = new Thread(() => { terrainBlocks = GenerateChunkTerrain(); });
         terrainThread.Start();
 
-        while (terrainThread.IsAlive) 
+        while (terrainThread.IsAlive)
             yield return new WaitForSeconds(0.1f);
 
         foreach (KeyValuePair<Location, Material> terrainBlock in terrainBlocks)
         {
             BlockState state = new BlockState(terrainBlock.Value);
-            
+
             terrainBlock.Key.SetStateNoBlockChange(state);
         }
-        
-            
+
+
         //Generate Structures
         Biome biome = GetBiome();
-        for (var y = 1; y < Height; y++)
+        for (int y = 1; y < Height; y++)
         {
-            for (var x = 0; x < Width; x++)
+            for (int x = 0; x < Width; x++)
             {
                 Location loc = new Location(chunkPosition.worldX + x, y, chunkPosition.dimension);
                 BlockState state = worldGenerator.GenerateStructures(loc, biome);
 
                 if (state.material != Material.Air)
-                {
                     loc.SetStateNoBlockChange(state);
-                }
             }
+
             yield return new WaitForSeconds(0f);
         }
-        
+
 
         //Mark chunk as Generated
-        var chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
-                            chunkPosition.chunkX + "\\chunk";
-        var chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
+        string chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+                               chunkPosition.chunkX + "\\chunk";
+        List<string> chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
         chunkDataLines.Add("hasBeenGenerated=true");
         File.WriteAllLines(chunkDataPath, chunkDataLines);
-        
+
         StartCoroutine(BuildChunk());
 
         while (!donePlacingGeneratedBlocks)
             yield return new WaitForSeconds(0.1f);
-        
+
         GeneratingTickAllBlocks();
-        
+
         areBlocksGenerated = true;
     }
 
-    IEnumerator BuildChunk()
+    private IEnumerator BuildChunk()
     {
         for (int y = 0; y < Height; y++)
         {
             for (int x = chunkPosition.worldX; x < chunkPosition.worldX + Width; x++)
-            {
                 try
                 {
                     Location loc = new Location(x, y, chunkPosition.dimension);
@@ -272,10 +265,10 @@ public class Chunk : NetworkBehaviour
                 {
                     Debug.LogError("Error chunk build block: " + e.Message);
                 }
-            }
+
             yield return new WaitForSeconds(0f);
         }
-        
+
         donePlacingGeneratedBlocks = true;
     }
 
@@ -288,13 +281,13 @@ public class Chunk : NetworkBehaviour
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
             return;
         }
-        
+
         int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
-        int listIndex = chunkLocation.x + (chunkLocation.y * Width);
-        
+        int listIndex = chunkLocation.x + chunkLocation.y * Width;
+
         blockStates[listIndex] = state;
     }
-    
+
     public BlockState GetBlockState(Location location)
     {
         if (!IsBlockLocal(location))
@@ -303,11 +296,12 @@ public class Chunk : NetworkBehaviour
                              ") inside Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "]");
             return new BlockState(Material.Air);
         }
+
         if (blockStates.Count == 0)
             return new BlockState(Material.Air);
-        
+
         int2 chunkLocation = new int2(location.x - chunkPosition.worldX, location.y);
-        int listIndex = chunkLocation.x + (chunkLocation.y * Width);
+        int listIndex = chunkLocation.x + chunkLocation.y * Width;
 
         return blockStates[listIndex];
     }
@@ -320,28 +314,21 @@ public class Chunk : NetworkBehaviour
         NetworkServer.Destroy(gameObject);
     }
 
-    public void OnDestroy()
-    {
-        WorldManager.instance.chunks.Remove(chunkPosition);
-    }
-
     [Server]
     public void UnloadEntities()
     {
-        foreach(Entity entity in GetEntities())
-        {
+        foreach (Entity entity in GetEntities())
             if (!(entity is Player))
                 entity.Unload();
-        }
     }
 
     [Server]
     public static void CreateChunksAround(ChunkPosition loc, int distance)
     {
-        for (var i = -distance; i < distance; i++)
+        for (int i = -distance; i < distance; i++)
         {
-            var cPos = new ChunkPosition(loc.chunkX + i, loc.dimension);
-            
+            ChunkPosition cPos = new ChunkPosition(loc.chunkX + i, loc.dimension);
+
             if (!cPos.IsChunkCreated())
                 cPos.CreateChunk();
         }
@@ -351,9 +338,9 @@ public class Chunk : NetworkBehaviour
     private void GeneratingTickAllBlocks()
     {
         //Tick Blocks
-        var blockList = transform.GetComponentsInChildren<Block>();
+        Block[] blockList = transform.GetComponentsInChildren<Block>();
 
-        foreach (var block in blockList)
+        foreach (Block block in blockList)
         {
             if (block == null || block.transform == null)
                 continue;
@@ -361,14 +348,14 @@ public class Chunk : NetworkBehaviour
             block.GeneratingTick();
         }
     }
-    
-    IEnumerator InitializeAllBlocks()
+
+    private IEnumerator InitializeAllBlocks()
     {
         //Initialize Blocks
         List<Block> blockList = new List<Block>(blocks.Values);
         int i = 0;
-        
-        foreach (var block in blockList)
+
+        foreach (Block block in blockList)
         {
             if (block == null || block.transform == null)
                 continue;
@@ -386,9 +373,7 @@ public class Chunk : NetworkBehaviour
 
             i++;
             if (i % 20 == 0)
-            {
                 yield return new WaitForSeconds(0);
-            }
         }
 
         blocksInitialized = true;
@@ -397,10 +382,11 @@ public class Chunk : NetworkBehaviour
     [Server]
     private IEnumerator SelfDestructionChecker()
     {
-        var timePassedOutsideRenderDistance = 0f;
+        float timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))    //Is outside one chunk of the render distance, begin self destruction
+            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1)
+            ) //Is outside one chunk of the render distance, begin self destruction
             {
                 timePassedOutsideRenderDistance = 0f;
             }
@@ -417,19 +403,73 @@ public class Chunk : NetworkBehaviour
             yield return new WaitForSeconds(1f);
         }
     }
-
+    
     [Server]
-    private IEnumerator MobSpawning()
+    private void GenerateAnimals()
+    {
+        Random r = new Random();
+
+        if (!(r.NextDouble() < animalSpawnChance))
+            return;
+
+        int x = r.Next(0, Width) + chunkPosition.worldX;
+        Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
+
+        //Return in case no block was found in column, may be the case in ex void worlds
+        if (topmostBlock == null)
+            return;
+
+        int y = topmostBlock.location.y + 1;
+        List<string> entities = MobSpawnTypes;
+        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
+        string entityType = entities[r.Next(0, entities.Count)];
+
+        Entity entity = Entity.Spawn(entityType);
+        entity.Teleport(new Location(x, y, chunkPosition.dimension));
+    }
+    
+    [Server]
+    private IEnumerator MobSpawnCycle()
     {
         while (true)
         {
-            //Update neighbor chunks
-            TrySpawnMobs();
+            Random r = new Random();
+
+            if (chunkPosition.IsWithinDistanceOfPlayer(3) &&
+                r.NextDouble() < animalSpawnChance / TickRate)
+            {
+                
+            }
+                TrySpawnMobs();
 
             yield return new WaitForSeconds(1f / TickRate);
         }
     }
-    
+
+    [Server]
+    private void TrySpawnMobs()
+    {
+        Random r = new Random();
+
+        if (!(r.NextDouble() < animalSpawnChance / TickRate))
+            return;
+
+        int x = r.Next(0, Width) + chunkPosition.worldX;
+        Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
+
+        //Return in case no block was found in column, may be the case in ex void worlds
+        if (topmostBlock == null)
+            return;
+
+        int y = topmostBlock.location.y + 1;
+        List<string> entities = MobSpawnTypes;
+        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
+        string entityType = entities[r.Next(0, entities.Count)];
+
+        Entity entity = Entity.Spawn(entityType);
+        entity.Teleport(new Location(x, y, chunkPosition.dimension));
+    }
+
     private IEnumerator BlockRandomTicking()
     {
         float updateSpeed = 1f;
@@ -439,10 +479,9 @@ public class Chunk : NetworkBehaviour
             List<Block> blockList = new List<Block>(randomTickBlocks);
             foreach (Block block in blockList)
             {
-                var r = new Random(block.location.GetHashCode() + i);
+                Random r = new Random(block.location.GetHashCode() + i);
 
                 if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
-                {
                     try
                     {
                         block.RandomTick();
@@ -451,68 +490,42 @@ public class Chunk : NetworkBehaviour
                     {
                         Debug.LogError("Error in Block:RandomTick(): " + e.Message);
                     }
-                }
             }
 
             i++;
             yield return new WaitForSeconds(updateSpeed);
         }
     }
-    
-    [Server]
-    private void TrySpawnMobs()
-    {
-        var r = new Random();
-
-        if (!(r.NextDouble() < mobSpawningChance / TickRate) || Entity.LivingEntityCount >= Entity.MaxLivingAmount) 
-            return;
-
-        var x = r.Next(0, Width) + chunkPosition.worldX;
-        Block topmostBlock = GetTopmostBlock(x, chunkPosition.dimension, true);
-
-        //Return in case no block was found in column, may be the case in ex void worlds
-        if (topmostBlock == null)
-            return;
-            
-        var y = topmostBlock.location.y + 1;
-        var entities = MobSpawnTypes;
-        entities.AddRange(GetBiome().biomeSpecificEntitySpawns);
-        var entityType = entities[r.Next(0, entities.Count)];
-
-        var entity = Entity.Spawn(entityType);
-        entity.Teleport(new Location(x, y, chunkPosition.dimension));
-    }
 
     private Dictionary<Location, Material> GenerateChunkTerrain()
     {
-        var blockList = new Dictionary<Location, Material>();
+        Dictionary<Location, Material> blockList = new Dictionary<Location, Material>();
 
-        for (var y = 0; y < Height; y++)
-        for (var x = 0; x < Width; x++)
+        for (int y = 0; y < Height; y++)
+        for (int x = 0; x < Width; x++)
         {
-            var loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
-            var mat = worldGenerator.GenerateTerrainBlock(loc);
+            Location loc = new Location(x + chunkPosition.worldX, y, chunkPosition.dimension);
+            Material mat = worldGenerator.GenerateTerrainBlock(loc);
 
-            if (mat != Material.Air) blockList.Add(loc, mat);
+            if (mat != Material.Air)
+                blockList.Add(loc, mat);
         }
 
         return blockList;
     }
-    
+
     private void GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
-        {
             StartCoroutine(UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false));
-        }
 
         donePlacingBackgroundBlocks = true;
     }
 
-    IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
+    private IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
         yield return new WaitForSeconds(0);
-        
+
         Material lastViableMaterial = Material.Air;
         for (int y = Height - 1; y >= 0; y--)
         {
@@ -526,9 +539,7 @@ public class Chunk : NetworkBehaviour
             }
 
             if (BackgroundBlock.viableMaterials.ContainsKey(mat))
-            {
                 lastViableMaterial = BackgroundBlock.viableMaterials[mat];
-            }
 
             bool placeBackground = false;
 
@@ -536,15 +547,15 @@ public class Chunk : NetworkBehaviour
             {
                 if (mat == Material.Air)
                     placeBackground = true;
-                else if(loc.GetBlock() != null && !loc.GetBlock().solid)
+                else if (loc.GetBlock() != null && !loc.GetBlock().solid)
                     placeBackground = true;
             }
-            
-            if(placeBackground)
+
+            if (placeBackground)
             {
                 GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
                 BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
-                    
+
                 blockObject.transform.position = loc.GetPosition();
                 backgroundBlock.material = lastViableMaterial;
                 backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
@@ -552,8 +563,8 @@ public class Chunk : NetworkBehaviour
                 if (updateLight)
                     StartCoroutine(ScheduleBlockLightUpdate(loc));
             }
-            
-            if(!isLoaded && y % 10 == 0)
+
+            if (!isLoaded && y % 10 == 0)
                 yield return new WaitForSeconds(0);
         }
     }
@@ -561,8 +572,9 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void LoadAllEntities()
     {
-        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" + chunkPosition.chunkX +
-                   "\\entities";
+        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+                      chunkPosition.chunkX +
+                      "\\entities";
 
         if (!Directory.Exists(path))
             return;
@@ -579,7 +591,8 @@ public class Chunk : NetworkBehaviour
 
     private bool IsBlockLocal(Location loc)
     {
-        return (new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension && loc.y >= 0 && loc.y < Height);
+        return new ChunkPosition(loc).chunkX == chunkPosition.chunkX && loc.dimension == chunkPosition.dimension &&
+               loc.y >= 0 && loc.y < Height;
     }
 
     [ClientRpc]
@@ -587,23 +600,23 @@ public class Chunk : NetworkBehaviour
     {
         if (!donePlacingGeneratedBlocks || isServer)
             return;
-        
+
         StartCoroutine(ScheduleLocalBlockChange(loc, state));
     }
-    
-    
-    IEnumerator ScheduleLocalBlockChange(Location location, BlockState state)
+
+
+    private IEnumerator ScheduleLocalBlockChange(Location location, BlockState state)
     {
         //Schedule block change for next frame, since block data lists get synced late on clients
         yield return new WaitForSeconds(0f);
         LocalBlockChange(location, state);
     }
-    
+
     public void LocalBlockChange(Location location, BlockState state)
     {
         int2 coordinates = new int2(location.x, location.y);
         Material mat = state.material;
-        
+
         Type type = Type.GetType(mat.ToString());
         if (!type.IsSubclassOf(typeof(Block)))
             return;
@@ -639,7 +652,7 @@ public class Chunk : NetworkBehaviour
             blockObject = Instantiate(blockPrefab, transform, true);
 
             //Attach it to the object
-            var block = (Block) blockObject.AddComponent(type);
+            Block block = (Block) blockObject.AddComponent(type);
 
             blockObject.transform.position = location.GetPosition();
 
@@ -660,10 +673,8 @@ public class Chunk : NetworkBehaviour
             result = blockObject.GetComponent<Block>();
         }
 
-        if(mat == Material.Portal_Frame)
-        {
-            netherPortal = (Portal_Frame)result;
-        }
+        if (mat == Material.Portal_Frame)
+            netherPortal = (Portal_Frame) result;
 
         if (isLoaded)
         {
@@ -674,7 +685,7 @@ public class Chunk : NetworkBehaviour
         }
     }
 
-    IEnumerator ScheduleBlockLightUpdate(Location loc)
+    private IEnumerator ScheduleBlockLightUpdate(Location loc)
     {
         yield return new WaitForSeconds(0f);
         LightManager.UpdateBlockLight(loc);
@@ -684,13 +695,14 @@ public class Chunk : NetworkBehaviour
     public Location GeneratePortal(int x)
     {
         //Find an air pocket to place portal at
-        int maxPortalHeight = (chunkPosition.dimension == Dimension.Overworld) ? Chunk.Height : 128; 
+        int maxPortalHeight = chunkPosition.dimension == Dimension.Overworld ? Height : 128;
         for (int y = 0; y < maxPortalHeight; y++)
         {
             Location loc = new Location(x, y, chunkPosition.dimension);
             if (loc.GetMaterial() == Material.Air)
             {
-                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block).SetData(new BlockData("structure=Nether_Portal")).Tick();
+                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block)
+                    .SetData(new BlockData("structure=Nether_Portal")).Tick();
                 return loc;
             }
         }
@@ -718,9 +730,9 @@ public class Chunk : NetworkBehaviour
 
     public Entity[] GetEntities()
     {
-        var entities = new List<Entity>();
+        List<Entity> entities = new List<Entity>();
 
-        foreach (var e in Entity.entities)
+        foreach (Entity e in Entity.entities)
             if (e.Location.x >= chunkPosition.worldX &&
                 e.Location.x <= chunkPosition.worldX + Width &&
                 e != null)
@@ -731,7 +743,7 @@ public class Chunk : NetworkBehaviour
 
     public static Block GetTopmostBlock(int x, Dimension dimension, bool mustBeSolid)
     {
-        var chunk = new ChunkPosition(new Location(x, 0, dimension)).GetChunk();
+        Chunk chunk = new ChunkPosition(new Location(x, 0, dimension)).GetChunk();
         if (chunk == null)
             return null;
 
@@ -740,9 +752,9 @@ public class Chunk : NetworkBehaviour
 
     public Block GetLocalTopmostBlock(int x, bool mustBeSolid)
     {
-        for (var y = Height - 1; y >= 0; y--)
+        for (int y = Height - 1; y >= 0; y--)
         {
-            var block = GetLocalBlock(new Location(x, y, chunkPosition.dimension));
+            Block block = GetLocalBlock(new Location(x, y, chunkPosition.dimension));
 
             if (block != null)
             {

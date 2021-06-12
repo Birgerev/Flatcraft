@@ -4,21 +4,33 @@ using UnityEngine;
 namespace Mirror
 {
     /// <summary>
-    /// Allows Middleware to override some of the transport methods or let the inner transport handle them.
+    ///     Allows Middleware to override some of the transport methods or let the inner transport handle them.
     /// </summary>
     [DisallowMultipleComponent]
     public abstract class MiddlewareTransport : Transport
     {
         /// <summary>
-        /// Transport to call to after middleware
+        ///     Transport to call to after middleware
         /// </summary>
         public Transport inner;
 
-        public override bool Available() => inner.Available();
-        public override int GetMaxPacketSize(int channelId = 0) => inner.GetMaxPacketSize(channelId);
-        public override void Shutdown() => inner.Shutdown();
+        public override bool Available()
+        {
+            return inner.Available();
+        }
+
+        public override int GetMaxPacketSize(int channelId = 0)
+        {
+            return inner.GetMaxPacketSize(channelId);
+        }
+
+        public override void Shutdown()
+        {
+            inner.Shutdown();
+        }
 
         #region Client
+
         public override void ClientConnect(string address)
         {
             inner.OnClientConnected = OnClientConnected;
@@ -28,13 +40,30 @@ namespace Mirror
             inner.ClientConnect(address);
         }
 
-        public override bool ClientConnected() => inner.ClientConnected();
-        public override void ClientDisconnect() => inner.ClientDisconnect();
-        public override void ClientSend(int channelId, ArraySegment<byte> segment) => inner.ClientSend(channelId, segment);
+        public override bool ClientConnected()
+        {
+            return inner.ClientConnected();
+        }
+
+        public override void ClientDisconnect()
+        {
+            inner.ClientDisconnect();
+        }
+
+        public override void ClientSend(int channelId, ArraySegment<byte> segment)
+        {
+            inner.ClientSend(channelId, segment);
+        }
+
         #endregion
 
         #region Server
-        public override bool ServerActive() => inner.ServerActive();
+
+        public override bool ServerActive()
+        {
+            return inner.ServerActive();
+        }
+
         public override void ServerStart()
         {
             inner.OnServerConnected = OnServerConnected;
@@ -44,11 +73,31 @@ namespace Mirror
             inner.ServerStart();
         }
 
-        public override void ServerStop() => inner.ServerStop();
-        public override void ServerSend(int connectionId, int channelId, ArraySegment<byte> segment) => inner.ServerSend(connectionId, channelId, segment);
-        public override bool ServerDisconnect(int connectionId) => inner.ServerDisconnect(connectionId);
-        public override string ServerGetClientAddress(int connectionId) => inner.ServerGetClientAddress(connectionId);
-        public override Uri ServerUri() => inner.ServerUri();
+        public override void ServerStop()
+        {
+            inner.ServerStop();
+        }
+
+        public override void ServerSend(int connectionId, int channelId, ArraySegment<byte> segment)
+        {
+            inner.ServerSend(connectionId, channelId, segment);
+        }
+
+        public override bool ServerDisconnect(int connectionId)
+        {
+            return inner.ServerDisconnect(connectionId);
+        }
+
+        public override string ServerGetClientAddress(int connectionId)
+        {
+            return inner.ServerGetClientAddress(connectionId);
+        }
+
+        public override Uri ServerUri()
+        {
+            return inner.ServerUri();
+        }
+
         #endregion
     }
 }

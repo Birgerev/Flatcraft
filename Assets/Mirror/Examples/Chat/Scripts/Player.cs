@@ -1,12 +1,10 @@
 using System;
-using UnityEngine;
 
 namespace Mirror.Examples.Chat
 {
     public class Player : NetworkBehaviour
     {
-        [SyncVar]
-        public string playerName;
+        [SyncVar] public string playerName;
 
         public static event Action<Player, string> OnMessage;
 

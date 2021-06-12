@@ -9,6 +9,7 @@
 //
 // let's even keep them in a STATIC CLASS so it's 100% obvious that this should
 // NOT EVER be changed to non static!
+
 using System;
 using System.Net.Sockets;
 using System.Threading;
@@ -38,16 +39,19 @@ namespace Telepathy
                 return false;
             }
         }
+
         // read message (via stream) blocking.
         // writes into byte[] and returns bytes written to avoid allocations.
-        public static bool ReadMessageBlocking(NetworkStream stream, int MaxMessageSize, byte[] headerBuffer, byte[] payloadBuffer, out int size)
+        public static bool ReadMessageBlocking(NetworkStream stream, int MaxMessageSize, byte[] headerBuffer
+            , byte[] payloadBuffer, out int size)
         {
             size = 0;
 
             // buffer needs to be of Header + MaxMessageSize
             if (payloadBuffer.Length != 4 + MaxMessageSize)
             {
-                Log.Error($"ReadMessageBlocking: payloadBuffer needs to be of size 4 + MaxMessageSize = {4 + MaxMessageSize} instead of {payloadBuffer.Length}");
+                Log.Error(
+                    $"ReadMessageBlocking: payloadBuffer needs to be of size 4 + MaxMessageSize = {4 + MaxMessageSize} instead of {payloadBuffer.Length}");
                 return false;
             }
 
@@ -64,16 +68,15 @@ namespace Telepathy
             //
             // also protect against size <= 0 which would cause issues
             if (size > 0 && size <= MaxMessageSize)
-            {
                 // read exactly 'size' bytes for content (blocking)
                 return stream.ReadExactly(payloadBuffer, size);
-            }
             Log.Warning("ReadMessageBlocking: possible header attack with a header of: " + size + " bytes.");
             return false;
         }
 
         // thread receive function is the same for client and server's clients
-        public static void ReceiveLoop(int connectionId, TcpClient client, int MaxMessageSize, MagnificentReceivePipe receivePipe, int QueueLimit)
+        public static void ReceiveLoop(int connectionId, TcpClient client, int MaxMessageSize
+            , MagnificentReceivePipe receivePipe, int QueueLimit)
         {
             // get NetworkStream from client
             NetworkStream stream = client.GetStream();
@@ -139,7 +142,8 @@ namespace Telepathy
                     if (receivePipe.Count(connectionId) >= QueueLimit)
                     {
                         // log the reason
-                        Log.Warning($"receivePipe reached limit of {QueueLimit} for connectionId {connectionId}. This can happen if network messages come in way faster than we manage to process them. Disconnecting this connection for load balancing.");
+                        Log.Warning(
+                            $"receivePipe reached limit of {QueueLimit} for connectionId {connectionId}. This can happen if network messages come in way faster than we manage to process them. Disconnecting this connection for load balancing.");
 
                         // IMPORTANT: do NOT clear the whole queue. we use one
                         // queue for all connections.
@@ -155,7 +159,8 @@ namespace Telepathy
                 // something went wrong. the thread was interrupted or the
                 // connection closed or we closed our own connection or ...
                 // -> either way we should stop gracefully
-                Log.Info("ReceiveLoop: finished receive function for connectionId=" + connectionId + " reason: " + exception);
+                Log.Info("ReceiveLoop: finished receive function for connectionId=" + connectionId + " reason: " +
+                         exception);
             }
             finally
             {
@@ -171,10 +176,12 @@ namespace Telepathy
                 receivePipe.Enqueue(connectionId, EventType.Disconnected, default);
             }
         }
+
         // thread send function
         // note: we really do need one per connection, so that if one connection
         //       blocks, the rest will still continue to get sends
-        public static void SendLoop(int connectionId, TcpClient client, MagnificentSendPipe sendPipe, ManualResetEvent sendPending)
+        public static void SendLoop(int connectionId, TcpClient client, MagnificentSendPipe sendPipe
+            , ManualResetEvent sendPending)
         {
             // get NetworkStream from client
             NetworkStream stream = client.GetStream();
@@ -202,12 +209,10 @@ namespace Telepathy
                     // a locked{} TryDequeueAll is twice as fast as
                     // ConcurrentQueue, see SafeQueue.cs!
                     if (sendPipe.DequeueAndSerializeAll(ref payload, out int packetSize))
-                    {
                         // send messages (blocking) or stop if stream is closed
                         if (!SendMessagesBlocking(stream, payload, packetSize))
                             // break instead of return so stream close still happens!
                             break;
-                    }
 
                     // don't choke up the CPU: wait until queue not empty anymore
                     sendPending.WaitOne();

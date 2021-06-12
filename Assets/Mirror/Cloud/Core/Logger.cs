@@ -11,13 +11,9 @@ namespace Mirror.Cloud
         public static void LogRequest(string page, string method, bool hasJson, string json)
         {
             if (hasJson)
-            {
                 Debug.LogFormat("Request: {0} {1} {2}", method, page, json);
-            }
             else
-            {
                 Debug.LogFormat("Request: {0} {1}", method, page);
-            }
         }
 
         public static void LogResponse(UnityWebRequest statusRequest)

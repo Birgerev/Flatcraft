@@ -3,36 +3,36 @@
 public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
-    
+    public static float targetFov;
+
     //Camera target variables
-    [Header("Targeting Values")]
-    public float dampTime = 0.15f;
+    [Header("Targeting Values")] public float dampTime = 0.15f;
+
     public Transform target;
-    private Vector3 currentTargetSmoothVelocity;
 
     //Camera transform variables
-    [Header("Transform Values")]
-    public float offsetX;
+    [Header("Transform Values")] public float offsetX;
+
     public float offsetY;
     public float roll;
 
     //Shake
-    [Header("Shake Values")]
-    public float shake;
+    [Header("Shake Values")] public float shake;
+
     public float shakeDropoffPerFrame = 0.8f;
     public float shakeSpeed = 0.8f;
     public float maxOffset = 0.5f;
     public float maxRoll = 10;
 
-    [Header("Zoom Values")]
-    public float zoomDampTime = 2f;
-    private float currentSmoothZoomVelocity;
+    [Header("Zoom Values")] public float zoomDampTime = 2f;
+
     public int roofCheckMaxDistance = 5;
     public float normalFov = 11f;
     public float zoomedFov = 8f;
-    public static float targetFov;
+    private float currentSmoothZoomVelocity;
+    private Vector3 currentTargetSmoothVelocity;
 
-    
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -44,14 +44,14 @@ public class CameraController : MonoBehaviour
     {
         if (target == null)
             return;
-        
+
         //Smoothly target player
         CalculateShake();
         SetTranslation();
         CalculateTargetZoom();
         SetSmoothTargetZoom();
     }
-    
+
     private void CalculateShake()
     {
         //Seeds needs to use fractal numbers
@@ -66,10 +66,10 @@ public class CameraController : MonoBehaviour
 
     private void CalculateTargetZoom()
     {
-        if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+        if (Time.time % 0.5f - Time.deltaTime <= 0)
         {
             targetFov = normalFov;
-            
+
             for (int y = 0; y < roofCheckMaxDistance; y++)
             {
                 Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
@@ -87,20 +87,18 @@ public class CameraController : MonoBehaviour
     private void SetSmoothTargetZoom()
     {
         float currentFov = GetComponent<Camera>().orthographicSize;
-        
-        GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(
-            currentFov, 
-            targetFov, 
-            ref currentSmoothZoomVelocity, 
+
+        GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(currentFov,
+            targetFov,
+            ref currentSmoothZoomVelocity,
             zoomDampTime);
     }
 
     private void SetTranslation()
     {
-        transform.position = Vector3.SmoothDamp(
-            transform.position, 
-            target.position + new Vector3(offsetX, offsetY, -10), 
-            ref currentTargetSmoothVelocity, 
+        transform.position = Vector3.SmoothDamp(transform.position,
+            target.position + new Vector3(offsetX, offsetY, -10),
+            ref currentTargetSmoothVelocity,
             dampTime);
         transform.rotation = Quaternion.Euler(0, 0, roll);
     }

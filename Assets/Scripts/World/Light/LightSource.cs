@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
 
 public class LightSource : MonoBehaviour
 {
@@ -13,13 +10,13 @@ public class LightSource : MonoBehaviour
     {
         LightManager.UpdateLightInArea(location + new Location(-15, -15), location + new Location(15, 15));
     }
-    
+
     public void UpdateLightLevel(int value, bool updateLight)
     {
         lightLevel = value;
 
         bool chunkLoaded = new ChunkPosition(location).IsChunkLoaded();
-        
+
         if (updateLight && chunkLoaded)
             UpdateLight();
     }
@@ -32,7 +29,7 @@ public class LightSource : MonoBehaviour
 
         source.position = obj.transform.position;
         source.location = Location.LocationByPosition(source.position);
-        
+
         return source;
     }
 }

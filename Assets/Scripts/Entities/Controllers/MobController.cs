@@ -3,40 +3,41 @@ using Random = System.Random;
 
 public class MobController : EntityController
 {
-    protected virtual float startWanderingChance { get; } = 0.2f;
-    protected virtual float stopWanderingChance { get; } = 0.4f;
-    
-    protected virtual bool targetDamagerIfAttacked { get; } = false;
-    protected virtual float targetRange { get; } = 0;
-    
-    protected virtual float pathfindingKeepDistanceToTarget { get; } = 0;
-    
-    protected virtual float hitTargetDamage { get; } = 0;
-    protected virtual float hitTargetCooldown { get; } = 1;
-    protected virtual bool jumpWhenHitting { get; } = false;
-    
-    public Entity target;
     public bool isWalking;
-    public bool walkingRight;
-    public bool swimDown;
-    
+
     private float lastHitTime;
-    
+    public bool swimDown;
+
+    public Entity target;
+    public bool walkingRight;
+
     public MobController(LivingEntity instance) : base(instance)
     {
     }
-    
+
+    protected virtual float startWanderingChance { get; } = 0.2f;
+    protected virtual float stopWanderingChance { get; } = 0.4f;
+
+    protected virtual bool targetDamagerIfAttacked { get; } = false;
+    protected virtual float targetRange { get; } = 0;
+
+    protected virtual float pathfindingKeepDistanceToTarget { get; } = 0;
+
+    protected virtual float hitTargetDamage { get; } = 0;
+    protected virtual float hitTargetCooldown { get; } = 1;
+    protected virtual bool jumpWhenHitting { get; } = false;
+
     public override void Tick()
     {
         base.Tick();
-        
+
         CheckTargetDistance();
-        if(targetRange != 0)
+        if (targetRange != 0)
             FindPlayerTarget();
         if (targetDamagerIfAttacked)
             FindAttackerTarget();
         Pathfind();
-        
+
         Walking();
         Swim();
         if (hitTargetDamage > 0)
@@ -48,9 +49,7 @@ public class MobController : EntityController
         Location pathfindLocation = new Location();
 
         if (target != null)
-        {
             pathfindLocation = target.Location;
-        }
         //TODO else linger location
 
         if (pathfindLocation.Equals(default(Location)))
@@ -62,29 +61,24 @@ public class MobController : EntityController
             Location curLocation = instance.Location;
 
             isWalking = true;
-            walkingRight = (curLocation.x < pathfindLocation.x);
+            walkingRight = curLocation.x < pathfindLocation.x;
 
             if (instance.isInLiquid)
-            {
-                swimDown = (curLocation.y > pathfindLocation.y);
-            }
+                swimDown = curLocation.y > pathfindLocation.y;
 
             if (pathfindingKeepDistanceToTarget != 0)
             {
                 float distanceToTarget = Vector2.Distance(curLocation.GetPosition(), pathfindLocation.GetPosition());
 
                 if (distanceToTarget <= pathfindingKeepDistanceToTarget)
-                {
                     isWalking = false;
-                }
             }
         }
-        
     }
 
     protected virtual void Wander()
     {
-        var r = new Random((instance.Location + " " + instance.age).GetHashCode());
+        Random r = new Random((instance.Location + " " + instance.age).GetHashCode());
 
         if (r.NextDouble() < (isWalking ? stopWanderingChance : startWanderingChance) / (1.0f / Time.deltaTime))
         {
@@ -102,9 +96,9 @@ public class MobController : EntityController
             instance.Walk(walkingRight ? 1 : -1);
 
             Block blockInFront = (instance.Location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
-            
+
             //Jump when there is a block in front of entity
-            if (blockInFront != null && blockInFront.solid && !instance.isInLiquid) 
+            if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)
                 instance.Jump();
         }
     }
@@ -114,20 +108,18 @@ public class MobController : EntityController
         if (instance.isInLiquid && !swimDown)
             instance.Jump();
     }
-    
+
     protected virtual void FindPlayerTarget()
     {
         if (target != null)
             return;
-        
+
         foreach (Player p in Player.players)
-        {
             if (Vector2.Distance(p.Location.GetPosition(), instance.Location.GetPosition()) < targetRange)
             {
                 target = p;
                 break;
-            } 
-        }
+            }
     }
 
     protected virtual void FindAttackerTarget()
@@ -145,24 +137,24 @@ public class MobController : EntityController
 
         target = attacker;
     }
-    
+
     protected virtual void TryHit()
     {
         if (target == null || Time.time - lastHitTime < hitTargetCooldown)
             return;
 
         float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
-            
-        if(jumpWhenHitting && distance < 2f)
+
+        if (jumpWhenHitting && distance < 2f)
             instance.Jump();
-        
+
         if (distance < 1.5f)
         {
             target.Hit(hitTargetDamage, instance);
             lastHitTime = Time.time;
         }
     }
-    
+
     protected virtual void CheckTargetDistance()
     {
         if (target == null)

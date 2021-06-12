@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Mirror.Weaver
 {
-    static class Helpers
+    internal static class Helpers
     {
         // This code is taken from SerializationWeaver
 

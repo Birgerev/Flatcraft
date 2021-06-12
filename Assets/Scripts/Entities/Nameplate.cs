@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,9 +7,9 @@ public class Nameplate : MonoBehaviour
     public Text textComponent;
     public CanvasGroup canvasGroup;
 
-    void Update()
+    private void Update()
     {
         textComponent.text = text;
-        canvasGroup.alpha = (text.Equals("")) ? 0 : 1;
+        canvasGroup.alpha = text.Equals("") ? 0 : 1;
     }
 }

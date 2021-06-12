@@ -5,7 +5,7 @@ namespace Mirror.Weaver
 {
     public static class MethodProcessor
     {
-        const string RpcPrefix = "UserCode_";
+        private const string RpcPrefix = "UserCode_";
 
         // creates a method substitute
         // For example, if we have this:
@@ -37,9 +37,7 @@ namespace Mirror.Weaver
 
             // add parameters
             foreach (ParameterDefinition pd in md.Parameters)
-            {
                 cmd.Parameters.Add(new ParameterDefinition(pd.Name, ParameterAttributes.None, pd.ParameterType));
-            }
 
             // swap bodies
             (cmd.Body, md.Body) = (md.Body, cmd.Body);
@@ -53,7 +51,8 @@ namespace Mirror.Weaver
                 cmd.CustomDebugInformations.Add(customInfo);
             md.CustomDebugInformations.Clear();
 
-            (md.DebugInformation.Scope, cmd.DebugInformation.Scope) = (cmd.DebugInformation.Scope, md.DebugInformation.Scope);
+            (md.DebugInformation.Scope, cmd.DebugInformation.Scope) =
+                (cmd.DebugInformation.Scope, md.DebugInformation.Scope);
 
             td.Methods.Add(cmd);
 
@@ -62,8 +61,8 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Finds and fixes call to base methods within remote calls
-        /// <para>For example, changes `base.CmdDoSomething` to `base.CallCmdDoSomething` within `this.CallCmdDoSomething`</para>
+        ///     Finds and fixes call to base methods within remote calls
+        ///     <para>For example, changes `base.CmdDoSomething` to `base.CallCmdDoSomething` within `this.CallCmdDoSomething`</para>
         /// </summary>
         /// <param name="type"></param>
         /// <param name="method"></param>
@@ -80,7 +79,6 @@ namespace Mirror.Weaver
             string baseRemoteCallName = method.Name.Substring(RpcPrefix.Length);
 
             foreach (Instruction instruction in method.Body.Instructions)
-            {
                 // if call to base.CmdDoSomething within this.CallCmdDoSomething
                 if (IsCallToMethod(instruction, out MethodDefinition calledMethod) &&
                     calledMethod.Name == baseRemoteCallName)
@@ -102,12 +100,12 @@ namespace Mirror.Weaver
 
                     instruction.Operand = baseMethod;
 
-                    Weaver.DLog(type, "Replacing call to '{0}' with '{1}' inside '{2}'", calledMethod.FullName, baseMethod.FullName, method.FullName);
+                    Weaver.DLog(type, "Replacing call to '{0}' with '{1}' inside '{2}'", calledMethod.FullName
+                        , baseMethod.FullName, method.FullName);
                 }
-            }
         }
 
-        static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
+        private static bool IsCallToMethod(Instruction instruction, out MethodDefinition calledMethod)
         {
             if (instruction.OpCode == OpCodes.Call &&
                 instruction.Operand is MethodDefinition method)
@@ -115,11 +113,9 @@ namespace Mirror.Weaver
                 calledMethod = method;
                 return true;
             }
-            else
-            {
-                calledMethod = null;
-                return false;
-            }
+
+            calledMethod = null;
+            return false;
         }
     }
 }

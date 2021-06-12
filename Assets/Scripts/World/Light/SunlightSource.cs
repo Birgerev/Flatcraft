@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SunlightSource : MonoBehaviour
@@ -12,17 +10,17 @@ public class SunlightSource : MonoBehaviour
     {
         StartCoroutine(UpdateTimeOfDayLoop());
     }
-    
-    IEnumerator UpdateTimeOfDayLoop()
+
+    private IEnumerator UpdateTimeOfDayLoop()
     {
         TimeOfDay lastUpdated = GetTimeOfDay();
         lightSource.UpdateLightLevel(
-            GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel, 
+            GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
             false);
 
         while (true)
         {
-            if(GetTimeOfDay() != lastUpdated)
+            if (GetTimeOfDay() != lastUpdated)
             {
                 lightSource.UpdateLightLevel(
                     GetTimeOfDay() == TimeOfDay.Night ? LightManager.nightLightLevel : LightManager.maxLightLevel,
@@ -33,7 +31,7 @@ public class SunlightSource : MonoBehaviour
             yield return new WaitForSeconds(5);
         }
     }
-    
+
     public Location GetLocation()
     {
         return Location.LocationByPosition(transform.position);
@@ -41,10 +39,11 @@ public class SunlightSource : MonoBehaviour
 
     private TimeOfDay GetTimeOfDay()
     {
-        return (WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2) ? 
-            TimeOfDay.Night : TimeOfDay.Day;
+        return WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2
+            ? TimeOfDay.Night
+            : TimeOfDay.Day;
     }
-    
+
     public static SunlightSource Create(Location loc)
     {
         if (SunlightSourceParent == null)
@@ -52,19 +51,20 @@ public class SunlightSource : MonoBehaviour
             GameObject sunlightSourceParent = new GameObject("Sunlight Sources");
             SunlightSourceParent = sunlightSourceParent.transform;
         }
+
         GameObject obj = Instantiate(LightManager.instance.sunlightSourcePrefab, SunlightSourceParent);
         SunlightSource source = obj.GetComponent<SunlightSource>();
-        
+
         obj.transform.position = loc.GetPosition();
         source.lightSource = LightSource.Create(obj.transform);
         source.StartTimeOfDayLoop();
-        
+
         return source;
     }
 }
 
-enum TimeOfDay
+internal enum TimeOfDay
 {
-    Day,
-    Night
+    Day
+    , Night
 }

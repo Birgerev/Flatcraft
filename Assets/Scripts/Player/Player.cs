@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Mirror;
 using UnityEngine;
+using Random = System.Random;
 
 public class Player : HumanEntity
 {
@@ -15,47 +16,55 @@ public class Player : HumanEntity
 
     [SyncVar] public GameObject playerInstance;
     public GameObject crosshair;
+
+    //Entity Data Tags
+    [EntityDataTag(false)] [SyncVar] public float hunger;
+
+    [EntityDataTag(false)] [SyncVar] public int inventoryId;
+
+    [SyncVar] public float eatingTime;
+
+    public Location bedLocation = new Location(0, 0);
+    public float maxHunger = 20;
+    public float reach = 5;
+
+    [SyncVar] public bool sprinting;
+
+    [SyncVar] public bool sneaking;
+
+    private Material actionBarLastSelectedMaterial;
     private int framesSinceInventoryOpen;
+    private readonly float healthRegenerationHungerCost = 0.4f;
+    private readonly float jumpHungerCost = 0.1f;
+    private bool ladderSneaking;
+
+    [SyncVar] private double lastBlockHitTime;
+
     private float lastBlockInteractionTime;
     private float lastFrameScroll;
-    [SyncVar]
-    private double lastHitTime;
-    [SyncVar]
-    private double lastBlockHitTime;
-    private Material actionBarLastSelectedMaterial;
-    
-    //Entity Data Tags
-    [EntityDataTag(false)] [SyncVar]
-    public float hunger;
-    [EntityDataTag(false)] [SyncVar]
-    public int inventoryId;
-    [SyncVar] 
-    public float eatingTime;
-    public Location bedLocation = new Location(0, 0);
+
+    [SyncVar] private double lastHitTime;
+
+    private readonly float movementHungerCost = 0.03f;
+    private readonly float sneakSpeed = 1.3f;
+    private readonly float sprintHungerCost = 0.03f;
+    private readonly float sprintSpeed = 5.6f;
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
-    public float maxHunger = 20;
-    public float reach = 5;
-    private float movementHungerCost = 0.03f;
-    private float sprintHungerCost = 0.03f;
-    private float jumpHungerCost = 0.1f;
-    private float healthRegenerationHungerCost = 0.4f;
-    private float sneakSpeed = 1.3f;
-    private float sprintSpeed = 5.6f;
-    [SyncVar]
-    public bool sprinting;
-    [SyncVar]
-    public bool sneaking;
-    private bool ladderSneaking;
-    
+
     public override void Start()
     {
         Debug.Log("Spawning player '" + uuid + "'");
         players.Add(this);
-        
+
         base.Start();
+    }
+
+    public void OnDestroy()
+    {
+        players.Remove(this);
     }
 
     [Client]
@@ -70,14 +79,14 @@ public class Player : HumanEntity
     public override void Spawn()
     {
         base.Spawn();
-        
+
         hunger = maxHunger;
         Inventory inv = PlayerInventory.CreatePreset();
         inventoryId = inv.id;
-        
+
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Teleport(bedLocation);
-        
+
         StartCoroutine(ValidSpawnOnceChunkLoaded());
     }
 
@@ -91,7 +100,7 @@ public class Player : HumanEntity
         CheckRegenerateHealth();
         CheckStarvationDamage();
         ClimbableSound();
-        
+
         //Sprint particles    
         if (sprinting && isOnGround)
             MovementParticlesEffect(0.2f);
@@ -106,18 +115,18 @@ public class Player : HumanEntity
             PerformInput();
             CheckActionBarUpdate();
             CheckDimensionChangeLoadingScreen();
-            
-            if(!isServer)     //If we are server, Process movement will already have been called in LivingEntity.Tick()
+
+            if (!isServer) //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
-        
+
             if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
                 framesSinceInventoryOpen = 0;
             else
                 framesSinceInventoryOpen++;
         }
-        
+
         RenderSpriteParts();
-        
+
         base.ClientUpdate();
     }
 
@@ -139,25 +148,26 @@ public class Player : HumanEntity
     {
         if (!hasAuthority)
             return;
-        
+
         base.ProcessMovement();
         CrouchOnLadderCheck();
     }
 
     public void CrouchOnLadderCheck()
     {
-        bool isLadderSneakingThisFrame = (isOnClimbable && sneaking);
+        bool isLadderSneakingThisFrame = isOnClimbable && sneaking;
         if (isLadderSneakingThisFrame && !ladderSneaking)
         {
             GetComponent<Rigidbody2D>().gravityScale = 0;
             ladderSneaking = true;
-        }else if (!isLadderSneakingThisFrame && ladderSneaking)
+        }
+        else if (!isLadderSneakingThisFrame && ladderSneaking)
         {
             GetComponent<Rigidbody2D>().gravityScale = 1;
             ladderSneaking = false;
         }
     }
-    
+
     [Client]
     public override void UpdateNameplate()
     {
@@ -166,19 +176,19 @@ public class Player : HumanEntity
             nameplate.text = "";
             return;
         }
-        
+
         base.UpdateNameplate();
     }
-    
+
     [Server]
     private void CheckRegenerateHealth()
     {
         if (health >= 20)
             return;
 
-        if(hunger > 19)
+        if (hunger > 19)
         {
-            if ((Time.time % 0.5f) - Time.deltaTime <= 0)
+            if (Time.time % 0.5f - Time.deltaTime <= 0)
             {
                 health += 1;
                 hunger -= healthRegenerationHungerCost;
@@ -186,7 +196,7 @@ public class Player : HumanEntity
         }
         else if (hunger > 17)
         {
-            if ((Time.time % 4f) - Time.deltaTime <= 0)
+            if (Time.time % 4f - Time.deltaTime <= 0)
             {
                 health += 1;
                 hunger -= healthRegenerationHungerCost;
@@ -197,7 +207,7 @@ public class Player : HumanEntity
     [Server]
     private void CheckHunger()
     {
-        if ((Time.time % 1f) - Time.deltaTime <= 0)
+        if (Time.time % 1f - Time.deltaTime <= 0)
         {
             if (GetVelocity().x > 0.2f || GetVelocity().x < -0.2f)
                 hunger -= movementHungerCost;
@@ -212,18 +222,18 @@ public class Player : HumanEntity
     private void CheckActionBarUpdate()
     {
         Material selectedMaterial = GetInventory().GetSelectedItem().material;
-        
-        if(selectedMaterial != actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
+
+        if (selectedMaterial != actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
             ActionBar.message = selectedMaterial.ToString();
 
         actionBarLastSelectedMaterial = selectedMaterial;
     }
-    
+
     [Server]
     private void CheckStarvationDamage()
     {
         if (hunger <= 0)
-            if ((Time.time % 4f) - Time.deltaTime <= 0)
+            if (Time.time % 4f - Time.deltaTime <= 0)
                 TakeStarvationDamage(1);
     }
 
@@ -232,40 +242,41 @@ public class Player : HumanEntity
     {
         Damage(damage);
     }
-    
+
     [Client]
     private void PerformInput()
     {
         if (ChatMenu.instance.open)
             return;
-            
+
         //Open inventory
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             RequestOpenInventory();
 
         if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
             return;
-        
+
         //Open chat
         if (Input.GetKeyDown(KeyCode.T))
             ChatMenu.instance.open = true;
-        
+
         //Walking
-        if (Input.GetKey(KeyCode.A)) 
+        if (Input.GetKey(KeyCode.A))
             Walk(-1);
-        if (Input.GetKey(KeyCode.D)) 
+        if (Input.GetKey(KeyCode.D))
             Walk(1);
-        
+
         //Jumping
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space)) 
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
             Jump();
 
         //Sneaking
-        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S)))
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S))
         {
             SetServerSneaking(true);
             speed = sneakSpeed;
         }
+
         if (sneaking && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
         {
             SetServerSneaking(false);
@@ -278,7 +289,9 @@ public class Player : HumanEntity
             SetServerSprinting(true);
             speed = sprintSpeed;
         }
-        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 3f || sneaking || hunger <= 6))
+
+        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 3f || sneaking ||
+                          hunger <= 6))
         {
             SetServerSprinting(false);
             speed = walkSpeed;
@@ -294,53 +307,56 @@ public class Player : HumanEntity
 
         KeyCode[] numpadCodes =
         {
-            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
-            KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
+            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6
+            , KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
         };
-        foreach (var keyCode in numpadCodes)
+        foreach (KeyCode keyCode in numpadCodes)
             if (Input.GetKeyDown(keyCode))
                 SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
-        
-        
-        var scroll = Input.mouseScrollDelta.y;
+
+
+        float scroll = Input.mouseScrollDelta.y;
         //Check once every 5 frames
         if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
         {
             int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
-            if (newSelectedSlot > 8) newSelectedSlot = 0;
-            if (newSelectedSlot < 0) newSelectedSlot = 8;
-            
+            if (newSelectedSlot > 8)
+                newSelectedSlot = 0;
+            if (newSelectedSlot < 0)
+                newSelectedSlot = 8;
+
             SetSelectedInventorySlot(newSelectedSlot);
         }
+
         lastFrameScroll = scroll;
-        
+
         MouseInput();
     }
-    
+
     [Command]
     private void RequestOpenInventory()
     {
         GetInventory().Open(playerInstance.GetComponent<PlayerInstance>());
     }
-    
+
     [Command]
     private void RequestDropItem()
     {
         DropSelected();
     }
-    
+
     [Command]
     private void SetServerSprinting(bool sprint)
     {
         sprinting = sprint;
     }
-    
+
     [Command]
     private void SetSelectedInventorySlot(int slot)
     {
         GetInventory().selectedSlot = slot;
     }
-    
+
     [Command]
     private void SetServerSneaking(bool sneak)
     {
@@ -349,15 +365,15 @@ public class Player : HumanEntity
 
     public PlayerInventory GetInventory()
     {
-        return (PlayerInventory)Inventory.Get(inventoryId);
+        return (PlayerInventory) Inventory.Get(inventoryId);
     }
-    
+
     [Client]
     public Location GetBlockedMouseLocation()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Location blockedMouseLocation = Location.LocationByPosition(mousePosition);
-        
+
         return blockedMouseLocation;
     }
 
@@ -375,15 +391,13 @@ public class Player : HumanEntity
     [Client]
     public Entity GetMouseEntity()
     {
-        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var rays = Physics2D.RaycastAll(mousePosition, Vector2.zero);
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D[] rays = Physics2D.RaycastAll(mousePosition, Vector2.zero);
 
         foreach (RaycastHit2D ray in rays)
-        {
             if (ray.collider != null && ray.transform.GetComponent<Entity>() != null)
                 return ray.transform.GetComponent<Entity>();
-        }
-        
+
         return null;
     }
 
@@ -392,12 +406,12 @@ public class Player : HumanEntity
     {
         if (!IsChunkLoaded())
             return;
-        
+
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        bool isInRange = (Vector2.Distance(mousePosition, transform.position) <= reach);
-        
+        bool isInRange = Vector2.Distance(mousePosition, transform.position) <= reach;
+
         UpdateCrosshair();
-        
+
         EatItemInput();
 
         if (!isInRange)
@@ -416,11 +430,11 @@ public class Player : HumanEntity
             GameObject prefab = Resources.Load<GameObject>("Prefabs/Crosshair");
             crosshair = Instantiate(prefab);
         }
-        
+
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        bool isInRange = (Vector2.Distance(mousePosition, transform.position) <= reach);
+        bool isInRange = Vector2.Distance(mousePosition, transform.position) <= reach;
         Entity entity = GetMouseEntity();
-        
+
         string spriteName = "empty";
         if (isInRange)
         {
@@ -429,9 +443,9 @@ public class Player : HumanEntity
             else
                 spriteName = "entity";
         }
-        
+
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
-        crosshair.GetComponent<SpriteRenderer>().sprite = 
+        crosshair.GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("Sprites/crosshair_" + spriteName);
     }
 
@@ -443,12 +457,10 @@ public class Player : HumanEntity
             RequestResetEatTime();
             return;
         }
-        
-        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && (Time.time % 0.2f) - Time.deltaTime <= 0 &&
+
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Time.time % 0.2f - Time.deltaTime <= 0 &&
             Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
-        {
             RequestEat();
-        }
     }
 
     [Command]
@@ -456,16 +468,16 @@ public class Player : HumanEntity
     {
         if (!Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
             return;
-        
-        if(eatingTime > 1.3f)
+
+        if (eatingTime > 1.3f)
         {
             EatHeldItem();
             eatingTime = 0;
             return;
         }
-        
+
         Sound.Play(Location, "entity/Player/eat", SoundType.Entities, 0.85f, 1.15f);
-        
+
         eatingTime += 0.2f;
     }
 
@@ -474,14 +486,15 @@ public class Player : HumanEntity
     {
         eatingTime = 0;
     }
-    
+
     [Server]
     private void EatHeldItem()
     {
         ItemStack selectedItemStack = GetInventory().GetSelectedItem();
 
         //Add hunger
-        Food foodItemType = (Food)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
+        Food foodItemType =
+            (Food) Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
         int foodPoints = foodItemType.food_points;
         hunger = Mathf.Clamp(hunger + foodPoints, 0, maxHunger);
 
@@ -490,7 +503,7 @@ public class Player : HumanEntity
 
         //Burp sounds
         Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
-        
+
         //Subtract food item from inventory
         selectedItemStack.amount -= 1;
         GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
@@ -503,14 +516,12 @@ public class Player : HumanEntity
         if (Input.GetMouseButtonDown(0))
         {
             Entity entity = GetMouseEntity();
-            
+
             if (entity != null && entity != this)
-            {
                 RequestHitEntity(entity.gameObject);
-            }
         }
     }
-    
+
     [Client]
     private void BlockPlaceInput()
     {
@@ -518,12 +529,10 @@ public class Player : HumanEntity
         {
             Location loc = GetBlockedMouseLocation();
             Material currentMaterial = loc.GetMaterial();
-            
-            if (GetMouseEntity() == null && (currentMaterial == Material.Air || currentMaterial == Material.Water || 
+
+            if (GetMouseEntity() == null && (currentMaterial == Material.Air || currentMaterial == Material.Water ||
                                              currentMaterial == Material.Lava))
-            {
                 RequestBlockPlace(loc);
-            }
         }
     }
 
@@ -532,20 +541,17 @@ public class Player : HumanEntity
     {
         ItemStack item = GetInventory().GetSelectedItem().Clone();
         Material heldMat;
-        
+
         if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().amount <= 0)
             return;
 
         if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
-        {
             heldMat = item.material;
-        }
         else if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-        {
-            heldMat = ((PlaceableItem)Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
-        }
-        else return;
-        
+            heldMat = ((PlaceableItem) Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
+        else
+            return;
+
         loc.SetMaterial(heldMat);
         loc.GetBlock().BuildTick();
         loc.Tick();
@@ -584,23 +590,25 @@ public class Player : HumanEntity
     }
 
     [Command]
-    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
+    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown
+        , NetworkConnectionToClient sender = null)
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses
-        Item itemType; 
+        Item itemType;
         if (Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
-            itemType = (Item)Activator.CreateInstance(Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
+            itemType = (Item) Activator.CreateInstance(
+                Type.GetType(GetInventory().GetSelectedItem().material.ToString()));
         else
-            itemType = (Item)Activator.CreateInstance(typeof(Item));
+            itemType = (Item) Activator.CreateInstance(typeof(Item));
 
         PlayerInstance player = sender.identity.GetComponent<PlayerInstance>();
 
         itemType.Interact(player, loc, mouseButton, firstFrameDown);
-        if(loc.GetMaterial() != Material.Air)
+        if (loc.GetMaterial() != Material.Air)
             lastBlockHitTime = NetworkTime.time;
     }
-    
+
     [Server]
     public void DoToolDurability()
     {
@@ -620,7 +628,7 @@ public class Player : HumanEntity
         bool criticalHit = false;
         float damage = GetInventory().GetSelectedItem().GetItemEntityDamage();
 
-        
+
         if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
@@ -636,11 +644,11 @@ public class Player : HumanEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
     }
-    
+
     [Server]
     public override List<ItemStack> GetDrops()
     {
-        var result = new List<ItemStack>();
+        List<ItemStack> result = new List<ItemStack>();
 
         result.AddRange(GetInventory().items);
 
@@ -653,13 +661,14 @@ public class Player : HumanEntity
         ItemStack selectedItem = GetInventory().GetSelectedItem().Clone();
         ItemStack droppedItem = selectedItem.Clone();
         droppedItem.amount = 1;
-        selectedItem.amount --;
+        selectedItem.amount--;
 
         if (droppedItem.amount <= 0)
             return;
 
 
-        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0), new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
+            , new Vector2(3 * (facingLeft ? -1 : 1), 0));
         GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
 
@@ -674,37 +683,37 @@ public class Player : HumanEntity
     [Server]
     public Location ValidSpawn(int x)
     {
-        var topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, true);
+        Block topmostBlock = Chunk.GetTopmostBlock(x, Location.dimension, true);
 
-        if (topmostBlock == null) 
+        if (topmostBlock == null)
             return new Location(x, 80, Location.dimension);
 
         return topmostBlock.location + new Location(0, 2);
     }
-    
+
     [Server]
     public override void Save()
     {
-        if (!Directory.Exists(WorldManager.world.getPath() + "\\players\\"+displayName))
-            Directory.CreateDirectory(WorldManager.world.getPath() + "\\players\\"+displayName);
-        
+        if (!Directory.Exists(WorldManager.world.getPath() + "\\players\\" + displayName))
+            Directory.CreateDirectory(WorldManager.world.getPath() + "\\players\\" + displayName);
+
         base.Save();
         PlayerSaveData.SetBedLocation(displayName, bedLocation);
     }
-    
+
     [Server]
     public override void Load()
     {
         base.Load();
         bedLocation = PlayerSaveData.GetBedLocation(displayName);
     }
-    
+
     [Server]
     public void Sleep()
     {
-        var currentDay = (int) (WorldManager.instance.worldTime / WorldManager.dayLength);
-        var newTime = (currentDay + 1) * WorldManager.dayLength;
-        var isNight = WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2;
+        int currentDay = (int) (WorldManager.instance.worldTime / WorldManager.dayLength);
+        float newTime = (currentDay + 1) * WorldManager.dayLength;
+        bool isNight = WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2;
 
         if (isNight)
             WorldManager.world.time = newTime;
@@ -713,27 +722,27 @@ public class Player : HumanEntity
     [Server]
     public override string SavePath()
     {
-        return WorldManager.world.getPath() + "\\players\\"+uuid+"\\entity.dat";
+        return WorldManager.world.getPath() + "\\players\\" + uuid + "\\entity.dat";
     }
 
     [Server]
     private IEnumerator ValidSpawnOnceChunkLoaded()
     {
         yield return new WaitForSeconds(0.2f);
-        while (!IsChunkLoaded()) 
+        while (!IsChunkLoaded())
             yield return new WaitForSeconds(0.1f);
 
         Location validLoc = ValidSpawn(Location.x);
 
         Teleport(validLoc);
     }
-    
+
     [Server]
     public override void Die()
     {
         if (dead)
             return;
-        
+
         base.Die();
         GetInventory().Delete();
         DeathMenuEffect();
@@ -745,16 +754,16 @@ public class Player : HumanEntity
         if (hasAuthority)
             ClientKnockback(direction);
     }
-    
+
     public void ClientKnockback(Vector2 direction)
     {
         base.Knockback(direction);
     }
-    
+
     [ClientRpc]
     public void DeathMenuEffect()
     {
-        if(hasAuthority)
+        if (hasAuthority)
             DeathMenu.active = true;
     }
 
@@ -762,25 +771,17 @@ public class Player : HumanEntity
     private void ClimbableSound()
     {
         if (isOnClimbable && Mathf.Abs(GetVelocity().y) > 0.5f)
-            if ((Time.time % 0.8f) - Time.deltaTime <= 0)
+            if (Time.time % 0.8f - Time.deltaTime <= 0)
                 Sound.Play(Location, "block/ladder/hit", SoundType.Entities, 0.8f, 1.2f);
-                
-    }
-    
-    public void OnDestroy()
-    {
-        players.Remove(this);
     }
 
     [Client]
     private void CheckDimensionChangeLoadingScreen()
     {
         if (teleportingDimension)
-        {
             LoadingMenu.Create(LoadingMenuType.Dimension);
-        }
     }
-    
+
     [Server]
     public override void Damage(float damage)
     {
@@ -792,25 +793,24 @@ public class Player : HumanEntity
     [ClientRpc]
     public void PlayClientCameraShakeEffect()
     {
-        if(hasAuthority)
+        if (hasAuthority)
             CameraController.instance.shake = 5;
     }
-    
+
     [ClientRpc]
     public void PlayEatEffect(Color[] colors)
     {
-        var r = new System.Random();
-        for (var i = 0; i < r.Next(6, 10); i++) //SpawnParticles
+        Random r = new Random();
+        for (int i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
             Particle part = Particle.Spawn();
             Color color = colors[r.Next(0, colors.Length)];
             part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
             part.color = color;
             part.doGravity = true;
-            part.velocity = new Vector2(
-                (0.5f + (float)r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1), 
-                3f + (float)r.NextDouble());
-            part.maxAge = (float)r.NextDouble();
+            part.velocity = new Vector2((0.5f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1),
+                3f + (float) r.NextDouble());
+            part.maxAge = (float) r.NextDouble();
             part.maxBounces = 10;
         }
     }
@@ -823,8 +823,8 @@ public class Player : HumanEntity
         Animator anim = GetComponent<Animator>();
 
         anim.SetBool("eating", eatingTime > 0);
-        anim.SetBool("punch", 
-            (NetworkTime.time - lastHitTime < 0.05f) || (NetworkTime.time - lastBlockHitTime < 0.3f));
+        anim.SetBool("punch",
+            NetworkTime.time - lastHitTime < 0.05f || NetworkTime.time - lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
         anim.SetBool("grounded", isOnGround);
@@ -835,9 +835,9 @@ public class Player : HumanEntity
     [Client]
     private void RenderSpriteParts()
     {
-        for (var i = 0; i < GetRenderer().transform.childCount; i++)
+        for (int i = 0; i < GetRenderer().transform.childCount; i++)
         {
-            var spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
+            SpriteRenderer spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
             spritePart.color = GetRenderer().color;
         }
     }

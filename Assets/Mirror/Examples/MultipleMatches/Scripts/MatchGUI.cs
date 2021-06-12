@@ -6,16 +6,16 @@ namespace Mirror.Examples.MultipleMatch
 {
     public class MatchGUI : MonoBehaviour
     {
-        Guid matchId;
+        [Header("GUI Elements")] public Image image;
 
-        [Header("GUI Elements")]
-        public Image image;
         public Toggle toggleButton;
         public Text matchName;
         public Text playerCount;
 
         [Header("Diagnostics - Do Not Modify")]
         public CanvasController canvasController;
+
+        private Guid matchId;
 
         public void Awake()
         {

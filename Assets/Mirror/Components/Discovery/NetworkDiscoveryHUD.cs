@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.Events;
 using UnityEngine;
 
 namespace Mirror.Discovery
@@ -9,24 +11,11 @@ namespace Mirror.Discovery
     [RequireComponent(typeof(NetworkDiscovery))]
     public class NetworkDiscoveryHUD : MonoBehaviour
     {
-        readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
-        Vector2 scrollViewPos = Vector2.zero;
-
         public NetworkDiscovery networkDiscovery;
+        private readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
+        private Vector2 scrollViewPos = Vector2.zero;
 
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (networkDiscovery == null)
-            {
-                networkDiscovery = GetComponent<NetworkDiscovery>();
-                UnityEditor.Events.UnityEventTools.AddPersistentListener(networkDiscovery.OnServerFound, OnDiscoveredServer);
-                UnityEditor.Undo.RecordObjects(new Object[] { this, networkDiscovery }, "Set NetworkDiscovery");
-            }
-        }
-#endif
-
-        void OnGUI()
+        private void OnGUI()
         {
             if (NetworkManager.singleton == null)
                 return;
@@ -38,7 +27,19 @@ namespace Mirror.Discovery
                 DrawGUI();
         }
 
-        void DrawGUI()
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (networkDiscovery == null)
+            {
+                networkDiscovery = GetComponent<NetworkDiscovery>();
+                UnityEventTools.AddPersistentListener(networkDiscovery.OnServerFound, OnDiscoveredServer);
+                Undo.RecordObjects(new Object[] {this, networkDiscovery}, "Set NetworkDiscovery");
+            }
+        }
+#endif
+
+        private void DrawGUI()
         {
             GUILayout.BeginHorizontal();
 
@@ -81,7 +82,7 @@ namespace Mirror.Discovery
             GUILayout.EndScrollView();
         }
 
-        void Connect(ServerResponse info)
+        private void Connect(ServerResponse info)
         {
             NetworkManager.singleton.StartClient(info.uri);
         }

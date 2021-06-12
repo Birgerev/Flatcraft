@@ -1,15 +1,9 @@
 ﻿// common code used by server and client
+
 namespace Telepathy
 {
     public abstract class Common
     {
-        // IMPORTANT: DO NOT SHARE STATE ACROSS SEND/RECV LOOPS (DATA RACES)
-        // (except receive pipe which is used for all threads)
-
-        // NoDelay disables nagle algorithm. lowers CPU% and latency but
-        // increases bandwidth
-        public bool NoDelay = true;
-
         // Prevent allocation attacks. Each packet is prefixed with a length
         // header, so an attacker could send a fake packet with length=2GB,
         // causing the server to allocate 2GB and run out of memory quickly.
@@ -17,10 +11,12 @@ namespace Telepathy
         //    files!
         // -> 16KB per message should be more than enough.
         public readonly int MaxMessageSize;
+        // IMPORTANT: DO NOT SHARE STATE ACROSS SEND/RECV LOOPS (DATA RACES)
+        // (except receive pipe which is used for all threads)
 
-        // Send would stall forever if the network is cut off during a send, so
-        // we need a timeout (in milliseconds)
-        public int SendTimeout = 5000;
+        // NoDelay disables nagle algorithm. lowers CPU% and latency but
+        // increases bandwidth
+        public bool NoDelay = true;
 
         // Default TCP receive time out can be huge (minutes).
         // That's way too much for games, let's make it configurable.
@@ -29,6 +25,10 @@ namespace Telepathy
         // => disabled by default because some people might use Telepathy
         //    without Mirror and without sending pings, so timeouts are likely
         public int ReceiveTimeout = 0;
+
+        // Send would stall forever if the network is cut off during a send, so
+        // we need a timeout (in milliseconds)
+        public int SendTimeout = 5000;
 
         // constructor
         protected Common(int MaxMessageSize)

@@ -95,18 +95,18 @@ namespace LibNoise.Generator
         /// <returns>The resulting output value.</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var value = 0.0;
-            var cp = 1.0;
+            double value = 0.0;
+            double cp = 1.0;
             x *= Frequency;
             y *= Frequency;
             z *= Frequency;
-            for (var i = 0; i < _octaveCount; i++)
+            for (int i = 0; i < _octaveCount; i++)
             {
-                var nx = Utils.MakeInt32Range(x);
-                var ny = Utils.MakeInt32Range(y);
-                var nz = Utils.MakeInt32Range(z);
-                var seed = (Seed + i) & 0xffffffff;
-                var signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
+                double nx = Utils.MakeInt32Range(x);
+                double ny = Utils.MakeInt32Range(y);
+                double nz = Utils.MakeInt32Range(z);
+                long seed = (Seed + i) & 0xffffffff;
+                double signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
                 value += signal * cp;
                 x *= Lacunarity;
                 y *= Lacunarity;
@@ -119,16 +119,16 @@ namespace LibNoise.Generator
 
         public double GetValue(double x, double y)
         {
-            var value = 0.0;
-            var cp = 1.0;
+            double value = 0.0;
+            double cp = 1.0;
             x *= Frequency;
             y *= Frequency;
-            for (var i = 0; i < _octaveCount; i++)
+            for (int i = 0; i < _octaveCount; i++)
             {
-                var nx = Utils.MakeInt32Range(x);
-                var ny = Utils.MakeInt32Range(y);
-                var seed = (Seed + i) & 0xffffffff;
-                var signal = Utils.GradientCoherentNoise2D(nx, ny, seed, Quality);
+                double nx = Utils.MakeInt32Range(x);
+                double ny = Utils.MakeInt32Range(y);
+                long seed = (Seed + i) & 0xffffffff;
+                double signal = Utils.GradientCoherentNoise2D(nx, ny, seed, Quality);
                 value += signal * cp;
                 x *= Lacunarity;
                 y *= Lacunarity;

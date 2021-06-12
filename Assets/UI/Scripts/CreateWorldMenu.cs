@@ -11,9 +11,9 @@ public class CreateWorldMenu : MonoBehaviour
     public InputField nameField;
     public InputField seedField;
 
-    private bool switchingMenus;
-
     public World world;
+
+    private bool switchingMenus;
 
     // Start is called before the first frame update
     private void Start()
@@ -37,9 +37,9 @@ public class CreateWorldMenu : MonoBehaviour
             world.seed = 0;
 
 
-        var worldExists = World.worldExists(world.name);
-        var nameEmpty = nameField.text == "";
-        var error = worldExists || nameEmpty;
+        bool worldExists = World.worldExists(world.name);
+        bool nameEmpty = nameField.text == "";
+        bool error = worldExists || nameEmpty;
 
         if (worldExists)
             errorText.text = "World name is already taken!";
@@ -54,7 +54,8 @@ public class CreateWorldMenu : MonoBehaviour
     {
         switchingMenus = true;
 
-        if (world.seed == 0) world.seed = new Random().Next();
+        if (world.seed == 0)
+            world.seed = new Random().Next();
         world.versionId = VersionController.CurrentVersionId;
 
         world.SaveData();

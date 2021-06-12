@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Mirror.Cloud
 {
     /// <summary>
-    /// Used to requests and responses from the mirror api
+    ///     Used to requests and responses from the mirror api
     /// </summary>
     public interface IApiConnector
     {
@@ -12,44 +12,20 @@ namespace Mirror.Cloud
     }
 
     /// <summary>
-    /// Used to requests and responses from the mirror api
+    ///     Used to requests and responses from the mirror api
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/CloudServices/ApiConnector")]
     [HelpURL("https://mirror-networking.com/docs/api/Mirror.Cloud.ApiConnector.html")]
     public class ApiConnector : MonoBehaviour, IApiConnector, ICoroutineRunner
     {
-        #region Inspector
-        [Header("Settings")]
+        private IRequestCreator requestCreator;
 
-        [Tooltip("Base URL of api, including https")]
-        [SerializeField] string ApiAddress = "";
-
-        [Tooltip("Api key required to access api")]
-        [SerializeField] string ApiKey = "";
-
-        [Header("Events")]
-
-        [Tooltip("Triggered when server list updates")]
-        [SerializeField] ServerListEvent _onServerListUpdated = new ServerListEvent();
-        #endregion
-
-        IRequestCreator requestCreator;
-
-        public ListServer ListServer { get; private set; }
-
-        void Awake()
+        private void Awake()
         {
             requestCreator = new RequestCreator(ApiAddress, ApiKey, this);
 
             InitListServer();
-        }
-
-        void InitListServer()
-        {
-            IListServerServerApi serverApi = new ListServerServerApi(this, requestCreator);
-            IListServerClientApi clientApi = new ListServerClientApi(this, requestCreator, _onServerListUpdated);
-            ListServer = new ListServer(serverApi, clientApi);
         }
 
         public void OnDestroy()
@@ -57,5 +33,27 @@ namespace Mirror.Cloud
             ListServer?.ServerApi.Shutdown();
             ListServer?.ClientApi.Shutdown();
         }
+
+        public ListServer ListServer { get; private set; }
+
+        private void InitListServer()
+        {
+            IListServerServerApi serverApi = new ListServerServerApi(this, requestCreator);
+            IListServerClientApi clientApi = new ListServerClientApi(this, requestCreator, _onServerListUpdated);
+            ListServer = new ListServer(serverApi, clientApi);
+        }
+
+        #region Inspector
+
+        [Header("Settings")] [Tooltip("Base URL of api, including https")] [SerializeField]
+        private string ApiAddress = "";
+
+        [Tooltip("Api key required to access api")] [SerializeField]
+        private string ApiKey = "";
+
+        [Header("Events")] [Tooltip("Triggered when server list updates")] [SerializeField]
+        private ServerListEvent _onServerListUpdated = new ServerListEvent();
+
+        #endregion
     }
 }

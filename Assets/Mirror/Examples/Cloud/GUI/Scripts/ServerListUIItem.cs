@@ -6,18 +6,18 @@ using UnityEngine.UI;
 namespace Mirror.Cloud.Example
 {
     /// <summary>
-    /// Displays a server created by ServerListUI
+    ///     Displays a server created by ServerListUI
     /// </summary>
     public class ServerListUIItem : MonoBehaviour
     {
-        [SerializeField] Text nameText = null;
-        [SerializeField] Text namePlayers = null;
-        [SerializeField] string playersFormat = "{0} / {1}";
-        [SerializeField] Text addressText = null;
+        [SerializeField] private Text nameText;
+        [SerializeField] private Text namePlayers;
+        [SerializeField] private string playersFormat = "{0} / {1}";
+        [SerializeField] private Text addressText;
 
-        [SerializeField] Button joinButton = null;
+        [SerializeField] private Button joinButton;
 
-        ServerJson server;
+        private ServerJson server;
 
         public void Setup(ServerJson server)
         {
@@ -29,7 +29,7 @@ namespace Mirror.Cloud.Example
             joinButton.onClick.AddListener(OnJoinClicked);
         }
 
-        void OnJoinClicked()
+        private void OnJoinClicked()
         {
             NetworkManager.singleton.StartClient(new Uri(server.address));
         }

@@ -9,12 +9,12 @@
 
     public override Tool_Type propperToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
-    
+
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
 
-        trigger = open;                             //Custom solution, so that block becomes trigger (and as such climbable), when trapdoor is open
+        trigger = open; //Custom solution, so that block becomes trigger (and as such climbable), when trapdoor is open
         UpdateColliders();
 
         base.Initialize();

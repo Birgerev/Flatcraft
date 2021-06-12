@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PlayerSaveData
@@ -13,19 +13,19 @@ public class PlayerSaveData
     {
         return GetPath() + "\\" + Player + "\\playerData.dat";
     }
-    
+
     public static void SetBedLocation(string player, Location loc)
     {
         EditLine(player, "bedLocation", JsonUtility.ToJson(loc));
     }
-    
+
     public static Location GetBedLocation(string player)
     {
         string locString = ReadLine(player, "bedLocation");
 
         if (locString == null)
             return new Location();
-        
+
         return JsonUtility.FromJson<Location>(locString);
     }
 
@@ -33,20 +33,18 @@ public class PlayerSaveData
     {
         if (!File.Exists(GetPlayerPath(player)))
             File.Create(GetPlayerPath(player)).Close();
-        
+
         List<string> lines = new List<string>(ReadFile(player));
         bool lineWasChanged = false;
         for (int i = 0; i < lines.Count; i++)
-        {
             if (lines[i].Split('=')[0].Equals(key))
             {
                 lines[i] = key + "=" + value;
                 lineWasChanged = true;
                 break;
             }
-        }
-        
-        if(!lineWasChanged)
+
+        if (!lineWasChanged)
             lines.Add(key + "=" + value);
 
         File.WriteAllLines(GetPlayerPath(player), lines);
@@ -56,15 +54,11 @@ public class PlayerSaveData
     {
         if (!File.Exists(GetPlayerPath(player)))
             return null;
-        
+
         List<string> lines = new List<string>(ReadFile(player));
         for (int i = 0; i < lines.Count; i++)
-        {
             if (lines[i].Split('=')[0].Equals(key))
-            {
                 return lines[i].Split('=')[1];
-            }
-        }
 
         return null;
     }
@@ -74,9 +68,7 @@ public class PlayerSaveData
         string[] lines = new string[0];
 
         if (File.Exists(GetPlayerPath(player)))
-        {
             lines = File.ReadAllLines(GetPlayerPath(player));
-        }
 
         return lines;
     }

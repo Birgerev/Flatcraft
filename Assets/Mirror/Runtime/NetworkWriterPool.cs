@@ -5,7 +5,10 @@ namespace Mirror
     /// <summary>Pooled NetworkWriter, automatically returned to pool when using 'using'</summary>
     public sealed class PooledNetworkWriter : NetworkWriter, IDisposable
     {
-        public void Dispose() => NetworkWriterPool.Recycle(this);
+        public void Dispose()
+        {
+            NetworkWriterPool.Recycle(this);
+        }
     }
 
     /// <summary>Pool of NetworkWriters to avoid allocations.</summary>
@@ -16,9 +19,8 @@ namespace Mirror
         // position before reusing.
         // this is also more consistent with NetworkReaderPool where we need to
         // assign the internal buffer before reusing.
-        static readonly Pool<PooledNetworkWriter> Pool = new Pool<PooledNetworkWriter>(
-            () => new PooledNetworkWriter()
-        );
+        private static readonly Pool<PooledNetworkWriter> Pool = new Pool<PooledNetworkWriter>(
+            () => new PooledNetworkWriter());
 
         /// <summary>Get a writer from the pool. Creates new one if pool is empty.</summary>
         public static PooledNetworkWriter GetWriter()

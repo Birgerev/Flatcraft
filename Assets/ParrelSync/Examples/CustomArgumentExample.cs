@@ -1,7 +1,6 @@
 ﻿// This should be editor only
+
 #if UNITY_EDITOR
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ParrelSync.Example
@@ -9,7 +8,7 @@ namespace ParrelSync.Example
     public class CustomArgumentExample : MonoBehaviour
     {
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             // Is this editor instance running a clone project?
             if (ClonesManager.IsClone())

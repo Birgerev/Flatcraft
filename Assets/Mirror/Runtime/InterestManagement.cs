@@ -1,5 +1,6 @@
 // interest management component for custom solutions like
 // distance based, spatial hashing, raycast based, etc.
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,13 +10,13 @@ namespace Mirror
     public abstract class InterestManagement : MonoBehaviour
     {
         // Awake configures InterestManagement in NetworkServer
-        void Awake()
+        private void Awake()
         {
             if (NetworkServer.aoi == null)
-            {
                 NetworkServer.aoi = this;
-            }
-            else Debug.LogError($"Only one InterestManagement component allowed. {NetworkServer.aoi.GetType()} has been set up already.");
+            else
+                Debug.LogError(
+                    $"Only one InterestManagement component allowed. {NetworkServer.aoi.GetType()} has been set up already.");
         }
 
         // Callback used by the visibility system to determine if an observer
@@ -42,7 +43,8 @@ namespace Mirror
         //
         // Mirror maintains .observing automatically in the background. best of
         // both worlds without any worrying now!
-        public abstract void OnRebuildObservers(NetworkIdentity identity, HashSet<NetworkConnection> newObservers, bool initialize);
+        public abstract void OnRebuildObservers(NetworkIdentity identity, HashSet<NetworkConnection> newObservers
+            , bool initialize);
 
         // helper function to trigger a full rebuild.
         // most implementations should call this in a certain interval.
@@ -53,9 +55,7 @@ namespace Mirror
         protected void RebuildAll()
         {
             foreach (NetworkIdentity identity in NetworkIdentity.spawned.Values)
-            {
                 NetworkServer.RebuildObservers(identity, false);
-            }
         }
     }
 }

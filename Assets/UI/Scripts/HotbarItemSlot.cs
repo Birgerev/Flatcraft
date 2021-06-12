@@ -8,7 +8,7 @@ public class HotbarItemSlot : ItemSlot
 
     private void Update()
     {
-        if (Time.frameCount % 2 == 0) 
+        if (Time.frameCount % 2 == 0)
             UpdateSlot();
     }
 

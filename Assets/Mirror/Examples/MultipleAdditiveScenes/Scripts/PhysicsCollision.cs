@@ -10,19 +10,13 @@ namespace Mirror.Examples.MultipleAdditiveScenes
 
         public Rigidbody rigidbody3D;
 
-        void OnValidate()
-        {
-            if (rigidbody3D == null)
-                rigidbody3D = GetComponent<Rigidbody>();
-        }
-
-        void Start()
+        private void Start()
         {
             rigidbody3D.isKinematic = !isServer;
         }
 
         [ServerCallback]
-        void OnCollisionStay(Collision other)
+        private void OnCollisionStay(Collision other)
         {
             if (other.gameObject.CompareTag("Player"))
             {
@@ -34,11 +28,18 @@ namespace Mirror.Examples.MultipleAdditiveScenes
                 direction = direction.normalized;
 
                 // push this away from player...a bit less force for host player
-                if (other.gameObject.GetComponent<NetworkIdentity>().connectionToClient.connectionId == NetworkConnection.LocalConnectionId)
+                if (other.gameObject.GetComponent<NetworkIdentity>().connectionToClient.connectionId ==
+                    NetworkConnection.LocalConnectionId)
                     rigidbody3D.AddForce(direction * force * .5f);
                 else
                     rigidbody3D.AddForce(direction * force);
             }
+        }
+
+        private void OnValidate()
+        {
+            if (rigidbody3D == null)
+                rigidbody3D = GetComponent<Rigidbody>();
         }
     }
 }

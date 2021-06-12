@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -10,21 +11,21 @@ namespace Mirror.SimpleWeb
     {
         public const int IdNotSet = -1;
 
-        readonly object disposedLock = new object();
+        private readonly object disposedLock = new object();
 
         public TcpClient client;
 
         public int connId = IdNotSet;
-        public Stream stream;
+
+        private volatile bool hasDisposed;
+
+        public Action<Connection> onDispose;
         public Thread receiveThread;
-        public Thread sendThread;
 
         public ManualResetEventSlim sendPending = new ManualResetEventSlim(false);
         public ConcurrentQueue<ArrayBuffer> sendQueue = new ConcurrentQueue<ArrayBuffer>();
-
-        public Action<Connection> onDispose;
-
-        volatile bool hasDisposed;
+        public Thread sendThread;
+        public Stream stream;
 
         public Connection(TcpClient client, Action<Connection> onDispose)
         {
@@ -34,14 +35,15 @@ namespace Mirror.SimpleWeb
 
 
         /// <summary>
-        /// disposes client and stops threads
+        ///     disposes client and stops threads
         /// </summary>
         public void Dispose()
         {
             Log.Verbose($"Dispose {ToString()}");
 
             // check hasDisposed first to stop ThreadInterruptedException on lock
-            if (hasDisposed) { return; }
+            if (hasDisposed)
+                return;
 
             Log.Info($"Connection Close: {ToString()}");
 
@@ -49,7 +51,8 @@ namespace Mirror.SimpleWeb
             lock (disposedLock)
             {
                 // check hasDisposed again inside lock to make sure no other object has called this
-                if (hasDisposed) { return; }
+                if (hasDisposed)
+                    return;
                 hasDisposed = true;
 
                 // stop threads first so they don't try to use disposed objects
@@ -73,9 +76,7 @@ namespace Mirror.SimpleWeb
 
                 // release all buffers in send queue
                 while (sendQueue.TryDequeue(out ArrayBuffer buffer))
-                {
                     buffer.Release();
-                }
 
                 onDispose.Invoke(this);
             }
@@ -83,7 +84,7 @@ namespace Mirror.SimpleWeb
 
         public override string ToString()
         {
-            System.Net.EndPoint endpoint = client?.Client?.RemoteEndPoint;
+            EndPoint endpoint = client?.Client?.RemoteEndPoint;
             return $"[Conn:{connId}, endPoint:{endpoint}]";
         }
     }

@@ -2,13 +2,15 @@
 //
 // reliable: latency
 // unreliable: latency, loss, scramble (unreliable isn't ordered so we scramble)
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Mirror
 {
-    struct QueuedMessage
+    internal struct QueuedMessage
     {
         public int connectionId;
         public byte[] bytes;
@@ -21,40 +23,41 @@ namespace Mirror
     {
         public Transport wrap;
 
-        [Header("Common")]
-        [Tooltip("Spike latency via perlin(Time * speedMultiplier) * spikeMultiplier")]
-        [Range(0, 1)] public float latencySpikeMultiplier;
+        [Header("Common")] [Tooltip("Spike latency via perlin(Time * speedMultiplier) * spikeMultiplier")] [Range(0, 1)]
+        public float latencySpikeMultiplier;
+
         [Tooltip("Spike latency via perlin(Time * speedMultiplier) * spikeMultiplier")]
         public float latencySpikeSpeedMultiplier = 1;
 
-        [Header("Reliable Messages")]
-        [Tooltip("Reliable latency in seconds")]
+        [Header("Reliable Messages")] [Tooltip("Reliable latency in seconds")]
         public float reliableLatency;
         // note: packet loss over reliable manifests itself in latency.
         //       don't need (and can't add) a loss option here.
         // note: reliable is ordered by definition. no need to scramble.
 
-        [Header("Unreliable Messages")]
-        [Tooltip("Packet loss in %")]
-        [Range(0, 1)] public float unreliableLoss;
+        [Header("Unreliable Messages")] [Tooltip("Packet loss in %")] [Range(0, 1)]
+        public float unreliableLoss;
+
         [Tooltip("Unreliable latency in seconds")]
         public float unreliableLatency;
-        [Tooltip("Scramble % of unreliable messages, just like over the real network. Mirror unreliable is unordered.")]
-        [Range(0, 1)] public float unreliableScramble;
 
-        // message queues
-        // list so we can insert randomly (scramble)
-        List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
-        List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
-        List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
-        List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
+        [Tooltip("Scramble % of unreliable messages, just like over the real network. Mirror unreliable is unordered.")]
+        [Range(0, 1)]
+        public float unreliableScramble;
 
         // random
         // UnityEngine.Random.value is [0, 1] with both upper and lower bounds inclusive
         // but we need the upper bound to be exclusive, so using System.Random instead.
         // => NextDouble() is NEVER < 0 so loss=0 never drops!
         // => NextDouble() is ALWAYS < 1 so loss=1 always drops!
-        System.Random random = new System.Random();
+        private readonly Random random = new Random();
+
+        // message queues
+        // list so we can insert randomly (scramble)
+        private readonly List<QueuedMessage> reliableClientToServer = new List<QueuedMessage>();
+        private readonly List<QueuedMessage> reliableServerToClient = new List<QueuedMessage>();
+        private readonly List<QueuedMessage> unreliableClientToServer = new List<QueuedMessage>();
+        private readonly List<QueuedMessage> unreliableServerToClient = new List<QueuedMessage>();
 
         public void Awake()
         {
@@ -63,14 +66,24 @@ namespace Mirror
         }
 
         // forward enable/disable to the wrapped transport
-        void OnEnable() { wrap.enabled = true; }
-        void OnDisable() { wrap.enabled = false; }
+        private void OnEnable()
+        {
+            wrap.enabled = true;
+        }
+
+        private void OnDisable()
+        {
+            wrap.enabled = false;
+        }
 
         // noise function can be replaced if needed
-        protected virtual float Noise(float time) => Mathf.PerlinNoise(time, time);
+        protected virtual float Noise(float time)
+        {
+            return Mathf.PerlinNoise(time, time);
+        }
 
         // helper function to simulate latency
-        float SimulateLatency(int channeldId)
+        private float SimulateLatency(int channeldId)
         {
             // spike over perlin noise.
             // no spikes isn't realistic.
@@ -91,7 +104,8 @@ namespace Mirror
         }
 
         // helper function to simulate a send with latency/loss/scramble
-        void SimulateSend(int connectionId, int channelId, ArraySegment<byte> segment, float latency, List<QueuedMessage> reliableQueue, List<QueuedMessage> unreliableQueue)
+        private void SimulateSend(int connectionId, int channelId, ArraySegment<byte> segment, float latency
+            , List<QueuedMessage> reliableQueue, List<QueuedMessage> unreliableQueue)
         {
             // segment is only valid after returning. copy it.
             // (allocates for now. it's only for testing anyway.)
@@ -101,9 +115,7 @@ namespace Mirror
             // enqueue message. send after latency interval.
             QueuedMessage message = new QueuedMessage
             {
-                connectionId = connectionId,
-                bytes = bytes,
-                time = Time.time + latency
+                connectionId = connectionId, bytes = bytes, time = Time.time + latency
             };
 
             switch (channelId)
@@ -125,6 +137,7 @@ namespace Mirror
                         // simulate latency
                         unreliableQueue.Insert(index, message);
                     }
+
                     break;
                 default:
                     Debug.LogError($"{nameof(LatencySimulation)} unexpected channelId: {channelId}");
@@ -132,7 +145,10 @@ namespace Mirror
             }
         }
 
-        public override bool Available() => wrap.Available();
+        public override bool Available()
+        {
+            return wrap.Available();
+        }
 
         public override void ClientConnect(string address)
         {
@@ -152,7 +168,10 @@ namespace Mirror
             wrap.ClientConnect(uri);
         }
 
-        public override bool ClientConnected() => wrap.ClientConnected();
+        public override bool ClientConnected()
+        {
+            return wrap.ClientConnected();
+        }
 
         public override void ClientDisconnect()
         {
@@ -167,13 +186,25 @@ namespace Mirror
             SimulateSend(0, channelId, segment, latency, reliableClientToServer, unreliableClientToServer);
         }
 
-        public override Uri ServerUri() => wrap.ServerUri();
+        public override Uri ServerUri()
+        {
+            return wrap.ServerUri();
+        }
 
-        public override bool ServerActive() => wrap.ServerActive();
+        public override bool ServerActive()
+        {
+            return wrap.ServerActive();
+        }
 
-        public override string ServerGetClientAddress(int connectionId) => wrap.ServerGetClientAddress(connectionId);
+        public override string ServerGetClientAddress(int connectionId)
+        {
+            return wrap.ServerGetClientAddress(connectionId);
+        }
 
-        public override bool ServerDisconnect(int connectionId) => wrap.ServerDisconnect(connectionId);
+        public override bool ServerDisconnect(int connectionId)
+        {
+            return wrap.ServerDisconnect(connectionId);
+        }
 
         public override void ServerSend(int connectionId, int channelId, ArraySegment<byte> segment)
         {
@@ -197,8 +228,16 @@ namespace Mirror
             unreliableServerToClient.Clear();
         }
 
-        public override void ClientEarlyUpdate() => wrap.ClientEarlyUpdate();
-        public override void ServerEarlyUpdate() => wrap.ServerEarlyUpdate();
+        public override void ClientEarlyUpdate()
+        {
+            wrap.ClientEarlyUpdate();
+        }
+
+        public override void ServerEarlyUpdate()
+        {
+            wrap.ServerEarlyUpdate();
+        }
+
         public override void ClientLateUpdate()
         {
             // flush reliable messages after latency
@@ -212,6 +251,7 @@ namespace Mirror
                     wrap.ClientSend(Channels.Reliable, new ArraySegment<byte>(message.bytes));
                     reliableClientToServer.RemoveAt(0);
                 }
+
                 // not enough time elapsed yet
                 break;
             }
@@ -227,6 +267,7 @@ namespace Mirror
                     wrap.ClientSend(Channels.Unreliable, new ArraySegment<byte>(message.bytes));
                     unreliableClientToServer.RemoveAt(0);
                 }
+
                 // not enough time elapsed yet
                 break;
             }
@@ -234,6 +275,7 @@ namespace Mirror
             // update wrapped transport too
             wrap.ClientLateUpdate();
         }
+
         public override void ServerLateUpdate()
         {
             // flush reliable messages after latency
@@ -247,6 +289,7 @@ namespace Mirror
                     wrap.ServerSend(message.connectionId, Channels.Reliable, new ArraySegment<byte>(message.bytes));
                     reliableServerToClient.RemoveAt(0);
                 }
+
                 // not enough time elapsed yet
                 break;
             }
@@ -262,6 +305,7 @@ namespace Mirror
                     wrap.ServerSend(message.connectionId, Channels.Unreliable, new ArraySegment<byte>(message.bytes));
                     unreliableServerToClient.RemoveAt(0);
                 }
+
                 // not enough time elapsed yet
                 break;
             }
@@ -270,11 +314,24 @@ namespace Mirror
             wrap.ServerLateUpdate();
         }
 
-        public override int GetMaxBatchSize(int channelId) => wrap.GetMaxBatchSize(channelId);
-        public override int GetMaxPacketSize(int channelId = 0) => wrap.GetMaxPacketSize(channelId);
+        public override int GetMaxBatchSize(int channelId)
+        {
+            return wrap.GetMaxBatchSize(channelId);
+        }
 
-        public override void Shutdown() => wrap.Shutdown();
+        public override int GetMaxPacketSize(int channelId = 0)
+        {
+            return wrap.GetMaxPacketSize(channelId);
+        }
 
-        public override string ToString() => $"{nameof(LatencySimulation)} {wrap}";
+        public override void Shutdown()
+        {
+            wrap.Shutdown();
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(LatencySimulation)} {wrap}";
+        }
     }
 }

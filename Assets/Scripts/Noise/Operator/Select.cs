@@ -39,25 +39,27 @@ namespace LibNoise.Operator
             Debug.Assert(Modules[0] != null);
             Debug.Assert(Modules[1] != null);
             Debug.Assert(Modules[2] != null);
-            var cv = Modules[2].GetValue(x, y, z);
+            double cv = Modules[2].GetValue(x, y, z);
             if (_fallOff > 0.0)
             {
                 double a;
-                if (cv < _min - _fallOff) return Modules[0].GetValue(x, y, z);
+                if (cv < _min - _fallOff)
+                    return Modules[0].GetValue(x, y, z);
                 if (cv < _min + _fallOff)
                 {
-                    var lc = _min - _fallOff;
-                    var uc = _min + _fallOff;
+                    double lc = _min - _fallOff;
+                    double uc = _min + _fallOff;
                     a = Utils.MapCubicSCurve((cv - lc) / (uc - lc));
                     return Utils.InterpolateLinear(Modules[0].GetValue(x, y, z),
                         Modules[1].GetValue(x, y, z), a);
                 }
 
-                if (cv < _max - _fallOff) return Modules[1].GetValue(x, y, z);
+                if (cv < _max - _fallOff)
+                    return Modules[1].GetValue(x, y, z);
                 if (cv < _max + _fallOff)
                 {
-                    var lc = _max - _fallOff;
-                    var uc = _max + _fallOff;
+                    double lc = _max - _fallOff;
+                    double uc = _max + _fallOff;
                     a = Utils.MapCubicSCurve((cv - lc) / (uc - lc));
                     return Utils.InterpolateLinear(Modules[1].GetValue(x, y, z),
                         Modules[0].GetValue(x, y, z), a);
@@ -66,7 +68,8 @@ namespace LibNoise.Operator
                 return Modules[0].GetValue(x, y, z);
             }
 
-            if (cv < _min || cv > _max) return Modules[0].GetValue(x, y, z);
+            if (cv < _min || cv > _max)
+                return Modules[0].GetValue(x, y, z);
             return Modules[1].GetValue(x, y, z);
         }
 
@@ -149,7 +152,7 @@ namespace LibNoise.Operator
             get => _fallOff;
             set
             {
-                var bs = _max - _min;
+                double bs = _max - _min;
                 _raw = value;
                 _fallOff = value > bs / 2 ? bs / 2 : value;
             }

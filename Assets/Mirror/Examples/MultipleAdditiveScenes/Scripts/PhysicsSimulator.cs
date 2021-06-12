@@ -4,13 +4,13 @@ namespace Mirror.Examples.MultipleAdditiveScenes
 {
     public class PhysicsSimulator : MonoBehaviour
     {
-        PhysicsScene physicsScene;
-        PhysicsScene2D physicsScene2D;
+        private PhysicsScene physicsScene;
+        private PhysicsScene2D physicsScene2D;
 
-        bool simulatePhysicsScene;
-        bool simulatePhysicsScene2D;
+        private bool simulatePhysicsScene;
+        private bool simulatePhysicsScene2D;
 
-        void Awake()
+        private void Awake()
         {
             if (NetworkServer.active)
             {
@@ -26,9 +26,10 @@ namespace Mirror.Examples.MultipleAdditiveScenes
             }
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
-            if (!NetworkServer.active) return;
+            if (!NetworkServer.active)
+                return;
 
             if (simulatePhysicsScene)
                 physicsScene.Simulate(Time.fixedDeltaTime);

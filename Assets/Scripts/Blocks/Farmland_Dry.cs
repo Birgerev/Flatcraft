@@ -21,8 +21,8 @@
 
     public void CheckWater()
     {
-        var hasWater = false;
-        for (var x = -4; x <= 4; x++)
+        bool hasWater = false;
+        for (int x = -4; x <= 4; x++)
             if ((location + new Location(x, 0)).GetMaterial() == Material.Water)
             {
                 hasWater = true;

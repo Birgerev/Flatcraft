@@ -1,6 +1,7 @@
 // uses the first available transport for server and client.
 // example: to use Apathy if on Windows/Mac/Linux and fall back to Telepathy
 //          otherwise.
+
 using System;
 using UnityEngine;
 
@@ -13,38 +14,32 @@ namespace Mirror
         public Transport[] transports;
 
         // the first transport that is available on this platform
-        Transport available;
+        private Transport available;
 
         public void Awake()
         {
             if (transports == null || transports.Length == 0)
-            {
                 throw new Exception("FallbackTransport requires at least 1 underlying transport");
-            }
             available = GetAvailableTransport();
             Debug.Log("FallbackTransport available: " + available.GetType());
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             available.enabled = true;
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             available.enabled = false;
         }
 
         // The client just uses the first transport available
-        Transport GetAvailableTransport()
+        private Transport GetAvailableTransport()
         {
             foreach (Transport transport in transports)
-            {
                 if (transport.Available())
-                {
                     return transport;
-                }
-            }
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -65,9 +60,7 @@ namespace Mirror
         public override void ClientConnect(Uri uri)
         {
             foreach (Transport transport in transports)
-            {
                 if (transport.Available())
-                {
                     try
                     {
                         transport.ClientConnect(uri);
@@ -77,8 +70,7 @@ namespace Mirror
                     {
                         // transport does not support the schema, just move on to the next one
                     }
-                }
-            }
+
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -99,7 +91,10 @@ namespace Mirror
 
         // right now this just returns the first available uri,
         // should we return the list of all available uri?
-        public override Uri ServerUri() => available.ServerUri();
+        public override Uri ServerUri()
+        {
+            return available.ServerUri();
+        }
 
         public override bool ServerActive()
         {
@@ -159,6 +154,7 @@ namespace Mirror
                 int size = transport.GetMaxPacketSize(channelId);
                 mininumAllowedSize = Mathf.Min(size, mininumAllowedSize);
             }
+
             return mininumAllowedSize;
         }
 
@@ -166,6 +162,5 @@ namespace Mirror
         {
             return available.ToString();
         }
-
     }
 }

@@ -5,16 +5,16 @@ namespace Mirror.Cloud
     public interface IBaseApi
     {
         /// <summary>
-        /// Cleans up any data created by the instance
-        /// <para>For Example: removing server from list</para>
+        ///     Cleans up any data created by the instance
+        ///     <para>For Example: removing server from list</para>
         /// </summary>
         void Shutdown();
     }
 
     public abstract class BaseApi
     {
-        protected readonly ICoroutineRunner runner;
         protected readonly IRequestCreator requestCreator;
+        protected readonly ICoroutineRunner runner;
 
         protected BaseApi(ICoroutineRunner runner, IRequestCreator requestCreator)
         {

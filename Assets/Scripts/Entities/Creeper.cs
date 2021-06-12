@@ -5,11 +5,11 @@ using Random = System.Random;
 
 public class Creeper : Monster
 {
-    private float maxFuse = 1.5f;
-    [SyncVar] 
-    public float fuse;
-    [SyncVar] 
-    public bool ignited;
+    [SyncVar] public float fuse;
+
+    [SyncVar] public bool ignited;
+
+    private readonly float maxFuse = 1.5f;
     public override float maxHealth { get; } = 20;
 
     public override List<ItemStack> GetDrops()
@@ -29,9 +29,7 @@ public class Creeper : Monster
         base.Tick();
 
         if (ignited)
-        {
             fuse += Time.deltaTime;
-        }
 
         if (fuse >= maxFuse)
             Explode();
@@ -43,13 +41,9 @@ public class Creeper : Monster
         this.ignited = ignited;
 
         if (ignited)
-        {
             Sound.Play(Location, "entity/Creeper/fuse", SoundType.Entities, 0.8f, 1.2f);
-        }
         else
-        {
             fuse = 0;
-        }
     }
 
     [Server]
@@ -58,17 +52,17 @@ public class Creeper : Monster
         Explosion.Create(Location, 4, 1);
         Die();
     }
-    
+
     [Client]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();
-        
+
         Animator anim = GetComponent<Animator>();
-        
+
         anim.SetBool("primed", ignited);
     }
-    
+
     public override EntityController GetController()
     {
         return new CreeperController(this);

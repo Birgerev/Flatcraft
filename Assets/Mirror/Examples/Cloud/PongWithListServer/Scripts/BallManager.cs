@@ -5,33 +5,30 @@ namespace Mirror.Cloud.Examples.Pong
 {
     public class BallManager : NetworkBehaviour
     {
-        [SerializeField] GameObject ballPrefab = null;
-        GameObject ball;
-        NetworkManagerListServerPong manager;
+        [SerializeField] private GameObject ballPrefab;
+        private GameObject ball;
+        private NetworkManagerListServerPong manager;
 
         public override void OnStartServer()
         {
-            manager = (NetworkManager.singleton as NetworkManagerListServerPong);
+            manager = NetworkManager.singleton as NetworkManagerListServerPong;
             manager.onPlayerListChanged += onPlayerListChanged;
         }
+
         public override void OnStopServer()
         {
             manager.onPlayerListChanged -= onPlayerListChanged;
         }
 
-        void onPlayerListChanged(int playerCount)
+        private void onPlayerListChanged(int playerCount)
         {
             if (playerCount >= 2)
-            {
                 SpawnBall();
-            }
             if (playerCount < 2)
-            {
                 DestroyBall();
-            }
         }
 
-        void SpawnBall()
+        private void SpawnBall()
         {
             if (ball != null)
                 return;
@@ -40,7 +37,7 @@ namespace Mirror.Cloud.Examples.Pong
             NetworkServer.Spawn(ball);
         }
 
-        void DestroyBall()
+        private void DestroyBall()
         {
             if (ball == null)
                 return;

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace Mirror
@@ -34,7 +35,7 @@ namespace Mirror
             where T : struct, NetworkMessage
         {
             int msgType = GetId<T>();
-            writer.WriteUInt16((ushort)msgType);
+            writer.WriteUInt16((ushort) msgType);
 
             // serialize message into writer
             writer.Write(message);
@@ -52,7 +53,7 @@ namespace Mirror
                 msgType = messageReader.ReadUInt16();
                 return true;
             }
-            catch (System.IO.EndOfStreamException)
+            catch (EndOfStreamException)
             {
                 msgType = 0;
                 return false;
@@ -60,66 +61,72 @@ namespace Mirror
         }
 
         [Obsolete("MessagePacker.UnpackMessage was renamed to Unpack for consistency with Pack.")]
-        public static bool UnpackMessage(NetworkReader messageReader, out int msgType) =>
-            Unpack(messageReader, out msgType);
+        public static bool UnpackMessage(NetworkReader messageReader, out int msgType)
+        {
+            return Unpack(messageReader, out msgType);
+        }
 
         internal static NetworkMessageDelegate WrapHandler<T, C>(Action<C, T> handler, bool requireAuthentication)
             where T : struct, NetworkMessage
             where C : NetworkConnection
-            => (conn, reader, channelId) =>
         {
-            // protect against DOS attacks if attackers try to send invalid
-            // data packets to crash the server/client. there are a thousand
-            // ways to cause an exception in data handling:
-            // - invalid headers
-            // - invalid message ids
-            // - invalid data causing exceptions
-            // - negative ReadBytesAndSize prefixes
-            // - invalid utf8 strings
-            // - etc.
-            //
-            // let's catch them all and then disconnect that connection to avoid
-            // further attacks.
-            T message = default;
-            try
+            return (conn, reader, channelId) =>
             {
-                if (requireAuthentication && !conn.isAuthenticated)
+                // protect against DOS attacks if attackers try to send invalid
+                // data packets to crash the server/client. there are a thousand
+                // ways to cause an exception in data handling:
+                // - invalid headers
+                // - invalid message ids
+                // - invalid data causing exceptions
+                // - negative ReadBytesAndSize prefixes
+                // - invalid utf8 strings
+                // - etc.
+                //
+                // let's catch them all and then disconnect that connection to avoid
+                // further attacks.
+                T message = default;
+                try
                 {
-                    // message requires authentication, but the connection was not authenticated
-                    Debug.LogWarning($"Closing connection: {conn}. Received message {typeof(T)} that required authentication, but the user has not authenticated yet");
+                    if (requireAuthentication && !conn.isAuthenticated)
+                    {
+                        // message requires authentication, but the connection was not authenticated
+                        Debug.LogWarning(
+                            $"Closing connection: {conn}. Received message {typeof(T)} that required authentication, but the user has not authenticated yet");
+                        conn.Disconnect();
+                        return;
+                    }
+
+                    //Debug.Log($"ConnectionRecv {conn} msgType:{typeof(T)} content:{BitConverter.ToString(reader.buffer.Array, reader.buffer.Offset, reader.buffer.Count)}");
+
+                    // if it is a value type, just use default(T)
+                    // otherwise allocate a new instance
+                    message = reader.Read<T>();
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogError(
+                        $"Closed connection: {conn}. This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: {exception}");
                     conn.Disconnect();
                     return;
                 }
+                finally
+                {
+                    // TODO: Figure out the correct channel
+                    NetworkDiagnostics.OnReceive(message, channelId, reader.Length);
+                }
 
-                //Debug.Log($"ConnectionRecv {conn} msgType:{typeof(T)} content:{BitConverter.ToString(reader.buffer.Array, reader.buffer.Offset, reader.buffer.Count)}");
-
-                // if it is a value type, just use default(T)
-                // otherwise allocate a new instance
-                message = reader.Read<T>();
-            }
-            catch (Exception exception)
-            {
-                Debug.LogError($"Closed connection: {conn}. This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: {exception}");
-                conn.Disconnect();
-                return;
-            }
-            finally
-            {
-                // TODO: Figure out the correct channel
-                NetworkDiagnostics.OnReceive(message, channelId, reader.Length);
-            }
-
-            // user handler exception should not stop the whole server
-            try
-            {
-                // user implemented handler
-                handler((C)conn, message);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Exception in MessageHandler: {e.GetType().Name} {e.Message}\n{e.StackTrace}");
-                conn.Disconnect();
-            }
-        };
+                // user handler exception should not stop the whole server
+                try
+                {
+                    // user implemented handler
+                    handler((C) conn, message);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Exception in MessageHandler: {e.GetType().Name} {e.Message}\n{e.StackTrace}");
+                    conn.Disconnect();
+                }
+            };
+        }
     }
 }

@@ -2,9 +2,9 @@ namespace Mirror.SimpleWeb
 {
     public enum EventType
     {
-        Connected,
-        Data,
-        Disconnected,
-        Error
+        Connected
+        , Data
+        , Disconnected
+        , Error
     }
 }

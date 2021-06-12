@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Mirror
 {
     /// <summary>
-    /// Component that will display the clients ping in milliseconds
+    ///     Component that will display the clients ping in milliseconds
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkPingDisplay")]
@@ -13,13 +13,14 @@ namespace Mirror
     {
         public Color color = Color.white;
         public int padding = 2;
-        int width = 150;
-        int height = 25;
+        private readonly int height = 25;
+        private readonly int width = 150;
 
-        void OnGUI()
+        private void OnGUI()
         {
             // only while client is active
-            if (!NetworkClient.active) return;
+            if (!NetworkClient.active)
+                return;
 
             // show rtt in bottom right corner, right aligned
             GUI.color = color;

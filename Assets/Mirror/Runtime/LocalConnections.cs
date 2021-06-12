@@ -6,11 +6,13 @@ namespace Mirror
 {
     // a server's connection TO a LocalClient.
     // sending messages on this connection causes the client's handler function to be invoked directly
-    class LocalConnectionToClient : NetworkConnectionToClient
+    internal class LocalConnectionToClient : NetworkConnectionToClient
     {
         internal LocalConnectionToServer connectionToServer;
 
-        public LocalConnectionToClient() : base(LocalConnectionId, false, 0) {}
+        public LocalConnectionToClient() : base(LocalConnectionId, false, 0)
+        {
+        }
 
         public override string address => "localhost";
 
@@ -28,7 +30,10 @@ namespace Mirror
         }
 
         // true because local connections never timeout
-        internal override bool IsAlive(float timeout) => true;
+        internal override bool IsAlive(float timeout)
+        {
+            return true;
+        }
 
         internal void DisconnectInternal()
         {
@@ -50,18 +55,25 @@ namespace Mirror
     // send messages on this connection causes the server's handler function to be invoked directly.
     internal class LocalConnectionToServer : NetworkConnectionToServer
     {
-        internal LocalConnectionToClient connectionToClient;
-
         // packet queue
         internal readonly Queue<PooledNetworkWriter> queue = new Queue<PooledNetworkWriter>();
 
+        // see caller for comments on why we need this
+        private bool connectedEventPending;
+        internal LocalConnectionToClient connectionToClient;
+        private bool disconnectedEventPending;
+
         public override string address => "localhost";
 
-        // see caller for comments on why we need this
-        bool connectedEventPending;
-        bool disconnectedEventPending;
-        internal void QueueConnectedEvent() => connectedEventPending = true;
-        internal void QueueDisconnectedEvent() => disconnectedEventPending = true;
+        internal void QueueConnectedEvent()
+        {
+            connectedEventPending = true;
+        }
+
+        internal void QueueDisconnectedEvent()
+        {
+            disconnectedEventPending = true;
+        }
 
         internal override void Send(ArraySegment<byte> segment, int channelId = Channels.Reliable)
         {
@@ -121,6 +133,9 @@ namespace Mirror
         }
 
         // true because local connections never timeout
-        internal override bool IsAlive(float timeout) => true;
+        internal override bool IsAlive(float timeout)
+        {
+            return true;
+        }
     }
 }

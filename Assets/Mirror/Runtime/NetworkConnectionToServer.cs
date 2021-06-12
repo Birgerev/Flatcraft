@@ -12,9 +12,7 @@ namespace Mirror
 
             // validate packet size first.
             if (ValidatePacketSize(segment, channelId))
-            {
                 Transport.activeTransport.ClientSend(channelId, segment);
-            }
         }
 
         /// <summary>Disconnects this connection.</summary>

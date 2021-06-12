@@ -12,31 +12,23 @@ namespace Mirror.Weaver
 
             //Search through the types
             foreach (TypeDefinition td in moduleDef.Types)
-            {
                 if (td.IsClass)
-                {
                     ProcessSiteClass(td);
-                }
-            }
 
             Console.WriteLine("  ProcessSitesModule " + moduleDef.Name + " elapsed time:" + (DateTime.Now - startTime));
         }
 
-        static void ProcessSiteClass(TypeDefinition td)
+        private static void ProcessSiteClass(TypeDefinition td)
         {
             //Console.WriteLine("    ProcessSiteClass " + td);
             foreach (MethodDefinition md in td.Methods)
-            {
                 ProcessSiteMethod(md);
-            }
 
             foreach (TypeDefinition nested in td.NestedTypes)
-            {
                 ProcessSiteClass(nested);
-            }
         }
 
-        static void ProcessSiteMethod(MethodDefinition md)
+        private static void ProcessSiteMethod(MethodDefinition md)
         {
             // process all references to replaced members with properties
             //Weaver.DLog(td, "      ProcessSiteMethod " + md);
@@ -47,22 +39,18 @@ namespace Mirror.Weaver
                 return;
 
             if (md.IsAbstract)
-            {
                 return;
-            }
 
             if (md.Body != null && md.Body.Instructions != null)
-            {
                 for (int iCount = 0; iCount < md.Body.Instructions.Count;)
                 {
                     Instruction instr = md.Body.Instructions[iCount];
                     iCount += ProcessInstruction(md, instr, iCount);
                 }
-            }
         }
 
         // replaces syncvar write access with the NetworkXYZ.get property calls
-        static void ProcessInstructionSetterField(MethodDefinition md, Instruction i, FieldDefinition opField)
+        private static void ProcessInstructionSetterField(MethodDefinition md, Instruction i, FieldDefinition opField)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")
@@ -80,7 +68,7 @@ namespace Mirror.Weaver
         }
 
         // replaces syncvar read access with the NetworkXYZ.get property calls
-        static void ProcessInstructionGetterField(MethodDefinition md, Instruction i, FieldDefinition opField)
+        private static void ProcessInstructionGetterField(MethodDefinition md, Instruction i, FieldDefinition opField)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")
@@ -97,31 +85,26 @@ namespace Mirror.Weaver
             }
         }
 
-        static int ProcessInstruction(MethodDefinition md, Instruction instr, int iCount)
+        private static int ProcessInstruction(MethodDefinition md, Instruction instr, int iCount)
         {
             if (instr.OpCode == OpCodes.Stfld && instr.Operand is FieldDefinition opFieldst)
-            {
                 // this instruction sets the value of a field. cache the field reference.
                 ProcessInstructionSetterField(md, instr, opFieldst);
-            }
 
             if (instr.OpCode == OpCodes.Ldfld && instr.Operand is FieldDefinition opFieldld)
-            {
                 // this instruction gets the value of a field. cache the field reference.
                 ProcessInstructionGetterField(md, instr, opFieldld);
-            }
 
             if (instr.OpCode == OpCodes.Ldflda && instr.Operand is FieldDefinition opFieldlda)
-            {
                 // loading a field by reference,  watch out for initobj instruction
                 // see https://github.com/vis2k/Mirror/issues/696
                 return ProcessInstructionLoadAddress(md, instr, opFieldlda, iCount);
-            }
 
             return 1;
         }
 
-        static int ProcessInstructionLoadAddress(MethodDefinition md, Instruction instr, FieldDefinition opField, int iCount)
+        private static int ProcessInstructionLoadAddress(MethodDefinition md, Instruction instr, FieldDefinition opField
+            , int iCount)
         {
             // don't replace property call sites in constructors
             if (md.Name == ".ctor")

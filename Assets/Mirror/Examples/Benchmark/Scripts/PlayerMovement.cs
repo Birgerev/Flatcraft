@@ -6,9 +6,10 @@ namespace Mirror.Examples.Benchmark
     {
         public float speed = 5;
 
-        void Update()
+        private void Update()
         {
-            if (!isLocalPlayer) return;
+            if (!isLocalPlayer)
+                return;
 
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");

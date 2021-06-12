@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
-using UnityEngine;
-using Random = System.Random;
 
 public class SeedGenerator
 {
@@ -12,7 +8,7 @@ public class SeedGenerator
         builder.Append((char) (WorldManager.world.seed % 65535));
         builder.Append((char) (loc.x % 65535));
         builder.Append((char) (loc.y % 65535));
-        builder.Append((char) ((int)loc.dimension % 65535));
+        builder.Append((char) ((int) loc.dimension % 65535));
 
         return builder.GetHashCode();
     }

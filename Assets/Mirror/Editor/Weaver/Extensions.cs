@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.CecilX;
+using UnityEngine;
 
 namespace Mirror.Weaver
 {
@@ -10,15 +11,19 @@ namespace Mirror.Weaver
         public static bool Is(this TypeReference td, Type t)
         {
             if (t.IsGenericType)
-            {
                 return td.GetElementType().FullName == t.FullName;
-            }
             return td.FullName == t.FullName;
         }
 
-        public static bool Is<T>(this TypeReference td) => Is(td, typeof(T));
+        public static bool Is<T>(this TypeReference td)
+        {
+            return Is(td, typeof(T));
+        }
 
-        public static bool IsDerivedFrom<T>(this TypeReference tr) => IsDerivedFrom(tr, typeof(T));
+        public static bool IsDerivedFrom<T>(this TypeReference tr)
+        {
+            return IsDerivedFrom(tr, typeof(T));
+        }
 
         public static bool IsDerivedFrom(this TypeReference tr, Type baseClass)
         {
@@ -44,10 +49,8 @@ namespace Mirror.Weaver
         public static TypeReference GetEnumUnderlyingType(this TypeDefinition td)
         {
             foreach (FieldDefinition field in td.Fields)
-            {
                 if (!field.IsStatic)
                     return field.FieldType;
-            }
             throw new ArgumentException($"Invalid enum {td.FullName}");
         }
 
@@ -82,13 +85,13 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Does type use netId as backing field
+        ///     Does type use netId as backing field
         /// </summary>
         public static bool IsNetworkIdentityField(this TypeReference tr)
         {
-            return tr.Is<UnityEngine.GameObject>()
-                || tr.Is<NetworkIdentity>()
-                || tr.IsDerivedFrom<NetworkBehaviour>();
+            return tr.Is<GameObject>()
+                   || tr.Is<NetworkIdentity>()
+                   || tr.IsDerivedFrom<NetworkBehaviour>();
         }
 
         public static bool CanBeResolved(this TypeReference parent)
@@ -96,9 +99,7 @@ namespace Mirror.Weaver
             while (parent != null)
             {
                 if (parent.Scope.Name == "Windows")
-                {
                     return false;
-                }
 
                 if (parent.Scope.Name == "mscorlib")
                 {
@@ -115,11 +116,12 @@ namespace Mirror.Weaver
                     return false;
                 }
             }
+
             return true;
         }
 
         /// <summary>
-        /// Makes T => Variable and imports function
+        ///     Makes T => Variable and imports function
         /// </summary>
         /// <param name="generic"></param>
         /// <param name="variableReference"></param>
@@ -134,21 +136,20 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Given a method of a generic class such as ArraySegment`T.get_Count,
-        /// and a generic instance such as ArraySegment`int
-        /// Creates a reference to the specialized method  ArraySegment`int`.get_Count
-        /// <para> Note that calling ArraySegment`T.get_Count directly gives an invalid IL error </para>
+        ///     Given a method of a generic class such as ArraySegment`T.get_Count,
+        ///     and a generic instance such as ArraySegment`int
+        ///     Creates a reference to the specialized method  ArraySegment`int`.get_Count
+        ///     <para> Note that calling ArraySegment`T.get_Count directly gives an invalid IL error </para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="instanceType"></param>
         /// <returns></returns>
-        public static MethodReference MakeHostInstanceGeneric(this MethodReference self, GenericInstanceType instanceType)
+        public static MethodReference MakeHostInstanceGeneric(this MethodReference self
+            , GenericInstanceType instanceType)
         {
             MethodReference reference = new MethodReference(self.Name, self.ReturnType, instanceType)
             {
-                CallingConvention = self.CallingConvention,
-                HasThis = self.HasThis,
-                ExplicitThis = self.ExplicitThis
+                CallingConvention = self.CallingConvention, HasThis = self.HasThis, ExplicitThis = self.ExplicitThis
             };
 
             foreach (ParameterDefinition parameter in self.Parameters)
@@ -161,10 +162,12 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Given a field of a generic class such as Writer<T>.write,
-        /// and a generic instance such as ArraySegment`int
-        /// Creates a reference to the specialized method  ArraySegment`int`.get_Count
-        /// <para> Note that calling ArraySegment`T.get_Count directly gives an invalid IL error </para>
+        ///     Given a field of a generic class such as Writer
+        ///     <T>
+        ///         .write,
+        ///         and a generic instance such as ArraySegment`int
+        ///         Creates a reference to the specialized method  ArraySegment`int`.get_Count
+        ///         <para> Note that calling ArraySegment`T.get_Count directly gives an invalid IL error </para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="instanceType">Generic Instance e.g. Writer<int></param>
@@ -189,7 +192,7 @@ namespace Mirror.Weaver
         {
             foreach (CustomAttributeNamedArgument customField in ca.Fields)
                 if (customField.Name == field)
-                    return (T)customField.Argument.Value;
+                    return (T) customField.Argument.Value;
             return defaultValue;
         }
 
@@ -209,10 +212,8 @@ namespace Mirror.Weaver
             while (typedef != null)
             {
                 foreach (MethodDefinition md in typedef.Methods)
-                {
                     if (md.Name == methodName)
                         return md;
-                }
 
                 try
                 {
@@ -230,7 +231,7 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Finds public fields in type and base type
+        ///     Finds public fields in type and base type
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>
@@ -240,7 +241,7 @@ namespace Mirror.Weaver
         }
 
         /// <summary>
-        /// Finds public fields in type and base type
+        ///     Finds public fields in type and base type
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>

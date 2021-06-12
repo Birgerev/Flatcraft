@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -7,7 +6,13 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
 {
     public InputField addressField;
     public InputField nameField;
-    
+
+    private void Update()
+    {
+        GameNetworkManager.serverAddress = addressField.text;
+        GameNetworkManager.playerName = nameField.text;
+    }
+
     public void ConnectButton()
     {
         GameNetworkManager.isHost = false;
@@ -15,12 +20,6 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 
-    private void Update()
-    {
-        GameNetworkManager.serverAddress = addressField.text;
-        GameNetworkManager.playerName = nameField.text;
-    }
-    
     public void Cancel()
     {
         SceneManager.LoadScene("MultiplayerMenu");

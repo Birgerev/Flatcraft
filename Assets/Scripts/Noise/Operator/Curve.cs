@@ -10,10 +10,6 @@ namespace LibNoise.Operator
     /// </summary>
     public class Curve : ModuleBase
     {
-        #region Fields
-
-        #endregion
-
         #region ModuleBase Members
 
         /// <summary>
@@ -27,24 +23,29 @@ namespace LibNoise.Operator
         {
             Debug.Assert(Modules[0] != null);
             Debug.Assert(ControlPointCount >= 4);
-            var smv = Modules[0].GetValue(x, y, z);
+            double smv = Modules[0].GetValue(x, y, z);
             int ip;
             for (ip = 0; ip < ControlPoints.Count; ip++)
                 if (smv < ControlPoints[ip].Key)
                     break;
-            var i0 = Mathf.Clamp(ip - 2, 0, ControlPoints.Count - 1);
-            var i1 = Mathf.Clamp(ip - 1, 0, ControlPoints.Count - 1);
-            var i2 = Mathf.Clamp(ip, 0, ControlPoints.Count - 1);
-            var i3 = Mathf.Clamp(ip + 1, 0, ControlPoints.Count - 1);
-            if (i1 == i2) return ControlPoints[i1].Value;
+            int i0 = Mathf.Clamp(ip - 2, 0, ControlPoints.Count - 1);
+            int i1 = Mathf.Clamp(ip - 1, 0, ControlPoints.Count - 1);
+            int i2 = Mathf.Clamp(ip, 0, ControlPoints.Count - 1);
+            int i3 = Mathf.Clamp(ip + 1, 0, ControlPoints.Count - 1);
+            if (i1 == i2)
+                return ControlPoints[i1].Value;
             //double ip0 = _data[i1].Value;
             //double ip1 = _data[i2].Value;
-            var ip0 = ControlPoints[i1].Key;
-            var ip1 = ControlPoints[i2].Key;
-            var a = (smv - ip0) / (ip1 - ip0);
+            double ip0 = ControlPoints[i1].Key;
+            double ip1 = ControlPoints[i2].Key;
+            double a = (smv - ip0) / (ip1 - ip0);
             return Utils.InterpolateCubic(ControlPoints[i0].Value, ControlPoints[i1].Value, ControlPoints[i2].Value,
                 ControlPoints[i3].Value, a);
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 
@@ -93,13 +94,13 @@ namespace LibNoise.Operator
         /// <param name="output">The curves output value.</param>
         public void Add(double input, double output)
         {
-            var kvp = new KeyValuePair<double, double>(input, output);
-            if (!ControlPoints.Contains(kvp)) ControlPoints.Add(kvp);
-            ControlPoints.Sort(
-                delegate(KeyValuePair<double, double> lhs, KeyValuePair<double, double> rhs)
-                {
-                    return lhs.Key.CompareTo(rhs.Key);
-                });
+            KeyValuePair<double, double> kvp = new KeyValuePair<double, double>(input, output);
+            if (!ControlPoints.Contains(kvp))
+                ControlPoints.Add(kvp);
+            ControlPoints.Sort(delegate(KeyValuePair<double, double> lhs, KeyValuePair<double, double> rhs)
+            {
+                return lhs.Key.CompareTo(rhs.Key);
+            });
         }
 
         /// <summary>
