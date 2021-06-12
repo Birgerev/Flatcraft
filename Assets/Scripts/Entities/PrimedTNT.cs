@@ -35,7 +35,7 @@ public class PrimedTNT : Entity
 
         if (age >= fuse)
         {
-            Explosion.Create(Location, 5, 1);
+            Explosion.Create(Location, 4, 1);
             Die();
         }
     }

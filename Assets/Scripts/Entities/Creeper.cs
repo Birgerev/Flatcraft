@@ -49,7 +49,7 @@ public class Creeper : Monster
     [Server]
     public void Explode()
     {
-        Explosion.Create(Location, 4, 1);
+        Explosion.Create(Location, 3, 1);
         Die();
     }
 
