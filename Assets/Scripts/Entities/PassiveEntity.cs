@@ -6,6 +6,6 @@ public class PassiveEntity : LivingEntity
     {
         base.Hit(damage, source);
 
-        Particle.Spawn_Number(transform.position + new Vector3(1, 2), (int) damage, Color.green);
+        DamageNumberEffect((int)damage, Color.green);
     }
 }

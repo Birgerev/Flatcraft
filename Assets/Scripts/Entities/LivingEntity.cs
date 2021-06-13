@@ -346,7 +346,7 @@ public class LivingEntity : Entity
             return;
 
         DeathSound();
-        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+        DeathSmokeEffect();
 
         base.Die();
     }
@@ -397,6 +397,18 @@ public class LivingEntity : Entity
         StartCoroutine(TurnRedByDamage());
     }
 
+    [ClientRpc]
+    public virtual void DeathSmokeEffect()
+    {
+        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+    }
+
+    [ClientRpc]
+    public virtual void DamageNumberEffect(int damage, Color color)
+    {
+        Particle.Spawn_Number(transform.position + new Vector3(1, 2), damage, color);
+    }
+    
     private IEnumerator TurnRedByDamage()
     {
         Color baseColor = GetRenderer().color;
