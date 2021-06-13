@@ -539,7 +539,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public static string CreateUUID()
     {
-        Random random = new Random();
+        Random random = new Random(Guid.NewGuid().GetHashCode());
         int uuidLength = 32;
         const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 

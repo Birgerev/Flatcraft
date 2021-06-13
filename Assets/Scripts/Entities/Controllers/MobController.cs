@@ -10,10 +10,8 @@ public class MobController : EntityController
 
     public Entity target;
     public bool walkingRight;
+    private Random r;
 
-    public MobController(LivingEntity instance) : base(instance)
-    {
-    }
 
     protected virtual float startWanderingChance { get; } = 0.2f;
     protected virtual float stopWanderingChance { get; } = 0.4f;
@@ -26,7 +24,12 @@ public class MobController : EntityController
     protected virtual float hitTargetDamage { get; } = 0;
     protected virtual float hitTargetCooldown { get; } = 1;
     protected virtual bool jumpWhenHitting { get; } = false;
-
+    
+    public MobController(LivingEntity instance) : base(instance)
+    {
+        r = new Random(instance.uuid.GetHashCode());
+    }
+    
     public override void Tick()
     {
         base.Tick();
@@ -78,8 +81,6 @@ public class MobController : EntityController
 
     protected virtual void Wander()
     {
-        Random r = new Random((instance.Location + " " + instance.age).GetHashCode());
-
         if (r.NextDouble() < (isWalking ? stopWanderingChance : startWanderingChance) / (1.0f / Time.deltaTime))
         {
             isWalking = !isWalking;
