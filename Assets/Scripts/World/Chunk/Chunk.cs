@@ -447,7 +447,7 @@ public class Chunk : NetworkBehaviour
         {
             yield return new WaitForSeconds(20);
             
-            if (GetMonsterCount() < monsterSpawnAmountCap && !chunkPosition.IsWithinDistanceOfPlayer(1))
+            if (GetMonsterCount() < monsterSpawnAmountCap && !chunkPosition.IsWithinDistanceOfPlayer(2))
             {
                 TrySpawnMonster();
             }
