@@ -272,11 +272,14 @@ public class Entity : NetworkBehaviour
 
         if (Time.time % 0.5f - Time.deltaTime <= 0)
         {
-            Block block = Location.GetBlock();
-
-            if (block != null)
+            foreach (Block block in GetBlocksForEntity())
+            {
                 if (block.solid && !block.trigger && !(block is Liquid))
+                {
                     TakeSuffocationDamage(1);
+                    return;
+                }
+            }
         }
     }
 
@@ -334,12 +337,22 @@ public class Entity : NetworkBehaviour
     public Liquid[] GetLiquidBlocksForEntity()
     {
         List<Liquid> liquids = new List<Liquid>();
-        foreach (Collider2D col in Physics2D.OverlapBoxAll(
-            (Vector2) transform.position + GetComponent<BoxCollider2D>().offset, GetComponent<BoxCollider2D>().size, 0))
-            if (col.GetComponent<Liquid>() != null)
-                liquids.Add(col.GetComponent<Liquid>());
+        foreach (Block block in GetBlocksForEntity())
+            if (block is Liquid)
+                liquids.Add((Liquid)block);
 
         return liquids.ToArray();
+    }
+    
+    public Block[] GetBlocksForEntity()
+    {
+        List<Block> blocks = new List<Block>();
+        foreach (Collider2D col in Physics2D.OverlapBoxAll(
+            (Vector2) transform.position + GetComponent<BoxCollider2D>().offset, GetComponent<BoxCollider2D>().size, 0))
+            if (col.GetComponent<Block>() != null)
+                blocks.Add(col.GetComponent<Block>());
+
+        return blocks.ToArray();
     }
 
     [Server]
