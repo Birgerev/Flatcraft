@@ -82,6 +82,13 @@ public class DroppedItem : Entity
         base.ClientUpdate();
     }
 
+    public override void TakeSuffocationDamage(float damage)
+    {
+        //Disable suffocation damage and float upwards instead
+        Teleport(Location + new Location(0, 1));
+    }
+
+
     [Server]
     public override void Hit(float damage, Entity source)
     {
