@@ -9,31 +9,8 @@ public class DroppedItem : Entity
 
     //Entity Data Tags
     [EntityDataTag(true)] [SyncVar] public ItemStack item = new ItemStack();
-
-    [ServerCallback]
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        if (dead || age < 0.5f || !isServer)
-            return;
-
-        if (col.GetComponent<DroppedItem>() != null)
-            if (col.GetComponent<DroppedItem>().item.material == item.material)
-            {
-                if (age < col.GetComponent<DroppedItem>().age || col.GetComponent<DroppedItem>().dead)
-                    return;
-
-                item.amount += col.GetComponent<DroppedItem>().item.amount;
-                col.GetComponent<DroppedItem>().Die();
-                return;
-            }
-
-        if (col.GetComponent<Player>() != null)
-            if (col.GetComponent<Player>().GetInventory().AddItem(item))
-            {
-                Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
-                Die();
-            }
-    }
+    public Vector2 triggerOffset;
+    public Vector2 triggerSize;
 
     [Server]
     public override void Initialize()
@@ -57,8 +34,42 @@ public class DroppedItem : Entity
 
         if (isOnGround)
             GetComponent<Rigidbody2D>().velocity *= 0.95f;
+
+        CheckTrigger();
     }
 
+    [Server]
+    private void CheckTrigger()
+    {
+        if (Time.time % 1f - Time.deltaTime > 0 || dead || age < 0.5f)
+            return;
+
+        Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
+        foreach (Collider2D col in cols)
+        {
+            if(col.gameObject == gameObject)
+                continue;
+            
+            if (col.GetComponent<DroppedItem>() != null)
+                if (col.GetComponent<DroppedItem>().item.material == item.material)
+                {
+                    if (age < col.GetComponent<DroppedItem>().age || col.GetComponent<DroppedItem>().dead)
+                        return;
+
+                    item.amount += col.GetComponent<DroppedItem>().item.amount;
+                    col.GetComponent<DroppedItem>().Die();
+                    return;
+                }
+
+            if (col.GetComponent<Player>() != null)
+                if (col.GetComponent<Player>().GetInventory().AddItem(item))
+                {
+                    Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
+                    Die();
+                }
+        }
+    }
+    
     [Client]
     public override void ClientUpdate()
     {

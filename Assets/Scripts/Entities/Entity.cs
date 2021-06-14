@@ -347,8 +347,9 @@ public class Entity : NetworkBehaviour
     public Block[] GetBlocksForEntity()
     {
         List<Block> blocks = new List<Block>();
-        foreach (Collider2D col in Physics2D.OverlapBoxAll(
-            (Vector2) transform.position + GetComponent<BoxCollider2D>().offset, GetComponent<BoxCollider2D>().size, 0))
+        Vector2 offset = (Vector2) transform.position + GetComponent<BoxCollider2D>().offset;
+        Vector2 size = GetComponent<BoxCollider2D>().size * 0.9f;
+        foreach (Collider2D col in Physics2D.OverlapBoxAll(offset, size, 0))
             if (col.GetComponent<Block>() != null)
                 blocks.Add(col.GetComponent<Block>());
 
