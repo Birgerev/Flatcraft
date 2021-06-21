@@ -40,9 +40,15 @@ public class SaveManager : NetworkBehaviour
 
             Thread entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();
-
+            
             while (entityThread.IsAlive)
                 yield return new WaitForSeconds(0.1f);
+
+            //Delete no longer present entities
+            foreach (Chunk chunk in WorldManager.instance.chunks.Values)
+            {
+                chunk.DeleteNoLongerPresentEntitiesSaves();
+            }
         }
     }
 

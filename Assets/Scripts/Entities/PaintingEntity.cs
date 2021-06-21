@@ -22,7 +22,7 @@ public class PaintingEntity : Entity
         base.Spawn();
 
         Random r = new Random();
-        ContactFilter2D filter = GetFilter();
+        ContactFilter2D filter = GetPaintingFilter();
         List<string> paintings = paintingTextures.Keys.OrderBy(item => r.Next()).ToList();
 
         foreach (string painting in paintings)
@@ -74,7 +74,7 @@ public class PaintingEntity : Entity
         if (Time.time % 3f - Time.deltaTime <= 0)
         {
             Collider2D[] paintingColliders = new Collider2D[1];
-            GetComponent<BoxCollider2D>().OverlapCollider(GetFilter(), paintingColliders);
+            GetComponent<BoxCollider2D>().OverlapCollider(GetPaintingFilter(), paintingColliders);
             if (paintingColliders[0] != null)
                 Die();
         }
@@ -97,7 +97,7 @@ public class PaintingEntity : Entity
         col.offset = center;
     }
 
-    private ContactFilter2D GetFilter()
+    private ContactFilter2D GetPaintingFilter()
     {
         ContactFilter2D filter = new ContactFilter2D().NoFilter();
         filter.SetLayerMask(LayerMask.GetMask("Block", "Painting"));

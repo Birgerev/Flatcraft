@@ -400,7 +400,6 @@ public class Entity : NetworkBehaviour
             return;
 
         DropAllDrops();
-        DeleteOldSavePath();
         dead = true;
         entities.Remove(this);
 
@@ -483,8 +482,6 @@ public class Entity : NetworkBehaviour
         if (dead)
             return;
 
-        DeleteOldSavePath();
-
         string path = SavePath();
 
         if (!File.Exists(path))
@@ -494,13 +491,6 @@ public class Entity : NetworkBehaviour
 
         File.WriteAllLines(path, lines);
     }
-
-    [Server]
-    public virtual void DeleteOldSavePath()
-    {
-        File.Delete(SavePath());
-    }
-
     [Server]
     public virtual void Unload()
     {
@@ -695,5 +685,13 @@ public class Entity : NetworkBehaviour
     {
         if (burningRender != null)
             burningRender.SetActive(IsBurning());
+    }
+    
+    public static ContactFilter2D GetFilter()
+    {
+        ContactFilter2D filter = new ContactFilter2D().NoFilter();
+        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle"));
+
+        return filter;
     }
 }

@@ -138,7 +138,9 @@ public class Chunk : NetworkBehaviour
         Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is done...");
 
         if (isServer)
+        {
             StartCoroutine(SelfDestructionChecker());
+        }
 
         //Wait until neighboring chunks are loaded to initialize light
         while (true)
@@ -393,8 +395,8 @@ public class Chunk : NetworkBehaviour
         float timePassedOutsideRenderDistance = 0f;
         while (true)
         {
-            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1)
-            ) //Is outside one chunk of the render distance, begin self destruction
+            //Is outside one chunk of the render distance, begin self destruction
+            if (chunkPosition.IsWithinDistanceOfPlayer(RenderDistance + 1))
             {
                 timePassedOutsideRenderDistance = 0f;
             }
@@ -409,6 +411,28 @@ public class Chunk : NetworkBehaviour
             }
 
             yield return new WaitForSeconds(1f);
+        }
+    }
+    
+    [Server]
+    public void DeleteNoLongerPresentEntitiesSaves()
+    {
+        List<String> presentUuids = new List<string>();
+        foreach (Entity entity in GetEntities())
+        {
+            presentUuids.Add(entity.uuid);
+        }
+        
+        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+                      chunkPosition.chunkX +
+                      "\\entities";
+        foreach (string entityPath in Directory.GetFiles(path))
+        {
+            string entityFile = entityPath.Split('\\')[entityPath.Split('\\').Length - 1];
+            string entityUuid = entityFile.Split('.')[0];
+
+            if(!presentUuids.Contains(entityUuid))
+                File.Delete(entityPath);
         }
     }
     
@@ -758,13 +782,20 @@ public class Chunk : NetworkBehaviour
 
     public Entity[] GetEntities()
     {
+        Location chunkMinLoc = new Location(chunkPosition.worldX, 0, chunkPosition.dimension);
+        Location chunkMaxLoc = new Location(chunkPosition.worldX + Width, Height, chunkPosition.dimension);
+        Collider2D[] entityColliders = Physics2D.OverlapAreaAll(
+            chunkMinLoc.GetPosition(), 
+            chunkMaxLoc.GetPosition(), Entity.GetFilter().layerMask);
         List<Entity> entities = new List<Entity>();
 
-        foreach (Entity e in Entity.entities)
-            if (e.Location.x >= chunkPosition.worldX &&
-                e.Location.x <= chunkPosition.worldX + Width &&
-                e != null)
-                entities.Add(e);
+        foreach (Collider2D entityCollider in entityColliders)
+        {
+            Entity entity = entityCollider.GetComponent<Entity>();
+
+            if (entity != null)
+                entities.Add(entity);
+        }
 
         return entities.ToArray();
     }
