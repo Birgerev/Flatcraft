@@ -27,8 +27,8 @@ public class CameraController : MonoBehaviour
     [Header("Zoom Values")] public float zoomDampTime = 2f;
 
     public int roofCheckMaxDistance = 5;
-    public float normalFov = 11f;
-    public float zoomedFov = 8f;
+    public float normalFov;
+    public float zoomedFov;
     private float currentSmoothZoomVelocity;
     private Vector3 currentTargetSmoothVelocity;
 
