@@ -2415,7 +2415,7 @@ MonoBehaviour:
   shakeSpeed: 6
   maxOffset: 3
   maxRoll: 3
-  zoomDampTime: 2
+  zoomDampTime: 1
   roofCheckMaxDistance: 5
   normalFov: 13
   zoomedFov: 9
