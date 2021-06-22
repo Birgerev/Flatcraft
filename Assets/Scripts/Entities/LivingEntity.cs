@@ -289,14 +289,7 @@ public class LivingEntity : Entity
 
         if (r.NextDouble() < chances)
         {
-            Block blockBeneath = null;
-            for (int y = 1; blockBeneath == null && y < 3; y++)
-            {
-                Block block = (Location - new Location(0, y)).GetBlock();
-                if (block != null && block.solid)
-                    blockBeneath = block;
-            }
-
+            Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
             if (blockBeneath == null)
                 return;
 

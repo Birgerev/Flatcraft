@@ -95,6 +95,7 @@ public class Entity : NetworkBehaviour
         isInLiquid = GetLiquidBlocksForEntity().Length > 0;
         UpdateCachedPosition();
 
+        CheckOnGround();
         if (isServer)
             Tick();
         if (isClient)
@@ -104,19 +105,6 @@ public class Entity : NetworkBehaviour
     public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
-    }
-
-    private void OnCollisionExit2D(Collision2D col)
-    {
-        if (col.transform.position.y + 0.5f < transform.position.y)
-            isOnGround = false;
-    }
-
-    private void OnCollisionStay2D(Collision2D col)
-    {
-        if (col.transform.position.y + 0.5f < transform.position.y &&
-            Mathf.Abs(col.transform.position.x - transform.position.x) < 0.9f && !isInLiquid)
-            isOnGround = true;
     }
 
     [Server]
@@ -218,7 +206,31 @@ public class Entity : NetworkBehaviour
     {
         return new ChunkPosition(Location).IsChunkLoaded();
     }
+    
+    private void CheckOnGround()
+    {
+        Collider2D collider = GetComponent<Collider2D>();
+        Vector2 pos = (Vector2)transform.position + new Vector2(collider.offset.x, -0.05f);
+        Vector2 size = new Vector2(collider.bounds.extents.x * 2, 0.1f);
+        
+        ContactFilter2D filter = new ContactFilter2D().NoFilter();
+        filter.SetLayerMask(LayerMask.GetMask("Block"));
+        
+        Collider2D[] blockBeneathColliders = Physics2D.OverlapBoxAll(pos, size, 0, filter.layerMask.value);
+        foreach (Collider2D col in blockBeneathColliders)
+        {
+            Block block = col.GetComponent<Block>();
+            if (block != null && block.solid && !block.trigger)
+            {
+                isOnGround = true;
+                return;
+            }
+        }
+        
 
+        isOnGround = false;
+    }
+    
     [Server]
     private void CheckWaterSplash()
     {
