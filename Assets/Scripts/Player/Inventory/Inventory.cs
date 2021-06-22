@@ -28,7 +28,7 @@ public class Inventory : NetworkBehaviour
 
     public virtual void Update()
     {
-        if (Time.time % 5f - Time.deltaTime <= 0 && isServer)
+        if ((Time.time % 5f) - Time.deltaTime <= 0 && isServer)
             Save();
     }
 

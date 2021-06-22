@@ -99,7 +99,7 @@ public struct ChunkPosition
         return chunk;
     }
 
-    public bool isInRenderDistance()
+    public bool IsInRenderDistance()
     {
         return IsWithinDistanceOfPlayer(Chunk.RenderDistance);
     }
@@ -112,10 +112,7 @@ public struct ChunkPosition
 
             if (dimension != loc.dimension)
                 continue;
-
-            if (chunkX == 0)
-                return true;
-
+            
             float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - loc.x);
             if (distanceFromPlayer < range * Chunk.Width)
                 return true;
