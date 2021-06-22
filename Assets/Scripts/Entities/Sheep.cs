@@ -9,8 +9,8 @@ public class Sheep : PassiveEntity
     public override List<ItemStack> GetDrops()
     {
         //Drop a random amount of a certain item
-        var result = new List<ItemStack>();
-        var r = new Random(SeedGenerator.SeedByLocation(Location));
+        List<ItemStack> result = new List<ItemStack>();
+        Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
         result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 3 + 1)));
 

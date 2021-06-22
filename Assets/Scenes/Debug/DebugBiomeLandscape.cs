@@ -22,27 +22,27 @@ public class DebugBiomeLandscape : MonoBehaviour
     {
         while (true)
         {
-            var tex = new Texture2D(previewWidth, Chunk.Height);
+            Texture2D tex = new Texture2D(previewWidth, Chunk.Height);
 
-            for (var x = 0; x < previewWidth; x++)
-            for (var y = 0; y < Chunk.Height; y++)
+            for (int x = 0; x < previewWidth; x++)
+            for (int y = 0; y < Chunk.Height; y++)
             {
-                var noiseValue = biome.GetLandscapeNoiseAt(new Location(x, y));
+                float noiseValue = biome.GetLandscapeNoiseAt(new Location(x, y));
                 if (noiseValue > 0.1f)
                 {
-                    var isStone = noiseValue > biome.stoneLayerNoiseValue;
+                    bool isStone = noiseValue > biome.stoneLayerNoiseValue;
 
                     tex.SetPixel(x, y, showStoneLayer && isStone ? Color.black : Color.gray);
                 }
             }
 
             if (showSeaLevel)
-                for (var x = 0; x < previewWidth; x++)
+                for (int x = 0; x < previewWidth; x++)
                     tex.SetPixel(x, OverworldGenerator.SeaLevel, Color.red);
 
             tex.Apply();
 
-            var sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
+            Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), Vector2.zero);
             GetComponent<SpriteRenderer>().sprite = sprite;
 
             yield return new WaitForSeconds(previewUpdateFrequency);

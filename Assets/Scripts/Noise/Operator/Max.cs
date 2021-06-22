@@ -22,8 +22,8 @@ namespace LibNoise.Operator
         {
             Debug.Assert(Modules[0] != null);
             Debug.Assert(Modules[1] != null);
-            var a = Modules[0].GetValue(x, y, z);
-            var b = Modules[1].GetValue(x, y, z);
+            double a = Modules[0].GetValue(x, y, z);
+            double b = Modules[1].GetValue(x, y, z);
             return Math.Max(a, b);
         }
 

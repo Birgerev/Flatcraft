@@ -39,9 +39,9 @@ namespace LibNoise.Operator
             Debug.Assert(Modules[0] != null);
             Debug.Assert(Modules[1] != null);
             Debug.Assert(Modules[2] != null);
-            var a = Modules[0].GetValue(x, y, z);
-            var b = Modules[1].GetValue(x, y, z);
-            var c = (Modules[2].GetValue(x, y, z) + 1.0) / 2.0;
+            double a = Modules[0].GetValue(x, y, z);
+            double b = Modules[1].GetValue(x, y, z);
+            double c = (Modules[2].GetValue(x, y, z) + 1.0) / 2.0;
             return Utils.InterpolateLinear(a, b, c);
         }
 

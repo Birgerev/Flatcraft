@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
@@ -16,15 +15,10 @@ public class BreakIndicator : NetworkBehaviour
         breakIndicators.Add(loc, this);
     }
 
-    public void OnDestroy()
-    {
-        breakIndicators.Remove(loc);
-    }
-
     // Update is called once per frame
     private void Update()
     {
-        if (isServer && (Time.time % 0.2f) - Time.deltaTime <= 0)
+        if (isServer && Time.time % 0.2f - Time.deltaTime <= 0)
         {
             Block block = loc.GetBlock();
             if (block != null)
@@ -32,28 +26,33 @@ public class BreakIndicator : NetworkBehaviour
                 blockHealth = block.blockHealth;
                 maxBlockHealth = block.breakTime;
             }
-            
+
             CheckDespawn();
         }
-        
+
         transform.position = loc.GetPosition();
         UpdateState();
 
         lastFrameBlockHealth = blockHealth;
     }
-    
+
+    public void OnDestroy()
+    {
+        breakIndicators.Remove(loc);
+    }
+
     public void UpdateState()
     {
         if (maxBlockHealth == 0)
             return;
-        
+
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-        int spriteIndex = (int) ((blockHealth / maxBlockHealth) * (sprites.Length - 1));
+        int spriteIndex = (int) (blockHealth / maxBlockHealth * (sprites.Length - 1));
         Sprite sprite = sprites[spriteIndex];
 
         GetComponent<SpriteRenderer>().sprite = sprite;
     }
-    
+
     [Server]
     public void Unspawn()
     {
@@ -66,11 +65,9 @@ public class BreakIndicator : NetworkBehaviour
         Block block = loc.GetBlock();
 
         if (block == null || blockHealth == maxBlockHealth)
-        {
             Unspawn();
-        }
     }
-    
+
     [Server]
     public static void Spawn(Location loc)
     {

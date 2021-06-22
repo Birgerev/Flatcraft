@@ -13,7 +13,9 @@
             otherBlockLocation.SetMaterial(otherBlockMaterial).GetBlock().BuildTick();
             otherBlockLocation.Tick();
         }
-        else 
+        else
+        {
             Break(true);
+        }
     }
 }

@@ -51,12 +51,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  amountOfChunksLoading: 0
   caveGeneratedRegions: 
   overworldBiomes:
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 5
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
     landscapeLacunarity: 1
@@ -67,7 +66,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 6.86
   - biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1
@@ -78,7 +77,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 7
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1.05
@@ -89,7 +88,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 4.63
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1.05
@@ -100,7 +99,7 @@ MonoBehaviour:
     stoneLayerNoiseValue: 4.63
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
     landscapeLacunarity: 1
@@ -112,7 +111,7 @@ MonoBehaviour:
   netherBiome:
     biomeMinimumChunkSize: 16
     biomeMaximumChunkSize: 16
-    biomeSpecificEntitySpawns: []
+    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -36.29
     landscapeHeightWeight: -0.3
     landscapeLacunarity: 0.81
@@ -123,9 +122,6 @@ MonoBehaviour:
     stoneLayerNoiseValue: 0
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}
-  playerPrefab: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61,
-    type: 3}
-  loadingProgress: 0
   worldTime: 0
 --- !u!114 &3047292750534003042
 MonoBehaviour:
@@ -143,7 +139,6 @@ MonoBehaviour:
   syncInterval: 0.1
   blocksGroup: {fileID: 2917957538123657003, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
-  enabled: 0
   entitiesGroup: {fileID: -433041381731868617, guid: 65aeab9a269652646b6795e2912b735a,
     type: 2}
   musicGroup: {fileID: 476619691098867234, guid: 65aeab9a269652646b6795e2912b735a,
@@ -179,7 +174,7 @@ MonoBehaviour:
   doLight: 1
   lightSourcePrefab: {fileID: 5354969073293725047, guid: 4eeacdb360394e240982d55895125233,
     type: 3}
-  sunlightSourcePrefab: {fileID: 3202872062129521457, guid: de52d119504ed4d40931792fc1765247,
+  sunlightSourcePrefab: {fileID: 153642762726311654, guid: 8958c9f71c6032743a046624bcda7b26,
     type: 3}
 --- !u!114 &3047292750534002975
 MonoBehaviour:
@@ -193,9 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca4c94b88cf0d84caf46776746f1cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   ambientMusic:
   - sweden
-  checkDuration: 600
+  - danny
+  checkDuration: 400
   checkChance: 0.5
 --- !u!114 &3047292750534002974
 MonoBehaviour:

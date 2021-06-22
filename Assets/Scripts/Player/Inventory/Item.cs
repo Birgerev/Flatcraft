@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 public class Item
@@ -13,35 +12,35 @@ public class Item
 
     public void Interact(PlayerInstance player, Location loc, int mouseType, bool firstFrameDown)
     {
-        if (mouseType == 0) 
+        if (mouseType == 0)
             InteractLeft(player, loc, firstFrameDown);
 
-        if (mouseType == 1) 
+        if (mouseType == 1)
             InteractRight(player, loc, firstFrameDown);
     }
 
-    public virtual void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected virtual void InteractLeft(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        var block = loc.GetBlock();
+        Block block = loc.GetBlock();
 
-        if (block != null) 
+        if (block != null)
             block.Hit(player, 1 / Player.interactionsPerPerSecond);
     }
 
-    public virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
+    protected virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        var block = loc.GetBlock();
+        Block block = loc.GetBlock();
 
-        if (firstFrameDown && block != null) 
+        if (firstFrameDown && block != null)
             block.Interact(player);
     }
 
-    public virtual Sprite getTexture()
+    public virtual Sprite GetTexture()
     {
         return Resources.Load<Sprite>("Sprites/" + texture);
     }
 
-    public Material GetMateral()
+    public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
     }

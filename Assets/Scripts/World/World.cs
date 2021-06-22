@@ -37,10 +37,11 @@ public class World
 
     public static World loadWorld(string name)
     {
-        var world = new World(name, 0);
-        var worldData = new Dictionary<string, string>();
-        var data = File.ReadAllLines(world.getPath() + "\\level.dat");
-        foreach (var dataLine in data) worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
+        World world = new World(name, 0);
+        Dictionary<string, string> worldData = new Dictionary<string, string>();
+        string[] data = File.ReadAllLines(world.getPath() + "\\level.dat");
+        foreach (string dataLine in data)
+            worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
 
         world.seed = int.Parse(worldData["seed"]);
         world.time = float.Parse(worldData["time"]);
@@ -56,9 +57,9 @@ public class World
 
     public static List<World> loadWorlds()
     {
-        var worlds = new List<World>();
+        List<World> worlds = new List<World>();
 
-        foreach (var worldName in Directory.GetDirectories(GetSavesPath()))
+        foreach (string worldName in Directory.GetDirectories(GetSavesPath()))
             worlds.Add(loadWorld(worldName.Split('\\')[worldName.Split('\\').Length - 1]));
 
         return worlds;
@@ -85,7 +86,7 @@ public class World
         if (!File.Exists(getPath() + "\\level.dat"))
             File.Create(getPath() + "\\level.dat").Close();
 
-        var data = new List<string>();
+        List<string> data = new List<string>();
 
         data.Add("seed=" + seed);
         data.Add("time=" + time);
@@ -96,7 +97,7 @@ public class World
 
     public static string GetSavesPath()
     {
-        var savesPath = appPath + "\\..\\Saves\\";
+        string savesPath = appPath + "\\..\\Saves\\";
 
         if (!Directory.Exists(savesPath))
             Directory.CreateDirectory(savesPath);
@@ -115,21 +116,19 @@ public class World
 
     protected static float CalculateFolderSize(string folder)
     {
-        var folderSize = 0.0f;
+        float folderSize = 0.0f;
         //Checks if the path is valid or not
         if (!Directory.Exists(folder))
-        {
             return folderSize;
-        }
 
-        foreach (var file in Directory.GetFiles(folder))
+        foreach (string file in Directory.GetFiles(folder))
             if (File.Exists(file))
             {
-                var finfo = new FileInfo(file);
+                FileInfo finfo = new FileInfo(file);
                 folderSize += finfo.Length;
             }
 
-        foreach (var dir in Directory.GetDirectories(folder))
+        foreach (string dir in Directory.GetDirectories(folder))
             folderSize += CalculateFolderSize(dir);
         return folderSize;
     }

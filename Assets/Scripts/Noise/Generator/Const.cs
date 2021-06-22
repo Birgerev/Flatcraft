@@ -5,10 +5,6 @@
     /// </summary>
     public class Const : ModuleBase
     {
-        #region Fields
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -31,6 +27,10 @@
         {
             return Value;
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 

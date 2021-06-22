@@ -15,8 +15,8 @@ namespace LibNoise.Generator
         /// </summary>
         private void UpdateWeights()
         {
-            var f = 1.0;
-            for (var i = 0; i < Utils.OctavesMaximum; i++)
+            double f = 1.0;
+            for (int i = 0; i < Utils.OctavesMaximum; i++)
             {
                 _weights[i] = Math.Pow(f, -1.0);
                 f *= _lacunarity;
@@ -39,17 +39,17 @@ namespace LibNoise.Generator
             x *= Frequency;
             y *= Frequency;
             z *= Frequency;
-            var value = 0.0;
-            var weight = 1.0;
-            var offset = 1.0;
-            var gain = 2.0;
-            for (var i = 0; i < _octaveCount; i++)
+            double value = 0.0;
+            double weight = 1.0;
+            double offset = 1.0;
+            double gain = 2.0;
+            for (int i = 0; i < _octaveCount; i++)
             {
-                var nx = Utils.MakeInt32Range(x);
-                var ny = Utils.MakeInt32Range(y);
-                var nz = Utils.MakeInt32Range(z);
+                double nx = Utils.MakeInt32Range(x);
+                double ny = Utils.MakeInt32Range(y);
+                double nz = Utils.MakeInt32Range(z);
                 long seed = (Seed + i) & 0x7fffffff;
-                var signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
+                double signal = Utils.GradientCoherentNoise3D(nx, ny, nz, seed, Quality);
                 signal = Math.Abs(signal);
                 signal = offset - signal;
                 signal *= signal;

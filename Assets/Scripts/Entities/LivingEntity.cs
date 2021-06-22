@@ -9,43 +9,40 @@ public class LivingEntity : Entity
     //Entity Properties
     public static Color damageColor = new Color(1, 0.5f, 0.5f, 1);
 
-    [Header("Movement Properties")] public float acceleration = 4f;
-
     public Nameplate nameplate;
-    EntityController controller;
 
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar] public float health;
     [EntityDataTag(false)] [SyncVar] public string displayName;
 
-    private float airDrag = 4.3f;
-    private float climbSpeed = 0.5f;
-    private float groundFriction = 5f;
-    private float jumpVelocity = 8.5f;
-    private float ladderFriction = 10f;
-    private float liquidDrag = 10f;
-    private float sneakSpeed = 1.3f;
-    private float sprintSpeed = 5.6f;
-    private float swimUpSpeed = 2f;
-    private float swimJumpVelocity = 2f;
-    private float walkSpeed = 4.3f;
+    [Header("Movement Properties")] private readonly float acceleration = 4f;
+
+    private readonly float airDrag = 4.3f;
+    private readonly float climbableFriction = 10f;
+    private readonly float climbAcceleration = 55.0f;
+    private EntityController controller;
+    private readonly float groundFriction = 5f;
 
 
     //Entity State
-    public float highestYlevelsinceground;
-    protected float last_jump_time;
+    protected float highestYlevelsinceground;
     protected bool inLiquidLastFrame;
-    [SyncVar]
-    protected bool sprinting;
-    [SyncVar]
-    protected bool sneaking;
+    private readonly float jumpVelocity = 8.5f;
+    protected float last_jump_time;
+    private readonly float liquidDrag = 10f;
+    protected float speed;
+    private readonly float swimJumpVelocity = 2f;
+    private readonly float swimUpAcceleration = 45.0f;
+    protected virtual float walkSpeed { get; } = 4.3f;
+
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
     {
         base.Start();
-        
+
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        speed = walkSpeed;
     }
 
     public override void Update()
@@ -53,6 +50,7 @@ public class LivingEntity : Entity
         base.Update();
 
         CalculateFlip();
+        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -60,37 +58,26 @@ public class LivingEntity : Entity
     {
         health = maxHealth;
         controller = GetController();
-        
+
         base.Initialize();
     }
-    
+
     [Server]
     public override void Tick()
     {
         base.Tick();
-        
-        AmbientSoundCheck();
-        
-        if(controller != null)
-            controller.Tick();
-        
-        
-        //Sprinting particles    
-        if (Mathf.Abs(GetVelocity().x) >= sneakSpeed && isOnGround)
-        {
-            float chances;
-            if (sprinting)
-                chances = 0.2f;
-            else
-                chances = 0.02f;
 
-            MovementParticlesEffect(chances);
-        }
-        
+        AmbientSoundCheck();
+
+        if (controller != null)
+            controller.Tick();
+
+        //Walking particles    
+        if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
+            MovementParticlesEffect(0.05f);
+
         ProcessMovement();
         FallDamageCheck();
-        
-        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -99,7 +86,7 @@ public class LivingEntity : Entity
         highestYlevelsinceground = 0;
         base.Teleport(loc);
     }
-    
+
     [Client]
     public override void ClientUpdate()
     {
@@ -113,17 +100,18 @@ public class LivingEntity : Entity
     public void AmbientSoundCheck()
     {
         int checkDuration = 4;
-        float timeOffset = (float)new System.Random(id).NextDouble() * checkDuration;    //Uses a static seed (id)
-        
-        if (((Time.time + timeOffset) % checkDuration) - Time.deltaTime <= 0)
-            if(new System.Random(Time.time.GetHashCode() + id).NextDouble() < 0.5f)
+        float timeOffset =
+            (float) new Random(uuid.GetHashCode()).NextDouble() * checkDuration; //Uses a static seed (id)
+
+        if ((Time.time + timeOffset) % checkDuration - Time.deltaTime <= 0)
+            if (new Random(Time.time.GetHashCode() + uuid.GetHashCode()).NextDouble() < 0.5f)
                 AmbientSound();
     }
-    
+
     [Client]
     public virtual void UpdateAnimatorValues()
     {
-        var anim = GetComponent<Animator>();
+        Animator anim = GetComponent<Animator>();
 
         if (anim == null)
             return;
@@ -131,62 +119,54 @@ public class LivingEntity : Entity
         if (anim.isInitialized)
             anim.SetFloat("velocity-x", Mathf.Abs(GetVelocity().x));
     }
-    
+
     [Client]
     public virtual void UpdateNameplate()
     {
         if (nameplate == null)
         {
-            Debug.LogWarning("Nameplate is missing for entity type: " + this.name);
+            Debug.LogWarning("Nameplate is missing for entity type: " + name);
             return;
         }
-        
+
         nameplate.text = displayName;
     }
 
     public virtual void ProcessMovement()
     {
-        if(inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
+        if (inLiquidLastFrame && !isInLiquid && GetVelocity().y > 0)
             SetVelocity(GetVelocity() + new Vector2(0, swimJumpVelocity));
-        
+
         ApplyFriction();
-        CrouchOnLadderCheck();
     }
 
     public void ApplyFriction()
     {
         if (isInLiquid)
-            SetVelocity(GetVelocity() * (1 / (1 + (liquidDrag * Time.deltaTime))));
+            SetVelocity(GetVelocity() * (1 / (1 + liquidDrag * Time.deltaTime)));
         if (isOnClimbable)
-            SetVelocity(GetVelocity() * (1 / (1 + (ladderFriction * Time.deltaTime))));
+            SetVelocity(GetVelocity() * (1 / (1 + climbableFriction * Time.deltaTime)));
         if (!isInLiquid && !isOnClimbable && !isOnGround)
-            SetVelocity(new Vector3(GetVelocity().x * (1 / (1 + (airDrag * Time.deltaTime))), GetVelocity().y));
+            SetVelocity(new Vector3(GetVelocity().x * (1 / (1 + airDrag * Time.deltaTime)), GetVelocity().y));
         if (!isInLiquid && !isOnClimbable && isOnGround)
-            SetVelocity(GetVelocity() * (1 / (1 + (groundFriction * Time.deltaTime))));
+            SetVelocity(GetVelocity() * (1 / (1 + groundFriction * Time.deltaTime)));
     }
 
     public void Walk(int direction)
     {
-        if (!hasAuthority)
+        if (!hasAuthority && !isServer)
             return;
-        
-        float maxSpeed;
-        if (sprinting)
-            maxSpeed = sprintSpeed;
-        else if (sneaking)
-            maxSpeed = sneakSpeed;
-        else
-            maxSpeed = walkSpeed;
 
-        if (GetVelocity().x < maxSpeed && GetVelocity().x > -maxSpeed)
+        if (GetVelocity().x < speed && GetVelocity().x > -speed)
         {
             float targetXVelocity = 0;
 
             if (direction == -1)
-                targetXVelocity -= maxSpeed;
+                targetXVelocity -= speed;
             else if (direction == 1)
-                targetXVelocity += maxSpeed;
-            else targetXVelocity = 0;
+                targetXVelocity += speed;
+            else
+                targetXVelocity = 0;
 
             GetComponent<Rigidbody2D>().velocity +=
                 new Vector2(targetXVelocity * (acceleration * Time.deltaTime), 0);
@@ -197,23 +177,20 @@ public class LivingEntity : Entity
 
     public void Jump()
     {
-        if (!hasAuthority)
+        if (!hasAuthority && !isServer)
             return;
 
-        if (isOnGround)
+        if (isOnGround && Time.time - last_jump_time >= 0.3f)
         {
-            if (Time.time - last_jump_time < 0.3f)
-                return;
-
             SetVelocity(new Vector2(GetVelocity().x, jumpVelocity));
             last_jump_time = Time.time;
         }
 
-        if (isInLiquid && GetVelocity().y < swimUpSpeed) 
-            SetVelocity(GetVelocity() + new Vector2(0, swimUpSpeed));
+        if (isInLiquid)
+            SetVelocity(GetVelocity() + new Vector2(0, swimUpAcceleration * Time.deltaTime));
 
-        if (isOnClimbable) 
-            SetVelocity(GetVelocity() + new Vector2(0, climbSpeed));
+        if (isOnClimbable)
+            SetVelocity(GetVelocity() + new Vector2(0, climbAcceleration * Time.deltaTime));
     }
 
     public void StairCheck(int direction)
@@ -223,25 +200,23 @@ public class LivingEntity : Entity
         if (!isOnGround) //Return if player isn't grounded
             return;
 
-        /*TODO better stair check
-        var blockInFront = Location
-            .LocationByPosition((Vector2) transform.position + new Vector2(direction * 0.7f, -0.5f), Location.dimension)
-            .GetBlock(); //Get block in front of player acording to walk direction
+        //Get block in front of player acording to walk direction
+        Block blockInFront = Location.LocationByPosition(
+            (Vector2) transform.position + new Vector2(direction * 0.5f, -0.5f)).GetBlock();
 
-        if (blockInFront == null) return;
+        if (blockInFront == null)
+            return;
 
         if (Type.GetType(blockInFront.GetMaterial().ToString()).IsSubclassOf(typeof(Stairs)))
         {
-            var rotated_x = false;
-            var rotated_y = false;
+            bool rotated_x = blockInFront.location.GetData().GetTag("rotated_x") == "true";
+            bool rotated_y = blockInFront.location.GetData().GetTag("rotated_y") == "true";
 
-            rotated_x = blockInFront.location.GetData().GetTag("rotated_x") == "true";
-            rotated_y = blockInFront.location.GetData().GetTag("rotated_y") == "true";
-            
             //if the stairs are rotated correctly
-            if (rotated_y == false && (direction == -1 && rotated_x == false || direction == 1 && rotated_x))
-                transform.position += new Vector3(0, 1);
-        }*/
+            if (rotated_y == false &&
+                (direction == -1 && rotated_x == false || direction == 1 && rotated_x))
+                transform.position += new Vector3(direction * 0.2f, 1);
+        }
     }
 
     [Server]
@@ -255,21 +230,13 @@ public class LivingEntity : Entity
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;
     }
-
-    public void CrouchOnLadderCheck()
-    {
-        if (isOnClimbable && sneaking)
-        {
-            SetVelocity(new Vector2(GetVelocity().x, 0.45f));        //y should be 0, but 0.45 prevents any downwards movement
-        }
-    }
-
+    
     [Server]
     private void FallDamageCheck()
     {
         if (isOnGround && !isInLiquid)
         {
-            var damage = highestYlevelsinceground - transform.position.y - 3;
+            float damage = highestYlevelsinceground - transform.position.y - 3;
             if (damage >= 1)
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
@@ -289,20 +256,20 @@ public class LivingEntity : Entity
     [ClientRpc]
     private void FallDamageParticlesEffect()
     {
-        var r = new Random();
+        Random r = new Random();
         Block blockBeneath = null;
-        for (var y = -1; blockBeneath == null && y > -3; y--)
+        for (int y = -1; blockBeneath == null && y > -3; y--)
         {
-            var block = (Location + new Location(0, y)).GetBlock();
+            Block block = (Location + new Location(0, y)).GetBlock();
             if (block != null)
                 blockBeneath = block;
         }
 
         if (blockBeneath == null)
             return;
-        
-        var particleAmount = r.Next(4, 8);
-        for (var i = 0; i < particleAmount; i++) //Spawn landing partickes
+
+        int particleAmount = r.Next(4, 8);
+        for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
         {
             Particle part = Particle.Spawn();
 
@@ -316,20 +283,13 @@ public class LivingEntity : Entity
     }
 
     [ClientRpc]
-    private void MovementParticlesEffect(float chances)
+    protected void MovementParticlesEffect(float chances)
     {
-        var r = new Random();
+        Random r = new Random();
 
         if (r.NextDouble() < chances)
         {
-            Block blockBeneath = null;
-            for (var y = 1; blockBeneath == null && y < 3; y++)
-            {
-                var block = (Location - new Location(0, y)).GetBlock();
-                if (block != null && block.solid)
-                    blockBeneath = block;
-            }
-
+            Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
             if (blockBeneath == null)
                 return;
 
@@ -377,9 +337,9 @@ public class LivingEntity : Entity
     {
         if (dead)
             return;
-        
+
         DeathSound();
-        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+        DeathSmokeEffect();
 
         base.Die();
     }
@@ -393,27 +353,27 @@ public class LivingEntity : Entity
     [Server]
     public virtual void HurtSound()
     {
-        string soundName = "entity/" + this.GetType().ToString() + "/hurt";
-        
-        if(Sound.Exists(soundName))
+        string soundName = "entity/" + GetType() + "/hurt";
+
+        if (Sound.Exists(soundName))
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
 
     [Server]
     public virtual void DeathSound()
     {
-        string soundName = "entity/" + this.GetType().ToString() + "/death";
-        
-        if(Sound.Exists(soundName))
+        string soundName = "entity/" + GetType() + "/death";
+
+        if (Sound.Exists(soundName))
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
-    
+
     [Server]
     public virtual void AmbientSound()
     {
-        string soundName = "entity/" + this.GetType().ToString() + "/idle";
-        
-        if(Sound.Exists(soundName))
+        string soundName = "entity/" + GetType() + "/idle";
+
+        if (Sound.Exists(soundName))
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
 
@@ -421,7 +381,7 @@ public class LivingEntity : Entity
     {
         direction.Normalize();
 
-        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 3f, 4f);
+        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 5f, 6f);
     }
 
     [ClientRpc]
@@ -429,16 +389,29 @@ public class LivingEntity : Entity
     {
         StartCoroutine(TurnRedByDamage());
     }
+
+    [ClientRpc]
+    public virtual void DeathSmokeEffect()
+    {
+        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+    }
+
+    [ClientRpc]
+    public virtual void DamageNumberEffect(int damage, Color color)
+    {
+        Particle.Spawn_Number(transform.position + new Vector3(1, 2), damage, color);
+    }
     
     private IEnumerator TurnRedByDamage()
     {
-        var baseColor = GetRenderer().color;
+        Color baseColor = GetRenderer().color;
 
         for (int i = 0; i < 15; i++)
         {
             GetRenderer().color = damageColor;
             yield return new WaitForSeconds(0.01f);
         }
+
         GetRenderer().color = baseColor;
     }
 }

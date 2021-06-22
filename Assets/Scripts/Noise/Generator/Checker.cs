@@ -30,9 +30,9 @@ namespace LibNoise.Generator
         /// <returns>The resulting output value.</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var ix = (int) Math.Floor(Utils.MakeInt32Range(x));
-            var iy = (int) Math.Floor(Utils.MakeInt32Range(y));
-            var iz = (int) Math.Floor(Utils.MakeInt32Range(z));
+            int ix = (int) Math.Floor(Utils.MakeInt32Range(x));
+            int iy = (int) Math.Floor(Utils.MakeInt32Range(y));
+            int iz = (int) Math.Floor(Utils.MakeInt32Range(z));
             return ((ix & 1) ^ (iy & 1) ^ (iz & 1)) != 0 ? -1.0 : 1.0;
         }
 

@@ -12,8 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("None")]
 [assembly:
     AssemblyCopyright(
-        "LibUnity.Xna Copyright © Jason Bevins 2003-2007, 2010 BigBlackBlock Gamestudio, LibNoise.Unity Copyright © 2010 Unity Commons, distributed under the terms on the Lesser GPL"
-    )]
+        "LibUnity.Xna Copyright © Jason Bevins 2003-2007, 2010 BigBlackBlock Gamestudio, LibNoise.Unity Copyright © 2010 Unity Commons, distributed under the terms on the Lesser GPL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

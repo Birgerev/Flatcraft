@@ -1,53 +1,49 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Clouds : MonoBehaviour
 {
-    public GameObject cloud;
-    private readonly float cloudChance = 50;
+    public GameObject cloudPrefab;
+    public List<GameObject> clouds = new List<GameObject>();
+    public Color color;
+    public float cloudWidth;
+    public float cloudSpeed;
 
-    private readonly float cloudDistance = 30;
-    private readonly float cloudHeight = 128;
-    private readonly float cloudSpawnInterval = 7.9f;
-    private readonly float cloudSpeed = 0.5f;
-
-
-    private float nextSpawnTime;
-
-    // Start is called before the first frame update
-    private void Start()
+    public void Start()
     {
+        GameObject mainCloud = CreateCloud();
+        mainCloud.transform.localPosition = new Vector3(0, 0);
+        clouds.Add(mainCloud);
+
+        GameObject leftCloud = CreateCloud();
+        leftCloud.transform.localPosition = new Vector3(-cloudWidth, 0);
+        clouds.Add(leftCloud);
     }
+
 
     // Update is called once per frame
-    private void FixedUpdate()
+    private void Update()
     {
-        if (Player.localEntity == null)
-            return;
-        Vector2 playerPos = Player.localEntity.transform.position;
-
-        if (Time.time > nextSpawnTime)
+        foreach (GameObject cloud in clouds)
         {
-            if (Random.Range(0f, 100f) < cloudChance) CreateCloud();
-            nextSpawnTime = Time.time + cloudSpawnInterval;
+            cloud.GetComponent<SpriteRenderer>().color = color;
+            cloud.transform.position += new Vector3(cloudSpeed * Time.deltaTime, 0);
         }
 
-
-        for (var i = 0; i < transform.childCount; i++)
+        if (clouds[0].transform.localPosition.x >= cloudWidth)
         {
-            //Clear cloud
-            if (transform.GetChild(i).position.x > playerPos.x + cloudDistance * 2)
-                Destroy(transform.GetChild(i).gameObject);
+            GameObject oldestCloud = clouds[0];
+            clouds.Remove(oldestCloud);
+            Destroy(oldestCloud);
 
-            //Move
-            transform.GetChild(i).position += new Vector3(cloudSpeed * Time.fixedDeltaTime, 0);
+            GameObject newCloud = CreateCloud();
+            newCloud.transform.localPosition = new Vector3(-cloudWidth, 0);
+            clouds.Add(newCloud);
         }
     }
 
-    public void CreateCloud()
+    public GameObject CreateCloud()
     {
-        var obj = Instantiate(cloud);
-
-        obj.transform.SetParent(transform);
-        obj.transform.position = new Vector2(Player.localEntity.transform.position.x - cloudDistance, cloudHeight);
+        return Instantiate(cloudPrefab, transform);
     }
 }

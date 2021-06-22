@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SingleplayerMenu : MonoBehaviour
 {
@@ -20,8 +20,8 @@ public class SingleplayerMenu : MonoBehaviour
 
     private void Update()
     {
-        playButton.interactable = (selectedWorld != -1);
-        deleteButton.interactable = (selectedWorld != -1);
+        playButton.interactable = selectedWorld != -1;
+        deleteButton.interactable = selectedWorld != -1;
     }
 
     public void LoadWorlds()
@@ -29,9 +29,9 @@ public class SingleplayerMenu : MonoBehaviour
         worlds.Clear();
         worlds = GetWorlds();
 
-        foreach (var world in worlds)
+        foreach (World world in worlds)
         {
-            var obj = Instantiate(worldPrefab, list, false);
+            GameObject obj = Instantiate(worldPrefab, list, false);
         }
     }
 
@@ -47,6 +47,7 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void Play()
     {
+        Sound.PlayLocal(new Location(), "menu/click", 0, SoundType.Menu, 1f, 100000f, false);
         WorldManager.world = worlds[selectedWorld];
         SceneManager.LoadScene("Game");
         GameNetworkManager.isHost = true;

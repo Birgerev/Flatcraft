@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.InteropServices;
 using Mirror;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ public struct ChunkPosition
 
     public ChunkPosition(Location loc)
     {
-        var chunkX = 0;
+        int chunkX = 0;
         if (loc.x >= 0)
             chunkX = (int) (loc.x / (float) Chunk.Width);
         else
@@ -29,7 +28,7 @@ public struct ChunkPosition
 
     public bool HasBeenSaved()
     {
-        var path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
+        string path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
 
         return Directory.Exists(path);
     }
@@ -39,9 +38,9 @@ public struct ChunkPosition
         if (!HasBeenSaved())
             return false;
 
-        var chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX + "\\chunk";
-        var chunkDataLines = File.ReadAllLines(chunkDataPath);
-        foreach (var line in chunkDataLines)
+        string chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX + "\\chunk";
+        string[] chunkDataLines = File.ReadAllLines(chunkDataPath);
+        foreach (string line in chunkDataLines)
             if (line.Contains("hasBeenGenerated"))
             {
                 if (line.Split('=')[1] == "true")
@@ -56,15 +55,15 @@ public struct ChunkPosition
     {
         if (WorldManager.instance == null)
             return true;
-        
+
         return WorldManager.instance.chunks.ContainsKey(this);
     }
-    
+
     public bool IsChunkLoaded()
     {
         if (!IsChunkCreated())
             return false;
-        
+
         return GetChunk().isLoaded;
     }
 
@@ -73,16 +72,17 @@ public struct ChunkPosition
     {
         if (IsChunkCreated())
             return null;
-        
-        var newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
-        NetworkServer.Spawn(newChunk);
+
+        GameObject newChunk = Object.Instantiate(WorldManager.instance.chunkPrefab);
         newChunk.GetComponent<Chunk>().chunkPosition = this;
+        NetworkServer.Spawn(newChunk);
+
         return newChunk.GetComponent<Chunk>();
     }
 
     public void CreateChunkPath()
     {
-        var path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
+        string path = WorldManager.world.getPath() + "\\chunks\\" + dimension + "\\" + chunkX;
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
@@ -94,14 +94,12 @@ public struct ChunkPosition
 
     public Chunk GetChunk()
     {
-        Chunk chunk;
-
-        WorldManager.instance.chunks.TryGetValue(this, out chunk);
+        Chunk chunk = (Chunk) WorldManager.instance.chunks[this];
 
         return chunk;
     }
 
-    public bool isInRenderDistance()
+    public bool IsInRenderDistance()
     {
         return IsWithinDistanceOfPlayer(Chunk.RenderDistance);
     }
@@ -111,12 +109,9 @@ public struct ChunkPosition
         foreach (Player player in Player.players)
         {
             Location loc = player.Location;
-            
+
             if (dimension != loc.dimension)
                 continue;
-
-            if (chunkX == 0)
-                return true;
             
             float distanceFromPlayer = Mathf.Abs(worldX + Chunk.Width / 2 - loc.x);
             if (distanceFromPlayer < range * Chunk.Width)

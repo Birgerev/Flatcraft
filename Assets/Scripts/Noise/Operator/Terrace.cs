@@ -24,21 +24,22 @@ namespace LibNoise.Operator
         {
             Debug.Assert(Modules[0] != null);
             Debug.Assert(ControlPointCount >= 2);
-            var smv = Modules[0].GetValue(x, y, z);
+            double smv = Modules[0].GetValue(x, y, z);
             int ip;
             for (ip = 0; ip < ControlPoints.Count; ip++)
                 if (smv < ControlPoints[ip])
                     break;
-            var i0 = Mathf.Clamp(ip - 1, 0, ControlPoints.Count - 1);
-            var i1 = Mathf.Clamp(ip, 0, ControlPoints.Count - 1);
-            if (i0 == i1) return ControlPoints[i1];
-            var v0 = ControlPoints[i0];
-            var v1 = ControlPoints[i1];
-            var a = (smv - v0) / (v1 - v0);
+            int i0 = Mathf.Clamp(ip - 1, 0, ControlPoints.Count - 1);
+            int i1 = Mathf.Clamp(ip, 0, ControlPoints.Count - 1);
+            if (i0 == i1)
+                return ControlPoints[i1];
+            double v0 = ControlPoints[i0];
+            double v1 = ControlPoints[i1];
+            double a = (smv - v0) / (v1 - v0);
             if (IsInverted)
             {
                 a = 1.0 - a;
-                var t = v0;
+                double t = v0;
                 v0 = v1;
                 v1 = t;
             }
@@ -114,7 +115,8 @@ namespace LibNoise.Operator
         /// <param name="input">The curves input value.</param>
         public void Add(double input)
         {
-            if (!ControlPoints.Contains(input)) ControlPoints.Add(input);
+            if (!ControlPoints.Contains(input))
+                ControlPoints.Add(input);
             ControlPoints.Sort(delegate(double lhs, double rhs) { return lhs.CompareTo(rhs); });
         }
 
@@ -132,11 +134,12 @@ namespace LibNoise.Operator
         /// <param name="steps">The number of steps.</param>
         public void Generate(int steps)
         {
-            if (steps < 2) throw new ArgumentException("Need at least two steps");
+            if (steps < 2)
+                throw new ArgumentException("Need at least two steps");
             Clear();
-            var ts = 2.0 / (steps - 1.0);
-            var cv = -1.0;
-            for (var i = 0; i < steps; i++)
+            double ts = 2.0 / (steps - 1.0);
+            double cv = -1.0;
+            for (int i = 0; i < steps; i++)
             {
                 Add(cv);
                 cv += ts;

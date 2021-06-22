@@ -13,7 +13,7 @@ public class SaveManager : NetworkBehaviour
 
     private void Start()
     {
-        if(isServer)
+        if (isServer)
             StartCoroutine(SaveLoop());
     }
 
@@ -26,29 +26,35 @@ public class SaveManager : NetworkBehaviour
             //Save Block Changes
             if (blockChanges.Count > 0)
             {
-                var blockChangesCopy = new Dictionary<Location, string>(blockChanges);
+                Dictionary<Location, string> blockChangesCopy = new Dictionary<Location, string>(blockChanges);
                 blockChanges.Clear();
-                var worldThread = new Thread(() => { SaveBlockChanges(blockChangesCopy); });
+                Thread worldThread = new Thread(() => { SaveBlockChanges(blockChangesCopy); });
                 worldThread.Start();
 
-                while (worldThread.IsAlive) 
+                while (worldThread.IsAlive)
                     yield return new WaitForSeconds(0.1f);
             }
 
             //Save Entities
-            var entities = Entity.entities;
+            List<Entity> entities = Entity.entities;
 
-            var entityThread = new Thread(() => { SaveEntities(entities); });
+            Thread entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();
-
-            while (entityThread.IsAlive) 
+            
+            while (entityThread.IsAlive)
                 yield return new WaitForSeconds(0.1f);
+
+            //Delete no longer present entities
+            foreach (Chunk chunk in WorldManager.instance.chunks.Values)
+            {
+                chunk.DeleteNoLongerPresentEntitiesSaves();
+            }
         }
     }
 
     public static void SaveEntities(List<Entity> entities)
     {
-        foreach (var e in entities)
+        foreach (Entity e in entities)
             try
             {
                 e.Save();
@@ -62,29 +68,30 @@ public class SaveManager : NetworkBehaviour
     public static void SaveBlockChanges(Dictionary<Location, string> changes)
     {
         //Get all changed chunks
-        var changedChunks = new List<ChunkPosition>();
-        foreach (var blockChange in changes)
+        List<ChunkPosition> changedChunks = new List<ChunkPosition>();
+        foreach (KeyValuePair<Location, string> blockChange in changes)
         {
-            var cPos = new ChunkPosition(blockChange.Key);
-            if (!changedChunks.Contains(cPos)) 
+            ChunkPosition cPos = new ChunkPosition(blockChange.Key);
+            if (!changedChunks.Contains(cPos))
                 changedChunks.Add(cPos);
         }
 
         //Rewrite all block changes for chunks
-        foreach (var currentEditingChunk in changedChunks)
+        foreach (ChunkPosition currentEditingChunk in changedChunks)
         {
-            var changesForChunk = new Dictionary<Location, string>();
-            foreach (var blockChange in changes) //Add block change to list if it belongs to current chunk that we are editing
+            Dictionary<Location, string> changesForChunk = new Dictionary<Location, string>();
+            foreach (KeyValuePair<Location, string> blockChange in changes
+            ) //Add block change to list if it belongs to current chunk that we are editing
                 if (new ChunkPosition(blockChange.Key).Equals(currentEditingChunk))
                     changesForChunk.Add(blockChange.Key, blockChange.Value);
 
-            if (!currentEditingChunk.HasBeenSaved()) 
+            if (!currentEditingChunk.HasBeenSaved())
                 currentEditingChunk.CreateChunkPath();
 
-            var chunkPath = WorldManager.world.getPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
-                            currentEditingChunk.chunkX;
+            string chunkPath = WorldManager.world.getPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
+                               currentEditingChunk.chunkX;
 
-            foreach (var line in File.ReadAllLines(chunkPath + "\\blocks")
+            foreach (string line in File.ReadAllLines(chunkPath + "\\blocks")
             ) //Add all old block changes, removing duplicates of new block changes
             {
                 Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
@@ -100,7 +107,7 @@ public class SaveManager : NetworkBehaviour
 
             //Write all block changes
             TextWriter c = new StreamWriter(chunkPath + "\\blocks");
-            foreach (var line in changesForChunk) 
+            foreach (KeyValuePair<Location, string> line in changesForChunk)
                 c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
 
             //Close file writer

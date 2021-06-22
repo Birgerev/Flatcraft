@@ -22,9 +22,9 @@ TagManager:
   - Entity
   - DroppedItem
   - Particle
-  - 
+  - Painting
   - LightSource
-  - 
+  - FallingBlock
   - 
   - 
   - 
@@ -49,6 +49,9 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Painting
+    uniqueID: 6474793
     locked: 0
   - name: Entity
     uniqueID: 3276645917

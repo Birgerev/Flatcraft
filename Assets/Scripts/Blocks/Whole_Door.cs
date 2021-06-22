@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Whole_Door : Door
+﻿public class Whole_Door : Door
 {
     public Location otherBlockLocation =>
         location + new Location(0, IsBottomDoorPart() ? 1 : -1);
@@ -9,7 +7,7 @@ public class Whole_Door : Door
 
     public override void BuildTick()
     {
-        if(otherBlockLocation.GetMaterial() != otherBlockMaterial)
+        if (otherBlockLocation.GetMaterial() != otherBlockMaterial)
         {
             otherBlockLocation.SetMaterial(otherBlockMaterial);
             otherBlockLocation.GetBlock().BuildTick();
@@ -20,13 +18,14 @@ public class Whole_Door : Door
 
     public override void Interact(PlayerInstance player)
     {
-        var otherDoor = (Door) otherBlockLocation.GetBlock();
-        var open = !GetOpenState();
+        Door otherDoor = (Door) otherBlockLocation.GetBlock();
+        bool open = !GetOpenState();
 
         otherDoor.SetOpenState(open);
 
         base.Interact(player);
     }
+
     public override void PlaySound(bool open)
     {
         if (IsBottomDoorPart())
@@ -40,7 +39,8 @@ public class Whole_Door : Door
 
     public override void Break()
     {
-        if (otherBlockLocation.GetMaterial() == otherBlockMaterial) otherBlockLocation.SetMaterial(Material.Air);
+        if (otherBlockLocation.GetMaterial() == otherBlockMaterial)
+            otherBlockLocation.SetMaterial(Material.Air);
 
         base.Break();
     }

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Door : Block
+﻿public class Door : Block
 {
     public override bool solid { get; set; } = true;
 
@@ -10,13 +8,26 @@ public class Door : Block
     public override void ServerInitialize()
     {
         base.ServerInitialize();
-        
+
         Tick();
+    }
+
+    public override void Initialize()
+    {
+        bool open = GetData().GetTag("open") == "true";
+
+        texture = open ? open_texture : closed_texture;
+        solid = !open;
+
+        Render();
+        UpdateColliders();
+
+        base.Initialize();
     }
 
     public override void Interact(PlayerInstance player)
     {
-        var open = !GetOpenState();
+        bool open = !GetOpenState();
 
         SetOpenState(open);
 
@@ -28,9 +39,6 @@ public class Door : Block
         SetData(GetData().SetTag("open", open ? "true" : "false"));
 
         PlaySound(open);
-
-        Tick();
-        Autosave();
     }
 
     public virtual void PlaySound(bool open)
@@ -40,21 +48,8 @@ public class Door : Block
 
     public bool GetOpenState()
     {
-        var open = GetData().GetTag("open") == "true";
+        bool open = GetData().GetTag("open") == "true";
 
         return open;
-    }
-
-    public override void Tick()
-    {
-        var open = GetData().GetTag("open") == "true";
-
-        texture = open ? open_texture : closed_texture;
-        solid = !open;
-
-        Render();
-        UpdateColliders();
-
-        base.Tick();
     }
 }

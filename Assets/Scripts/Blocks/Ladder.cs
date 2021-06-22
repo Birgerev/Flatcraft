@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Ladder : Block
+﻿public class Ladder : Block
 {
     public override string texture { get; set; } = "block_ladder";
     public override bool solid { get; set; } = false;

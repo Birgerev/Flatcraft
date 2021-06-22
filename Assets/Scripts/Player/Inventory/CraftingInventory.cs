@@ -7,12 +7,12 @@ public class CraftingInventory : Inventory
     {
         return Create("CraftingInventory", 10, "Crafting");
     }
-    
+
     public ItemStack[] GetCraftingTableItems()
     {
-        var table = new ItemStack[9];
+        ItemStack[] table = new ItemStack[9];
 
-        for (var i = 0; i <= 8; i++) 
+        for (int i = 0; i <= 8; i++)
             table[i] = GetItem(i);
 
         return table;
@@ -22,12 +22,10 @@ public class CraftingInventory : Inventory
     public override void Close()
     {
         base.Close();
-        
+
         foreach (ItemStack item in GetCraftingTableItems())
-        {
             item.Drop(holder);
-        }
-        
+
         Clear();
     }
 

@@ -1,38 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
+using Random = System.Random;
 
-public class AmbientMusicManager : MonoBehaviour
+public class AmbientMusicManager : NetworkBehaviour
 {
     public List<string> ambientMusic;
     public float checkDuration;
     public float checkChance;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        StartCoroutine(ambientMusicLoop());
+        if (isServer)
+            StartCoroutine(ambientMusicLoop());
     }
 
-    IEnumerator ambientMusicLoop()
+    private IEnumerator ambientMusicLoop()
     {
-        System.Random random = new System.Random();
+        Random random = new Random();
         while (true)
         {
             yield return new WaitForSeconds(checkDuration);
 
-            if(random.NextDouble() < checkChance)
-            {
+            if (random.NextDouble() < checkChance)
                 PlaySong();
-            }
         }
     }
 
+    [Server]
     public void PlaySong()
     {
-        System.Random random = new System.Random();
+        Random random = new Random();
         string songName = ambientMusic[random.Next(0, ambientMusic.Count)];
 
-        Sound.Play(new Location(), "music/ambient/" + songName + "/" + songName, SoundType.Music, 1f, 1f, int.MaxValue);
+        Sound.Play(new Location(), "music/ambient/" + songName + "/" + songName, SoundType.Music, 1f, 1f, int.MaxValue
+            , false);
     }
 }

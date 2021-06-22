@@ -21,9 +21,9 @@ namespace LibNoise.Operator
         public override double GetValue(double x, double y, double z)
         {
             Debug.Assert(Modules[0] != null);
-            var xd = x + _xDistort.GetValue(x + X0, y + Y0, z + Z0) * Power;
-            var yd = y + _yDistort.GetValue(x + X1, y + Y1, z + Z1) * Power;
-            var zd = z + _zDistort.GetValue(x + X2, y + Y2, z + Z2) * Power;
+            double xd = x + _xDistort.GetValue(x + X0, y + Y0, z + Z0) * Power;
+            double yd = y + _yDistort.GetValue(x + X1, y + Y1, z + Z1) * Power;
+            double zd = z + _zDistort.GetValue(x + X2, y + Y2, z + Z2) * Power;
             return Modules[0].GetValue(xd, yd, zd);
         }
 

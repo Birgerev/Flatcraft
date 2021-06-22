@@ -6,20 +6,20 @@ using UnityEngine;
 public class CraftingRecipe
 {
     private static CraftingRecipe[] _cachedRecipes;
+    public bool flipX;
+    public bool flipY;
     public Dictionary<Vector2Int, Material> recipeShape = new Dictionary<Vector2Int, Material>();
 
     public ItemStack result;
-    public bool flipX;
-    public bool flipY;
 
     public static CraftingRecipe[] allRecipes()
     {
         if (_cachedRecipes == null)
         {
-            var files = Resources.LoadAll<TextAsset>("Recipes/Crafting");
-            var recipes = new List<CraftingRecipe>();
+            TextAsset[] files = Resources.LoadAll<TextAsset>("Recipes/Crafting");
+            List<CraftingRecipe> recipes = new List<CraftingRecipe>();
 
-            foreach (var file in files) 
+            foreach (TextAsset file in files)
                 recipes.Add(FileToRecipe(file));
 
             _cachedRecipes = recipes.ToArray(); //Cache results
@@ -34,31 +34,31 @@ public class CraftingRecipe
     {
         if (Compare(items, false, false))
             return true;
-        
-        if(flipX)
+
+        if (flipX)
             if (Compare(items, true, false))
                 return true;
-        
-        if(flipY)
+
+        if (flipY)
             if (Compare(items, false, true))
                 return true;
-        
-        if(flipX && flipY)
+
+        if (flipX && flipY)
             if (Compare(items, true, true))
                 return true;
 
         return false;
     }
-    
+
     public bool Compare(ItemStack[] items, bool mirrorX, bool mirrorY)
     {
-        var shape = new Dictionary<Vector2Int, Material>();
+        Dictionary<Vector2Int, Material> shape = new Dictionary<Vector2Int, Material>();
 
         //Get shape by item list
-        for (var i = 0; i < items.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            var curPos = Vector2Int.zero;
-            var maxPos = Vector2Int.zero;
+            Vector2Int curPos = Vector2Int.zero;
+            Vector2Int maxPos = Vector2Int.zero;
 
             if (items.Length == 4)
             {
@@ -115,47 +115,52 @@ public class CraftingRecipe
 
                 maxPos = new Vector2Int(2, 2);
             }
-            else Debug.LogError("Invalid Crating Table Size Of " + items.Length);
-            
+            else
+            {
+                Debug.LogError("Invalid Crating Table Size Of " + items.Length);
+            }
+
             //Mirroring
             if (mirrorX)
                 curPos.x = maxPos.x - curPos.x;
             if (mirrorY)
                 curPos.y = maxPos.y - curPos.y;
-            
-            if (items[i] != null && items[i].material != Material.Air) 
+
+            if (items[i] != null && items[i].material != Material.Air)
                 shape.Add(curPos, items[i].material);
         }
 
         //Find How much the recepie is Offsetted by
-        var lowest_x = 2;
-        var lowest_y = 2;
+        int lowest_x = 2;
+        int lowest_y = 2;
 
-        foreach (var shapeItem in shape)
+        foreach (KeyValuePair<Vector2Int, Material> shapeItem in shape)
         {
-            if (shapeItem.Key.x < lowest_x) lowest_x = shapeItem.Key.x;
-            if (shapeItem.Key.y < lowest_y) lowest_y = shapeItem.Key.y;
+            if (shapeItem.Key.x < lowest_x)
+                lowest_x = shapeItem.Key.x;
+            if (shapeItem.Key.y < lowest_y)
+                lowest_y = shapeItem.Key.y;
         }
 
-        var keys = shape.Keys.ToArray();
-        var shapeCopy = new Dictionary<Vector2Int, Material>(shape);
+        Vector2Int[] keys = shape.Keys.ToArray();
+        Dictionary<Vector2Int, Material> shapeCopy = new Dictionary<Vector2Int, Material>(shape);
         shape.Clear();
 
         //Move To Lowest Slots
-        foreach (var key in keys)
+        foreach (Vector2Int key in keys)
         {
-            var mat = shapeCopy[key];
+            Material mat = shapeCopy[key];
 
             shape.Add(key - new Vector2Int(lowest_x, lowest_y), mat);
         }
 
         //Compare both Dictionaries
-        var anyDifferences = false;
+        bool anyDifferences = false;
 
         if (recipeShape.Count != shape.Count)
             anyDifferences = true;
 
-        foreach (var recipeItem in recipeShape)
+        foreach (KeyValuePair<Vector2Int, Material> recipeItem in recipeShape)
         {
             if (!shape.ContainsKey(recipeItem.Key))
             {
@@ -175,7 +180,7 @@ public class CraftingRecipe
 
     public static CraftingRecipe FindRecipeByItems(ItemStack[] items)
     {
-        foreach (var recipe in allRecipes())
+        foreach (CraftingRecipe recipe in allRecipes())
             if (recipe.Compare(items))
                 return recipe;
         return null;
@@ -183,24 +188,22 @@ public class CraftingRecipe
 
     public static CraftingRecipe FileToRecipe(TextAsset file)
     {
-        var recipe = new CraftingRecipe();
+        CraftingRecipe recipe = new CraftingRecipe();
 
         try
         {
-            var lines = file.text.Split('\n');
-            
+            string[] lines = file.text.Split('\n');
+
             recipe.flipX = lines[0].Split('*')[1].Contains("1");
             recipe.flipY = lines[0].Split('*')[2].Contains("1");
-            
-            recipe.result = new ItemStack(
-                (Material) Enum.Parse(typeof(Material), lines[1].Split('*')[0]),
+
+            recipe.result = new ItemStack((Material) Enum.Parse(typeof(Material), lines[1].Split('*')[0]),
                 int.Parse(lines[1].Split('*')[1]), lines[1].Split('*')[2]);
 
-            for (var i = 2; i < lines.Length; i++)
+            for (int i = 2; i < lines.Length; i++)
             {
-                var mat = (Material) Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
-                var pos = new Vector2Int(
-                    int.Parse(lines[i].Split('*')[1].Split(',')[0]),
+                Material mat = (Material) Enum.Parse(typeof(Material), lines[i].Split('*')[0]);
+                Vector2Int pos = new Vector2Int(int.Parse(lines[i].Split('*')[1].Split(',')[0]),
                     int.Parse(lines[i].Split('*')[1].Split(',')[1]));
 
                 recipe.recipeShape.Add(pos, mat);

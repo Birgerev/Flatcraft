@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
-using Random = System.Random;
 
 public class Chicken : PassiveEntity
 {
@@ -11,7 +10,7 @@ public class Chicken : PassiveEntity
     [Server]
     public override List<ItemStack> GetDrops()
     {
-        var result = new List<ItemStack>();
+        List<ItemStack> result = new List<ItemStack>();
 
         result.Add(new ItemStack(Material.Raw_Chicken, 1));
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = System.Random;
 
 public class ItemStack
@@ -51,22 +49,22 @@ public class ItemStack
     public ItemStack(string saveString)
     {
         string[] values = saveString.Split('*');
-        
-        material = (Material)Enum.Parse(typeof(Material), values[0]);
+
+        material = (Material) Enum.Parse(typeof(Material), values[0]);
         amount = int.Parse(values[1]);
         data = values[2];
         durability = int.Parse(values[3]);
     }
-    
+
     public string GetTexture()
     {
-        System.Type materialType = Type.GetType(material.ToString());
+        Type materialType = Type.GetType(material.ToString());
         string texture = "invalid item class (not inheriting from Block nor Item)";
 
         if (materialType.IsSubclassOf(typeof(Block)))
-            texture = ((Block)Activator.CreateInstance(materialType)).texture;
+            texture = ((Block) Activator.CreateInstance(materialType)).texture;
         else if (materialType.IsSubclassOf(typeof(Item)))
-            texture = ((Item)Activator.CreateInstance(materialType)).texture;
+            texture = ((Item) Activator.CreateInstance(materialType)).texture;
 
         return texture;
     }
@@ -75,15 +73,13 @@ public class ItemStack
     {
         return Resources.Load<Sprite>("Sprites/" + GetTexture());
     }
-    
+
     public Color[] GetTextureColors()
     {
         List<Color> textureColors = new List<Color>();
         foreach (Color color in GetSprite().texture.GetPixels())
-        {
             if (color.a != 0)
                 textureColors.Add(color);
-        }
 
         return textureColors.ToArray();
     }
@@ -93,12 +89,12 @@ public class ItemStack
         if (material == Material.Air)
             return -1;
 
-        var type = Type.GetType(material.ToString());
+        Type type = Type.GetType(material.ToString());
 
         if (type == null || !type.IsSubclassOf(typeof(Item)))
             return -1;
 
-        var item = Activator.CreateInstance(type);
+        object item = Activator.CreateInstance(type);
 
         return ((Item) item).maxDurabulity;
     }
@@ -108,14 +104,14 @@ public class ItemStack
         if (material == Material.Air)
             return 1;
 
-        var type = Type.GetType(material.ToString());
+        Type type = Type.GetType(material.ToString());
 
         if (type == null || !type.IsSubclassOf(typeof(Item)))
             return 1;
 
-        var item = Activator.CreateInstance(type);
+        object item = Activator.CreateInstance(type);
 
-        return ((Item)item).entityDamage;
+        return ((Item) item).entityDamage;
     }
 
     public void Drop(Location location)
@@ -125,11 +121,11 @@ public class ItemStack
 
     public void Drop(Location location, bool randomVelocity)
     {
-        var velocity = Vector2.zero;
+        Vector2 velocity = Vector2.zero;
         if (randomVelocity)
         {
-            var random = new Random(GetHashCode() + location.GetHashCode());
-            var maxVelocity = new Vector2(1, 2);
+            Random random = new Random(GetHashCode() + location.GetHashCode());
+            Vector2 maxVelocity = new Vector2(1, 2);
             velocity = new Vector2((float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x,
                 (float) random.NextDouble() * (maxVelocity.x - -maxVelocity.x) + -maxVelocity.x);
         }
@@ -142,7 +138,7 @@ public class ItemStack
         if (material == Material.Air || amount <= 0)
             return;
 
-        var obj = Entity.Spawn("DroppedItem").gameObject;
+        GameObject obj = Entity.Spawn("DroppedItem").gameObject;
 
         obj.GetComponent<DroppedItem>().Location = location;
         obj.GetComponent<DroppedItem>().item = this;

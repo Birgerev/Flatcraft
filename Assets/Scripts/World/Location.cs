@@ -27,43 +27,41 @@ public struct Location
     public static Location LocationByPosition(Vector3 pos)
     {
         Dimension dimension = Dimension.Overworld;
-        
+
         foreach (Dimension dim in Enum.GetValues(typeof(Dimension)))
-        {
             if (pos.y >= (int) dim * Chunk.DimensionSeparationSpace)
                 dimension = dim;
 
-        }
-        
-        return new Location(Mathf.RoundToInt(pos.x), 
-            Mathf.RoundToInt(pos.y) - ((int) dimension * Chunk.DimensionSeparationSpace), 
+        return new Location(Mathf.RoundToInt(pos.x),
+            Mathf.RoundToInt(pos.y) - (int) dimension * Chunk.DimensionSeparationSpace,
             dimension);
     }
 
     public Vector2 GetPosition()
     {
-        return new Vector2(x, y + ((int)dimension * Chunk.DimensionSeparationSpace));
+        return new Vector2(x, y + (int) dimension * Chunk.DimensionSeparationSpace);
     }
 
     public Material GetMaterial()
     {
         BlockState state = GetState();
-        
+
         return state.material;
     }
 
     public BlockData GetData()
     {
         BlockState state = GetState();
-        
-        return state.data;
+        BlockData data = new BlockData(state.data);
+
+        return data;
     }
-    
+
     public Location SetMaterial(Material mat)
     {
         BlockState state = GetState();
         state.material = mat;
-        
+
         SetState(state);
 
         return this;
@@ -83,9 +81,9 @@ public struct Location
     {
         if (state.material == Material.Air)
             state.data = new BlockData("");
-        
+
         SaveState(state);
-        
+
         Chunk chunk = new ChunkPosition(this).GetChunk();
         if (chunk != null)
         {
@@ -93,7 +91,7 @@ public struct Location
             chunk.LocalBlockChange(this, state);
             chunk.BlockChange(this, state);
         }
-        
+
         return this;
     }
 
@@ -104,7 +102,7 @@ public struct Location
         Chunk chunk = new ChunkPosition(this).GetChunk();
         if (chunk != null)
             chunk.SetBlockState(this, state);
-        
+
         return this;
     }
 
@@ -114,18 +112,18 @@ public struct Location
             SaveManager.blockChanges.Remove(this);
 
         SaveManager.blockChanges.Add(this, state.GetSaveString());
-        
+
         return this;
     }
 
     public BlockState GetState()
     {
         Chunk chunk = new ChunkPosition(this).GetChunk();
-        
+
         if (chunk != null)
         {
             BlockState state = chunk.GetBlockState(this);
-            
+
             return state;
         }
 
@@ -134,8 +132,8 @@ public struct Location
 
     public Block GetBlock()
     {
-        var chunk = new ChunkPosition(this).GetChunk();
-        
+        Chunk chunk = new ChunkPosition(this).GetChunk();
+
         if (chunk != null)
         {
             Block block = chunk.GetLocalBlock(this);
@@ -148,17 +146,14 @@ public struct Location
 
     public void Tick()
     {
-        var blocks = new List<Block>
+        List<Block> blocks = new List<Block>
         {
-            (this).GetBlock(),
-            (this + new Location(0, 1)).GetBlock(),
-            (this + new Location(0, -1)).GetBlock(),
-            (this + new Location(-1, 0)).GetBlock(),
-            (this + new Location(1, 0)).GetBlock()
+            this.GetBlock(), (this + new Location(0, 1)).GetBlock(), (this + new Location(0, -1)).GetBlock()
+            , (this + new Location(-1, 0)).GetBlock(), (this + new Location(1, 0)).GetBlock()
         };
 
 
-        foreach (var blockToTick in blocks)
+        foreach (Block blockToTick in blocks)
             if (blockToTick != null)
                 blockToTick.Tick();
     }

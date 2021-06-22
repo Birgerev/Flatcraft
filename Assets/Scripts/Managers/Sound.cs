@@ -1,13 +1,13 @@
 ﻿using Mirror;
 using UnityEngine;
 using UnityEngine.Audio;
+using Random = System.Random;
 
 public class Sound : NetworkBehaviour
 {
     public static Sound instance;
     public AudioMixerGroup blocksGroup;
 
-    public bool enabled;
     public AudioMixerGroup entitiesGroup;
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup weatherGroup;
@@ -17,52 +17,73 @@ public class Sound : NetworkBehaviour
         instance = this;
     }
 
+    [Server]
     public static bool Exists(string sound)
     {
-        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
-        
-        return (clips.Length > 0);
+        AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+
+        return clips.Length > 0;
     }
-    
+
+    [Server]
     public static void Play(Location loc, string sound, SoundType type)
     {
         Play(loc, sound, type, 1, 1);
     }
 
+    [Server]
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch)
     {
-        Play(loc, sound, type, minPitch, maxPitch, 15);
+        Play(loc, sound, type, minPitch, maxPitch, 15, true);
     }
 
+    [Server]
     public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance)
+    {
+        Play(loc, sound, type, minPitch, maxPitch, distance, true);
+    }
+
+    [Server]
+    public static void Play(Location loc, string sound, SoundType type, float minPitch, float maxPitch, float distance
+        , bool spacialPanning)
     {
         if (instance == null)
         {
             Debug.LogError("Sound manager instance not set, cant play sound: " + sound);
             return;
         }
-        
-        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+
+        AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
         if (clips.Length == 0)
         {
             Debug.LogError("Sound clip not found: " + sound);
             return;
         }
-        
-        int soundIndex = new System.Random().Next(0, clips.Length);
-        var pitch = Random.Range(minPitch, maxPitch);
-        
-        instance.ClientsPlay(loc, sound, soundIndex, type, pitch, distance);
+
+        int soundIndex = new Random().Next(0, clips.Length);
+        float pitch = UnityEngine.Random.Range(minPitch, maxPitch);
+
+        instance.PlayOnClients(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
     }
 
     [ClientRpc]
-    public void ClientsPlay(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance)
+    public void PlayOnClients(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance
+        , bool spacialPanning)
     {
-        var obj = new GameObject("sound " + sound);
-        var source = obj.AddComponent<AudioSource>();
-        var clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
-        var clip = clips[soundIndex];
+        PlayLocal(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
+    }
+
+    public static void PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance
+        , bool spacialPanning)
+    {
+        if (instance == null)
+            return;
         
+        GameObject obj = new GameObject("sound " + sound);
+        AudioSource source = obj.AddComponent<AudioSource>();
+        AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
+        AudioClip clip = clips[soundIndex];
+
         AudioMixerGroup group = null;
         switch (type)
         {
@@ -80,7 +101,7 @@ public class Sound : NetworkBehaviour
                 break;
         }
 
-        source.spatialBlend = 1;
+        source.spatialBlend = spacialPanning ? 1 : 0;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.playOnAwake = false;
         source.outputAudioMixerGroup = group;
@@ -99,9 +120,9 @@ public class Sound : NetworkBehaviour
 
 public enum SoundType
 {
-    Music,
-    Weather,
-    Blocks,
-    Entities,
-    Menu
+    Music
+    , Weather
+    , Blocks
+    , Entities
+    , Menu
 }

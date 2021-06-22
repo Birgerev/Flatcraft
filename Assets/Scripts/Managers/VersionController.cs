@@ -1,19 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class VersionController : MonoBehaviour
 {
-    public static int CurrentVersionId
+    public static List<string> versionNames = new List<string>
     {
-        get
-        {
-            return versionNames.Count - 1;
-        }
-    }
-    public static List<string> versionNames = new List<string> { 
-        "Indev 9", "Indev 10", "Indev 11", "Indev 12" };
-    
+        "Indev 9", "Indev 10", "Indev 11", "Indev 12", "Indev 13", "Indev 14 / simon test 1", "Indev 14 / simon test 2"
+    };
+
+    public static int CurrentVersionId => versionNames.Count - 1;
+
     public static string GetVersionName()
     {
         return GetVersionName(CurrentVersionId);
@@ -23,7 +19,7 @@ public class VersionController : MonoBehaviour
     {
         if (versionId >= versionNames.Count)
             return "Future Version";
-        
+
         return versionNames[versionId];
     }
 }

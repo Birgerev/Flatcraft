@@ -6,6 +6,7 @@ public class Obsidian : Block
     public override Tool_Type propperToolType { get; } = Tool_Type.Pickaxe;
     public override Tool_Level propperToolLevel { get; } = Tool_Level.Diamond;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
+
     public override void Tick()
     {
         CheckPortalActivation();
@@ -21,6 +22,7 @@ public class Obsidian : Block
             (location + new Location(0, positiveY)).GetBlock().Break();
             positiveY++;
         }
+
         int negativeY = -1;
         while ((location + new Location(0, negativeY)).GetMaterial() == Material.Portal_Frame)
         {
@@ -34,9 +36,7 @@ public class Obsidian : Block
     public void CheckPortalActivation()
     {
         if ((location + new Location(0, 1)).GetMaterial() == Material.Fire)
-        {
             TryActivatePortal();
-        }
     }
 
     public void TryActivatePortal()

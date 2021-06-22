@@ -1,6 +1,3 @@
-﻿using UnityEngine.UI;
-
-public class ContainerInventoryMenu : InventoryMenu
+﻿public class ContainerInventoryMenu : InventoryMenu
 {
-    
 }

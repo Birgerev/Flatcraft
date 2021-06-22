@@ -7,10 +7,6 @@ namespace LibNoise.Generator
     /// </summary>
     public class Cylinders : ModuleBase
     {
-        #region Fields
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -33,12 +29,16 @@ namespace LibNoise.Generator
         {
             x *= Frequency;
             z *= Frequency;
-            var dfc = Math.Sqrt(x * x + z * z);
-            var dfss = dfc - Math.Floor(dfc);
-            var dfls = 1.0 - dfss;
-            var nd = Math.Min(dfss, dfls);
+            double dfc = Math.Sqrt(x * x + z * z);
+            double dfss = dfc - Math.Floor(dfc);
+            double dfls = 1.0 - dfss;
+            double nd = Math.Min(dfss, dfls);
             return 1.0 - nd * 4.0;
         }
+
+        #endregion
+
+        #region Fields
 
         #endregion
 

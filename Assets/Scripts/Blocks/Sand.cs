@@ -1,4 +1,6 @@
-﻿public class Sand : Block
+﻿using UnityEngine;
+
+public class Sand : Block
 {
     public override string texture { get; set; } = "block_sand";
     public override float breakTime { get; } = 0.75f;
@@ -10,8 +12,8 @@
     {
         if ((location + new Location(0, -1)).GetMaterial() == Material.Air)
         {
-            var fs = (FallingSand) Entity.Spawn("FallingSand");
-            fs.transform.position = location.GetPosition();
+            FallingBlock fs = (FallingBlock) Entity.Spawn("FallingBlock");
+            fs.transform.position = location.GetPosition() - new Vector2(0, 0.5f);
             fs.material = GetMaterial();
 
             location.SetMaterial(Material.Air).Tick();

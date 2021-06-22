@@ -22,7 +22,7 @@ public class SmeltingRecipe
 
     public static SmeltingRecipe FindRecipeByIngredient(Material ingredientItem)
     {
-        foreach (var recipe in allRecipes())
+        foreach (SmeltingRecipe recipe in allRecipes())
             if (recipe.Compare(ingredientItem))
                 return recipe;
         return null;
@@ -30,10 +30,10 @@ public class SmeltingRecipe
 
     public static SmeltingRecipe[] allRecipes()
     {
-        var files = Resources.LoadAll<TextAsset>("Recipes/Smelting");
-        var recipes = new List<SmeltingRecipe>();
+        TextAsset[] files = Resources.LoadAll<TextAsset>("Recipes/Smelting");
+        List<SmeltingRecipe> recipes = new List<SmeltingRecipe>();
 
-        foreach (var file in files) 
+        foreach (TextAsset file in files)
             recipes.Add(FileToRecipe(file));
 
         return recipes.ToArray();
@@ -41,11 +41,10 @@ public class SmeltingRecipe
 
     public static SmeltingRecipe FileToRecipe(TextAsset file)
     {
-        var recipe = new SmeltingRecipe();
-        var lines = file.text.Split('\n');
+        SmeltingRecipe recipe = new SmeltingRecipe();
+        string[] lines = file.text.Split('\n');
 
-        recipe.result = new ItemStack(
-            (Material) Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
+        recipe.result = new ItemStack((Material) Enum.Parse(typeof(Material), lines[0].Split('*')[0]),
             int.Parse(lines[0].Split('*')[1]), lines[0].Split('*')[2]);
 
         recipe.ingredient = (Material) Enum.Parse(typeof(Material), lines[1]);

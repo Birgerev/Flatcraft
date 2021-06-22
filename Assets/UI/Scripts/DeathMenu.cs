@@ -1,5 +1,4 @@
-﻿using Mirror;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DeathMenu : MonoBehaviour
@@ -14,7 +13,6 @@ public class DeathMenu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
         GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         GetComponent<CanvasGroup>().interactable = active;
         GetComponent<CanvasGroup>().blocksRaycasts = active;

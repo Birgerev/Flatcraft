@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class CaveGenerator : MonoBehaviour
 {
@@ -9,9 +8,9 @@ public class CaveGenerator : MonoBehaviour
     private const int perlinSnakeMaxLength = 92;
     private const int perlinSnakeMaxAngleChange = 40;
     private const float perlinSnakeVericalAngleStopChance = 0.2f;
-    
+
     private const int maxCaveHeight = 50;
-    
+
     public static void GenerateCavesForRegion(ChunkPosition chunkPos)
     {
         Dimension dim = chunkPos.dimension;
@@ -24,13 +23,13 @@ public class CaveGenerator : MonoBehaviour
 
         if (WorldManager.instance.caveGeneratedRegions.Contains(region))
             return;
-        
-        
+
+
         int minX = region * Chunk.AmountOfChunksInRegion * Chunk.Width; //first block of the region
-        int maxX = minX + (Chunk.AmountOfChunksInRegion * Chunk.Width); //last block of the region
+        int maxX = minX + Chunk.AmountOfChunksInRegion * Chunk.Width; //last block of the region
 
         //Random, with a seed unique to the chunk position and the world seed
-        System.Random r = new System.Random(chunkPos.GetHashCode() + WorldManager.world.seed);
+        Random r = new Random((region + ", " + WorldManager.world.seed).GetHashCode());
 
         for (int snakeAmount = 0; snakeAmount < perlinSnakeAmount; snakeAmount++)
         {
@@ -38,25 +37,21 @@ public class CaveGenerator : MonoBehaviour
             float angle = r.Next(0, 360);
             int snakeSize = 2;
             int snakeLength = r.Next(perlinSnakeMinLength, perlinSnakeMaxLength);
-            
+
             for (int currentLength = 0; currentLength < snakeLength; currentLength++)
             {
                 //Hollow out
                 for (int x = -snakeSize; x < snakeSize; x++)
-                {
-                    for (int y = -snakeSize; y < snakeSize; y++)
-                    {
-                        WorldManager.instance.caveHollowBlocks.Add(snakeSegmentLocation + new Location(x, y, dim));
-                    }
-                }
-                
+                for (int y = -snakeSize; y < snakeSize; y++)
+                    WorldManager.instance.caveHollowBlocks.Add(snakeSegmentLocation + new Location(x, y, dim));
+
                 //Decide new location
-                if (((angle % 360 > 340 || angle % 360 < 20) || (angle % 360 > 160 && angle % 360 < 200)) &&
+                if ((angle % 360 > 340 || angle % 360 < 20 || angle % 360 > 160 && angle % 360 < 200) &&
                     r.NextDouble() < perlinSnakeVericalAngleStopChance)
                     angle = 90 * (r.Next(0, 1 + 1) == 0 ? -1 : 1);
                 else
-                    angle += r.Next(-perlinSnakeMaxAngleChange, perlinSnakeMaxAngleChange+1);
-                
+                    angle += r.Next(-perlinSnakeMaxAngleChange, perlinSnakeMaxAngleChange + 1);
+
                 float angleRadians = angle * Mathf.Deg2Rad;
                 Vector2 deltaLocation = new Vector2(Mathf.Sin(angleRadians), Mathf.Cos(angleRadians)) * 2;
                 snakeSegmentLocation += Location.LocationByPosition(deltaLocation);
@@ -64,7 +59,7 @@ public class CaveGenerator : MonoBehaviour
                 //Decide new size
             }
         }
-        
+
         WorldManager.instance.caveGeneratedRegions.Add(region);
     }
 }

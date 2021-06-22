@@ -1,5 +1,5 @@
 ﻿public enum Dimension
 {
-    Overworld,
-    Nether
+    Overworld
+    , Nether
 }

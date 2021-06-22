@@ -1,13 +1,20 @@
-using System.Collections.Generic;
-using UnityEngine;
-using Random = System.Random;
+using System.Text;
 
-public class SeedGenerator : MonoBehaviour
+public class SeedGenerator
 {
     public static int SeedByLocation(Location loc)
     {
-        return new Random(
-                (WorldManager.world.seed.GetHashCode() + ", " + loc.x + ", " + loc.y + ", " + loc.dimension).GetHashCode())
-            .Next(int.MinValue, int.MaxValue);
+        return SeedByParameters(WorldManager.world.seed, loc.x, loc.y, (int)loc.dimension);
+    }
+    
+    public static int SeedByParameters(params int[] parameters)
+    {
+        StringBuilder builder = new StringBuilder();
+        foreach (var parameter in parameters)
+        {
+            builder.Append((char) (parameter % 65535));
+        }
+
+        return builder.GetHashCode();
     }
 }

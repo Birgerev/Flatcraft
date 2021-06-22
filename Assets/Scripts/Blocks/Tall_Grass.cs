@@ -1,4 +1,6 @@
-﻿public class Tall_Grass : Block
+﻿using System;
+
+public class Tall_Grass : Block
 {
     public override string texture { get; set; } = "block_tall_grass_0";
 
@@ -12,12 +14,12 @@
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
 
+
     public override ItemStack GetDrop()
     {
-        var r = getRandomChance();
-
-        if (r < 0.25f)
+        if (new Random().NextDouble() <= 0.25f)
             return new ItemStack(Material.Wheat_Seeds, 1);
+
         return new ItemStack();
     }
 }

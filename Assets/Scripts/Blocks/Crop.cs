@@ -39,9 +39,9 @@ public class Crop : Block
 
     public void CheckFarmland()
     {
-        var materialBeneath = (location - new Location(0, 1)).GetMaterial();
+        Material materialBeneath = (location - new Location(0, 1)).GetMaterial();
 
-        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry) 
+        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry)
             Break();
     }
 

@@ -1,25 +1,22 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemSlot : MonoBehaviour
 {
     public Text amountText;
-
-    private CanvasGroup canvasGroup;
     public GameObject durabilityBar;
     public Image durabilityBarFiller;
+    public Image texture;
+
+    private CanvasGroup canvasGroup;
 
     public ItemStack item;
-    public Image texture;
 
     // Start is called before the first frame update
     private void Update()
     {
         if (canvasGroup == null)
-        {
             canvasGroup = GetComponentInParent<CanvasGroup>();
-        }
     }
 
 
@@ -69,7 +66,7 @@ public class ItemSlot : MonoBehaviour
 
     public virtual void Hover(bool hover)
     {
-        if(hover)
+        if (hover)
             Tooltip.hoveredItem = item;
         if (!hover && Tooltip.hoveredItem == item)
             Tooltip.hoveredItem = new ItemStack();

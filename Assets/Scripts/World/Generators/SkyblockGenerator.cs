@@ -1,4 +1,3 @@
-
 public class SkyblockGenerator : WorldGenerator
 {
     public override Material GenerateTerrainBlock(Location loc)
@@ -8,7 +7,7 @@ public class SkyblockGenerator : WorldGenerator
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        if(loc.x == 0 && loc.y == 60)
+        if (loc.x == 0 && loc.y == 60)
             return new BlockState(Material.Structure_Block, new BlockData("structure=Sky_Block"));
 
         return new BlockState(Material.Air);

@@ -68,3 +68,4 @@ UserSettings/EditorUserSettings.asset
 Packages/packages-lock.json
 Packages/packages-lock.json
 sunvox_log.txt
+*.sunpat

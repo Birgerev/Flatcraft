@@ -31,7 +31,7 @@ public class Grass : Block
 
     public void TryDecay()
     {
-        var blockAbove = (location + new Location(0, 1)).GetBlock();
+        Block blockAbove = (location + new Location(0, 1)).GetBlock();
         if (blockAbove != null)
             //Turn to dirt if covered
             if (blockAbove.solid)
@@ -40,7 +40,7 @@ public class Grass : Block
 
     public void TrySpread()
     {
-        var r = new Random();
+        Random r = new Random();
 
         Location targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1 + 1));
         Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
