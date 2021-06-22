@@ -41,7 +41,7 @@ public class DroppedItem : Entity
     [Server]
     private void CheckTrigger()
     {
-        if (Time.time % 1f - Time.deltaTime > 0 || dead || age < 0.5f)
+        if (Time.time % 1f - Time.deltaTime > 0 || dead)
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
@@ -61,7 +61,7 @@ public class DroppedItem : Entity
                     return;
                 }
 
-            if (col.GetComponent<Player>() != null)
+            if (col.GetComponent<Player>() != null && age >= 0.5f)
                 if (col.GetComponent<Player>().GetInventory().AddItem(item))
                 {
                     Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
