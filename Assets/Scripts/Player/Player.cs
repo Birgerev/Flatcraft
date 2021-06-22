@@ -42,6 +42,7 @@ public class Player : HumanEntity
 
     private float lastBlockInteractionTime;
     private float lastFrameScroll;
+    private float lastDoubleTapSprintTap;
 
     [SyncVar] private double lastHitTime;
 
@@ -284,17 +285,28 @@ public class Player : HumanEntity
         }
 
         //Sprinting
+        if (sprinting && 
+            (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 0.5f || sneaking || hunger <= 6))
+        {
+            SetServerSprinting(false);
+            speed = walkSpeed;
+        }
+        
         if (Input.GetKeyDown(KeyCode.LeftControl) && hunger > 6)
         {
             SetServerSprinting(true);
             speed = sprintSpeed;
         }
 
-        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 3f || sneaking ||
-                          hunger <= 6))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
         {
-            SetServerSprinting(false);
-            speed = walkSpeed;
+            if (Time.time - lastDoubleTapSprintTap < 0.3f)
+            {
+                SetServerSprinting(true);
+                speed = sprintSpeed;
+            }
+            
+            lastDoubleTapSprintTap = Time.time;
         }
 
         //Debug disable lighting
