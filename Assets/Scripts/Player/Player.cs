@@ -743,6 +743,7 @@ public class Player : HumanEntity
         if (dead)
             return;
 
+        File.Delete(SavePath());
         base.Die();
         GetInventory().Delete();
         DeathMenuEffect();
