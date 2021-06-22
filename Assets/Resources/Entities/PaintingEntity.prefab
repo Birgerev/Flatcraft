@@ -184,6 +184,7 @@ MonoBehaviour:
   portalTime: 0
   portalCooldown: 0
   teleportingDimension: 0
+  lastDamager: {fileID: 0}
   lastFramePosition: {x: 0, y: 0}
   burningRender: {fileID: 0}
   paintingId: 
@@ -243,11 +244,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   clientAuthority: 0
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
   compressRotation: 0
   interpolateScale: 1
+  interpolateRotation: 1
+  interpolatePosition: 1
   syncScale: 1
