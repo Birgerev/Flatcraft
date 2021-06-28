@@ -229,7 +229,6 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8422761633378807888}
-  - {fileID: 1778372258290490506}
   - {fileID: -5506345689091034032}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
@@ -310,9 +309,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 3
     m_ConditionEvent: velocity-x
     m_EventTreshold: 0.3
-  - m_ConditionMode: 1
-    m_ConditionEvent: grounded
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6155959291405304807}
   m_Solo: 0
@@ -749,7 +745,6 @@ AnimatorState:
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
-  - {fileID: 8129732135880712425}
   - {fileID: 5294367153570997917}
   - {fileID: -4381314357586778038}
   m_StateMachineBehaviours: []
@@ -984,7 +979,6 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
-  - {fileID: 1946252249526499882}
   - {fileID: -7633835613886114477}
   - {fileID: 6082317095902859923}
   - {fileID: -651068373036047263}
@@ -1039,9 +1033,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 3
     m_ConditionEvent: velocity-x
     m_EventTreshold: 0.5
-  - m_ConditionMode: 1
-    m_ConditionEvent: grounded
-    m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: sneaking
     m_EventTreshold: 0
