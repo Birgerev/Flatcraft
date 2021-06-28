@@ -309,7 +309,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 3
     m_ConditionEvent: velocity-x
-    m_EventTreshold: 1
+    m_EventTreshold: 0.3
   - m_ConditionMode: 1
     m_ConditionEvent: grounded
     m_EventTreshold: 0
