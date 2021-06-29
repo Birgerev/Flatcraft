@@ -702,7 +702,7 @@ public class Entity : NetworkBehaviour
     public static ContactFilter2D GetFilter()
     {
         ContactFilter2D filter = new ContactFilter2D().NoFilter();
-        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle"));
+        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle", "Projectile"));
 
         return filter;
     }
