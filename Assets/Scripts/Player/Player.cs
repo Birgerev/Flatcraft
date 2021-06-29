@@ -126,8 +126,6 @@ public class Player : HumanEntity
                 framesSinceInventoryOpen++;
         }
 
-        RenderSpriteParts();
-
         base.ClientUpdate();
     }
 
@@ -840,18 +838,7 @@ public class Player : HumanEntity
             NetworkTime.time - lastHitTime < 0.05f || NetworkTime.time - lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
-        anim.SetBool("grounded", isOnGround);
 
         GetRenderer().transform.localScale = new Vector2(facingLeft ? -1 : 1, 1); //Mirror renderer if facing left
-    }
-
-    [Client]
-    private void RenderSpriteParts()
-    {
-        for (int i = 0; i < GetRenderer().transform.childCount; i++)
-        {
-            SpriteRenderer spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
-            spritePart.color = GetRenderer().color;
-        }
     }
 }

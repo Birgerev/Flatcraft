@@ -96,7 +96,10 @@ public class MobController : EntityController
         {
             instance.Walk(walkingRight ? 1 : -1);
 
-            Block blockInFront = (instance.Location + new Location(walkingRight ? 1 : -1, 0)).GetBlock();
+            Vector3 locInFront = instance.transform.position + new Vector3(
+                (walkingRight ? 1 : -1) * ((instance.GetWidth() / 2) + 0.5f),
+                0);
+            Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
 
             //Jump when there is a block in front of entity
             if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)

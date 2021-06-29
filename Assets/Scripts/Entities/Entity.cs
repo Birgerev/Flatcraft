@@ -699,10 +699,30 @@ public class Entity : NetworkBehaviour
             burningRender.SetActive(IsBurning());
     }
     
+    public float GetWidth()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
+
+        if (col == null)
+            return 0;
+
+        return col.bounds.size.x + col.edgeRadius;
+    }
+    
+    public float GetHeight()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
+
+        if (col == null)
+            return 0;
+
+        return col.bounds.size.y + col.edgeRadius;
+    }
+    
     public static ContactFilter2D GetFilter()
     {
         ContactFilter2D filter = new ContactFilter2D().NoFilter();
-        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle"));
+        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle", "Projectile"));
 
         return filter;
     }
