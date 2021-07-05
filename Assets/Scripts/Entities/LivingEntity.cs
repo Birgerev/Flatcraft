@@ -49,7 +49,6 @@ public class LivingEntity : Entity
     {
         base.Update();
 
-        CalculateFlip();
         inLiquidLastFrame = isInLiquid;
     }
 
@@ -223,12 +222,6 @@ public class LivingEntity : Entity
     public virtual EntityController GetController()
     {
         return new EntityController(this);
-    }
-
-    public void CalculateFlip()
-    {
-        if (Mathf.Abs(GetVelocity().x) > 0.1f)
-            facingLeft = GetVelocity().x < 0;
     }
     
     [Server]
