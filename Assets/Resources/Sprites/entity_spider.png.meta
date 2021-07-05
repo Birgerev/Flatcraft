@@ -115,10 +115,10 @@ TextureImporter:
       name: entity_spider_eyes
       rect:
         serializedVersion: 2
-        x: 0
-        y: 3
-        width: 8
-        height: 3
+        x: 4
+        y: 5
+        width: 3
+        height: 1
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -6,7 +6,6 @@ using UnityEngine;
 public class SpriteRendererPart : MonoBehaviour
 {
     public bool color = true;
-    public bool flip = true;
 
     public SpriteRenderer parentRenderer;
     private SpriteRenderer spriteRenderer;
@@ -21,11 +20,5 @@ public class SpriteRendererPart : MonoBehaviour
     {
         if (color)
             spriteRenderer.color = parentRenderer.color;
-
-        if (flip)
-        {
-            spriteRenderer.flipX = parentRenderer.flipX;
-            spriteRenderer.flipY = parentRenderer.flipY;
-        }
     }
 }
