@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class CraftingRecipe
@@ -192,7 +193,7 @@ public class CraftingRecipe
 
         try
         {
-            string[] lines = file.text.Split('\n');
+            string[] lines = Regex.Split(file.text, Environment.NewLine);
 
             recipe.flipX = lines[0].Split('*')[1].Contains("1");
             recipe.flipY = lines[0].Split('*')[2].Contains("1");
