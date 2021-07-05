@@ -148,7 +148,9 @@ public class Entity : NetworkBehaviour
     [Client]
     public virtual void ClientUpdate()
     {
-        GetRenderer().flipX = facingLeft;
+        //Mirror renderer direction if facingLeft doesnt match current render facing direction
+        if ((GetRenderer().transform.localScale.x < 0) != facingLeft)
+                GetRenderer().transform.localScale *= new Vector2(-1, 1); 
 
         if (isInLiquid)
             isOnGround = false;
