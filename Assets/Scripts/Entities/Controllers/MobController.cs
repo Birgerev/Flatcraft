@@ -147,7 +147,7 @@ public class MobController : EntityController
         if (target == null || Time.time - lastHitTime < hitTargetCooldown)
             return;
 
-        float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
+        float distance = GetTargetDistance();
 
         if (jumpWhenHitting && distance < 2f)
             instance.Jump();
@@ -164,10 +164,15 @@ public class MobController : EntityController
         if (target == null)
             return;
 
-        if (Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition()) > targetRange)
+        if (GetTargetDistance() > targetRange)
         {
             target = null;
             isWalking = false;
         }
+    }
+
+    protected virtual float GetTargetDistance()
+    {
+        return Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
     }
 }
