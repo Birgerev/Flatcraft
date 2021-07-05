@@ -126,6 +126,8 @@ public class Player : HumanEntity
                 framesSinceInventoryOpen++;
         }
 
+        CalculateFlip();
+        
         base.ClientUpdate();
     }
 
@@ -826,6 +828,13 @@ public class Player : HumanEntity
         }
     }
 
+
+    public void CalculateFlip()
+    {
+        if (Mathf.Abs(GetVelocity().x) > 0.1f)
+            facingLeft = GetVelocity().x < 0;
+    }
+    
     [Client]
     public override void UpdateAnimatorValues()
     {
