@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2012540874336276437}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.25, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1910523275709292781}
   m_RootOrder: 0
@@ -115,7 +115,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.25, y: 0.75}
+    oldSize: {x: 0.625, y: 0.375}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -190,8 +190,7 @@ MonoBehaviour:
   lastDamager: {fileID: 0}
   lastFramePosition: {x: 0, y: 0}
   burningRender: {fileID: 7361327405117884159}
-  stuckOnBlock: 0
-  triggerMargin: 0.5
+  hasLanded: 0
 --- !u!61 &3045138367806149472
 BoxCollider2D:
   m_ObjectHideFlags: 0
