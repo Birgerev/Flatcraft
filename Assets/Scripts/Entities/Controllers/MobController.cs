@@ -9,7 +9,6 @@ public class MobController : EntityController
     public bool swimDown;
 
     public Entity target;
-    public bool walkingRight;
     private Random r;
 
 
@@ -64,7 +63,7 @@ public class MobController : EntityController
             Location curLocation = instance.Location;
 
             isWalking = true;
-            walkingRight = curLocation.x < pathfindLocation.x;
+            instance.facingLeft = curLocation.x > pathfindLocation.x;
 
             if (instance.isInLiquid)
                 swimDown = curLocation.y > pathfindLocation.y;
@@ -84,7 +83,9 @@ public class MobController : EntityController
         if (r.NextDouble() < (isWalking ? stopWanderingChance : startWanderingChance) / (1.0f / Time.deltaTime))
         {
             isWalking = !isWalking;
-            walkingRight = r.Next(0, 2) == 0;
+            
+            if(isWalking)
+                instance.facingLeft = r.Next(0, 2) == 0;
         }
 
         swimDown = false;
@@ -94,10 +95,10 @@ public class MobController : EntityController
     {
         if (isWalking)
         {
-            instance.Walk(walkingRight ? 1 : -1);
+            instance.Walk(instance.facingLeft ? -1 : 1);
 
             Vector3 locInFront = instance.transform.position + new Vector3(
-                (walkingRight ? 1 : -1) * ((instance.GetWidth() / 2) + 0.5f),
+                (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
                 0);
             Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
 
@@ -147,7 +148,7 @@ public class MobController : EntityController
         if (target == null || Time.time - lastHitTime < hitTargetCooldown)
             return;
 
-        float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
+        float distance = GetTargetDistance();
 
         if (jumpWhenHitting && distance < 2f)
             instance.Jump();
@@ -164,10 +165,15 @@ public class MobController : EntityController
         if (target == null)
             return;
 
-        if (Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition()) > targetRange)
+        if (GetTargetDistance() > targetRange)
         {
             target = null;
             isWalking = false;
         }
+    }
+
+    protected virtual float GetTargetDistance()
+    {
+        return Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
     }
 }

@@ -25,7 +25,7 @@ public class Chunk : NetworkBehaviour
     
     private static readonly int monsterSpawningLightLevel = 7;
     private static readonly int monsterSpawnAmountCap = 1;
-    private static readonly List<string> CommonMonsters = new List<string> {"Zombie", "Creeper", "Spider"};
+    private static readonly List<string> CommonMonsters = new List<string> {"Zombie", "Creeper", "Spider", "Skeleton"};
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
