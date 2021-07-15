@@ -150,7 +150,8 @@ public class Entity : NetworkBehaviour
     {
         //Mirror renderer direction if facingLeft doesnt match current render facing direction
         if ((GetRenderer().transform.localScale.x < 0) != facingLeft)
-                GetRenderer().transform.localScale *= new Vector2(-1, 1); 
+            GetRenderer().transform.localScale *= new Vector2(-1, 1); 
+        
 
         if (isInLiquid)
             isOnGround = false;
@@ -442,6 +443,11 @@ public class Entity : NetworkBehaviour
             fireTime = 7;
         
         TakeHitDamage(damage);
+    }
+    
+    [Server]
+    public virtual void Interact(Player source)
+    {
     }
 
     [Server]

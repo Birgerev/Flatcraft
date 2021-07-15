@@ -429,7 +429,7 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        HitEntityInput();
+        InteractEntityInput();
         BlockInteractionInput();
         BlockPlaceInput();
     }
@@ -522,7 +522,7 @@ public class Player : HumanEntity
     }
 
     [Client]
-    private void HitEntityInput()
+    private void InteractEntityInput()
     {
         //Hit Entities
         if (Input.GetMouseButtonDown(0))
@@ -532,8 +532,17 @@ public class Player : HumanEntity
             if (entity != null && entity != this)
                 RequestHitEntity(entity.gameObject);
         }
-    }
+        
+        //Interract Entities
+        if (Input.GetMouseButtonDown(1))
+        {
+            Entity entity = GetMouseEntity();
 
+            if (entity != null && entity != this)
+                RequestInteractEntity(entity.gameObject);
+        }
+    }
+    
     [Client]
     private void BlockPlaceInput()
     {
@@ -654,6 +663,15 @@ public class Player : HumanEntity
             DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
+        lastHitTime = NetworkTime.time;
+    }
+    
+    [Command]
+    public virtual void RequestInteractEntity(GameObject entityObj)
+    {
+        Entity entity = entityObj.GetComponent<Entity>();
+
+        entity.transform.GetComponent<Entity>().Interact(this);
         lastHitTime = NetworkTime.time;
     }
 
