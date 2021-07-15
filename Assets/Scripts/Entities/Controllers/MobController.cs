@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -16,7 +18,9 @@ public class MobController : EntityController
     protected virtual float stopWanderingChance { get; } = 0.4f;
 
     protected virtual bool targetDamagerIfAttacked { get; } = false;
-    protected virtual float targetRange { get; } = 0;
+    protected virtual float targetSearchRange { get; } = 0;
+    protected virtual List<Type> targetSearchEntityTypes { get; } = new List<Type>();
+    protected virtual float targetLooseRange { get; } = 0;
 
     protected virtual float pathfindingKeepDistanceToTarget { get; } = 0;
 
@@ -34,8 +38,8 @@ public class MobController : EntityController
         base.Tick();
 
         CheckTargetDistance();
-        if (targetRange != 0)
-            FindPlayerTarget();
+        if (targetSearchRange != 0)
+            SearchTarget();
         if (targetDamagerIfAttacked)
             FindAttackerTarget();
         Pathfind();
@@ -114,17 +118,21 @@ public class MobController : EntityController
             instance.Jump();
     }
 
-    protected virtual void FindPlayerTarget()
+    protected virtual void SearchTarget()
     {
         if (target != null)
             return;
 
-        foreach (Player p in Player.players)
-            if (Vector2.Distance(p.Location.GetPosition(), instance.Location.GetPosition()) < targetRange)
-            {
-                target = p;
-                break;
-            }
+        foreach (Entity e in Entity.entities)
+        {
+            if (!targetSearchEntityTypes.Contains(e.GetType()) || 
+                Vector2.Distance(e.Location.GetPosition(), instance.Location.GetPosition()) > targetSearchRange)
+                continue;
+            
+            target = e;
+            break;
+        }
+            
     }
 
     protected virtual void FindAttackerTarget()
@@ -137,7 +145,7 @@ public class MobController : EntityController
         if (attacker == null)
             return;
 
-        if (Vector2.Distance(attacker.Location.GetPosition(), instance.Location.GetPosition()) > targetRange)
+        if (Vector2.Distance(attacker.Location.GetPosition(), instance.Location.GetPosition()) > targetLooseRange)
             return;
 
         target = attacker;
@@ -165,7 +173,7 @@ public class MobController : EntityController
         if (target == null)
             return;
 
-        if (GetTargetDistance() > targetRange)
+        if (GetTargetDistance() > targetLooseRange)
         {
             target = null;
             isWalking = false;
