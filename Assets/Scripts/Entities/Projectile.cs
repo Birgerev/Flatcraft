@@ -55,12 +55,12 @@ public class Projectile : Entity
     public virtual void HitEntity(Entity entity)
     {
         entity.Damage(entityDamage);
-        this.Die();
+        this.Remove();
     }
     
     public virtual void HitBlock(Block block)
     {
-        this.Die();
+        this.Remove();
     }
     
     private int GetCollisionMask()

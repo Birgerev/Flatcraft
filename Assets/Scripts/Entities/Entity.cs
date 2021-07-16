@@ -416,7 +416,6 @@ public class Entity : NetworkBehaviour
 
         DropAllDrops();
         dead = true;
-        entities.Remove(this);
 
         StartCoroutine(ScheduleDestruction(0.25f));
     }
@@ -425,9 +424,16 @@ public class Entity : NetworkBehaviour
     {
         yield return new WaitForSeconds(time);
 
-        NetworkServer.Destroy(gameObject);
+        Remove();
     }
 
+    [Server]
+    public virtual void Remove()
+    {
+        entities.Remove(this);
+        NetworkServer.Destroy(gameObject);
+    }
+    
     [Server]
     public virtual void Damage(float damage)
     {
@@ -700,6 +706,19 @@ public class Entity : NetworkBehaviour
         }
     }
 
+    public static Entity GetEntity(string uuid)
+    {
+        foreach (Entity e in entities)
+        {
+            if (e.uuid.Equals(uuid))
+            {
+                return e;
+            }
+        }
+
+        return null;
+    }
+    
     [Client]
     private void DoFireRender()
     {
