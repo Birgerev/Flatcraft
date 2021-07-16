@@ -11,6 +11,7 @@ public class MobController : EntityController
     public bool swimDown;
 
     public Entity target;
+    public Location pathfindLocation = new Location();
     private Random r;
 
 
@@ -42,6 +43,10 @@ public class MobController : EntityController
             SearchTarget();
         if (targetDamagerIfAttacked)
             FindAttackerTarget();
+
+        RemoveCompletedPathfindLocations();
+        if (target != null)
+            MoveToTarget();
         Pathfind();
 
         Walking();
@@ -50,14 +55,21 @@ public class MobController : EntityController
             TryHit();
     }
 
+    protected virtual void RemoveCompletedPathfindLocations()
+    {
+        if (Vector2.Distance(pathfindLocation.GetPosition(), instance.Location.GetPosition()) < 1)
+        {
+            pathfindLocation = new Location();
+        }
+    }
+
+    protected virtual void MoveToTarget()
+    {
+        pathfindLocation = target.Location;
+    }
+    
     protected virtual void Pathfind()
     {
-        Location pathfindLocation = new Location();
-
-        if (target != null)
-            pathfindLocation = target.Location;
-        //TODO else linger location
-
         if (pathfindLocation.Equals(default(Location)))
         {
             Wander();
