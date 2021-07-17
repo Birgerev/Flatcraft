@@ -10,10 +10,7 @@ public class Dog : PassiveEntity
     protected override float walkSpeed { get; } = 6f;
     [EntityDataTag(false)] public string ownerUuid;
     [EntityDataTag(false)] [SyncVar] public bool sitting;
-    //TODO follow and tp to player
-    //TODO kill player targets
     public SpriteRenderer collar;
-
     public override EntityController GetController()
     {
         return new DogController(this);
