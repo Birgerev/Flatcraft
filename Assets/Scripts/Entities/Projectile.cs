@@ -7,6 +7,7 @@ public class Projectile : Entity
 {
     public bool hasLanded = false;
     //Entity Data Tags
+    [EntityDataTag(false)] public string ownerUuid;
     public virtual float triggerMargin { get; } = 0;
     public virtual float entityDamage { get; } = 0;
     
@@ -55,12 +56,13 @@ public class Projectile : Entity
     public virtual void HitEntity(Entity entity)
     {
         entity.Damage(entityDamage);
-        this.Die();
+        entity.lastDamager = Entity.GetEntity(ownerUuid);
+        this.Remove();
     }
     
     public virtual void HitBlock(Block block)
     {
-        this.Die();
+        this.Remove();
     }
     
     private int GetCollisionMask()

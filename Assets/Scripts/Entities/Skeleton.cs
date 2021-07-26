@@ -65,6 +65,7 @@ public class Skeleton : Monster
         ArrowEntity arrow = (ArrowEntity) Entity.Spawn("ArrowEntity");
         arrow.Teleport(Location.LocationByPosition(GetShootPosition()));
         arrow.GetComponent<Rigidbody2D>().velocity = velocity;
+        arrow.ownerUuid = uuid;
         
         Sound.Play(Location, "random/bow_shoot", SoundType.Entities, 0.7f, 1.3f);
     }
