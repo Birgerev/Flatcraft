@@ -19,7 +19,7 @@ public class Skeleton : Monster
         List<ItemStack> result = new List<ItemStack>();
         Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
-        result.Add(new ItemStack(Material.Bread, r.Next(0, 2 + 1)));
+        result.Add(new ItemStack(Material.Bone, r.Next(0, 2 + 1)));
 
         return result;
     }

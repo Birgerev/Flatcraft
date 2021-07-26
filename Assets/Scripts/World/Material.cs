@@ -95,4 +95,5 @@
     , Gunpowder
     , Glass
     , Painting
+    , Bone
 }

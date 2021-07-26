@@ -23,7 +23,7 @@ public class Wolf : PassiveEntity
         PlayerInventory inv = source.GetInventory();
         ItemStack heldItem = inv.GetSelectedItem();
 
-        if (heldItem.material == Material.Bread)
+        if (heldItem.material == Material.Bone)
         {
             heldItem.amount--;
             inv.SetItem(inv.selectedSlot, heldItem);
