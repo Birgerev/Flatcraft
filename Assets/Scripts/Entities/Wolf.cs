@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using Random = System.Random;
 
 public class Wolf : PassiveEntity
 {
     //Entity Properties
     public override float maxHealth { get; } = 8;
     protected override float walkSpeed { get; } = 6f;
+    protected virtual float tameChance { get; } = 0.3f;
 
     //TODO spawns
     public override EntityController GetController()
@@ -27,13 +29,20 @@ public class Wolf : PassiveEntity
         {
             heldItem.amount--;
             inv.SetItem(inv.selectedSlot, heldItem);
-            Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.red);
-            
-            Dog dog = (Dog)Entity.Spawn("Dog");
-            dog.Teleport(Location);
-            dog.ownerUuid = source.uuid;
-            
-            Remove();
+            if (new Random().NextDouble() < tameChance)
+            {
+                Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.red);
+
+                Dog dog = (Dog) Entity.Spawn("Dog");
+                dog.Teleport(Location);
+                dog.ownerUuid = source.uuid;
+
+                Remove();
+            }
+            else
+            {
+                Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.black);
+            }
         }
     }
 }
