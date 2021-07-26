@@ -51,7 +51,7 @@ public class FallingBlock : Entity
                 new ItemStack(material, 1).Drop(Location);
 
             GetComponent<Rigidbody2D>().simulated = false;
-            Die();
+            Remove();
         }
     }
 

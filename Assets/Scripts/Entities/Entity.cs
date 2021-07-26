@@ -148,7 +148,10 @@ public class Entity : NetworkBehaviour
     [Client]
     public virtual void ClientUpdate()
     {
-        GetRenderer().flipX = facingLeft;
+        //Mirror renderer direction if facingLeft doesnt match current render facing direction
+        if ((GetRenderer().transform.localScale.x < 0) != facingLeft)
+            GetRenderer().transform.localScale *= new Vector2(-1, 1); 
+        
 
         if (isInLiquid)
             isOnGround = false;
@@ -413,7 +416,6 @@ public class Entity : NetworkBehaviour
 
         DropAllDrops();
         dead = true;
-        entities.Remove(this);
 
         StartCoroutine(ScheduleDestruction(0.25f));
     }
@@ -422,9 +424,16 @@ public class Entity : NetworkBehaviour
     {
         yield return new WaitForSeconds(time);
 
-        NetworkServer.Destroy(gameObject);
+        Remove();
     }
 
+    [Server]
+    public virtual void Remove()
+    {
+        entities.Remove(this);
+        NetworkServer.Destroy(gameObject);
+    }
+    
     [Server]
     public virtual void Damage(float damage)
     {
@@ -440,6 +449,11 @@ public class Entity : NetworkBehaviour
             fireTime = 7;
         
         TakeHitDamage(damage);
+    }
+    
+    [Server]
+    public virtual void Interact(Player source)
+    {
     }
 
     [Server]
@@ -692,6 +706,19 @@ public class Entity : NetworkBehaviour
         }
     }
 
+    public static Entity GetEntity(string uuid)
+    {
+        foreach (Entity e in entities)
+        {
+            if (e.uuid.Equals(uuid))
+            {
+                return e;
+            }
+        }
+
+        return null;
+    }
+    
     [Client]
     private void DoFireRender()
     {
@@ -699,10 +726,30 @@ public class Entity : NetworkBehaviour
             burningRender.SetActive(IsBurning());
     }
     
+    public float GetWidth()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
+
+        if (col == null)
+            return 0;
+
+        return col.bounds.size.x + col.edgeRadius;
+    }
+    
+    public float GetHeight()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
+
+        if (col == null)
+            return 0;
+
+        return col.bounds.size.y + col.edgeRadius;
+    }
+    
     public static ContactFilter2D GetFilter()
     {
         ContactFilter2D filter = new ContactFilter2D().NoFilter();
-        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle"));
+        filter.SetLayerMask(LayerMask.GetMask("Player", "Entity", "DroppedItem", "FallingBlock", "Painting", "Particle", "Projectile"));
 
         return filter;
     }

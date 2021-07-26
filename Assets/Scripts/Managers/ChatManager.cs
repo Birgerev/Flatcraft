@@ -40,12 +40,13 @@ public class ChatManager : NetworkBehaviour
             }
             catch (Exception e)
             {
-                ChatAddMessage("/give command failed for item: " + args[1] + ", amount: " + args[2]);
+                ChatAddMessage("/give command failed");
                 Debug.LogError("chat error: " + e.StackTrace);
             }
 
         if (args[0].Equals("/stork"))
             ChatAddMessage("meeeeeee");
+        
         if (args[0].Equals("/spawn"))
             try
             {
@@ -57,7 +58,7 @@ public class ChatManager : NetworkBehaviour
             }
             catch (Exception e)
             {
-                ChatAddMessage("/spawn command failed for entity: " + args[1]);
+                ChatAddMessage("/spawn command failed");
                 Debug.LogError("chat error: " + e.StackTrace);
             }
 

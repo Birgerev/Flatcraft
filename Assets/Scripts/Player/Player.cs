@@ -126,8 +126,8 @@ public class Player : HumanEntity
                 framesSinceInventoryOpen++;
         }
 
-        RenderSpriteParts();
-
+        CalculateFlip();
+        
         base.ClientUpdate();
     }
 
@@ -429,7 +429,7 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        HitEntityInput();
+        InteractEntityInput();
         BlockInteractionInput();
         BlockPlaceInput();
     }
@@ -522,7 +522,7 @@ public class Player : HumanEntity
     }
 
     [Client]
-    private void HitEntityInput()
+    private void InteractEntityInput()
     {
         //Hit Entities
         if (Input.GetMouseButtonDown(0))
@@ -532,8 +532,17 @@ public class Player : HumanEntity
             if (entity != null && entity != this)
                 RequestHitEntity(entity.gameObject);
         }
-    }
+        
+        //Interract Entities
+        if (Input.GetMouseButtonDown(1))
+        {
+            Entity entity = GetMouseEntity();
 
+            if (entity != null && entity != this)
+                RequestInteractEntity(entity.gameObject);
+        }
+    }
+    
     [Client]
     private void BlockPlaceInput()
     {
@@ -654,6 +663,15 @@ public class Player : HumanEntity
             DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
+        lastHitTime = NetworkTime.time;
+    }
+    
+    [Command]
+    public virtual void RequestInteractEntity(GameObject entityObj)
+    {
+        Entity entity = entityObj.GetComponent<Entity>();
+
+        entity.transform.GetComponent<Entity>().Interact(this);
         lastHitTime = NetworkTime.time;
     }
 
@@ -828,6 +846,13 @@ public class Player : HumanEntity
         }
     }
 
+
+    public void CalculateFlip()
+    {
+        if (Mathf.Abs(GetVelocity().x) > 0.1f)
+            facingLeft = GetVelocity().x < 0;
+    }
+    
     [Client]
     public override void UpdateAnimatorValues()
     {
@@ -840,18 +865,5 @@ public class Player : HumanEntity
             NetworkTime.time - lastHitTime < 0.05f || NetworkTime.time - lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
-        anim.SetBool("grounded", isOnGround);
-
-        GetRenderer().transform.localScale = new Vector2(facingLeft ? -1 : 1, 1); //Mirror renderer if facing left
-    }
-
-    [Client]
-    private void RenderSpriteParts()
-    {
-        for (int i = 0; i < GetRenderer().transform.childCount; i++)
-        {
-            SpriteRenderer spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
-            spritePart.color = GetRenderer().color;
-        }
     }
 }
