@@ -6,11 +6,17 @@ using UnityEngine;
 public class Dog : PassiveEntity
 {
     //Entity Properties
+    private static List<Material> acceptableFoods { get; } = new List<Material>() 
+    {Material.Raw_Beef, Material.Raw_Chicken, Material.Raw_Porkchop, Material.Steak, Material.Cooked_Chicken, 
+        Material.Cooked_Porkchop, Material.Rotten_Flesh};
+    protected virtual float foodHealthRegeneration { get; } = 20f / 3f;
+
     public override float maxHealth { get; } = 20;
     protected override float walkSpeed { get; } = 6f;
     [EntityDataTag(false)] public string ownerUuid;
     [EntityDataTag(false)] [SyncVar] public bool sitting;
     public SpriteRenderer collar;
+    
     public override EntityController GetController()
     {
         return new DogController(this);
@@ -40,7 +46,31 @@ public class Dog : PassiveEntity
         
         if (source.uuid == ownerUuid)
         {
+            //Try feeding dog with owners held item
+            if (TryFeed())
+                return;
+            
+            //If feeding was not applicable, toggle sit state
             sitting = !sitting;
         }
+    }
+
+    private bool TryFeed()
+    {
+        Player owner = (Player) GetOwner();
+        PlayerInventory inv = owner.GetInventory();
+        if (inv == null)
+            return false;
+        ItemStack heldItem = inv.GetSelectedItem();
+
+        if (!acceptableFoods.Contains(heldItem.material))
+            return false;
+        
+        heldItem.amount--;
+        inv.SetItem(inv.selectedSlot, heldItem);
+        Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.red);
+        health = Mathf.Clamp(health + foodHealthRegeneration, 0, maxHealth); 
+
+        return true;
     }
 }
