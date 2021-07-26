@@ -7,7 +7,7 @@ public class Item
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
     public virtual string texture { get; set; } = "";
-    public virtual int maxDurabulity { get; } = -1;
+    public virtual int maxDurability { get; } = -1;
     public virtual float entityDamage { get; } = 1;
 
     public void Interact(PlayerInstance player, Location loc, int mouseType, bool firstFrameDown)

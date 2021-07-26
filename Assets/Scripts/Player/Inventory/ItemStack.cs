@@ -96,7 +96,7 @@ public class ItemStack
 
         object item = Activator.CreateInstance(type);
 
-        return ((Item) item).maxDurabulity;
+        return ((Item) item).maxDurability;
     }
 
     public float GetItemEntityDamage()

@@ -2,5 +2,5 @@
 {
     public override string texture { get; set; } = "item_stone_shovel";
     public override Tool_Level tool_level { get; } = Tool_Level.Stone;
-    public override int maxDurabulity { get; } = 131;
+    public override int maxDurability { get; } = 131;
 }
