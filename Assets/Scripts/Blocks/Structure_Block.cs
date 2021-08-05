@@ -6,6 +6,7 @@ public class Structure_Block : Block
 {
     public override string texture { get; set; } = "block_structure";
     public override float breakTime { get; } = 10000000;
+    private bool hasBeenTicked = false;
 
     public override void GeneratingTick()
     {
@@ -16,7 +17,7 @@ public class Structure_Block : Block
 
     public override void Tick()
     {
-        if (age == 0) //prevent block from being ticked multiple times, since it would create an infinite loop
+        if (hasBeenTicked) //prevent block from being ticked multiple times, since it would create an infinite loop
         {
             base.Tick();
 
@@ -56,5 +57,7 @@ public class Structure_Block : Block
                 location.SetState(replaceState).Tick();
             }
         }
+
+        hasBeenTicked = true;
     }
 }
