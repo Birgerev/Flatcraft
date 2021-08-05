@@ -430,6 +430,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Remove()
     {
+        dead = true;
         entities.Remove(this);
         NetworkServer.Destroy(gameObject);
     }
