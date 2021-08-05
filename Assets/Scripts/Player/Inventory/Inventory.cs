@@ -117,12 +117,24 @@ public class Inventory : NetworkBehaviour
         string[] itemLines = File.ReadAllLines(path + "\\items.dat");
         List<ItemStack> items = new List<ItemStack>();
         foreach (string itemLine in itemLines)
-            items.Add(new ItemStack(itemLine));
-
+        {
+            try
+            {
+                items.Add(new ItemStack(itemLine));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error in loading item to inventory, corrupted line: '" + itemLine + "'   " + e.Message);
+            }
+            finally
+            {
+                items.Add(new ItemStack());
+            }
+        }
+        
         string type = File.ReadAllLines(path + "\\type.dat")[0];
         string invName = File.ReadAllLines(path + "\\invName.dat")[0];
         int size = int.Parse(File.ReadAllLines(path + "\\size.dat")[0]);
-
 
         Inventory inv = Create(type, size, invName, id);
         inv.items.Clear();
