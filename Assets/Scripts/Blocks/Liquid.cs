@@ -101,19 +101,15 @@ public class Liquid : Block
             for (int x = 1; x < liquidLevel; x++)
             {
                 Location leftIteration = location + new Location(-x, 0);
-                Location leftDownIteration = leftIteration + new Location(0, -1);
                 Location rightIteration = location + new Location(x, 0);
-                Location rightDownIteration = rightIteration + new Location(0, -1);
 
-                if (leftIteration.GetMaterial() == Material.Air && leftDownIteration.GetMaterial() == Material.Air &&
-                    !(rightIteration.GetMaterial() == Material.Air && rightDownIteration.GetMaterial() == Material.Air))
+                if (CanFlowToLocation(leftIteration) && !CanFlowToLocation(rightIteration))
                 {
                     flowRight = false;
                     break;
                 }
 
-                if (rightIteration.GetMaterial() == Material.Air && rightDownIteration.GetMaterial() == Material.Air &&
-                    !(leftIteration.GetMaterial() == Material.Air && leftDownIteration.GetMaterial() == Material.Air))
+                if (CanFlowToLocation(rightIteration) && !CanFlowToLocation(leftIteration))
                 {
                     flowLeft = false;
                     break;
@@ -127,12 +123,38 @@ public class Liquid : Block
                 TryFlow(new Location(1, 0), liquidLevel - 1);
         }
     }
+    
+    private bool CanFlowToLocation(Location loc)
+    {
+        Location locBelow = loc + new Location(0, -1);
+        if (IsLocationSolid(loc) || IsLocationSolid(locBelow))
+            return false;
 
+        return true;
+    }
+    
+    private bool IsLocationSolid(Location loc)
+    {
+        Block block = loc.GetBlock();
+
+        if (block != null && block.solid)
+            return true;
+
+        return false;
+    }
+    
+    
     public bool TryFlow(Location relativeLocation, int liquidLevel)
     {
         Location loc = location + relativeLocation;
 
-        if (loc.GetMaterial() == Material.Air) //Flow if no block is in the way
+        //Trigger a liquid encounter if target block is a liquid, but not the same as this block
+        if (loc.GetMaterial() != GetMaterial() && loc.GetBlock() is Liquid)
+        {
+            LiquidEncounterFlow(relativeLocation);
+        }
+
+        if (!IsLocationSolid(loc)) //Flow if no block is in the way
         {
             BlockState newState = new BlockState(GetMaterial(), new BlockData("liquid_level=" + liquidLevel));
 
@@ -144,11 +166,6 @@ public class Liquid : Block
 
             return true;
         }
-
-        if (loc.GetMaterial() != GetMaterial()
-            && loc.GetBlock() is Liquid
-        ) //Trigger a liquid encounter if target block is a liquid, but not the same as this block
-            LiquidEncounterFlow(relativeLocation);
 
         return false;
     }

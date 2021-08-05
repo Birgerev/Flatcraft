@@ -7,7 +7,6 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public int age;
 
     public float blockHealth;
 
@@ -124,8 +123,6 @@ public class Block : MonoBehaviour
         CheckGround();
         UpdateColliders();
         RenderRotate();
-
-        age++;
     }
 
     private void CheckGround()
