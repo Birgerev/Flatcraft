@@ -82,8 +82,6 @@ public class Player : HumanEntity
         base.Spawn();
 
         hunger = maxHunger;
-        Inventory inv = PlayerInventory.CreatePreset();
-        inventoryId = inv.id;
 
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Teleport(bedLocation);
@@ -95,6 +93,12 @@ public class Player : HumanEntity
     public override void Tick()
     {
         base.Tick();
+
+        if (GetInventory() == null) //Make sure player has an inventory
+        {
+            Inventory inv = PlayerInventory.CreatePreset();
+            inventoryId = inv.id;
+        }
 
         GetInventory().holder = Location;
         CheckHunger();
@@ -387,17 +391,6 @@ public class Player : HumanEntity
         Location blockedMouseLocation = Location.LocationByPosition(mousePosition);
 
         return blockedMouseLocation;
-    }
-
-    [Client]
-    public Block GetMouseBlock()
-    {
-        Location blockedMouseLoc = GetBlockedMouseLocation();
-
-        if (blockedMouseLoc.y < 0 || blockedMouseLoc.y > Chunk.Height)
-            return null;
-
-        return blockedMouseLoc.GetBlock();
     }
 
     [Client]
@@ -773,8 +766,8 @@ public class Player : HumanEntity
         if (dead)
             return;
 
-        File.Delete(SavePath());
         base.Die();
+        File.Delete(SavePath());
         GetInventory().Delete();
         DeathMenuEffect();
     }
