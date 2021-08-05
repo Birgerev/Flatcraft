@@ -233,6 +233,12 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Open(PlayerInstance playerInstance)
     {
+        if (open)
+        {
+            ChatManager.instance.AddMessagePlayer("Two players can't open the same inventory", playerInstance);
+            return;
+        }
+        
         GameObject obj = Instantiate(inventoryMenuPrefab);
         InventoryMenu menu = obj.GetComponent<InventoryMenu>();
 
