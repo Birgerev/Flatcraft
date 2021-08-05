@@ -21,7 +21,7 @@ public class Entity : NetworkBehaviour
 
     public bool dead;
 
-    [EntityDataTag(false)] public bool facingLeft;
+    [SyncVar] [EntityDataTag(false)] public bool facingLeft;
 
 
     //Entity State

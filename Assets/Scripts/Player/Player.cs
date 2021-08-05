@@ -100,6 +100,7 @@ public class Player : HumanEntity
             inventoryId = inv.id;
         }
 
+        CalculateFlip();
         GetInventory().holder = Location;
         CheckHunger();
         CheckRegenerateHealth();
@@ -129,8 +130,6 @@ public class Player : HumanEntity
             else
                 framesSinceInventoryOpen++;
         }
-
-        CalculateFlip();
         
         base.ClientUpdate();
     }
@@ -840,7 +839,7 @@ public class Player : HumanEntity
     }
 
 
-    public void CalculateFlip()
+    private void CalculateFlip()
     {
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;
