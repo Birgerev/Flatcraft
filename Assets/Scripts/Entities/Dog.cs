@@ -68,9 +68,15 @@ public class Dog : PassiveEntity
         
         heldItem.amount--;
         inv.SetItem(inv.selectedSlot, heldItem);
-        Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.red);
+        PlaySmokeEffect(Color.red);
         health = Mathf.Clamp(health + foodHealthRegeneration, 0, maxHealth); 
 
         return true;
+    }
+    
+    [ClientRpc]
+    private void PlaySmokeEffect(Color color)
+    {
+        Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), color);
     }
 }
