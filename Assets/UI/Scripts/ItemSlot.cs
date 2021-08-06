@@ -8,17 +8,7 @@ public class ItemSlot : MonoBehaviour
     public Image durabilityBarFiller;
     public Image texture;
 
-    private CanvasGroup canvasGroup;
-
     public ItemStack item;
-
-    // Start is called before the first frame update
-    private void Update()
-    {
-        if (canvasGroup == null)
-            canvasGroup = GetComponentInParent<CanvasGroup>();
-    }
-
 
     // Update is called once per frame
     public virtual void UpdateSlot()

@@ -680,7 +680,7 @@ public class Player : HumanEntity
     [Server]
     public void DropSelected()
     {
-        ItemStack selectedItem = GetInventory().GetSelectedItem().Clone();
+        ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem.Clone();
         droppedItem.amount = 1;
         selectedItem.amount--;
@@ -688,10 +688,17 @@ public class Player : HumanEntity
         if (droppedItem.amount <= 0)
             return;
 
-
+        DropItem(droppedItem);
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
+    }
+    
+    [Server]
+    public void DropItem(ItemStack item)
+    {
+        ItemStack droppedItem = item.Clone();
+        
         droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
             , new Vector2(3 * (facingLeft ? -1 : 1), 0));
-        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
 
     [Server]
