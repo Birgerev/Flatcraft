@@ -4,7 +4,7 @@ public class Lava : Liquid
 {
     public override string texture { get; set; } = "block_lava";
 
-    public override int max_liquid_level { get; } = 4;
+    public override int maxLiquidLevel { get; } = 4;
     public override int glowLevel { get; } = 15;
     public override float averageRandomTickDuration { get; } = 60;
 

@@ -1,7 +1,7 @@
 ﻿public class Water : Liquid
 {
     public override string texture { get; set; } = "block_water";
-    public override int max_liquid_level { get; } = 8;
+    public override int maxLiquidLevel { get; } = 8;
 
     public override void LiquidEncounterFlow(Location relativeLocation)
     {
