@@ -96,4 +96,7 @@
     , Glass
     , Painting
     , Bone
+    , Empty_Bucket
+    , Water_Bucket
+    , Lava_Bucket
 }
