@@ -48,10 +48,10 @@ public class ItemSlot : MonoBehaviour
     public virtual void Click()
     {
         InventoryMenu menu = GetComponentInParent<InventoryMenu>();
-        int inventoryId = menu.GetSlotInventoryIndex(this);
+        int inventoryIndex = menu.GetSlotInventoryIndex(this);
         int slotId = menu.GetSlotIndex(this);
 
-        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryId, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
+        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
     }
 
     public virtual void Hover(bool hover)
