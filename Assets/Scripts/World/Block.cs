@@ -28,8 +28,8 @@ public class Block : MonoBehaviour
     public virtual bool rotate_x { get; } = false;
     public virtual bool rotate_y { get; } = false;
 
-    public virtual Tool_Type propperToolType { get; } = Tool_Type.None;
-    public virtual Tool_Level propperToolLevel { get; } = Tool_Level.None;
+    public virtual Tool_Type properToolType { get; } = Tool_Type.None;
+    public virtual Tool_Level properToolLevel { get; } = Tool_Level.None;
 
     public virtual Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
@@ -203,10 +203,10 @@ public class Block : MonoBehaviour
 
         bool properToolStats = false;
 
-        if (tool_level != Tool_Level.None && tool_type == propperToolType && tool_level >= propperToolLevel)
+        if (tool_level != Tool_Level.None && tool_type == properToolType && tool_level >= properToolLevel)
             time *= 2 + (float) tool_level * 2f;
-        if (propperToolLevel == Tool_Level.None ||
-            tool_type == propperToolType && tool_level >= propperToolLevel)
+        if (properToolLevel == Tool_Level.None ||
+            tool_type == properToolType && tool_level >= properToolLevel)
             properToolStats = true;
 
         blockHealth -= time;
