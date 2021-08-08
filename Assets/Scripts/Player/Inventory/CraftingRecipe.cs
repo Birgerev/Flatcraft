@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class CraftingRecipe
@@ -155,27 +156,23 @@ public class CraftingRecipe
         }
 
         //Compare both Dictionaries
-        bool anyDifferences = false;
-
         if (recipeShape.Count != shape.Count)
-            anyDifferences = true;
+            return false;
 
         foreach (KeyValuePair<Vector2Int, Material> recipeItem in recipeShape)
         {
             if (!shape.ContainsKey(recipeItem.Key))
             {
-                anyDifferences = true;
-                break;
+                return false;
             }
 
             if (shape[recipeItem.Key] != recipeItem.Value)
             {
-                anyDifferences = true;
-                break;
+                return false;
             }
         }
 
-        return !anyDifferences;
+        return true;
     }
 
     public static CraftingRecipe FindRecipeByItems(ItemStack[] items)
@@ -192,7 +189,7 @@ public class CraftingRecipe
 
         try
         {
-            string[] lines = file.text.Split('\n');
+            string[] lines = Regex.Split(file.text, Environment.NewLine);
 
             recipe.flipX = lines[0].Split('*')[1].Contains("1");
             recipe.flipY = lines[0].Split('*')[2].Contains("1");
@@ -211,7 +208,7 @@ public class CraftingRecipe
         }
         catch (Exception e)
         {
-            Debug.LogError("faulty crafting recipe \"" + file.name + "\", error: " + e.StackTrace);
+            Debug.LogError("faulty crafting recipe '" + file.name + "', error: " + e.StackTrace);
         }
 
         return recipe;

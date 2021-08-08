@@ -82,8 +82,6 @@ public class Player : HumanEntity
         base.Spawn();
 
         hunger = maxHunger;
-        Inventory inv = PlayerInventory.CreatePreset();
-        inventoryId = inv.id;
 
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Teleport(bedLocation);
@@ -96,6 +94,13 @@ public class Player : HumanEntity
     {
         base.Tick();
 
+        if (GetInventory() == null) //Make sure player has an inventory
+        {
+            Inventory inv = PlayerInventory.CreatePreset();
+            inventoryId = inv.id;
+        }
+
+        CalculateFlip();
         GetInventory().holder = Location;
         CheckHunger();
         CheckRegenerateHealth();
@@ -125,9 +130,7 @@ public class Player : HumanEntity
             else
                 framesSinceInventoryOpen++;
         }
-
-        RenderSpriteParts();
-
+        
         base.ClientUpdate();
     }
 
@@ -390,17 +393,6 @@ public class Player : HumanEntity
     }
 
     [Client]
-    public Block GetMouseBlock()
-    {
-        Location blockedMouseLoc = GetBlockedMouseLocation();
-
-        if (blockedMouseLoc.y < 0 || blockedMouseLoc.y > Chunk.Height)
-            return null;
-
-        return blockedMouseLoc.GetBlock();
-    }
-
-    [Client]
     public Entity GetMouseEntity()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -429,7 +421,7 @@ public class Player : HumanEntity
         if (!isInRange)
             return;
 
-        HitEntityInput();
+        InteractEntityInput();
         BlockInteractionInput();
         BlockPlaceInput();
     }
@@ -522,7 +514,7 @@ public class Player : HumanEntity
     }
 
     [Client]
-    private void HitEntityInput()
+    private void InteractEntityInput()
     {
         //Hit Entities
         if (Input.GetMouseButtonDown(0))
@@ -532,8 +524,17 @@ public class Player : HumanEntity
             if (entity != null && entity != this)
                 RequestHitEntity(entity.gameObject);
         }
-    }
+        
+        //Interract Entities
+        if (Input.GetMouseButtonDown(1))
+        {
+            Entity entity = GetMouseEntity();
 
+            if (entity != null && entity != this)
+                RequestInteractEntity(entity.gameObject);
+        }
+    }
+    
     [Client]
     private void BlockPlaceInput()
     {
@@ -656,6 +657,15 @@ public class Player : HumanEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
     }
+    
+    [Command]
+    public virtual void RequestInteractEntity(GameObject entityObj)
+    {
+        Entity entity = entityObj.GetComponent<Entity>();
+
+        entity.transform.GetComponent<Entity>().Interact(this);
+        lastHitTime = NetworkTime.time;
+    }
 
     [Server]
     public override List<ItemStack> GetDrops()
@@ -670,7 +680,7 @@ public class Player : HumanEntity
     [Server]
     public void DropSelected()
     {
-        ItemStack selectedItem = GetInventory().GetSelectedItem().Clone();
+        ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem.Clone();
         droppedItem.amount = 1;
         selectedItem.amount--;
@@ -678,10 +688,17 @@ public class Player : HumanEntity
         if (droppedItem.amount <= 0)
             return;
 
-
+        DropItem(droppedItem);
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
+    }
+    
+    [Server]
+    public void DropItem(ItemStack item)
+    {
+        ItemStack droppedItem = item.Clone();
+        
         droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
             , new Vector2(3 * (facingLeft ? -1 : 1), 0));
-        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
 
     [Server]
@@ -755,8 +772,8 @@ public class Player : HumanEntity
         if (dead)
             return;
 
-        File.Delete(SavePath());
         base.Die();
+        File.Delete(SavePath());
         GetInventory().Delete();
         DeathMenuEffect();
     }
@@ -828,6 +845,13 @@ public class Player : HumanEntity
         }
     }
 
+
+    private void CalculateFlip()
+    {
+        if (Mathf.Abs(GetVelocity().x) > 0.1f)
+            facingLeft = GetVelocity().x < 0;
+    }
+    
     [Client]
     public override void UpdateAnimatorValues()
     {
@@ -840,18 +864,5 @@ public class Player : HumanEntity
             NetworkTime.time - lastHitTime < 0.05f || NetworkTime.time - lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
-        anim.SetBool("grounded", isOnGround);
-
-        GetRenderer().transform.localScale = new Vector2(facingLeft ? -1 : 1, 1); //Mirror renderer if facing left
-    }
-
-    [Client]
-    private void RenderSpriteParts()
-    {
-        for (int i = 0; i < GetRenderer().transform.childCount; i++)
-        {
-            SpriteRenderer spritePart = GetRenderer().transform.GetChild(i).GetComponent<SpriteRenderer>();
-            spritePart.color = GetRenderer().color;
-        }
     }
 }

@@ -43,7 +43,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
     {
         FurnaceInventory inv = (FurnaceInventory) Inventory.Get(inventoryIds[0]);
 
-        if (inventoryIndex == 1 && slotIndex == inv.GetResultSlot())
+        if (inventoryIndex == 0 && slotIndex == inv.GetResultSlot())
         {
             OnClickSmeltingResultSlot();
             return;

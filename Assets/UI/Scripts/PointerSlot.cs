@@ -12,7 +12,6 @@ public class PointerSlot : ItemSlot
         //always update pointer (overriding previous if statements)
         UpdateSlot();
         Tooltip.isPointerHoldingItem = item.material != Material.Air;
-        ;
     }
 
     // Update is called once per frame

@@ -8,17 +8,7 @@ public class ItemSlot : MonoBehaviour
     public Image durabilityBarFiller;
     public Image texture;
 
-    private CanvasGroup canvasGroup;
-
     public ItemStack item;
-
-    // Start is called before the first frame update
-    private void Update()
-    {
-        if (canvasGroup == null)
-            canvasGroup = GetComponentInParent<CanvasGroup>();
-    }
-
 
     // Update is called once per frame
     public virtual void UpdateSlot()
@@ -58,10 +48,10 @@ public class ItemSlot : MonoBehaviour
     public virtual void Click()
     {
         InventoryMenu menu = GetComponentInParent<InventoryMenu>();
-        int inventoryId = menu.GetSlotInventoryIndex(this);
+        int inventoryIndex = menu.GetSlotInventoryIndex(this);
         int slotId = menu.GetSlotIndex(this);
 
-        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryId, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
+        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
     }
 
     public virtual void Hover(bool hover)

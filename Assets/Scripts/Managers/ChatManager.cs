@@ -22,7 +22,7 @@ public class ChatManager : NetworkBehaviour
             return;
         }
 
-        ChatAddMessage("<" + player.playerName + "> " + text);
+        AddMessage("<" + player.playerName + "> " + text);
     }
 
     [Server]
@@ -36,16 +36,17 @@ public class ChatManager : NetworkBehaviour
                 ItemStack item = new ItemStack((Material) Enum.Parse(typeof(Material), args[1]), int.Parse(args[2]));
 
                 player.playerEntity.GetComponent<Player>().GetInventory().AddItem(item);
-                ChatAddMessage("Gave " + player.playerName + " " + item.amount + " " + item.material + "'s");
+                AddMessage("Gave " + player.playerName + " " + item.amount + " " + item.material + "'s");
             }
             catch (Exception e)
             {
-                ChatAddMessage("/give command failed for item: " + args[1] + ", amount: " + args[2]);
+                AddMessage("/give command failed");
                 Debug.LogError("chat error: " + e.StackTrace);
             }
 
         if (args[0].Equals("/stork"))
-            ChatAddMessage("meeeeeee");
+            AddMessage("meeeeeee");
+        
         if (args[0].Equals("/spawn"))
             try
             {
@@ -53,26 +54,36 @@ public class ChatManager : NetworkBehaviour
 
                 Entity entity = Entity.Spawn(entityType);
                 entity.Teleport(player.playerEntity.GetComponent<Player>().Location);
-                ChatAddMessage("Spawned " + entityType);
+                AddMessage("Spawned " + entityType);
             }
             catch (Exception e)
             {
-                ChatAddMessage("/spawn command failed for entity: " + args[1]);
+                AddMessage("/spawn command failed");
                 Debug.LogError("chat error: " + e.StackTrace);
             }
 
         if (args[0].Equals("/help"))
         {
-            ChatAddMessage("---- Commands ----");
-            ChatAddMessage("/give <Material> <Amount>");
-            ChatAddMessage("/spawn <Entity Type>");
+            AddMessage("---- Commands ----");
+            AddMessage("/give <Material> <Amount>");
+            AddMessage("/spawn <Entity Type>");
         }
     }
 
     [ClientRpc]
-    public void ChatAddMessage(string text)
+    public void AddMessage(string text)
     {
         Debug.Log("Chat> " + text);
         ChatMenu.instance.AddMessage(text);
+    }
+
+    [ClientRpc]
+    public void AddMessagePlayer(string text, PlayerInstance player)
+    {
+        if (PlayerInstance.localPlayerInstance == player)
+        {
+            Debug.Log("Chat> " + text);
+            ChatMenu.instance.AddMessage(text);
+        }
     }
 }

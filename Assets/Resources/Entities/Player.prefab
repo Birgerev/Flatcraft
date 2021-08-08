@@ -412,6 +412,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2524231000240290259}
   - component: {fileID: 6550336062071702866}
+  - component: {fileID: 227230060771739169}
   m_Layer: 12
   m_Name: legs
   m_TagString: Untagged
@@ -472,7 +473,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1839910403
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 170334841549676082, guid: c9d3300c21a9aeb44a48eac8b7e799bc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -484,6 +485,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &227230060771739169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5499535437409169527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 1
+  flip: 0
+  parentRenderer: {fileID: 1149122272203067694}
 --- !u!1 &6536377479616840242
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,6 +606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8890941275697198515}
   - component: {fileID: 4609856735471935549}
+  - component: {fileID: 6656738561345346543}
   m_Layer: 12
   m_Name: head
   m_TagString: Untagged
@@ -663,6 +680,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6656738561345346543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6737750770108508421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 1
+  flip: 0
+  parentRenderer: {fileID: 1149122272203067694}
 --- !u!1 &8075927248772030676
 GameObject:
   m_ObjectHideFlags: 0
@@ -673,6 +705,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2239911588411009801}
   - component: {fileID: 3482520972176343617}
+  - component: {fileID: 6810633250180048016}
   m_Layer: 12
   m_Name: torso
   m_TagString: Untagged
@@ -747,6 +780,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6810633250180048016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8075927248772030676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 1
+  flip: 0
+  parentRenderer: {fileID: 1149122272203067694}
 --- !u!1001 &841954829102773707
 PrefabInstance:
   m_ObjectHideFlags: 0

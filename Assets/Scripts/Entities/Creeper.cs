@@ -50,7 +50,7 @@ public class Creeper : Monster
     public void Explode()
     {
         Explosion.Create(Location, 3, 1);
-        Die();
+        Remove();
     }
 
     [Client]

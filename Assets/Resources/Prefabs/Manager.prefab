@@ -55,7 +55,8 @@ MonoBehaviour:
   overworldBiomes:
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 5
-    biomeSpecificAnimals: []
+    biomeSpecificAnimals:
+    - Wolf
     landscapeHeightOverSeaLevel: -0.02
     landscapeHeightWeight: 2.16
     landscapeLacunarity: 1
@@ -77,7 +78,8 @@ MonoBehaviour:
     stoneLayerNoiseValue: 7
   - biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    biomeSpecificAnimals: []
+    biomeSpecificAnimals:
+    - Wolf
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
     landscapeLacunarity: 1.05
@@ -194,7 +196,7 @@ MonoBehaviour:
   - sweden
   - danny
   checkDuration: 400
-  checkChance: 0.5
+  checkChance: 0.33
 --- !u!114 &3047292750534002974
 MonoBehaviour:
   m_ObjectHideFlags: 0

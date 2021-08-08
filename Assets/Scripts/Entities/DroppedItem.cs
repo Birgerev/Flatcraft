@@ -1,5 +1,7 @@
-﻿using Mirror;
+﻿using System.Linq;
+using Mirror;
 using UnityEngine;
+using Random = System.Random;
 
 public class DroppedItem : Entity
 {
@@ -16,7 +18,7 @@ public class DroppedItem : Entity
     public override void Initialize()
     {
         if (item.material == Material.Air || item.amount <= 0)
-            Die();
+            Remove();
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
@@ -30,7 +32,7 @@ public class DroppedItem : Entity
 
         //Despawn
         if (age > 60 * 5)
-            Die();
+            Remove();
 
         if (isOnGround)
             GetComponent<Rigidbody2D>().velocity *= 0.95f;
@@ -45,6 +47,9 @@ public class DroppedItem : Entity
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
+        Random r = new Random(); // Shuffle collider array order, as to not give priorities to certain players
+        cols = cols.OrderBy(x => r.Next()).ToArray(); 
+        
         foreach (Collider2D col in cols)
         {
             if(col.gameObject == gameObject)
@@ -57,7 +62,7 @@ public class DroppedItem : Entity
                         return;
 
                     item.amount += col.GetComponent<DroppedItem>().item.amount;
-                    col.GetComponent<DroppedItem>().Die();
+                    col.GetComponent<DroppedItem>().Remove();
                     return;
                 }
 
@@ -65,7 +70,8 @@ public class DroppedItem : Entity
                 if (col.GetComponent<Player>().GetInventory().AddItem(item))
                 {
                     Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
-                    Die();
+                    Remove();
+                    return;
                 }
         }
     }
