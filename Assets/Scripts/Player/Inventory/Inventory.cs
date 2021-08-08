@@ -69,6 +69,7 @@ public class Inventory : NetworkBehaviour
         if (NetworkServer.active && Directory.Exists(WorldManager.world.getPath() + "\\inventories\\" + id))
             return Load(id);
 
+        Debug.LogError("Failed getting inventory with id '" + id + "'");
         return null;
     }
 
