@@ -36,7 +36,7 @@ public class SaveManager : NetworkBehaviour
             }
 
             //Save Entities
-            List<Entity> entities = Entity.entities;
+            List<Entity> entities = new List<Entity>(Entity.entities);
 
             Thread entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();

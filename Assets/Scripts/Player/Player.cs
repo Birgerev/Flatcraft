@@ -82,8 +82,6 @@ public class Player : HumanEntity
         base.Spawn();
 
         hunger = maxHunger;
-        Inventory inv = PlayerInventory.CreatePreset();
-        inventoryId = inv.id;
 
         if (bedLocation.GetMaterial() == Material.Bed_Bottom || bedLocation.GetMaterial() == Material.Bed_Top)
             Teleport(bedLocation);
@@ -96,6 +94,13 @@ public class Player : HumanEntity
     {
         base.Tick();
 
+        if (GetInventory() == null) //Make sure player has an inventory
+        {
+            Inventory inv = PlayerInventory.CreatePreset();
+            inventoryId = inv.id;
+        }
+
+        CalculateFlip();
         GetInventory().holder = Location;
         CheckHunger();
         CheckRegenerateHealth();
@@ -125,8 +130,6 @@ public class Player : HumanEntity
             else
                 framesSinceInventoryOpen++;
         }
-
-        CalculateFlip();
         
         base.ClientUpdate();
     }
@@ -387,17 +390,6 @@ public class Player : HumanEntity
         Location blockedMouseLocation = Location.LocationByPosition(mousePosition);
 
         return blockedMouseLocation;
-    }
-
-    [Client]
-    public Block GetMouseBlock()
-    {
-        Location blockedMouseLoc = GetBlockedMouseLocation();
-
-        if (blockedMouseLoc.y < 0 || blockedMouseLoc.y > Chunk.Height)
-            return null;
-
-        return blockedMouseLoc.GetBlock();
     }
 
     [Client]
@@ -688,7 +680,7 @@ public class Player : HumanEntity
     [Server]
     public void DropSelected()
     {
-        ItemStack selectedItem = GetInventory().GetSelectedItem().Clone();
+        ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem.Clone();
         droppedItem.amount = 1;
         selectedItem.amount--;
@@ -696,10 +688,17 @@ public class Player : HumanEntity
         if (droppedItem.amount <= 0)
             return;
 
-
+        DropItem(droppedItem);
+        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
+    }
+    
+    [Server]
+    public void DropItem(ItemStack item)
+    {
+        ItemStack droppedItem = item.Clone();
+        
         droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
             , new Vector2(3 * (facingLeft ? -1 : 1), 0));
-        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
 
     [Server]
@@ -773,8 +772,8 @@ public class Player : HumanEntity
         if (dead)
             return;
 
-        File.Delete(SavePath());
         base.Die();
+        File.Delete(SavePath());
         GetInventory().Delete();
         DeathMenuEffect();
     }
@@ -847,7 +846,7 @@ public class Player : HumanEntity
     }
 
 
-    public void CalculateFlip()
+    private void CalculateFlip()
     {
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;

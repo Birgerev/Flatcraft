@@ -31,7 +31,7 @@ public class Wolf : PassiveEntity
             inv.SetItem(inv.selectedSlot, heldItem);
             if (new Random().NextDouble() < tameChance)
             {
-                Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.red);
+                PlaySmokeEffect(Color.red);
 
                 Dog dog = (Dog) Entity.Spawn("Dog");
                 dog.Teleport(Location);
@@ -41,8 +41,14 @@ public class Wolf : PassiveEntity
             }
             else
             {
-                Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), Color.black);
+                PlaySmokeEffect(Color.black);
             }
         }
+    }
+    
+    [ClientRpc]
+    private void PlaySmokeEffect(Color color)
+    {
+        Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), color);
     }
 }

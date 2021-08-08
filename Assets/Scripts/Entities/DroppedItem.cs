@@ -1,5 +1,7 @@
-﻿using Mirror;
+﻿using System.Linq;
+using Mirror;
 using UnityEngine;
+using Random = System.Random;
 
 public class DroppedItem : Entity
 {
@@ -45,6 +47,9 @@ public class DroppedItem : Entity
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
+        Random r = new Random(); // Shuffle collider array order, as to not give priorities to certain players
+        cols = cols.OrderBy(x => r.Next()).ToArray(); 
+        
         foreach (Collider2D col in cols)
         {
             if(col.gameObject == gameObject)
@@ -66,6 +71,7 @@ public class DroppedItem : Entity
                 {
                     Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
                     Remove();
+                    return;
                 }
         }
     }

@@ -35,7 +35,7 @@ public class PlayerInstance : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        ChatManager.instance.ChatAddMessage(playerName + " left the world");
+        ChatManager.instance.AddMessage(playerName + " left the world");
 
         base.OnStopServer();
     }
@@ -44,7 +44,7 @@ public class PlayerInstance : NetworkBehaviour
     public void RequestJoinMessage()
     {
         if (ChatManager.instance != null)
-            ChatManager.instance.ChatAddMessage(playerName + " joined the world");
+            ChatManager.instance.AddMessage(playerName + " joined the world");
     }
 
     [Command]

@@ -173,6 +173,19 @@ public class InventoryMenu : NetworkBehaviour
         return -1;
     }
 
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickBackground()
+    {
+        if (pointerItem.material == Material.Air)
+            return;
+        
+        Player player = playerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>();
+        player.DropItem(pointerItem);
+        
+        SetPointerItem(new ItemStack());
+        UpdateInventory();
+    }
+    
     [Client]
     public virtual void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
     {

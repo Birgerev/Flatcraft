@@ -21,7 +21,7 @@ public class Entity : NetworkBehaviour
 
     public bool dead;
 
-    [EntityDataTag(false)] public bool facingLeft;
+    [SyncVar] [EntityDataTag(false)] public bool facingLeft;
 
 
     //Entity State
@@ -430,6 +430,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual void Remove()
     {
+        dead = true;
         entities.Remove(this);
         NetworkServer.Destroy(gameObject);
     }
@@ -545,19 +546,31 @@ public class Entity : NetworkBehaviour
             GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
 
         foreach (FieldInfo field in fields)
-        foreach (Attribute attribute in Attribute.GetCustomAttributes(field))
-            if (attribute is EntityDataTag)
+        {
+            foreach (Attribute attribute in Attribute.GetCustomAttributes(field))
             {
-                bool json = ((EntityDataTag) attribute).json;
-                Type type = field.FieldType;
+                try
+                {
+                    if (attribute is EntityDataTag)
+                    {
+                        bool json = ((EntityDataTag) attribute).json;
+                        Type type = field.FieldType;
 
-                if (json)
-                    field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
-                else if (type == typeof(string))
-                    field.SetValue(this, lines[field.Name]);
-                else
-                    field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
+                        if (json)
+                            field.SetValue(this, JsonUtility.FromJson(lines[field.Name], type));
+                        else if (type == typeof(string))
+                            field.SetValue(this, lines[field.Name]);
+                        else
+                            field.SetValue(this, Convert.ChangeType(lines[field.Name], type));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error in loading field for entity: '" + this.GetType() + "', field: '" + field.Name + "'.   " +e.Message);
+                }
+                
             }
+        }
     }
 
     [Server]

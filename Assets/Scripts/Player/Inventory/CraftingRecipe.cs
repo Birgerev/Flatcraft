@@ -156,27 +156,23 @@ public class CraftingRecipe
         }
 
         //Compare both Dictionaries
-        bool anyDifferences = false;
-
         if (recipeShape.Count != shape.Count)
-            anyDifferences = true;
+            return false;
 
         foreach (KeyValuePair<Vector2Int, Material> recipeItem in recipeShape)
         {
             if (!shape.ContainsKey(recipeItem.Key))
             {
-                anyDifferences = true;
-                break;
+                return false;
             }
 
             if (shape[recipeItem.Key] != recipeItem.Value)
             {
-                anyDifferences = true;
-                break;
+                return false;
             }
         }
 
-        return !anyDifferences;
+        return true;
     }
 
     public static CraftingRecipe FindRecipeByItems(ItemStack[] items)
@@ -212,7 +208,7 @@ public class CraftingRecipe
         }
         catch (Exception e)
         {
-            Debug.LogError("faulty crafting recipe \"" + file.name + "\", error: " + e.StackTrace);
+            Debug.LogError("faulty crafting recipe '" + file.name + "', error: " + e.StackTrace);
         }
 
         return recipe;

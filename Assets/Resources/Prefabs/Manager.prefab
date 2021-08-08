@@ -196,7 +196,7 @@ MonoBehaviour:
   - sweden
   - danny
   checkDuration: 400
-  checkChance: 0.5
+  checkChance: 0.33
 --- !u!114 &3047292750534002974
 MonoBehaviour:
   m_ObjectHideFlags: 0

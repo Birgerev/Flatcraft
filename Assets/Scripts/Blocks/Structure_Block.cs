@@ -6,6 +6,7 @@ public class Structure_Block : Block
 {
     public override string texture { get; set; } = "block_structure";
     public override float breakTime { get; } = 10000000;
+    private bool hasBeenTicked = false;
 
     public override void GeneratingTick()
     {
@@ -16,7 +17,7 @@ public class Structure_Block : Block
 
     public override void Tick()
     {
-        if (age == 0) //prevent block from being ticked multiple times, since it would create an infinite loop
+        if (hasBeenTicked) //prevent block from being ticked multiple times, since it would create an infinite loop
         {
             base.Tick();
 
@@ -31,30 +32,39 @@ public class Structure_Block : Block
 
                 foreach (string blockText in structure.text.Split('\n', '\r'))
                 {
-                    if (blockText.Length < 4)
-                        continue;
-
-                    Material mat = (Material) Enum.Parse(typeof(Material), blockText.Split('*')[0]);
-                    Location loc = new Location(int.Parse(blockText.Split('*')[1].Split(',')[0]),
-                        int.Parse(blockText.Split('*')[1].Split(',')[1]),
-                        location.dimension);
-                    BlockData data = new BlockData(blockText.Split('*')[2]);
-                    BlockState state = new BlockState(mat, data);
-
-                    if (loc.x == 0 && loc.y == 0)
+                    try
                     {
-                        replaceState = state;
-                        continue;
+                        if (blockText.Length < 4)
+                            continue;
+
+                        Material mat = (Material) Enum.Parse(typeof(Material), blockText.Split('*')[0]);
+                        Location loc = new Location(int.Parse(blockText.Split('*')[1].Split(',')[0]),
+                            int.Parse(blockText.Split('*')[1].Split(',')[1]),
+                            location.dimension);
+                        BlockData data = new BlockData(blockText.Split('*')[2]);
+                        BlockState state = new BlockState(mat, data);
+
+                        if (loc.x == 0 && loc.y == 0)
+                        {
+                            replaceState = state;
+                            continue;
+                        }
+
+                        loc += location;
+
+
+                        loc.SetState(state).Tick();
                     }
-
-                    loc += location;
-
-
-                    loc.SetState(state).Tick();
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Error in loading structure for structure block, corrupted line: '" + blockText + "'.   " + e.Message);
+                    }
                 }
 
                 location.SetState(replaceState).Tick();
             }
         }
+
+        hasBeenTicked = true;
     }
 }
