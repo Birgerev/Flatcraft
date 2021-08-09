@@ -99,5 +99,6 @@
     , Empty_Bucket
     , Water_Bucket
     , Lava_Bucket
+    , Jukebox
     , Music_Disc_Stal
 }
