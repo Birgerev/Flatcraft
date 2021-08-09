@@ -167,7 +167,7 @@ public class Chunk : NetworkBehaviour
     [Server]
     private IEnumerator LoadBlocks()
     {
-        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+        string path = WorldManager.world.GetPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                       chunkPosition.chunkX + "\\blocks";
 
         string[] lines = File.ReadAllLines(path);
@@ -243,7 +243,7 @@ public class Chunk : NetworkBehaviour
 
 
         //Mark chunk as Generated
-        string chunkDataPath = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+        string chunkDataPath = WorldManager.world.GetPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                                chunkPosition.chunkX + "\\chunk";
         List<string> chunkDataLines = File.ReadAllLines(chunkDataPath).ToList();
         chunkDataLines.Add("hasBeenGenerated=true");
@@ -423,7 +423,7 @@ public class Chunk : NetworkBehaviour
             presentUuids.Add(entity.uuid);
         }
         
-        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+        string path = WorldManager.world.GetPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                       chunkPosition.chunkX +
                       "\\entities";
         foreach (string entityPath in Directory.GetFiles(path))
@@ -624,7 +624,7 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void LoadAllEntities()
     {
-        string path = WorldManager.world.getPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
+        string path = WorldManager.world.GetPath() + "\\chunks\\" + chunkPosition.dimension + "\\" +
                       chunkPosition.chunkX +
                       "\\entities";
 

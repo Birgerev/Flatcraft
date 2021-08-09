@@ -37,7 +37,7 @@ public class SingleplayerMenu : MonoBehaviour
 
     public static List<World> GetWorlds()
     {
-        return World.loadWorlds();
+        return World.LoadWorlds();
     }
 
     public void Cancel()

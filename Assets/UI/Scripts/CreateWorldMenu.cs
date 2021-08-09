@@ -37,7 +37,7 @@ public class CreateWorldMenu : MonoBehaviour
             world.seed = 0;
 
 
-        bool worldExists = World.worldExists(world.name);
+        bool worldExists = World.WorldExists(world.name);
         bool nameEmpty = nameField.text == "";
         bool error = worldExists || nameEmpty;
 

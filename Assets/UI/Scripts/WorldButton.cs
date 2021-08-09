@@ -17,7 +17,7 @@ public class WorldButton : MonoBehaviour
         World world = GetComponentInParent<SingleplayerMenu>().worlds[transform.GetSiblingIndex()];
 
         nameText.text = world.name;
-        float fileSize = world.getDiskSize() / 1000;
+        float fileSize = world.GetDiskSize() / 1000;
         float fileSizeRounded = Mathf.Round(fileSize * 100f) / 100f;
 
         string versionName = VersionController.GetVersionName(world.versionId);

@@ -499,7 +499,7 @@ public class Entity : NetworkBehaviour
     [Server]
     public virtual string SavePath()
     {
-        return WorldManager.world.getPath() + "/chunks/" + Location.dimension + "/" +
+        return WorldManager.world.GetPath() + "/chunks/" + Location.dimension + "/" +
                new ChunkPosition(Location).chunkX + "/entities/" + uuid + "." + GetType().Name;
     }
 

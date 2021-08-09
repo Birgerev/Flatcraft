@@ -35,11 +35,11 @@ public class World
         }
     }
 
-    public static World loadWorld(string name)
+    public static World LoadWorld(string name)
     {
         World world = new World(name, 0);
         Dictionary<string, string> worldData = new Dictionary<string, string>();
-        string[] data = File.ReadAllLines(world.getPath() + "\\level.dat");
+        string[] data = File.ReadAllLines(world.GetPath() + "\\level.dat");
         foreach (string dataLine in data)
             worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
 
@@ -50,41 +50,41 @@ public class World
         return world;
     }
 
-    public static bool worldExists(string name)
+    public static bool WorldExists(string name)
     {
-        return File.Exists(new World(name, 0).getPath() + "\\level.dat");
+        return File.Exists(new World(name, 0).GetPath() + "\\level.dat");
     }
 
-    public static List<World> loadWorlds()
+    public static List<World> LoadWorlds()
     {
         List<World> worlds = new List<World>();
 
         foreach (string worldName in Directory.GetDirectories(GetSavesPath()))
-            worlds.Add(loadWorld(worldName.Split('\\')[worldName.Split('\\').Length - 1]));
+            worlds.Add(LoadWorld(worldName.Split('\\')[worldName.Split('\\').Length - 1]));
 
         return worlds;
     }
 
     public void Delete()
     {
-        Directory.Delete(getPath(), true);
+        Directory.Delete(GetPath(), true);
     }
 
     public void SaveData()
     {
-        if (!Directory.Exists(getPath()))
-            Directory.CreateDirectory(getPath());
-        if (!Directory.Exists(getPath() + "\\chunks"))
-            Directory.CreateDirectory(getPath() + "\\chunks");
-        if (!Directory.Exists(getPath() + "\\chunks\\Overworld"))
-            Directory.CreateDirectory(getPath() + "\\chunks\\Overworld");
-        if (!Directory.Exists(getPath() + "\\chunks"))
-            Directory.CreateDirectory(getPath() + "\\players");
-        if (!Directory.Exists(getPath() + "\\inventories"))
-            Directory.CreateDirectory(getPath() + "\\inventories");
+        if (!Directory.Exists(GetPath()))
+            Directory.CreateDirectory(GetPath());
+        if (!Directory.Exists(GetPath() + "\\chunks"))
+            Directory.CreateDirectory(GetPath() + "\\chunks");
+        if (!Directory.Exists(GetPath() + "\\chunks\\Overworld"))
+            Directory.CreateDirectory(GetPath() + "\\chunks\\Overworld");
+        if (!Directory.Exists(GetPath() + "\\chunks"))
+            Directory.CreateDirectory(GetPath() + "\\players");
+        if (!Directory.Exists(GetPath() + "\\inventories"))
+            Directory.CreateDirectory(GetPath() + "\\inventories");
 
-        if (!File.Exists(getPath() + "\\level.dat"))
-            File.Create(getPath() + "\\level.dat").Close();
+        if (!File.Exists(GetPath() + "\\level.dat"))
+            File.Create(GetPath() + "\\level.dat").Close();
 
         List<string> data = new List<string>();
 
@@ -92,7 +92,7 @@ public class World
         data.Add("time=" + time);
         data.Add("versionId=" + versionId);
 
-        File.WriteAllLines(getPath() + "\\level.dat", data);
+        File.WriteAllLines(GetPath() + "\\level.dat", data);
     }
 
     public static string GetSavesPath()
@@ -104,14 +104,14 @@ public class World
         return savesPath;
     }
 
-    public string getPath()
+    public string GetPath()
     {
         return GetSavesPath() + name;
     }
 
-    public float getDiskSize()
+    public float GetDiskSize()
     {
-        return CalculateFolderSize(getPath());
+        return CalculateFolderSize(GetPath());
     }
 
     protected static float CalculateFolderSize(string folder)

@@ -88,7 +88,7 @@ public class SaveManager : NetworkBehaviour
             if (!currentEditingChunk.HasBeenSaved())
                 currentEditingChunk.CreateChunkPath();
 
-            string chunkPath = WorldManager.world.getPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
+            string chunkPath = WorldManager.world.GetPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
                                currentEditingChunk.chunkX;
 
             foreach (string line in File.ReadAllLines(chunkPath + "\\blocks")

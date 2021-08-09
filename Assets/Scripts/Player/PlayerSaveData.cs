@@ -6,7 +6,7 @@ public class PlayerSaveData
 {
     public static string GetPath()
     {
-        return WorldManager.world.getPath() + "\\players";
+        return WorldManager.world.GetPath() + "\\players";
     }
 
     public static string GetPlayerPath(string Player)

@@ -66,7 +66,7 @@ public class Inventory : NetworkBehaviour
         if (WorldManager.instance.loadedInventories.ContainsKey(id))
             return WorldManager.instance.loadedInventories[id];
 
-        if (NetworkServer.active && Directory.Exists(WorldManager.world.getPath() + "\\inventories\\" + id))
+        if (NetworkServer.active && Directory.Exists(WorldManager.world.GetPath() + "\\inventories\\" + id))
             return Load(id);
 
         Debug.LogError("Failed getting inventory with id '" + id + "'");
@@ -85,7 +85,7 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Save()
     {
-        string path = WorldManager.world.getPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
@@ -113,7 +113,7 @@ public class Inventory : NetworkBehaviour
     [Server]
     public static Inventory Load(int id)
     {
-        string path = WorldManager.world.getPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
 
         string[] itemLines = File.ReadAllLines(path + "\\items.dat");
         List<ItemStack> items = new List<ItemStack>();
@@ -147,7 +147,7 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Delete()
     {
-        string path = WorldManager.world.getPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
         Directory.Delete(path, true);
         NetworkServer.Destroy(gameObject);
     }
