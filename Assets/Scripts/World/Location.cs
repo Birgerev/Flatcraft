@@ -61,6 +61,7 @@ public struct Location
     {
         BlockState state = GetState();
         state.material = mat;
+        //state.data = new BlockData();
 
         SetState(state);
 
