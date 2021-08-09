@@ -22,7 +22,7 @@ public class ArrowEntity : Projectile
         base.Tick();
 
         //Despawn
-        if (age > 60 * 5)
+        if (age > 60 * 2)
             Remove();
 
         GetComponent<Rigidbody2D>().simulated = !hasLanded; //TODO this makes box collider inactive, which in turn makes arrows not save
