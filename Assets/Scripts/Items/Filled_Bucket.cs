@@ -8,19 +8,15 @@ public class Filled_Bucket : Item
     
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
+        base.InteractRight(player, loc, firstFrameDown);
+
         if (!firstFrameDown)
-        {
-            base.InteractRight(player, loc, firstFrameDown);
             return;
-        }
 
         Material clickedMaterial = loc.GetMaterial();
 
         if (clickedMaterial != Material.Air && loc.GetBlock().solid)
-        {
-            base.InteractRight(player, loc, firstFrameDown);
             return;
-        }
 
         //Get player inventory
         Player playerEntity = player.playerEntity.GetComponent<Player>();
