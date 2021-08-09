@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7491657452633707932}
+  - component: {fileID: 5373676287770218126}
   - component: {fileID: 278373852062830937}
   - component: {fileID: 5760063787725456618}
-  - component: {fileID: 5373676287770218126}
   - component: {fileID: 6591052542201027870}
   - component: {fileID: 7332492137403674706}
   - component: {fileID: 7769584507077202104}
@@ -37,6 +37,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5373676287770218126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 238254436577181984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6d3f8169bc0bb47881a446fdab4bf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  age: 0
+  fireTime: 0
+  dead: 0
+  facingLeft: 0
+  uuid: 
+  isInLiquid: 0
+  isOnGround: 0
+  isOnClimbable: 0
+  portalTime: 0
+  portalCooldown: 0
+  teleportingDimension: 0
+  lastDamager: {fileID: 0}
+  lastFramePosition: {x: 0, y: 0}
+  burningRender: {fileID: 0}
+  material: 19
 --- !u!61 &278373852062830937
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -84,35 +113,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &5373676287770218126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 238254436577181984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a6d3f8169bc0bb47881a446fdab4bf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  age: 0
-  fireTime: 0
-  dead: 0
-  facingLeft: 0
-  uuid: 
-  isInLiquid: 0
-  isOnGround: 0
-  isOnClimbable: 0
-  portalTime: 0
-  portalCooldown: 0
-  teleportingDimension: 0
-  lastDamager: {fileID: 0}
-  lastFramePosition: {x: 0, y: 0}
-  burningRender: {fileID: 0}
-  material: 19
 --- !u!114 &6591052542201027870
 MonoBehaviour:
   m_ObjectHideFlags: 0

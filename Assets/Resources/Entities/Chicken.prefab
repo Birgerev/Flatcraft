@@ -165,8 +165,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1767858284413292952}
-  - component: {fileID: 8992056153573987602}
   - component: {fileID: 4151330154855811528}
+  - component: {fileID: 8992056153573987602}
   - component: {fileID: 8981300222419932509}
   - component: {fileID: 3499538818770125038}
   - component: {fileID: 1791002088493498114}
@@ -196,6 +196,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4151330154855811528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8949061861619549476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30db9d2aa818a6448868a1918c92f4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  age: 0
+  fireTime: 0
+  dead: 0
+  facingLeft: 0
+  uuid: 
+  isInLiquid: 0
+  isOnGround: 0
+  isOnClimbable: 0
+  portalTime: 0
+  portalCooldown: 0
+  teleportingDimension: 0
+  lastDamager: {fileID: 0}
+  lastFramePosition: {x: 0, y: 0}
+  burningRender: {fileID: 5690658863663076067}
+  nameplate: {fileID: 1847994518737342972}
+  health: 0
+  displayName: 
 --- !u!95 &8992056153573987602
 Animator:
   serializedVersion: 3
@@ -215,37 +246,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &4151330154855811528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8949061861619549476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30db9d2aa818a6448868a1918c92f4f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  age: 0
-  fireTime: 0
-  dead: 0
-  facingLeft: 0
-  uuid: 
-  isInLiquid: 0
-  isOnGround: 0
-  isOnClimbable: 0
-  portalTime: 0
-  portalCooldown: 0
-  teleportingDimension: 0
-  lastDamager: {fileID: 0}
-  lastFramePosition: {x: 0, y: 0}
-  burningRender: {fileID: 5690658863663076067}
-  nameplate: {fileID: 1847994518737342972}
-  health: 0
-  displayName: 
 --- !u!61 &8981300222419932509
 BoxCollider2D:
   m_ObjectHideFlags: 0

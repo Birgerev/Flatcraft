@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   age: 0
   fireTime: 0
   dead: 0
@@ -71,6 +71,8 @@ MonoBehaviour:
   nameplate: {fileID: 5029836664970296128}
   health: 0
   displayName: 
+  bowInaccuracy: 0.5
+  isShooting: 0
 --- !u!95 &227088829206810149
 Animator:
   serializedVersion: 3

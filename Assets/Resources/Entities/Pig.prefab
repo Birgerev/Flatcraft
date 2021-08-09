@@ -41,9 +41,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5115385872056283717}
+  - component: {fileID: 2882180151632910469}
   - component: {fileID: 2503722705769756367}
   - component: {fileID: 2510419314081986176}
-  - component: {fileID: 2882180151632910469}
   - component: {fileID: 7991054680386118451}
   - component: {fileID: 7642256944260818324}
   - component: {fileID: 1818202747044089694}
@@ -72,6 +72,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2882180151632910469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2469175179285931769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee472df054cdf744b4ae4e1764007e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  age: 0
+  fireTime: 0
+  dead: 0
+  facingLeft: 0
+  uuid: 
+  isInLiquid: 0
+  isOnGround: 0
+  isOnClimbable: 0
+  portalTime: 0
+  portalCooldown: 0
+  teleportingDimension: 0
+  lastDamager: {fileID: 0}
+  lastFramePosition: {x: 0, y: 0}
+  burningRender: {fileID: 1836135611648166109}
+  nameplate: {fileID: 2985312819124822622}
+  health: 0
+  displayName: 
 --- !u!95 &2503722705769756367
 Animator:
   serializedVersion: 3
@@ -117,37 +148,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1}
   m_EdgeRadius: 0.13
---- !u!114 &2882180151632910469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2469175179285931769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ee472df054cdf744b4ae4e1764007e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  age: 0
-  fireTime: 0
-  dead: 0
-  facingLeft: 0
-  uuid: 
-  isInLiquid: 0
-  isOnGround: 0
-  isOnClimbable: 0
-  portalTime: 0
-  portalCooldown: 0
-  teleportingDimension: 0
-  lastDamager: {fileID: 0}
-  lastFramePosition: {x: 0, y: 0}
-  burningRender: {fileID: 1836135611648166109}
-  nameplate: {fileID: 2985312819124822622}
-  health: 0
-  displayName: 
 --- !u!50 &7991054680386118451
 Rigidbody2D:
   serializedVersion: 4
