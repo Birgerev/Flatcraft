@@ -21,7 +21,7 @@ public struct BlockData
                 SetTag(tagStrings.Split('=')[0], tagStrings.Split('=')[1]);
     }
 
-    public void RemoveTag(string key)
+    public BlockData RemoveTag(string key)
     {
         if (HasTag(key))
         {
@@ -30,6 +30,8 @@ public struct BlockData
             keys.RemoveAt(index);
             values.RemoveAt(index);
         }
+
+        return this;
     }
 
     public BlockData SetTag(string key, string value)
