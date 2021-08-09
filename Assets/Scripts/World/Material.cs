@@ -101,4 +101,5 @@
     , Lava_Bucket
     , Jukebox
     , Music_Disc_Stal
+    , Wipe
 }
