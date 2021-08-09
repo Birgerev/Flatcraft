@@ -11,6 +11,7 @@ public class Creeper : Monster
 
     private readonly float maxFuse = 1.5f;
     public override float maxHealth { get; } = 20;
+    private bool dropDisc = false;
 
     public override List<ItemStack> GetDrops()
     {
@@ -19,6 +20,8 @@ public class Creeper : Monster
         Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
         result.Add(new ItemStack(Material.Gunpowder, r.Next(0, 2 + 1)));
+        if(dropDisc)
+            result.Add(new ItemStack(Material.Music_Disc_Stal, 1));
 
         return result;
     }
@@ -61,6 +64,20 @@ public class Creeper : Monster
         Animator anim = GetComponent<Animator>();
 
         anim.SetBool("primed", ignited);
+    }
+
+    [Server]
+    public override void Die()
+    {
+        if (dead)
+            return;
+
+        if (lastDamager is Skeleton)
+        {
+            dropDisc = true;
+        }
+        
+        base.Die();
     }
 
     public override EntityController GetController()

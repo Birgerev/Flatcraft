@@ -116,6 +116,26 @@ public class Sound : NetworkBehaviour
 
         Destroy(obj, clip.length + 1);
     }
+
+    [Server]
+    public static void DestroySounds(Location loc, float distance)
+    {
+        instance.DestroySoundsOnClients(loc, distance);
+    }
+
+    [ClientRpc]
+    public void DestroySoundsOnClients(Location loc, float distance)
+    {
+        Vector2 position = loc.GetPosition();
+        AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+
+        foreach (AudioSource audio in audioSources)
+        {
+            Vector2 audioPos = audio.transform.position;
+            if (Vector2.Distance(audioPos, position) <= distance)
+                Destroy(audio.gameObject);
+        }
+    }
 }
 
 public enum SoundType
