@@ -17,9 +17,9 @@ public class Structure_Block : Block
 
     public override void Tick()
     {
-        if (hasBeenTicked) //prevent block from being ticked multiple times, since it would create an infinite loop
+        if (!hasBeenTicked) //prevent block from being ticked multiple times, since it would create an infinite loop
         {
-            base.Tick();
+            hasBeenTicked = true;
 
             if (GetData().HasTag("structure"))
             {
@@ -64,7 +64,7 @@ public class Structure_Block : Block
                 location.SetState(replaceState).Tick();
             }
         }
-
-        hasBeenTicked = true;
+        
+        base.Tick();
     }
 }
