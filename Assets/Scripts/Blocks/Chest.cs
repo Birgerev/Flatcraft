@@ -40,6 +40,9 @@ public class Chest : InventoryContainer
 
     private IEnumerator AwaitChestOpenCloseTextureChange()
     {
+        //Wait for chest values to sync from server
+        yield return new WaitForSeconds(1f);
+        
         bool lastCheckOpen = IsOpen();
         while (true)
         {
