@@ -157,21 +157,29 @@ public class Inventory : NetworkBehaviour
         if (item.amount > MaxStackSize)
             item.amount = MaxStackSize;
 
-        items[slot] = item;
+        if(slot < items.Count)
+            items[slot] = item;
+        else
+            Debug.LogError("Tried setting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
+
     }
 
     public ItemStack GetItem(int slot)
     {
-        if (slot < size)
+        if (slot < items.Count)
             return items[slot];
-        return null;
+        
+        Debug.LogError("Tried getting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
+        return new ItemStack();
     }
 
     [Server]
     public void Clear()
     {
         for (int slot = 0; slot < size; slot++)
-            items[slot] = new ItemStack();
+        {
+            SetItem(slot, new ItemStack());
+        }
     }
 
     [Server]
