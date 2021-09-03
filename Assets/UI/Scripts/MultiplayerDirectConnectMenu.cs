@@ -5,12 +5,10 @@ using UnityEngine.UI;
 public class MultiplayerDirectConnectMenu : MonoBehaviour
 {
     public InputField addressField;
-    public InputField nameField;
 
     private void Update()
     {
         GameNetworkManager.serverAddress = addressField.text;
-        GameNetworkManager.playerName = nameField.text;
     }
 
     public void ConnectButton()

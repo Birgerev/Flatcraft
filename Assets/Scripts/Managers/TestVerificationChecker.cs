@@ -32,8 +32,6 @@ public class TestVerificationChecker : MonoBehaviour
             {
                 string verificationCode = www.downloadHandler.text;
                 
-                print(verificationCode);
-                print(VersionController.GetVersionName());
                 if (!verificationCode.Equals(VersionController.GetVersionName()))
                 {
                     VerificationTestFailed();
