@@ -5,7 +5,7 @@ public class VersionController : MonoBehaviour
 {
     public static List<string> versionNames = new List<string>
     {
-        "Indev 9", "Indev 10", "Indev 11", "Indev 12", "Indev 13", "Indev 14 / simon test 1", "Indev 14 / simon test 2, Indev 15"
+        "Indev 9", "Indev 10", "Indev 11", "Indev 12", "Indev 13", "Indev 14 / simon test 1", "Indev 14 / simon test 2", "Indev 15.0"
     };
 
     public static int CurrentVersionId => versionNames.Count - 1;
