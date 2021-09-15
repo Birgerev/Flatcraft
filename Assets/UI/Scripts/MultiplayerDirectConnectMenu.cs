@@ -8,12 +8,12 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
 
     private void Update()
     {
-        GameNetworkManager.serverAddress = addressField.text;
+        GameNetworkManager.clientConnectionAddress = addressField.text;
     }
 
     public void ConnectButton()
     {
-        GameNetworkManager.isHost = false;
+        GameNetworkManager.connectionMode = ConnectionMode.Client;
         SceneManager.LoadScene("Game");
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }

@@ -14,12 +14,18 @@ public class LoadingMenu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (type == LoadingMenuType.LoadWorld)
-            LoadWorldMenu();
-        else if (type == LoadingMenuType.ConnectServer)
-            ConnectMenu();
-        else if (type == LoadingMenuType.Dimension)
-            ChangeDimensionMenu();
+        switch (type)
+        {
+            case LoadingMenuType.LoadWorld:
+                LoadWorldMenu();
+                break;
+            case LoadingMenuType.ConnectServer:
+                ConnectMenu();
+                break;
+            case LoadingMenuType.Dimension:
+                ChangeDimensionMenu();
+                break;
+        }
     }
 
     public void SetState(string name, float progress)

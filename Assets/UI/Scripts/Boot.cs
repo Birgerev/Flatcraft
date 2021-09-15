@@ -8,6 +8,15 @@ public class Boot : MonoBehaviour
 {
     void Start()
     {
+        if (DedicatedServerManager.DedicatedServerCheck())
+            return;
+        CreateNameCheck();
+        
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    private void CreateNameCheck()
+    {
         string testingNamePath = Application.dataPath + "/../testingProfile.dat";
         if(!File.Exists(testingNamePath))
         {
@@ -15,7 +24,5 @@ public class Boot : MonoBehaviour
             return;
         }
         GameNetworkManager.playerName = File.ReadAllText(testingNamePath);
-        
-        SceneManager.LoadScene("MainMenu");
     }
 }
