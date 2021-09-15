@@ -166,7 +166,11 @@ public class Block : MonoBehaviour
     {
         bool rotated_x = false;
         bool rotated_y = false;
-
+        Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
+        
+        if (closestPlayer == null)
+            return;
+        
         if (rotate_y)
             rotated_y = Player.localEntity.transform.position.y < location.y;
         if (rotate_x)

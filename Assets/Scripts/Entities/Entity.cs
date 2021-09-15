@@ -732,6 +732,23 @@ public class Entity : NetworkBehaviour
         return null;
     }
     
+    public static Entity ClosestEntityOfType(Location loc, Type type)
+    {
+        Entity closestEntity = null;
+        float closestEntityDistance = int.MaxValue;
+        foreach (Entity entity in entities)
+        {
+            float distance = Vector2.Distance(entity.Location.GetPosition(), loc.GetPosition());
+            if (!(distance < closestEntityDistance))
+                continue;
+            
+            closestEntity = entity;
+            closestEntityDistance = distance;
+        }
+
+        return closestEntity;
+    }
+    
     [Client]
     private void DoFireRender()
     {
