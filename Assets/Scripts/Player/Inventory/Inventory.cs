@@ -76,7 +76,7 @@ public class Inventory : NetworkBehaviour
     public static bool IsAnyOpen(PlayerInstance playerInstance)
     {
         foreach (Inventory inv in WorldManager.instance.loadedInventories.Values)
-            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().playerInstance == playerInstance.gameObject)
+            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().ownerPlayerInstance == playerInstance.gameObject)
                 return true;
 
         return false;
@@ -261,7 +261,7 @@ public class Inventory : NetworkBehaviour
         InventoryMenu menu = obj.GetComponent<InventoryMenu>();
 
         menu.inventoryIds.Add(0, id);
-        menu.playerInstance = playerInstance.gameObject;
+        menu.ownerPlayerInstance = playerInstance.gameObject;
 
         NetworkServer.Spawn(obj);
         inventoryMenu = obj;
