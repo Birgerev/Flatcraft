@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class TestVerificationChecker : MonoBehaviour
 {
-    private const string Url = "http://79.142.222.17/flatcraft/testingVerification.html";  //TODO static ip
+    private const string Url = "http://hille.evansson.se/flatcraft/testingVerification.html";
     private const float LoopDuration = 10;
     
     // Start is called before the first frame update
