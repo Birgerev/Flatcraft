@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 public class PlayerSaveData
 {
+    public static char separatorChar = Path.DirectorySeparatorChar;
     public static string GetPath()
     {
-        return WorldManager.world.GetPath() + "\\players";
+        return WorldManager.world.GetPath() + $"{separatorChar}players";
     }
 
     public static string GetPlayerPath(string Player)
     {
-        return GetPath() + "\\" + Player + "\\playerData.dat";
+        return GetPath() + separatorChar + Player + $"{separatorChar}playerData.dat";
     }
 
     public static void SetBedLocation(string player, Location loc)
