@@ -10,7 +10,7 @@ public class SaveManager : NetworkBehaviour
 {
     public static float AutosaveDuration = 2;
     public static Dictionary<Location, string> blockChanges = new Dictionary<Location, string>();
-
+    public static char separatorChar = Path.DirectorySeparatorChar;
     private void Start()
     {
         if (isServer)
@@ -88,10 +88,10 @@ public class SaveManager : NetworkBehaviour
             if (!currentEditingChunk.HasBeenSaved())
                 currentEditingChunk.CreateChunkPath();
 
-            string chunkPath = WorldManager.world.GetPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
+            string chunkPath = WorldManager.world.GetPath() + $"{separatorChar}chunks{separatorChar}" + currentEditingChunk.dimension + separatorChar +
                                currentEditingChunk.chunkX;
 
-            foreach (string line in File.ReadAllLines(chunkPath + "\\blocks")
+            foreach (string line in File.ReadAllLines(chunkPath + $"{separatorChar}blocks")
             ) //Add all old block changes, removing duplicates of new block changes
             {
                 Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
@@ -103,10 +103,10 @@ public class SaveManager : NetworkBehaviour
             }
 
             //Empty file before writing
-            File.WriteAllText(chunkPath + "\\blocks", "");
+            File.WriteAllText(chunkPath + $"{separatorChar}blocks", "");
 
             //Write all block changes
-            TextWriter c = new StreamWriter(chunkPath + "\\blocks");
+            TextWriter c = new StreamWriter(chunkPath + $"{separatorChar}blocks");
             foreach (KeyValuePair<Location, string> line in changesForChunk)
                 c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
 
