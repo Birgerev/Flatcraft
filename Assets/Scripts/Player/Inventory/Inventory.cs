@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Mirror;
@@ -20,7 +20,8 @@ public class Inventory : NetworkBehaviour
     public GameObject inventoryMenuPrefab;
 
     public SyncList<ItemStack> items = new SyncList<ItemStack>();
-
+    
+    public static char separatorChar = Path.DirectorySeparatorChar;
     private void Start()
     {
         WorldManager.instance.loadedInventories[id] = this;
@@ -66,7 +67,7 @@ public class Inventory : NetworkBehaviour
         if (WorldManager.instance.loadedInventories.ContainsKey(id))
             return WorldManager.instance.loadedInventories[id];
 
-        if (NetworkServer.active && Directory.Exists(WorldManager.world.GetPath() + "\\inventories\\" + id))
+        if (NetworkServer.active && Directory.Exists(WorldManager.world.GetPath() + $"{separatorChar}inventories{separatorChar}" + id))
             return Load(id);
 
         Debug.LogError("Failed getting inventory with id '" + id + "'");
@@ -85,37 +86,37 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Save()
     {
-        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() + $"{separatorChar}inventories{separatorChar}" + id;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
-        if (!File.Exists(path + "\\items.dat"))
-            File.Create(path + "\\items.dat").Close();
-        if (!File.Exists(path + "\\type.dat"))
-            File.Create(path + "\\type.dat").Close();
-        if (!File.Exists(path + "\\invName.dat"))
-            File.Create(path + "\\invName.dat").Close();
-        if (!File.Exists(path + "\\size.dat"))
-            File.Create(path + "\\size.dat").Close();
+        if (!File.Exists(path + $"{separatorChar}items.dat"))
+            File.Create(path + $"{separatorChar}items.dat").Close();
+        if (!File.Exists(path + $"{separatorChar}type.dat"))
+            File.Create(path + $"{separatorChar}type.dat").Close();
+        if (!File.Exists(path + $"{separatorChar}invName.dat"))
+            File.Create(path + $"{separatorChar}invName.dat").Close();
+        if (!File.Exists(path + $"{separatorChar}size.dat"))
+            File.Create(path + $"{separatorChar}size.dat").Close();
 
         List<string> itemLines = new List<string>();
         foreach (ItemStack item in items)
             itemLines.Add(item.GetSaveString());
-        File.WriteAllLines(path + "\\items.dat", itemLines);
+        File.WriteAllLines(path +  $"{separatorChar}items.dat", itemLines);
 
-        File.WriteAllLines(path + "\\type.dat", new List<string> {type});
+        File.WriteAllLines(path +  $"{separatorChar}type.dat", new List<string> {type});
 
-        File.WriteAllLines(path + "\\invName.dat", new List<string> {invName});
+        File.WriteAllLines(path +  $"{separatorChar}invName.dat", new List<string> {invName});
 
-        File.WriteAllLines(path + "\\size.dat", new List<string> {size.ToString()});
+        File.WriteAllLines(path +  $"{separatorChar}size.dat", new List<string> {size.ToString()});
     }
 
     [Server]
     public static Inventory Load(int id)
     {
-        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() +  $"{separatorChar}inventories{separatorChar}" + id;
 
-        string[] itemLines = File.ReadAllLines(path + "\\items.dat");
+        string[] itemLines = File.ReadAllLines(path +  $"{separatorChar}items.dat");
         List<ItemStack> items = new List<ItemStack>();
         foreach (string itemLine in itemLines)
         {
@@ -130,9 +131,9 @@ public class Inventory : NetworkBehaviour
             }
         }
         
-        string type = File.ReadAllLines(path + "\\type.dat")[0];
-        string invName = File.ReadAllLines(path + "\\invName.dat")[0];
-        int size = int.Parse(File.ReadAllLines(path + "\\size.dat")[0]);
+        string type = File.ReadAllLines(path +  $"{separatorChar}type.dat")[0];
+        string invName = File.ReadAllLines(path +  $"{separatorChar}invName.dat")[0];
+        int size = int.Parse(File.ReadAllLines(path +  $"{separatorChar}size.dat")[0]);
 
         Inventory inv = Create(type, size, invName, id);
         inv.items.Clear();
@@ -144,7 +145,7 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Delete()
     {
-        string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
+        string path = WorldManager.world.GetPath() +  $"{separatorChar}inventories{separatorChar}" + id;
         Directory.Delete(path, true);
         NetworkServer.Destroy(gameObject);
     }
