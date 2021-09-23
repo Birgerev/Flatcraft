@@ -29,6 +29,8 @@ public class DedicatedServerManager
                 world = World.LoadWorlds()[0];
             WorldManager.world = world;
             
+            //Start server
+            GameNetworkManager.port = int.Parse(configValues["port"]);
             GameNetworkManager.connectionMode = ConnectionMode.DedicatedServer;
             SceneManager.LoadScene("Game");
             return true;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using kcp2k;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,6 +8,7 @@ public class GameNetworkManager : NetworkManager
 {
     public static ConnectionMode connectionMode;
     public static string clientConnectionAddress = "player";
+    public static int port = 1;
     public static string playerName = "player";
 
     public List<string> prefabDirectories = new List<string>();
@@ -30,12 +32,14 @@ public class GameNetworkManager : NetworkManager
         {
             case ConnectionMode.Client:
                 networkAddress = clientConnectionAddress;
+                GetComponent<KcpTransport>().Port = (ushort)port;
                 StartClient();
                 break;
             case ConnectionMode.Host:
                 StartHost();
                 break;
             case ConnectionMode.DedicatedServer:
+                GetComponent<KcpTransport>().Port = (ushort)port;
                 StartServer();
                 break;
         }
