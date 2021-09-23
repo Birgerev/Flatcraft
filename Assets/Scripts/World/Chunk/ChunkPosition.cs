@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Mirror;
 using UnityEngine;
 
@@ -8,6 +8,7 @@ public struct ChunkPosition
     public Dimension dimension;
     public int worldX => chunkX * Chunk.Width;
 
+    public static char separatorChar = Path.DirectorySeparatorChar;
     public ChunkPosition(int chunkX, Dimension dimension)
     {
         this.chunkX = chunkX;
@@ -28,7 +29,7 @@ public struct ChunkPosition
 
     public bool HasBeenSaved()
     {
-        string path = WorldManager.world.GetPath() + "\\chunks\\" + dimension + "\\" + chunkX;
+        string path = WorldManager.world.GetPath() + $"{separatorChar}chunks{separatorChar}" + dimension + $"{separatorChar}" + chunkX;
 
         return Directory.Exists(path);
     }
@@ -38,7 +39,7 @@ public struct ChunkPosition
         if (!HasBeenSaved())
             return false;
 
-        string chunkDataPath = WorldManager.world.GetPath() + "\\chunks\\" + dimension + "\\" + chunkX + "\\chunk";
+        string chunkDataPath = WorldManager.world.GetPath() + $"{separatorChar}chunks{separatorChar}" + dimension + $"{separatorChar}" + chunkX + $"{separatorChar}chunk";
         string[] chunkDataLines = File.ReadAllLines(chunkDataPath);
         foreach (string line in chunkDataLines)
             if (line.Contains("hasBeenGenerated"))
@@ -82,13 +83,13 @@ public struct ChunkPosition
 
     public void CreateChunkPath()
     {
-        string path = WorldManager.world.GetPath() + "\\chunks\\" + dimension + "\\" + chunkX;
+        string path = WorldManager.world.GetPath() + $"{separatorChar}chunks{separatorChar}" + dimension + $"{separatorChar}" + chunkX;
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
-            Directory.CreateDirectory(path + "\\entities");
-            File.Create(path + "\\blocks").Close();
-            File.Create(path + "\\chunk").Close();
+            Directory.CreateDirectory(path + $"{separatorChar}entities");
+            File.Create(path + $"{separatorChar}blocks").Close();
+            File.Create(path + $"{separatorChar}chunk").Close();
         }
     }
 
