@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -54,7 +54,8 @@ public class Player : HumanEntity
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
-
+    
+    public static char separatorChar = Path.DirectorySeparatorChar;
     public override void Start()
     {
         Debug.Log("Spawning player '" + uuid + "'");
@@ -723,8 +724,8 @@ public class Player : HumanEntity
     [Server]
     public override void Save()
     {
-        if (!Directory.Exists(WorldManager.world.GetPath() + "\\players\\" + displayName))
-            Directory.CreateDirectory(WorldManager.world.GetPath() + "\\players\\" + displayName);
+        if (!Directory.Exists(WorldManager.world.GetPath() + $"{separatorChar}players{separatorChar}" + displayName))
+            Directory.CreateDirectory(WorldManager.world.GetPath() + $"{separatorChar}players{separatorChar}" + displayName);
 
         base.Save();
         PlayerSaveData.SetBedLocation(displayName, bedLocation);
@@ -751,7 +752,7 @@ public class Player : HumanEntity
     [Server]
     public override string SavePath()
     {
-        return WorldManager.world.GetPath() + "\\players\\" + uuid + "\\entity.dat";
+        return WorldManager.world.GetPath() + $"{separatorChar}players{separatorChar}" + uuid + $"{separatorChar}entity.dat";
     }
 
     [Server]
