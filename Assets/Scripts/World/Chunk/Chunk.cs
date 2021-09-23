@@ -47,7 +47,6 @@ public class Chunk : NetworkBehaviour
     [SyncVar] public ChunkPosition chunkPosition;
 
     public WorldGenerator worldGenerator;
-
     public static char separatorChar = Path.DirectorySeparatorChar;
     
     private void Start()
