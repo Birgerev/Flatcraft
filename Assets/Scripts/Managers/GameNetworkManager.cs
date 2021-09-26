@@ -8,7 +8,7 @@ public class GameNetworkManager : NetworkManager
 {
     public static ConnectionMode connectionMode;
     public static string clientConnectionAddress = "player";
-    public static int port = 1;
+    public static int port = 630;
     public static string playerName = "player";
 
     public List<string> prefabDirectories = new List<string>();

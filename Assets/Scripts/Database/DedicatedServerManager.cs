@@ -21,8 +21,6 @@ public class DedicatedServerManager
                 configValues.Add(parts[0], parts[1]);
             }
             
-            
-            
             //Load or create a world
             World world = new World("world", new System.Random().Next());
             if (World.LoadWorlds().Count > 0)
