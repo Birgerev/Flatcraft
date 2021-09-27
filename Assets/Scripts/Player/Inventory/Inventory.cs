@@ -100,7 +100,7 @@ public class Inventory : NetworkBehaviour
 
         List<string> itemLines = new List<string>();
         foreach (ItemStack item in items)
-            itemLines.Add(item.GetSaveString());
+            itemLines.Add(item.ToString());
         File.WriteAllLines(path + "\\items.dat", itemLines);
 
         File.WriteAllLines(path + "\\type.dat", new List<string> {type});
@@ -187,7 +187,7 @@ public class Inventory : NetworkBehaviour
     {
         for (int slot = 0; slot < size; slot++)
         {
-            ItemStack invItem = GetItem(slot).Clone();
+            ItemStack invItem = GetItem(slot);
 
             if (invItem.material == item.material && invItem.amount + item.amount <= MaxStackSize)
             {
@@ -213,7 +213,8 @@ public class Inventory : NetworkBehaviour
         foreach (ItemStack item in items)
             if (item.material == mat)
                 return item;
-        return null;
+        
+        return new ItemStack(Material.Air);
     }
 
     public bool ContainsAtLeast(Material mat, int amount)

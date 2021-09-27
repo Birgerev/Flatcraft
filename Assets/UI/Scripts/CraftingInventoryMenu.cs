@@ -48,7 +48,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             pointerItem.material != Material.Air)
             return;
 
-        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot()).Clone();
+        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot());
         newPointerItem.amount = pointerItem.amount + inv.GetItem(inv.GetCraftingResultSlot()).amount;
         SetPointerItem(newPointerItem);
 
@@ -57,7 +57,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
 
         for (int i = 0; i <= 8; i++)
         {
-            ItemStack newCraftingSlotItem = inv.GetItem(i).Clone();
+            ItemStack newCraftingSlotItem = inv.GetItem(i);
             newCraftingSlotItem.amount--;
 
             inv.SetItem(i, newCraftingSlotItem);

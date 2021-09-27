@@ -45,12 +45,15 @@ public class FurnaceInventory : Inventory
 
     public void CheckFuels()
     {
-        if (fuelLeft <= 0 && GetItem(GetFuelSlot()) != null && GetRecipe() != null &&
+        if (fuelLeft <= 0 && GetRecipe() != null &&
             SmeltingRecipe.Fuels.ContainsKey(GetItem(GetFuelSlot()).material))
         {
             fuelLeft = SmeltingRecipe.Fuels[GetItem(GetFuelSlot()).material];
             highestFuel = fuelLeft;
-            GetItem(GetFuelSlot()).amount--;
+
+            ItemStack newFuelItem = GetItem(GetFuelSlot());
+            newFuelItem.amount--;
+            SetItem(GetFuelSlot(), newFuelItem);
         }
     }
 
@@ -93,11 +96,16 @@ public class FurnaceInventory : Inventory
     {
         //Called once smelting is done 
         SmeltingRecipe curRecepie = GetRecipe();
+        ItemStack newResultItem = GetItem(GetResultSlot());
+        ItemStack newIngredientItem = GetItem(GetIngredientSlot());
+            
+        newResultItem.material = curRecepie.result.material;
+        newResultItem.amount += curRecepie.result.amount;
+        newIngredientItem.amount--;
 
-        GetItem(GetResultSlot()).material = curRecepie.result.material;
-        GetItem(GetResultSlot()).amount += curRecepie.result.amount;
-        GetItem(GetIngredientSlot()).amount--;
-
+        SetItem(GetResultSlot(), newResultItem);
+        SetItem(GetIngredientSlot(), newIngredientItem);
+        
         smeltingProgress = 0;
     }
 

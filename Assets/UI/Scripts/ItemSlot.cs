@@ -13,9 +13,6 @@ public class ItemSlot : MonoBehaviour
     // Update is called once per frame
     public virtual void UpdateSlot()
     {
-        if (item == null)
-            item = new ItemStack();
-
         if (item.amount == 0)
         {
             amountText.text = "";
@@ -58,7 +55,7 @@ public class ItemSlot : MonoBehaviour
     {
         if (hover)
             Tooltip.hoveredItem = item;
-        if (!hover && Tooltip.hoveredItem == item)
+        if (!hover && Tooltip.hoveredItem.Equals(item))
             Tooltip.hoveredItem = new ItemStack();
     }
 }

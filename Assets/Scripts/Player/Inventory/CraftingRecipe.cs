@@ -127,7 +127,7 @@ public class CraftingRecipe
             if (mirrorY)
                 curPos.y = maxPos.y - curPos.y;
 
-            if (items[i] != null && items[i].material != Material.Air)
+            if (items[i].material != Material.Air)
                 shape.Add(curPos, items[i].material);
         }
 

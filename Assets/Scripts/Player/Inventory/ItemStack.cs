@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
-public class ItemStack
+public struct ItemStack
 {
     public int amount;
     public string data;
     public int durability;
     public Material material;
 
-    public ItemStack()
-    {
-        material = Material.Air;
-        amount = 0;
-    }
-
     public ItemStack(Material material)
     {
         this.material = material;
-        amount = 1;
-        durability = GetMaxDurability();
+        this.amount = 1;
+        this.durability = -1;
+        this.data = "";
+        
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount)
     {
         this.material = material;
         this.amount = amount;
-        durability = GetMaxDurability();
+        this.durability = -1;
+        this.data = "";
+        
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data)
@@ -35,7 +35,9 @@ public class ItemStack
         this.material = material;
         this.amount = amount;
         this.data = data;
-        durability = GetMaxDurability();
+        this.durability = -1;
+        
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data, int durability)
@@ -50,10 +52,10 @@ public class ItemStack
     {
         string[] values = saveString.Split('*');
 
-        material = (Material) Enum.Parse(typeof(Material), values[0]);
-        amount = int.Parse(values[1]);
-        data = values[2];
-        durability = int.Parse(values[3]);
+        this.material = (Material) Enum.Parse(typeof(Material), values[0]);
+        this.amount = int.Parse(values[1]);
+        this.data = values[2];
+        this.durability = int.Parse(values[3]);
     }
 
     public string GetTexture()
@@ -145,13 +147,8 @@ public class ItemStack
         obj.GetComponent<Rigidbody2D>().velocity = velocity;
     }
 
-    public string GetSaveString()
+    public override string ToString()
     {
         return material + "*" + amount + "*" + data + "*" + durability;
-    }
-
-    public ItemStack Clone()
-    {
-        return (ItemStack) MemberwiseClone();
     }
 }

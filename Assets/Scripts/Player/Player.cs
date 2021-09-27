@@ -552,7 +552,7 @@ public class Player : HumanEntity
     [Command]
     public void RequestBlockPlace(Location loc)
     {
-        ItemStack item = GetInventory().GetSelectedItem().Clone();
+        ItemStack item = GetInventory().GetSelectedItem();
         Material heldMat;
 
         if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().amount <= 0)
@@ -627,10 +627,10 @@ public class Player : HumanEntity
     {
         if (GetInventory().GetSelectedItem().GetMaxDurability() != -1)
         {
-            GetInventory().GetSelectedItem().durability--;
+            ItemStack newItem = GetInventory().GetSelectedItem();
+            newItem.durability--;
 
-            if (GetInventory().GetSelectedItem().durability < 0)
-                GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack());
+            GetInventory().SetItem(GetInventory().selectedSlot, (newItem.durability >= 0) ? newItem : new ItemStack());
         }
     }
 
@@ -681,7 +681,7 @@ public class Player : HumanEntity
     public void DropSelected()
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
-        ItemStack droppedItem = selectedItem.Clone();
+        ItemStack droppedItem = selectedItem;
         droppedItem.amount = 1;
         selectedItem.amount--;
 
@@ -695,7 +695,7 @@ public class Player : HumanEntity
     [Server]
     public void DropItem(ItemStack item)
     {
-        ItemStack droppedItem = item.Clone();
+        ItemStack droppedItem = item;
         
         droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
             , new Vector2(3 * (facingLeft ? -1 : 1), 0));
