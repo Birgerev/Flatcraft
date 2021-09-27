@@ -603,8 +603,7 @@ public class Player : HumanEntity
     }
 
     [Command]
-    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown
-        , NetworkConnectionToClient sender = null)
+    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses

@@ -71,3 +71,4 @@ Packages/packages-lock.json
 sunvox_log.txt
 *.sunpat
 testingProfile.dat
+serverConfig.dat
