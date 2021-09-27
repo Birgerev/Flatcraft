@@ -393,12 +393,6 @@ public class LivingEntity : Entity
     [Server]
     public virtual void WalkSound()
     {
-        /*string blockSoundType = blockBeneath.blockSoundType.ToString().ToLower();
-        
-        string soundName = "block/" + blockSoundType + "/hit";
-        
-        if (Sound.Exists(soundName))
-            Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);*/
         string soundName = "entity/step";
         Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
