@@ -120,7 +120,7 @@ public class LivingEntity : Entity
         float checkFrequency = stepSoundFrequencyMultiplier / Mathf.Abs(GetVelocity().x);
         float timeOffset = (float) new Random(uuid.GetHashCode()).NextDouble(); //Uses a static seed (id)
 
-        if (Time.time - lastStepSoundTime > checkFrequency)
+        if (Time.time - lastStepSoundTime > checkFrequency && isOnGround)
         {
             WalkSound();
             lastStepSoundTime = Time.time;
@@ -393,10 +393,6 @@ public class LivingEntity : Entity
     [Server]
     public virtual void WalkSound()
     {
-        Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
-        if (blockBeneath == null)
-            return;
-        
         /*string blockSoundType = blockBeneath.blockSoundType.ToString().ToLower();
         
         string soundName = "block/" + blockSoundType + "/hit";
