@@ -10,19 +10,22 @@ public class Boot : MonoBehaviour
     {
         if (DedicatedServerManager.DedicatedServerCheck())
             return;
-        CreateNameCheck();
+        if(CreateNameCheck())
+            return;
         
         SceneManager.LoadScene("MainMenu");
     }
 
-    private void CreateNameCheck()
+    private bool CreateNameCheck()
     {
         string testingNamePath = Application.dataPath + "/../testingProfile.dat";
         if(!File.Exists(testingNamePath))
         {
             SceneManager.LoadScene("TestingCreateName");
-            return;
+            return true;
         }
+        
         GameNetworkManager.playerName = File.ReadAllText(testingNamePath);
+        return false;
     }
 }
