@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 54166479}
+  - component: {fileID: 54166480}
   m_Layer: 5
   m_Name: Browse Servers Section
   m_TagString: Untagged
@@ -159,6 +160,18 @@ RectTransform:
   m_AnchoredPosition: {x: -0.008178711, y: 0.20245361}
   m_SizeDelta: {x: -1.8965, y: -0.40503}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &54166480
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54166478}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &100235836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393,7 +406,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.7978704}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.014831543, y: 0.25}
+  m_AnchoredPosition: {x: -0.014892578, y: 0.25}
   m_SizeDelta: {x: -0.9000244, y: -1.3499756}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &242534089
@@ -1553,12 +1566,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myServersButtonText: {fileID: 2041474962}
   showMyServers: 1
-  myServersSection: {fileID: 1738521716}
-  browseServersSection: {fileID: 54166478}
+  myServersSection: {fileID: 1738521718}
+  browseServersSection: {fileID: 54166480}
   myServersList: {fileID: 2101690456}
   browseServersList: {fileID: 1051465449}
   dedicatedServerPrefab: {fileID: 2408141092648412837, guid: fda1a6fd4798b604fbc24594f77aaaac,
     type: 3}
+  browseServersScrollbar: {fileID: 242534091}
   selectedServer:
     id: 0
     name: 
@@ -2550,6 +2564,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1738521717}
+  - component: {fileID: 1738521718}
   m_Layer: 5
   m_Name: My Servers Section
   m_TagString: Untagged
@@ -2577,6 +2592,18 @@ RectTransform:
   m_AnchoredPosition: {x: -0.0064697266, y: -0.010375977}
   m_SizeDelta: {x: -1.9000244, y: -0.8000488}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1738521718
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738521716}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1776929006
 GameObject:
   m_ObjectHideFlags: 0
@@ -2613,7 +2640,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.1623148}
-  m_AnchoredPosition: {x: -0.246521, y: 0.020019531}
+  m_AnchoredPosition: {x: -0.24658203, y: 0.020019531}
   m_SizeDelta: {x: -1.4000244, y: -0.77001953}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1822146516

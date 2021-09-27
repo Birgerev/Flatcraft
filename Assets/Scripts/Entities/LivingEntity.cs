@@ -28,12 +28,15 @@ public class LivingEntity : Entity
     protected float highestYlevelsinceground;
     protected bool inLiquidLastFrame;
     private readonly float jumpVelocity = 8.5f;
-    protected float last_jump_time;
+    private float lastJumpTime;
+    private float lastStepSoundTime;
     private readonly float liquidDrag = 10f;
     protected float speed;
     private readonly float swimJumpVelocity = 2f;
     private readonly float swimUpAcceleration = 45.0f;
     protected virtual float walkSpeed { get; } = 4.3f;
+    protected virtual float stepSoundFrequencyMultiplier { get; } = 1.1f;
+    int checkDuration = 4;
 
     public virtual float maxHealth { get; } = 20;
 
@@ -67,6 +70,7 @@ public class LivingEntity : Entity
         base.Tick();
 
         AmbientSoundCheck();
+        WalkSoundCheck();
 
         if (controller != null)
             controller.Tick();
@@ -105,6 +109,22 @@ public class LivingEntity : Entity
         if ((Time.time + timeOffset) % checkDuration - Time.deltaTime <= 0)
             if (new Random(Time.time.GetHashCode() + uuid.GetHashCode()).NextDouble() < 0.5f)
                 AmbientSound();
+    }
+    
+    [Server]
+    public void WalkSoundCheck()
+    {
+        if (Mathf.Abs(GetVelocity().x) < 0.5f)
+            return;
+        
+        float checkFrequency = stepSoundFrequencyMultiplier / Mathf.Abs(GetVelocity().x);
+        float timeOffset = (float) new Random(uuid.GetHashCode()).NextDouble(); //Uses a static seed (id)
+
+        if (Time.time - lastStepSoundTime > checkFrequency)
+        {
+            WalkSound();
+            lastStepSoundTime = Time.time;
+        }
     }
 
     [Client]
@@ -179,10 +199,10 @@ public class LivingEntity : Entity
         if (!hasAuthority && !isServer)
             return;
 
-        if (isOnGround && Time.time - last_jump_time >= 0.3f)
+        if (isOnGround && Time.time - lastJumpTime >= 0.3f)
         {
             SetVelocity(new Vector2(GetVelocity().x, jumpVelocity));
-            last_jump_time = Time.time;
+            lastJumpTime = Time.time;
         }
 
         if (isInLiquid)
@@ -368,6 +388,23 @@ public class LivingEntity : Entity
 
         if (Sound.Exists(soundName))
             Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
+    }
+    
+    [Server]
+    public virtual void WalkSound()
+    {
+        Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
+        if (blockBeneath == null)
+            return;
+        
+        /*string blockSoundType = blockBeneath.blockSoundType.ToString().ToLower();
+        
+        string soundName = "block/" + blockSoundType + "/hit";
+        
+        if (Sound.Exists(soundName))
+            Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);*/
+        string soundName = "entity/step";
+        Sound.Play(Location, soundName, SoundType.Entities, 0.8f, 1.2f);
     }
 
     public virtual void Knockback(Vector2 direction)
