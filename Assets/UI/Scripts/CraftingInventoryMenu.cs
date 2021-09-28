@@ -58,8 +58,10 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         for (int i = 0; i <= 8; i++)
         {
             ItemStack newCraftingSlotItem = inv.GetItem(i);
+            if(newCraftingSlotItem.material == Material.Air)
+                continue;
+            
             newCraftingSlotItem.Amount--;
-
             inv.SetItem(i, newCraftingSlotItem);
         }
 

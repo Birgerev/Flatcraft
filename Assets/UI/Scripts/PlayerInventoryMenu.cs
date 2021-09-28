@@ -73,10 +73,12 @@ public class PlayerInventoryMenu : InventoryMenu
 
         for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
         {
-            ItemStack newItem = inv.GetItem(slot);
-            newItem.Amount--;
-
-            inv.SetItem(slot, newItem);
+            ItemStack newCraftingSlotItem = inv.GetItem(slot);
+            if(newCraftingSlotItem.material == Material.Air)
+                continue;
+            
+            newCraftingSlotItem.Amount--;
+            inv.SetItem(slot, newCraftingSlotItem);
         }
 
         UpdateInventory();
