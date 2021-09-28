@@ -5,20 +5,20 @@ using Random = System.Random;
 
 public struct ItemStack
 {
-    private int _amount;
+    public int amount;
     public int Amount{
         get
         {
-            return _amount;
+            return amount;
         }
         set
         {
             if(value == 0)
                 this = default(ItemStack);
             if (value > Inventory.MaxStackSize)
-                _amount = Inventory.MaxStackSize;
+                amount = Inventory.MaxStackSize;
             
-            _amount = value;
+            amount = value;
         }
     }
     public string data;
@@ -28,7 +28,7 @@ public struct ItemStack
     public ItemStack(Material material)
     {
         this.material = material;
-        this._amount = -1;
+        this.amount = -1;
         this.durability = -1;
         this.data = "";
 
@@ -39,7 +39,7 @@ public struct ItemStack
     public ItemStack(Material material, int amount)
     {
         this.material = material;
-        this._amount = -1;
+        this.amount = -1;
         this.durability = -1;
         this.data = "";
 
@@ -50,7 +50,7 @@ public struct ItemStack
     public ItemStack(Material material, int amount, string data)
     {
         this.material = material;
-        this._amount = -1;
+        this.amount = -1;
         this.data = data;
         this.durability = -1;
         
@@ -61,7 +61,7 @@ public struct ItemStack
     public ItemStack(Material material, int amount, string data, int durability)
     {
         this.material = material;
-        this._amount = -1;
+        this.amount = -1;
         this.data = data;
         this.durability = durability;
         
@@ -73,7 +73,7 @@ public struct ItemStack
         string[] values = saveString.Split('*');
 
         this.material = (Material) Enum.Parse(typeof(Material), values[0]);
-        this._amount = -1;
+        this.amount = -1;
         this.data = values[2];
         this.durability = int.Parse(values[3]);
         
