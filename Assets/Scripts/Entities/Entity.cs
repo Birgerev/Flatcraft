@@ -395,7 +395,7 @@ public class Entity : NetworkBehaviour
     {
         int i = 0;
         foreach (ItemStack item in GetDrops())
-            if (item.material != Material.Air && item.amount > 0)
+            if (item.material != Material.Air && item.Amount > 0)
             {
                 Random random = new Random((transform.position + "" + i).GetHashCode());
                 Vector2 maxVelocity = new Vector2(2, 2);

@@ -13,18 +13,18 @@ public class ItemSlot : MonoBehaviour
     // Update is called once per frame
     public virtual void UpdateSlot()
     {
-        if (item.amount == 0)
+        if (item.Amount == 0)
         {
             amountText.text = "";
             item.material = Material.Air;
         }
-        else if (item.amount == 1)
+        else if (item.Amount == 1)
         {
             amountText.text = "";
         }
         else
         {
-            amountText.text = item.amount.ToString();
+            amountText.text = item.Amount.ToString();
         }
 
         texture.sprite = item.GetSprite();

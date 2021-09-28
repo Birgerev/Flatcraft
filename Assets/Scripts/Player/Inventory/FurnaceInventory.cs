@@ -52,7 +52,7 @@ public class FurnaceInventory : Inventory
             highestFuel = fuelLeft;
 
             ItemStack newFuelItem = GetItem(GetFuelSlot());
-            newFuelItem.amount--;
+            newFuelItem.Amount--;
             SetItem(GetFuelSlot(), newFuelItem);
         }
     }
@@ -64,7 +64,7 @@ public class FurnaceInventory : Inventory
         if (fuelLeft <= 0)
             highestFuel = 0;
 
-        if (curRecipe != null && GetItem(GetIngredientSlot()).amount > 0 &&
+        if (curRecipe != null && GetItem(GetIngredientSlot()).Amount > 0 &&
             (GetItem(GetResultSlot()).material == curRecipe.result.material ||
              GetItem(GetResultSlot()).material == Material.Air))
         {
@@ -100,8 +100,8 @@ public class FurnaceInventory : Inventory
         ItemStack newIngredientItem = GetItem(GetIngredientSlot());
             
         newResultItem.material = curRecepie.result.material;
-        newResultItem.amount += curRecepie.result.amount;
-        newIngredientItem.amount--;
+        newResultItem.Amount += curRecepie.result.Amount;
+        newIngredientItem.Amount--;
 
         SetItem(GetResultSlot(), newResultItem);
         SetItem(GetIngredientSlot(), newIngredientItem);
@@ -111,7 +111,7 @@ public class FurnaceInventory : Inventory
 
     public SmeltingRecipe GetRecipe()
     {
-        if (GetItem(GetIngredientSlot()).amount <= 0)
+        if (GetItem(GetIngredientSlot()).Amount <= 0)
             return null;
 
         //Get recepie based on contents of ingredient slot

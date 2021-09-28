@@ -66,7 +66,7 @@ public class Dog : PassiveEntity
         if (!acceptableFoods.Contains(heldItem.material))
             return false;
         
-        heldItem.amount--;
+        heldItem.Amount--;
         inv.SetItem(inv.selectedSlot, heldItem);
         PlaySmokeEffect(Color.red);
         health = Mathf.Clamp(health + foodHealthRegeneration, 0, maxHealth); 

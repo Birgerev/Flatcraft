@@ -36,7 +36,7 @@ public class ChatManager : NetworkBehaviour
                 ItemStack item = new ItemStack((Material) Enum.Parse(typeof(Material), args[1]), int.Parse(args[2]));
 
                 player.playerEntity.GetComponent<Player>().GetInventory().AddItem(item);
-                AddMessage("Gave " + player.playerName + " " + item.amount + " " + item.material + "'s");
+                AddMessage("Gave " + player.playerName + " " + item.Amount + " " + item.material + "'s");
             }
             catch (Exception e)
             {

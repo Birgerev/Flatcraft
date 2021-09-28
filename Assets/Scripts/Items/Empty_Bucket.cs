@@ -25,7 +25,7 @@
         
         //Remove one empty bucket
         ItemStack currentBucket = inv.GetSelectedItem();
-        currentBucket.amount--;
+        currentBucket.Amount--;
         inv.SetItem(inv.selectedSlot, currentBucket);
         
         //Give one filled bucket

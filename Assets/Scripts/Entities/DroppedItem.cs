@@ -17,7 +17,7 @@ public class DroppedItem : Entity
     [Server]
     public override void Initialize()
     {
-        if (item.material == Material.Air || item.amount <= 0)
+        if (item.material == Material.Air || item.Amount <= 0)
             Remove();
 
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -61,7 +61,7 @@ public class DroppedItem : Entity
                     if (age < col.GetComponent<DroppedItem>().age || col.GetComponent<DroppedItem>().dead)
                         return;
 
-                    item.amount += col.GetComponent<DroppedItem>().item.amount;
+                    item.Amount += col.GetComponent<DroppedItem>().item.Amount;
                     col.GetComponent<DroppedItem>().Remove();
                     return;
                 }

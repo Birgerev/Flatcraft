@@ -152,11 +152,6 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void SetItem(int slot, ItemStack item)
     {
-        if (item.amount <= 0)
-            item = new ItemStack();
-        if (item.amount > MaxStackSize)
-            item.amount = MaxStackSize;
-
         if(slot < items.Count)
             items[slot] = item;
         else
@@ -166,11 +161,13 @@ public class Inventory : NetworkBehaviour
 
     public ItemStack GetItem(int slot)
     {
-        if (slot < items.Count)
-            return items[slot];
+        if (slot >= items.Count)
+        {
+            Debug.LogError("Tried getting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
+            return new ItemStack();
+        }
         
-        Debug.LogError("Tried getting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
-        return new ItemStack();
+        return items[slot];
     }
 
     [Server]
@@ -189,9 +186,9 @@ public class Inventory : NetworkBehaviour
         {
             ItemStack invItem = GetItem(slot);
 
-            if (invItem.material == item.material && invItem.amount + item.amount <= MaxStackSize)
+            if (invItem.material == item.material && invItem.Amount + item.Amount <= MaxStackSize)
             {
-                invItem.amount += item.amount;
+                invItem.Amount += item.Amount;
                 SetItem(slot, invItem);
                 return true;
             }
@@ -214,7 +211,7 @@ public class Inventory : NetworkBehaviour
             if (item.material == mat)
                 return item;
         
-        return new ItemStack(Material.Air);
+        return new ItemStack();
     }
 
     public bool ContainsAtLeast(Material mat, int amount)
@@ -223,7 +220,7 @@ public class Inventory : NetworkBehaviour
         foreach (ItemStack item in items)
         {
             if (item.material == mat)
-                amountOfMaterial += item.amount;
+                amountOfMaterial += item.Amount;
 
             if (amountOfMaterial >= amount)
                 return true;

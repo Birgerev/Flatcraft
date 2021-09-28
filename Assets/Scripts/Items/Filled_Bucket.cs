@@ -24,7 +24,7 @@ public class Filled_Bucket : Item
         
         //Remove one filled bucket
         ItemStack currentBucket = inv.GetSelectedItem();
-        currentBucket.amount--;
+        currentBucket.Amount--;
         inv.SetItem(inv.selectedSlot, currentBucket);
         
         //Give one empty bucket

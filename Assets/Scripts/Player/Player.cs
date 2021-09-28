@@ -509,7 +509,7 @@ public class Player : HumanEntity
         Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
 
         //Subtract food item from inventory
-        selectedItemStack.amount -= 1;
+        selectedItemStack.Amount -= 1;
         GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
     }
 
@@ -555,7 +555,7 @@ public class Player : HumanEntity
         ItemStack item = GetInventory().GetSelectedItem();
         Material heldMat;
 
-        if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().amount <= 0)
+        if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().Amount <= 0)
             return;
 
         if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
@@ -569,7 +569,7 @@ public class Player : HumanEntity
         loc.GetBlock().BuildTick();
         loc.Tick();
 
-        GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
+        GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.Amount - 1));
         lastHitTime = NetworkTime.time;
     }
 
@@ -681,10 +681,10 @@ public class Player : HumanEntity
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem;
-        droppedItem.amount = 1;
-        selectedItem.amount--;
+        droppedItem.Amount = 1;
+        selectedItem.Amount--;
 
-        if (droppedItem.amount <= 0)
+        if (droppedItem.Amount <= 0)
             return;
 
         DropItem(droppedItem);

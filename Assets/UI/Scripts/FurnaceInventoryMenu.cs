@@ -65,7 +65,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
             return;
 
         newPointerItem.material = inv.GetItem(inv.GetResultSlot()).material;
-        newPointerItem.amount += inv.GetItem(inv.GetResultSlot()).amount;
+        newPointerItem.Amount += inv.GetItem(inv.GetResultSlot()).Amount;
         inv.SetItem(inv.GetResultSlot(), new ItemStack());
         SetPointerItem(newPointerItem);
 

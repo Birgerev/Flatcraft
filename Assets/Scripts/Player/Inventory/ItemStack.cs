@@ -5,47 +5,67 @@ using Random = System.Random;
 
 public struct ItemStack
 {
-    public int amount;
+    private int _amount;
+    public int Amount{
+        get
+        {
+            return _amount;
+        }
+        set
+        {
+            if(value == 0)
+                this = default(ItemStack);
+            if (value > Inventory.MaxStackSize)
+                _amount = Inventory.MaxStackSize;
+            
+            _amount = value;
+        }
+    }
     public string data;
     public int durability;
-    public Material material;
+    public Material material;//TODO test structs in all cases
 
     public ItemStack(Material material)
     {
         this.material = material;
-        this.amount = 1;
+        this._amount = -1;
         this.durability = -1;
         this.data = "";
-        
+
+        this.Amount = 1;
         this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount)
     {
         this.material = material;
-        this.amount = amount;
+        this._amount = -1;
         this.durability = -1;
         this.data = "";
-        
+
+        this.Amount = amount;
         this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data)
     {
         this.material = material;
-        this.amount = amount;
+        this._amount = -1;
         this.data = data;
         this.durability = -1;
         
+        this.Amount = amount;
         this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data, int durability)
     {
         this.material = material;
-        this.amount = amount;
+        this._amount = -1;
         this.data = data;
         this.durability = durability;
+        
+        this.Amount = amount;
     }
 
     public ItemStack(string saveString)
@@ -53,9 +73,11 @@ public struct ItemStack
         string[] values = saveString.Split('*');
 
         this.material = (Material) Enum.Parse(typeof(Material), values[0]);
-        this.amount = int.Parse(values[1]);
+        this._amount = -1;
         this.data = values[2];
         this.durability = int.Parse(values[3]);
+        
+        this.Amount = int.Parse(values[1]);
     }
 
     public string GetTexture()
@@ -137,7 +159,7 @@ public struct ItemStack
 
     public void Drop(Location location, Vector2 velocity)
     {
-        if (material == Material.Air || amount <= 0)
+        if (material == Material.Air || Amount <= 0)
             return;
 
         GameObject obj = Entity.Spawn("DroppedItem").gameObject;
@@ -149,6 +171,6 @@ public struct ItemStack
 
     public override string ToString()
     {
-        return material + "*" + amount + "*" + data + "*" + durability;
+        return material + "*" + Amount + "*" + data + "*" + durability;
     }
 }
