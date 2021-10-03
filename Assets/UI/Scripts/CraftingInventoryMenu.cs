@@ -48,8 +48,8 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             pointerItem.material != Material.Air)
             return;
 
-        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot()).Clone();
-        newPointerItem.amount = pointerItem.amount + inv.GetItem(inv.GetCraftingResultSlot()).amount;
+        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot());
+        newPointerItem.Amount = pointerItem.Amount + inv.GetItem(inv.GetCraftingResultSlot()).Amount;
         SetPointerItem(newPointerItem);
 
         //Clear Crafting slot
@@ -57,9 +57,11 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
 
         for (int i = 0; i <= 8; i++)
         {
-            ItemStack newCraftingSlotItem = inv.GetItem(i).Clone();
-            newCraftingSlotItem.amount--;
-
+            ItemStack newCraftingSlotItem = inv.GetItem(i);
+            if(newCraftingSlotItem.material == Material.Air)
+                continue;
+            
+            newCraftingSlotItem.Amount--;
             inv.SetItem(i, newCraftingSlotItem);
         }
 

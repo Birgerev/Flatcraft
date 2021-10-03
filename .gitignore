@@ -11,6 +11,7 @@ Saves/
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
+/[Bb]uildServer/
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
@@ -69,3 +70,5 @@ Packages/packages-lock.json
 Packages/packages-lock.json
 sunvox_log.txt
 *.sunpat
+testingProfile.dat
+serverConfig.dat

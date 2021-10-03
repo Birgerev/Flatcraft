@@ -509,7 +509,7 @@ public class Player : HumanEntity
         Sound.Play(Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
 
         //Subtract food item from inventory
-        selectedItemStack.amount -= 1;
+        selectedItemStack.Amount -= 1;
         GetInventory().SetItem(GetInventory().selectedSlot, selectedItemStack);
     }
 
@@ -552,10 +552,10 @@ public class Player : HumanEntity
     [Command]
     public void RequestBlockPlace(Location loc)
     {
-        ItemStack item = GetInventory().GetSelectedItem().Clone();
+        ItemStack item = GetInventory().GetSelectedItem();
         Material heldMat;
 
-        if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().amount <= 0)
+        if (GetInventory().GetSelectedItem().material == Material.Air || GetInventory().GetSelectedItem().Amount <= 0)
             return;
 
         if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
@@ -569,7 +569,7 @@ public class Player : HumanEntity
         loc.GetBlock().BuildTick();
         loc.Tick();
 
-        GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.amount - 1));
+        GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack(item.material, item.Amount - 1));
         lastHitTime = NetworkTime.time;
     }
 
@@ -603,8 +603,7 @@ public class Player : HumanEntity
     }
 
     [Command]
-    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown
-        , NetworkConnectionToClient sender = null)
+    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses
@@ -627,10 +626,10 @@ public class Player : HumanEntity
     {
         if (GetInventory().GetSelectedItem().GetMaxDurability() != -1)
         {
-            GetInventory().GetSelectedItem().durability--;
+            ItemStack newItem = GetInventory().GetSelectedItem();
+            newItem.durability--;
 
-            if (GetInventory().GetSelectedItem().durability < 0)
-                GetInventory().SetItem(GetInventory().selectedSlot, new ItemStack());
+            GetInventory().SetItem(GetInventory().selectedSlot, (newItem.durability >= 0) ? newItem : new ItemStack());
         }
     }
 
@@ -681,11 +680,11 @@ public class Player : HumanEntity
     public void DropSelected()
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
-        ItemStack droppedItem = selectedItem.Clone();
-        droppedItem.amount = 1;
-        selectedItem.amount--;
+        ItemStack droppedItem = selectedItem;
+        droppedItem.Amount = 1;
+        selectedItem.Amount--;
 
-        if (droppedItem.amount <= 0)
+        if (droppedItem.Amount <= 0)
             return;
 
         DropItem(droppedItem);
@@ -695,7 +694,7 @@ public class Player : HumanEntity
     [Server]
     public void DropItem(ItemStack item)
     {
-        ItemStack droppedItem = item.Clone();
+        ItemStack droppedItem = item;
         
         droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
             , new Vector2(3 * (facingLeft ? -1 : 1), 0));

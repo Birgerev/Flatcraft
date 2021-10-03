@@ -395,7 +395,7 @@ public class Entity : NetworkBehaviour
     {
         int i = 0;
         foreach (ItemStack item in GetDrops())
-            if (item.material != Material.Air && item.amount > 0)
+            if (item.material != Material.Air && item.Amount > 0)
             {
                 Random random = new Random((transform.position + "" + i).GetHashCode());
                 Vector2 maxVelocity = new Vector2(2, 2);
@@ -730,6 +730,23 @@ public class Entity : NetworkBehaviour
         }
 
         return null;
+    }
+    
+    public static Entity ClosestEntityOfType(Location loc, Type type)
+    {
+        Entity closestEntity = null;
+        float closestEntityDistance = int.MaxValue;
+        foreach (Entity entity in entities)
+        {
+            float distance = Vector2.Distance(entity.Location.GetPosition(), loc.GetPosition());
+            if (!(distance < closestEntityDistance))
+                continue;
+            
+            closestEntity = entity;
+            closestEntityDistance = distance;
+        }
+
+        return closestEntity;
     }
     
     [Client]

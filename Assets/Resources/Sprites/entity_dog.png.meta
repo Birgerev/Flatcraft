@@ -139,12 +139,12 @@ TextureImporter:
       name: entity_dog
       rect:
         serializedVersion: 2
-        x: 1
-        y: 25
-        width: 9
-        height: 7
-      alignment: 9
-      pivot: {x: 0.44444, y: 0.5}
+        x: 0
+        y: 26
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -160,12 +160,12 @@ TextureImporter:
       name: entity_dog_walk
       rect:
         serializedVersion: 2
-        x: 10
-        y: 25
-        width: 10
-        height: 7
+        x: 8
+        y: 26
+        width: 9
+        height: 6
       alignment: 9
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0.5555556, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -181,10 +181,10 @@ TextureImporter:
       name: entity_dog_sit
       rect:
         serializedVersion: 2
-        x: 20
-        y: 25
-        width: 8
-        height: 7
+        x: 17
+        y: 26
+        width: 6
+        height: 6
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

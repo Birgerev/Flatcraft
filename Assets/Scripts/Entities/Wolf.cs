@@ -27,7 +27,7 @@ public class Wolf : PassiveEntity
 
         if (heldItem.material == Material.Bone)
         {
-            heldItem.amount--;
+            heldItem.Amount--;
             inv.SetItem(inv.selectedSlot, heldItem);
             if (new Random().NextDouble() < tameChance)
             {

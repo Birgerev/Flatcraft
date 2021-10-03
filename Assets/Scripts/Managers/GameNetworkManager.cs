@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using kcp2k;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameNetworkManager : NetworkManager
 {
-    public static bool isHost;
-    public static string serverAddress = "player";
+    public static ConnectionMode connectionMode;
+    public static string clientConnectionAddress = "player";
+    public static int port = 630;
     public static string playerName = "player";
 
     public List<string> prefabDirectories = new List<string>();
@@ -15,7 +17,9 @@ public class GameNetworkManager : NetworkManager
     public override void Start()
     {
         base.Start();
+        //Begin setup after entering loading scene
 
+        //Register all network prefabs to manager
         foreach (string dir in prefabDirectories)
         {
             GameObject[] prefabs = Resources.LoadAll<GameObject>(dir + "/");
@@ -23,24 +27,31 @@ public class GameNetworkManager : NetworkManager
                 NetworkClient.RegisterPrefab(prefab);
         }
 
-        if (isHost)
+        //Start Connection based on selected connection mode
+        switch(connectionMode)
         {
-            Debug.Log("Starting host");
-            StartHost();
+            case ConnectionMode.Client:
+                networkAddress = clientConnectionAddress;
+                GetComponent<KcpTransport>().Port = (ushort)port;
+                StartClient();
+                break;
+            case ConnectionMode.Host:
+                StartHost();
+                break;
+            case ConnectionMode.DedicatedServer:
+                GetComponent<KcpTransport>().Port = (ushort)port;
+                StartServer();
+                break;
         }
-        else
-        {
-            Debug.Log("Starting client");
-            networkAddress = serverAddress;
-            StartClient();
-        }
+        
+        Debug.Log("Starting " + connectionMode);
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
 
-        if (!isHost)
+        if (connectionMode == ConnectionMode.Client)
         {
             World world = new World("multiplayer", 1);
             world.versionId = VersionController.CurrentVersionId;
@@ -80,9 +91,24 @@ public class GameNetworkManager : NetworkManager
 
     public static void Disconnect()
     {
-        if (isHost)
-            singleton.StopHost();
-        else
-            singleton.StopClient();
+        switch (connectionMode)
+        {
+            case ConnectionMode.Client:
+                singleton.StopClient();
+                break;
+            case ConnectionMode.Host:
+                singleton.StopHost();
+                break;
+            case ConnectionMode.DedicatedServer:
+                singleton.StopServer();
+                break;
+        }
     }
+}
+
+public enum ConnectionMode
+{
+    Client,
+    Host,
+    DedicatedServer
 }

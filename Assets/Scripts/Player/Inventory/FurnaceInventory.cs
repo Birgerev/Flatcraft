@@ -45,12 +45,15 @@ public class FurnaceInventory : Inventory
 
     public void CheckFuels()
     {
-        if (fuelLeft <= 0 && GetItem(GetFuelSlot()) != null && GetRecipe() != null &&
+        if (fuelLeft <= 0 && GetRecipe() != null &&
             SmeltingRecipe.Fuels.ContainsKey(GetItem(GetFuelSlot()).material))
         {
             fuelLeft = SmeltingRecipe.Fuels[GetItem(GetFuelSlot()).material];
             highestFuel = fuelLeft;
-            GetItem(GetFuelSlot()).amount--;
+
+            ItemStack newFuelItem = GetItem(GetFuelSlot());
+            newFuelItem.Amount--;
+            SetItem(GetFuelSlot(), newFuelItem);
         }
     }
 
@@ -61,7 +64,7 @@ public class FurnaceInventory : Inventory
         if (fuelLeft <= 0)
             highestFuel = 0;
 
-        if (curRecipe != null && GetItem(GetIngredientSlot()).amount > 0 &&
+        if (curRecipe != null && GetItem(GetIngredientSlot()).Amount > 0 &&
             (GetItem(GetResultSlot()).material == curRecipe.result.material ||
              GetItem(GetResultSlot()).material == Material.Air))
         {
@@ -93,17 +96,22 @@ public class FurnaceInventory : Inventory
     {
         //Called once smelting is done 
         SmeltingRecipe curRecepie = GetRecipe();
+        ItemStack newResultItem = GetItem(GetResultSlot());
+        ItemStack newIngredientItem = GetItem(GetIngredientSlot());
+            
+        newResultItem.material = curRecepie.result.material;
+        newResultItem.Amount += curRecepie.result.Amount;
+        newIngredientItem.Amount--;
 
-        GetItem(GetResultSlot()).material = curRecepie.result.material;
-        GetItem(GetResultSlot()).amount += curRecepie.result.amount;
-        GetItem(GetIngredientSlot()).amount--;
-
+        SetItem(GetResultSlot(), newResultItem);
+        SetItem(GetIngredientSlot(), newIngredientItem);
+        
         smeltingProgress = 0;
     }
 
     public SmeltingRecipe GetRecipe()
     {
-        if (GetItem(GetIngredientSlot()).amount <= 0)
+        if (GetItem(GetIngredientSlot()).Amount <= 0)
             return null;
 
         //Get recepie based on contents of ingredient slot

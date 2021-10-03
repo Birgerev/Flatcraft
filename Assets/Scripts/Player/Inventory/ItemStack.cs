@@ -3,57 +3,81 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
-public class ItemStack
+public struct ItemStack
 {
     public int amount;
+    public int Amount{
+        get
+        {
+            return amount;
+        }
+        set
+        {
+            if(value == 0)
+                this = default(ItemStack);
+            if (value > Inventory.MaxStackSize)
+                amount = Inventory.MaxStackSize;
+            
+            amount = value;
+        }
+    }
     public string data;
     public int durability;
-    public Material material;
-
-    public ItemStack()
-    {
-        material = Material.Air;
-        amount = 0;
-    }
+    public Material material;//TODO test structs in all cases
 
     public ItemStack(Material material)
     {
         this.material = material;
-        amount = 1;
-        durability = GetMaxDurability();
+        this.amount = -1;
+        this.durability = -1;
+        this.data = "";
+
+        this.Amount = 1;
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount)
     {
         this.material = material;
-        this.amount = amount;
-        durability = GetMaxDurability();
+        this.amount = -1;
+        this.durability = -1;
+        this.data = "";
+
+        this.Amount = amount;
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data)
     {
         this.material = material;
-        this.amount = amount;
+        this.amount = -1;
         this.data = data;
-        durability = GetMaxDurability();
+        this.durability = -1;
+        
+        this.Amount = amount;
+        this.durability = GetMaxDurability();
     }
 
     public ItemStack(Material material, int amount, string data, int durability)
     {
         this.material = material;
-        this.amount = amount;
+        this.amount = -1;
         this.data = data;
         this.durability = durability;
+        
+        this.Amount = amount;
     }
 
     public ItemStack(string saveString)
     {
         string[] values = saveString.Split('*');
 
-        material = (Material) Enum.Parse(typeof(Material), values[0]);
-        amount = int.Parse(values[1]);
-        data = values[2];
-        durability = int.Parse(values[3]);
+        this.material = (Material) Enum.Parse(typeof(Material), values[0]);
+        this.amount = -1;
+        this.data = values[2];
+        this.durability = int.Parse(values[3]);
+        
+        this.Amount = int.Parse(values[1]);
     }
 
     public string GetTexture()
@@ -135,7 +159,7 @@ public class ItemStack
 
     public void Drop(Location location, Vector2 velocity)
     {
-        if (material == Material.Air || amount <= 0)
+        if (material == Material.Air || Amount <= 0)
             return;
 
         GameObject obj = Entity.Spawn("DroppedItem").gameObject;
@@ -145,13 +169,8 @@ public class ItemStack
         obj.GetComponent<Rigidbody2D>().velocity = velocity;
     }
 
-    public string GetSaveString()
+    public override string ToString()
     {
-        return material + "*" + amount + "*" + data + "*" + durability;
-    }
-
-    public ItemStack Clone()
-    {
-        return (ItemStack) MemberwiseClone();
+        return material + "*" + Amount + "*" + data + "*" + durability;
     }
 }

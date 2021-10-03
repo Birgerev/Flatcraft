@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class InventoryMenu : NetworkBehaviour
 {
-    [SyncVar] public GameObject playerInstance;
+    [SyncVar] public GameObject ownerPlayerInstance;
 
     public List<Transform> inventorySlotLists = new List<Transform>();
     public PointerSlot pointerSlot;
@@ -19,7 +19,9 @@ public class InventoryMenu : NetworkBehaviour
 
     public virtual void Update()
     {
-        bool ownsInventoryMenu = PlayerInstance.localPlayerInstance.gameObject == playerInstance;
+        bool ownsInventoryMenu = (PlayerInstance.localPlayerInstance != null &&
+                                 PlayerInstance.localPlayerInstance.gameObject == ownerPlayerInstance);
+
         canvasGroup.alpha = ownsInventoryMenu ? 1 : 0;
         canvasGroup.interactable = ownsInventoryMenu;
         canvasGroup.blocksRaycasts = ownsInventoryMenu;
@@ -46,7 +48,7 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void OpenPlayerInventory()
     {
         inventoryIds.Add(1,
-            playerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
+            ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
     }
 
     [Command(requiresAuthority = false)]
@@ -179,10 +181,10 @@ public class InventoryMenu : NetworkBehaviour
         if (pointerItem.material == Material.Air)
             return;
         
-        Player player = playerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>();
+        Player player = ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>();
         player.DropItem(pointerItem);
         
-        SetPointerItem(new ItemStack());
+        SetPointerItem(new ItemStack(Material.Air));
         UpdateInventory();
     }
     
@@ -202,7 +204,7 @@ public class InventoryMenu : NetworkBehaviour
 
         //Right Click to leave one item
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.amount > 0 && slotItem.amount + 1 <= 64)
+            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= 64)
         {
             SlotAction_LeaveOne(inventoryIndex, slotIndex);
 
@@ -210,7 +212,7 @@ public class InventoryMenu : NetworkBehaviour
         }
 
         //Right click to halve
-        if ((pointerItem.amount == 0 || pointerItem.material == Material.Air) && slotItem.amount > 0)
+        if ((pointerItem.Amount == 0 || pointerItem.material == Material.Air) && slotItem.Amount > 0)
             SlotAction_Halve(inventoryIndex, slotIndex);
     }
 
@@ -230,23 +232,23 @@ public class InventoryMenu : NetworkBehaviour
     [Server]
     public virtual void SlotAction_LeaveOne(int inventoryIndex, int slotIndex)
     {
-        ItemStack slotItem = GetItem(inventoryIndex, slotIndex).Clone();
-        ItemStack pointerItemClone = pointerItem.Clone();
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+        ItemStack newPointerItem = pointerItem;
 
-        if (slotItem.material == pointerItemClone.material)
+        if (slotItem.material == newPointerItem.material)
         {
-            slotItem.amount++;
+            slotItem.Amount++;
         }
         else
         {
-            slotItem = pointerItem.Clone();
-            slotItem.amount = 1;
+            slotItem = pointerItem;
+            slotItem.Amount = 1;
         }
 
         SetItem(inventoryIndex, slotIndex, slotItem);
 
-        pointerItemClone.amount--;
-        SetPointerItem(pointerItemClone);
+        newPointerItem.Amount--;
+        SetPointerItem(newPointerItem);
 
         UpdateInventory();
     }
@@ -254,16 +256,16 @@ public class InventoryMenu : NetworkBehaviour
     [Server]
     public virtual void SlotAction_Halve(int inventoryIndex, int slotIndex)
     {
-        ItemStack slotItem = GetItem(inventoryIndex, slotIndex).Clone();
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
 
-        int pointerAmount = Mathf.CeilToInt(slotItem.amount / 2f);
-        int slotAmount = Mathf.FloorToInt(slotItem.amount / 2f);
+        int newPointerAmount = Mathf.CeilToInt(slotItem.Amount / 2f);
+        int newSlotAmount = Mathf.FloorToInt(slotItem.Amount / 2f);
 
-        ItemStack pointerItemClone = slotItem.Clone();
-        pointerItemClone.amount = pointerAmount;
-        SetPointerItem(pointerItemClone);
+        ItemStack newPointerItem = slotItem;
+        newPointerItem.Amount = newPointerAmount;
+        SetPointerItem(newPointerItem);
 
-        slotItem.amount = slotAmount;
+        slotItem.Amount = newSlotAmount;
         SetItem(inventoryIndex, slotIndex, slotItem);
 
         UpdateInventory();
@@ -272,11 +274,10 @@ public class InventoryMenu : NetworkBehaviour
     [Server]
     public virtual void SlotAction_Swap(int inventoryIndex, int slotIndex)
     {
-        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
-        ItemStack pointerItemClone = pointerItem.Clone();
+        ItemStack oldSlotItem = GetItem(inventoryIndex, slotIndex);
 
-        SetItem(inventoryIndex, slotIndex, pointerItemClone);
-        SetPointerItem(slotItem);
+        SetItem(inventoryIndex, slotIndex, pointerItem);
+        SetPointerItem(oldSlotItem);
 
         UpdateInventory();
     }
@@ -284,16 +285,16 @@ public class InventoryMenu : NetworkBehaviour
     [Server]
     public virtual void SlotAction_MergeSlot(int inventoryIndex, int slotIndex)
     {
-        ItemStack slotItem = GetItem(inventoryIndex, slotIndex).Clone();
-        ItemStack pointerItemClone = pointerItem.Clone();
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+        ItemStack newPointerItem = pointerItem;
 
-        int maxAmountOfItemsToMerge = Inventory.MaxStackSize - slotItem.amount;
-        int amountOfItemsFromPointerToMerge = Mathf.Clamp(pointerItemClone.amount, 0, maxAmountOfItemsToMerge);
+        int maxAmountOfItemsToMerge = Inventory.MaxStackSize - slotItem.Amount;
+        int amountOfItemsFromPointerToMerge = Mathf.Clamp(newPointerItem.Amount, 0, maxAmountOfItemsToMerge);
 
-        pointerItemClone.amount -= amountOfItemsFromPointerToMerge;
-        slotItem.amount += amountOfItemsFromPointerToMerge;
+        newPointerItem.Amount -= amountOfItemsFromPointerToMerge;
+        slotItem.Amount += amountOfItemsFromPointerToMerge;
         SetItem(inventoryIndex, slotIndex, slotItem);
-        SetPointerItem(pointerItemClone);
+        SetPointerItem(newPointerItem);
 
         UpdateInventory();
     }

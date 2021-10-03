@@ -15,7 +15,7 @@ public class PlaceableEntityItem : Item
             //Remove player item
             PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
             ItemStack selectedItem = inv.GetSelectedItem();
-            selectedItem.amount--;
+            selectedItem.Amount--;
             inv.SetItem(inv.selectedSlot, selectedItem);
         }
     }

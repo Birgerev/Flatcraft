@@ -76,7 +76,7 @@ public class Inventory : NetworkBehaviour
     public static bool IsAnyOpen(PlayerInstance playerInstance)
     {
         foreach (Inventory inv in WorldManager.instance.loadedInventories.Values)
-            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().playerInstance == playerInstance.gameObject)
+            if (inv.open && inv.inventoryMenu.GetComponent<InventoryMenu>().ownerPlayerInstance == playerInstance.gameObject)
                 return true;
 
         return false;
@@ -100,7 +100,7 @@ public class Inventory : NetworkBehaviour
 
         List<string> itemLines = new List<string>();
         foreach (ItemStack item in items)
-            itemLines.Add(item.GetSaveString());
+            itemLines.Add(item.ToString());
         File.WriteAllLines(path + "\\items.dat", itemLines);
 
         File.WriteAllLines(path + "\\type.dat", new List<string> {type});
@@ -152,26 +152,31 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void SetItem(int slot, ItemStack item)
     {
-        if (item.amount <= 0)
-            item = new ItemStack();
-        if (item.amount > MaxStackSize)
-            item.amount = MaxStackSize;
+        if(slot < items.Count)
+            items[slot] = item;
+        else
+            Debug.LogError("Tried setting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
 
-        items[slot] = item;
     }
 
     public ItemStack GetItem(int slot)
     {
-        if (slot < size)
-            return items[slot];
-        return null;
+        if (slot >= items.Count)
+        {
+            Debug.LogError("Tried getting item outside of inventory list range, index accessed: " + slot + ", item list size: " + items.Count);
+            return new ItemStack();
+        }
+        
+        return items[slot];
     }
 
     [Server]
     public void Clear()
     {
         for (int slot = 0; slot < size; slot++)
-            items[slot] = new ItemStack();
+        {
+            SetItem(slot, new ItemStack());
+        }
     }
 
     [Server]
@@ -179,11 +184,11 @@ public class Inventory : NetworkBehaviour
     {
         for (int slot = 0; slot < size; slot++)
         {
-            ItemStack invItem = GetItem(slot).Clone();
+            ItemStack invItem = GetItem(slot);
 
-            if (invItem.material == item.material && invItem.amount + item.amount <= MaxStackSize)
+            if (invItem.material == item.material && invItem.Amount + item.Amount <= MaxStackSize)
             {
-                invItem.amount += item.amount;
+                invItem.Amount += item.Amount;
                 SetItem(slot, invItem);
                 return true;
             }
@@ -205,7 +210,8 @@ public class Inventory : NetworkBehaviour
         foreach (ItemStack item in items)
             if (item.material == mat)
                 return item;
-        return null;
+        
+        return new ItemStack();
     }
 
     public bool ContainsAtLeast(Material mat, int amount)
@@ -214,7 +220,7 @@ public class Inventory : NetworkBehaviour
         foreach (ItemStack item in items)
         {
             if (item.material == mat)
-                amountOfMaterial += item.amount;
+                amountOfMaterial += item.Amount;
 
             if (amountOfMaterial >= amount)
                 return true;
@@ -253,7 +259,7 @@ public class Inventory : NetworkBehaviour
         InventoryMenu menu = obj.GetComponent<InventoryMenu>();
 
         menu.inventoryIds.Add(0, id);
-        menu.playerInstance = playerInstance.gameObject;
+        menu.ownerPlayerInstance = playerInstance.gameObject;
 
         NetworkServer.Spawn(obj);
         inventoryMenu = obj;
