@@ -30,12 +30,12 @@ public class OverworldGenerator : WorldGenerator
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005f;
     public static int SeaLevel = 62;
-    public static Perlin caveNoise;
+    public static Perlin materialPatchNoise;
 
     public OverworldGenerator()
     {
-        if (caveNoise == null)
-            caveNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
+        if (materialPatchNoise == null)
+            materialPatchNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
                 WorldManager.world.seed, QualityMode.High);
     }
 
@@ -91,9 +91,9 @@ public class OverworldGenerator : WorldGenerator
         //-Dirt & Gravel Patches-//
         if (mat == Material.Stone)
         {
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
+            if (Mathf.Abs((float) materialPatchNoise.GetValue((float) loc.x / 20, (float) loc.y / 20)) > 7.5f)
                 mat = Material.Dirt;
-            if (Mathf.Abs((float) caveNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
+            if (Mathf.Abs((float) materialPatchNoise.GetValue((float) loc.x / 20 + 100, (float) loc.y / 20, 200)) > 7.5f)
                 mat = Material.Gravel;
         }
 
