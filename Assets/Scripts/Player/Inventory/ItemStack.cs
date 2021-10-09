@@ -23,7 +23,7 @@ public struct ItemStack
     }
     public string data;
     public int durability;
-    public Material material;//TODO test structs in all cases
+    public Material material;
 
     public ItemStack(Material material)
     {
