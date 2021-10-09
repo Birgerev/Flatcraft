@@ -200,11 +200,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256065115}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 3.3, y: 1.74, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1009806582
 GameObject:
@@ -217,7 +217,6 @@ GameObject:
   - component: {fileID: 1009806584}
   - component: {fileID: 1009806583}
   - component: {fileID: 1009806585}
-  - component: {fileID: 1009806586}
   m_Layer: 0
   m_Name: DebugManager
   m_TagString: Untagged
@@ -238,19 +237,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   biome:
-    name: 
-    landscapeLacunarity: 1
-    landscapePercistance: 2.13
+    biomeMinimumChunkSize: 16
+    biomeMaximumChunkSize: 16
+    biomeSpecificAnimals: []
+    landscapeHeightOverSeaLevel: -25.76
+    landscapeHeightWeight: -0.1
+    landscapeLacunarity: 0.86
     landscapeOctaves: 4
-    landscapeSize: 0.05
-    landscapeHeightWeight: 2.16
-    landscapeHeightOverSeaLevel: -0.02
-    stoneLayerNoiseValue: 8.97
-    biomeMinimumChunkSize: 0
-    biomeMaximumChunkSize: 0
-    biomeSpecificEntitySpawns: []
-  previewWidth: 200
+    landscapePercistance: 2.59
+    landscapeSize: -0.11
+    name: hell
+    stoneLayerNoiseValue: 0
   previewUpdateFrequency: 0.2
+  previewWidth: 600
   showSeaLevel: 1
   showStoneLayer: 1
 --- !u!4 &1009806584
@@ -265,7 +264,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1009806585
 SpriteRenderer:
@@ -318,81 +317,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1009806586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1009806582}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a32bebd3afb1a94b8dc814814745476, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  biomes:
-  - name: forest
-    landscapeLacunarity: 1
-    landscapePercistance: 2.13
-    landscapeOctaves: 4
-    landscapeSize: 0.05
-    landscapeHeightWeight: 2.16
-    landscapeHeightOverSeaLevel: -0.02
-    stoneLayerNoiseValue: 6.86
-    biomeMinimumChunkSize: 3
-    biomeMaximumChunkSize: 5
-    biomeSpecificEntitySpawns: []
-  - name: desert
-    landscapeLacunarity: 1
-    landscapePercistance: 2.13
-    landscapeOctaves: 4
-    landscapeSize: 0.05
-    landscapeHeightWeight: 1.23
-    landscapeHeightOverSeaLevel: -0.02
-    stoneLayerNoiseValue: 5
-    biomeMinimumChunkSize: 4
-    biomeMaximumChunkSize: 10
-    biomeSpecificEntitySpawns: []
-  - name: forest_hills
-    landscapeLacunarity: 1.05
-    landscapePercistance: 2.05
-    landscapeOctaves: 4
-    landscapeSize: 0.06
-    landscapeHeightWeight: 1.23
-    landscapeHeightOverSeaLevel: -0.08
-    stoneLayerNoiseValue: 4.63
-    biomeMinimumChunkSize: 3
-    biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
-  - name: birch_forest
-    landscapeLacunarity: 1.05
-    landscapePercistance: 2.05
-    landscapeOctaves: 4
-    landscapeSize: 0.06
-    landscapeHeightWeight: 1.23
-    landscapeHeightOverSeaLevel: -0.08
-    stoneLayerNoiseValue: 4.63
-    biomeMinimumChunkSize: 3
-    biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
-  - name: plains
-    landscapeLacunarity: 1
-    landscapePercistance: 2.13
-    landscapeOctaves: 4
-    landscapeSize: 0.05
-    landscapeHeightWeight: 2.16
-    landscapeHeightOverSeaLevel: -0.02
-    stoneLayerNoiseValue: 8.97
-    biomeMinimumChunkSize: 3
-    biomeMaximumChunkSize: 6
-    biomeSpecificEntitySpawns: []
-  amountOfChunksLoading: 0
-  chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
-    type: 3}
-  player: {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61, type: 3}
-  loadingState: 
-  loadingProgress: 0
-  mainChunk: {fileID: 0}
 --- !u!850595691 &1068284029
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -400,7 +324,7 @@ LightingSettings:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Settings.lighting
-  serializedVersion: 2
+  serializedVersion: 3
   m_GIWorkflowMode: 1
   m_EnableBakedLightmaps: 0
   m_EnableRealtimeLightmaps: 0
@@ -439,7 +363,7 @@ LightingSettings:
   m_PVREnvironmentReferencePointCount: 2048
   m_LightProbeSampleCountMultiplier: 4
   m_PVRBounces: 2
-  m_PVRRussianRouletteStartBounce: 2
+  m_PVRMinBounces: 1
   m_PVREnvironmentMIS: 1
   m_PVRFilteringMode: 1
   m_PVRDenoiserTypeDirect: 1
