@@ -9,7 +9,7 @@ public class CaveGenerator : MonoBehaviour
     private const int perlinSnakeMaxAngleChange = 40;
     private const float perlinSnakeVericalAngleStopChance = 0.2f;
 
-    private const int maxCaveHeight = 50;
+    private const int maxCaveHeight = 100;
 
     public static void GenerateCavesForRegion(ChunkPosition chunkPos)
     {
