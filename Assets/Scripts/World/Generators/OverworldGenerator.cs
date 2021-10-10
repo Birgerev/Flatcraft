@@ -27,6 +27,7 @@ public class OverworldGenerator : WorldGenerator
     private const int OreRedstoneHeight = 16;
     private const double OreRedstoneChance = 0.002d;
 
+    private const double DesertTempleChance = 0.03d;
     private const double DungeonChance = 0.0003d;
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005d;
@@ -129,7 +130,8 @@ public class OverworldGenerator : WorldGenerator
 
         Material[] flowerMaterials = {Material.Red_Flower};
         Material[] vegetationMaterials = {Material.Tall_Grass};
-
+        
+        //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass || matBeneath == Material.Sand) && mat == Material.Air)
         {
             //Vegetation
