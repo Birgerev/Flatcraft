@@ -62,6 +62,6 @@ public class DebugMenu : MonoBehaviour
         Location location = player.GetBlockedMouseLocation();
         BlockState state = location.GetState();
 
-        text_blockInfo.text = "{" + state.data.GetSaveString() + "}   " + "Material." + state.material;
+        text_blockInfo.text = "{" + state.data.ToString() + "}   " + "Material." + state.material;
     }
 }
