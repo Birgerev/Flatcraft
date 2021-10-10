@@ -37,6 +37,7 @@ public class Chunk : NetworkBehaviour
     public bool isLoaded;
     public bool isLightGenerated;
     public bool blocksInitialized;
+    public bool startedInitializingAllBlocks;
 
     public Portal_Frame netherPortal;
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
@@ -364,6 +365,7 @@ public class Chunk : NetworkBehaviour
         //Initialize Blocks
         List<Block> blockList = new List<Block>(blocks.Values);
         int i = 0;
+        startedInitializingAllBlocks = true;
 
         foreach (Block block in blockList)
         {
@@ -385,7 +387,6 @@ public class Chunk : NetworkBehaviour
             if (i % 20 == 0)
                 yield return new WaitForSeconds(0);
         }
-
         blocksInitialized = true;
     }
 
@@ -699,9 +700,7 @@ public class Chunk : NetworkBehaviour
         if (mat != Material.Air)
         {
             //Place new block
-            GameObject blockObject = null;
-
-            blockObject = Instantiate(blockPrefab, transform, true);
+            GameObject blockObject = Instantiate(blockPrefab, transform, true);
 
             //Attach it to the object
             Block block = (Block) blockObject.AddComponent(type);
@@ -714,8 +713,11 @@ public class Chunk : NetworkBehaviour
             else
                 blocks.Add(coordinates, block);
 
+            //Assign location to block
             block.location = location;
-            if (isLoaded)
+            
+            //Dont initialize blocks when chunk is loading
+            if (startedInitializingAllBlocks)
             {
                 block.Initialize();
                 if (isServer)

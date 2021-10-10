@@ -14,8 +14,11 @@ public static class DefaultSceneLoader
             EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo ();
         }
 
-        if (state == PlayModeStateChange.EnteredPlayMode) {
-            EditorSceneManager.LoadScene (0);
+        if (state == PlayModeStateChange.EnteredPlayMode)
+        {
+            string loadedSceneName = EditorSceneManager.GetActiveScene().name;
+            if(!loadedSceneName.Contains("Debug"))
+                EditorSceneManager.LoadScene (0);
         }
     }
 }
