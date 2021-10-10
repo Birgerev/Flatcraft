@@ -27,7 +27,7 @@ public class OverworldGenerator : WorldGenerator
     private const int OreRedstoneHeight = 16;
     private const double OreRedstoneChance = 0.002d;
 
-    private const double DesertTempleChance = 0.03d;
+    private const double DesertTempleChance = 0.005d;
     private const double DungeonChance = 0.0003d;
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005d;
@@ -174,6 +174,12 @@ public class OverworldGenerator : WorldGenerator
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Cactus"));
+            
+            //Desert Temple
+            if (biome.name == "desert")
+                if (r.NextDouble() < DesertTempleChance)
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Desert_Temple"));
+            
         }
         
         if (mat == Material.Stone)
