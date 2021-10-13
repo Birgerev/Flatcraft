@@ -722,18 +722,18 @@ public class Player : HumanEntity
     [Server]
     public override void Save()
     {
-        if (!Directory.Exists(WorldManager.world.GetPath() + "\\players\\" + displayName))
-            Directory.CreateDirectory(WorldManager.world.GetPath() + "\\players\\" + displayName);
+        if (!Directory.Exists(WorldManager.world.GetPath() + "\\players\\" + uuid))
+            Directory.CreateDirectory(WorldManager.world.GetPath() + "\\players\\" + uuid);
 
         base.Save();
-        PlayerSaveData.SetBedLocation(displayName, bedLocation);
+        PlayerSaveData.SetBedLocation(uuid, bedLocation);
     }
 
     [Server]
     public override void Load()
     {
         base.Load();
-        bedLocation = PlayerSaveData.GetBedLocation(displayName);
+        bedLocation = PlayerSaveData.GetBedLocation(uuid);
     }
 
     [Server]
