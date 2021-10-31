@@ -308,7 +308,7 @@ Air*10,13*
 Air*10,14*
 Sandstone*11,-13*
 Sandstone*11,-12*
-Chest*11,-11*rotated_x=false|rotated_y=false
+Chest*11,-11*rotated_x=false|rotated_y=false|loottable=DesertTempleChest
 Air*11,-10*
 Sandstone*11,-9*
 Sandstone*11,-8*
@@ -420,7 +420,7 @@ Air*14,13*
 Air*14,14*
 Sandstone*15,-13*
 Sandstone*15,-12*
-Chest*15,-11*rotated_x=true|rotated_y=false
+Chest*15,-11*rotated_x=true|rotated_y=false|loottable=DesertTempleChest
 Air*15,-10*
 Sandstone*15,-9*
 Sandstone*15,-8*

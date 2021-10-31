@@ -26,4 +26,4 @@ Grass*6,2*
 Grass*7,2*
 Grass*8,2*
 Structure_Block*8,3*structure=Oak_Tree
-Chest*0,3*
+Chest*0,3*loottable=SkyblockChest
