@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0ad68f421d8ca14cb5323eda08ea5db, type: 3}
+  m_Name: DungeonChest
+  m_EditorClassIdentifier: 
+  minimunRolls: 30
+  maximumRolls: 40
+  items:
+  - material: 95
+    minAmount: 1
+    maxAmount: 8
+    chance: 0.578
+  - material: 92
+    minAmount: 1
+    maxAmount: 8
+    chance: 0.578
+  - material: 90
+    minAmount: 1
+    maxAmount: 8
+    chance: 0.578
+  - material: 75
+    minAmount: 1
+    maxAmount: 4
+    chance: 0.341
+  - material: 91
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.341
+  - material: 51
+    minAmount: 1
+    maxAmount: 4
+    chance: 0.266
+  - material: 54
+    minAmount: 1
+    maxAmount: 4
+    chance: 0.266
+  - material: 100
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.218
+  - material: 52
+    minAmount: 1
+    maxAmount: 4
+    chance: 0.185
+  - material: 96
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.185
+  - material: 53
+    minAmount: 1
+    maxAmount: 4
+    chance: 0.096
