@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 [CreateAssetMenu(fileName = "Loottable", menuName = "ScriptableObjects/Loottable")]
@@ -8,7 +9,8 @@ public class Loottable : ScriptableObject
 {
     public int minimunRolls;
     public int maximumRolls;
-    public List<LoottableItem> items = new List<LoottableItem>();
+    public List<ItemStack> confirmedItems = new List<ItemStack>();
+    public List<LoottableItem> rollItems = new List<LoottableItem>();
 
     private Random random = new Random();
     
@@ -20,11 +22,11 @@ public class Loottable : ScriptableObject
     public List<ItemStack> GetRandomItems()
     {
         int rollAmounts = random.Next(minimunRolls, maximumRolls + 1);
-        List<ItemStack> results = new List<ItemStack>();
+        List<ItemStack> results = new List<ItemStack>(confirmedItems);
 
         for (int roll = 0; roll < rollAmounts; roll++)
         {
-            LoottableItem loottableItem = items[random.Next(0, items.Count)];
+            LoottableItem loottableItem = rollItems[random.Next(0, rollItems.Count)];
             
             if(random.NextDouble() > loottableItem.chance)
                 continue;

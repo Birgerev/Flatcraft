@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
+[Serializable]
 public struct ItemStack
 {
     public int amount;

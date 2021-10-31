@@ -62,7 +62,7 @@ public struct BlockData
         return values[keys.IndexOf(key)];
     }
 
-    public string GetSaveString()
+    public override string ToString()
     {
         string result = "";
 

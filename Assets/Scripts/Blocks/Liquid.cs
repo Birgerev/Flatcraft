@@ -36,7 +36,6 @@ public class Liquid : Block
         if (!GetData().HasTag("liquid_level"))
         {
             SetData(GetData().SetTag("liquid_level", maxLiquidLevel.ToString()));
-            location.Tick();
             return;
         }
         

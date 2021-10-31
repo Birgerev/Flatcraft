@@ -31,6 +31,6 @@ public struct BlockState
 
     public string GetSaveString()
     {
-        return material + "*" + data.GetSaveString();
+        return material + "*" + data.ToString();
     }
 }

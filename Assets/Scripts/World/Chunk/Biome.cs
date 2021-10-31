@@ -41,12 +41,10 @@ public class Biome
 
     public float GetLandscapeNoiseAt(Location loc)
     {
-        float value = 100;
-        if (loc.y > OverworldGenerator.SeaLevel - 20)
-        {
-            value = (float) GetLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
-            value -= landscapeHeightWeight * (loc.y + landscapeHeightOverSeaLevel - OverworldGenerator.SeaLevel);
-        }
+        //Get value at location
+        float value = (float) GetLandscapeNoise().GetValue(loc.x * landscapeSize, loc.y * landscapeSize) + 4;
+        //Apply Weight f
+        value -= landscapeHeightWeight * (loc.y + landscapeHeightOverSeaLevel - OverworldGenerator.SeaLevel);
 
         return value;
     }
@@ -108,8 +106,8 @@ public class Biome
                     , biome.biomeMaximumChunkSize + 1); //how many chunks will this biome cover
             int biomeBeginningChunk = currentChunk; //where the biome starts
 
-            while (currentChunk <= biomeBeginningChunk + biomeChunkSize
-            ) //Assign this biome to every one of these chunks
+            //Assign this biome to every one of these chunks
+            while (currentChunk <= biomeBeginningChunk + biomeChunkSize)
             {
                 if (currentChunk >= endChunk) //if chunk is outside of region, stop generating
                     break;

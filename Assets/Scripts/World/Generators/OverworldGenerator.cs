@@ -13,22 +13,24 @@ public class OverworldGenerator : WorldGenerator
 
 
     private const int OreCoalHeight = 128;
-    private const double OreCoalChance = 0.0035f;
+    private const double OreCoalChance = 0.0035d;
 
     private const int OreIronHeight = 64;
-    private const double OreIronChance = 0.0025f;
+    private const double OreIronChance = 0.0025d;
 
     private const int OreGoldHeight = 32;
-    private const double OreGoldChance = 0.0008f;
+    private const double OreGoldChance = 0.0008d;
 
     private const int OreLapisHeight = 32;
-    private const double OreLapisChance = 0.001f;
+    private const double OreLapisChance = 0.001d;
 
     private const int OreRedstoneHeight = 16;
-    private const double OreRedstoneChance = 0.002f;
+    private const double OreRedstoneChance = 0.002d;
 
+    private const double DesertTempleChance = 0.005d;
+    private const double DungeonChance = 0.0003d;
     private const int OreDiamondHeight = 16;
-    private const double OreDiamondChance = 0.0005f;
+    private const double OreDiamondChance = 0.0005d;
     public static int SeaLevel = 62;
     public static Perlin materialPatchNoise;
 
@@ -128,7 +130,8 @@ public class OverworldGenerator : WorldGenerator
 
         Material[] flowerMaterials = {Material.Red_Flower};
         Material[] vegetationMaterials = {Material.Tall_Grass};
-
+        
+        //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass || matBeneath == Material.Sand) && mat == Material.Air)
         {
             //Vegetation
@@ -171,11 +174,21 @@ public class OverworldGenerator : WorldGenerator
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Cactus"));
+            
+            //Desert Temple
+            if (biome.name == "desert")
+                if (r.NextDouble() < DesertTempleChance)
+                    return new BlockState(Material.Structure_Block, new BlockData("structure=Desert_Temple"));
+            
         }
-
-        //Generate Ores
+        
         if (mat == Material.Stone)
         {
+            //Generate Dungeon
+            if (r.NextDouble() < DungeonChance)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Dungeon"));
+            
+            //Generate Ores
             if (r.NextDouble() < OreDiamondChance && loc.y <= OreDiamondHeight)
                 return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Diamond"));
             if (r.NextDouble() < OreRedstoneChance && loc.y <= OreRedstoneHeight)
