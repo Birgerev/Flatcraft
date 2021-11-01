@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimunRolls: 32
   maximumRolls: 38
-  items:
+  rollItems:
   - material: 95
     minAmount: 1
     maxAmount: 8
