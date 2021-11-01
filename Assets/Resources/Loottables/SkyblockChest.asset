@@ -14,5 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimunRolls: 0
   maximumRolls: 0
-  confirmedItems: []
+  confirmedItems:
+  - amount: 1
+    data: 
+    durability: 0
+    material: 98
+  - amount: 1
+    data: 
+    durability: 0
+    material: 17
   rollItems: []
