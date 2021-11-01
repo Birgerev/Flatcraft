@@ -29,6 +29,7 @@ public class OverworldGenerator : WorldGenerator
 
     private const double DesertTempleChance = 0.005d;
     private const double DungeonChance = 0.0003d;
+    private const double MineshaftChance = 0.0002d;
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005d;
     public static int SeaLevel = 62;
@@ -181,13 +182,22 @@ public class OverworldGenerator : WorldGenerator
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Desert_Temple"));
             
         }
+
+        //Generate Liquid Pockets
+        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
+            if (mat == Material.Stone)
+            {
+                Material liquidMat = r.Next(0, 100) < 75 ? Material.Water : Material.Lava;
+
+                return new BlockState(liquidMat);
+            }
+        
+        //Lava lakes
+        if (loc.y < LavaHeight && mat == Material.Air)
+            return new BlockState(Material.Lava);
         
         if (mat == Material.Stone)
         {
-            //Generate Dungeon
-            if (r.NextDouble() < DungeonChance)
-                return new BlockState(Material.Structure_Block, new BlockData("structure=Dungeon"));
-            
             //Generate Ores
             if (r.NextDouble() < OreDiamondChance && loc.y <= OreDiamondHeight)
                 return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Diamond"));
@@ -201,19 +211,16 @@ public class OverworldGenerator : WorldGenerator
                 return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Iron"));
             if (r.NextDouble() < OreCoalChance && loc.y <= OreCoalHeight)
                 return new BlockState(Material.Structure_Block, new BlockData("structure=Ore_Coal"));
+            
+            
+            //Generate Dungeon
+            if (r.NextDouble() < DungeonChance)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Dungeon"));
+            
+            //Generate Mineshaft
+            if (r.NextDouble() < MineshaftChance && loc.y > 30 && loc.y < 50)
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Mineshaft/Start_Room"));
         }
-
-        //Generate Liquid Pockets
-        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
-            if (mat == Material.Stone)
-            {
-                Material liquidMat = r.Next(0, 100) < 75 ? Material.Water : Material.Lava;
-
-                return new BlockState(liquidMat);
-            }
-
-        if (loc.y < LavaHeight && mat == Material.Air)
-            return new BlockState(Material.Lava);
 
         return new BlockState(Material.Air);
     }
