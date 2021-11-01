@@ -28,7 +28,7 @@ public class OverworldGenerator : WorldGenerator
     private const double OreRedstoneChance = 0.002d;
 
     private const double DesertTempleChance = 0.005d;
-    private const double DungeonChance = 0.0003d;
+    private const double DungeonChance = 0.0002d;
     private const double MineshaftChance = 0.0002d;
     private const int OreDiamondHeight = 16;
     private const double OreDiamondChance = 0.0005d;
