@@ -10,36 +10,45 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0ad68f421d8ca14cb5323eda08ea5db, type: 3}
-  m_Name: DesertTempleChest
+  m_Name: MineshaftChest
   m_EditorClassIdentifier: 
-  minimunRolls: 32
-  maximumRolls: 38
+  minimunRolls: 30
+  maximumRolls: 40
+  confirmedItems: []
   rollItems:
-  - material: 95
+  - material: 56
     minAmount: 1
-    maxAmount: 8
-    chance: 0.7
-  - material: 90
+    maxAmount: 16
+    chance: 0.78
+  - material: 91
     minAmount: 1
+    maxAmount: 3
+    chance: 0.38
+  - material: 51
+    minAmount: 3
     maxAmount: 8
-    chance: 0.7
-  - material: 92
-    minAmount: 1
-    maxAmount: 8
-    chance: 0.59
-  - material: 19
-    minAmount: 1
-    maxAmount: 8
-    chance: 0.59
-  - material: 53
+    chance: 0.27
+  - material: 74
     minAmount: 2
-    maxAmount: 7
-    chance: 0.18
+    maxAmount: 4
+    chance: 0.27
   - material: 52
     minAmount: 1
     maxAmount: 5
-    chance: 0.18
-  - material: 55
+    chance: 0.27
+  - material: 54
+    minAmount: 4
+    maxAmount: 9
+    chance: 0.14
+  - material: 53
     minAmount: 1
     maxAmount: 3
-    chance: 0.06
+    chance: 0.14
+  - material: 55
+    minAmount: 1
+    maxAmount: 2
+    chance: 0.09
+  - material: 34
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.08
