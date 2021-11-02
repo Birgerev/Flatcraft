@@ -25,6 +25,11 @@ public class Structure_Block : Block
             {
                 string structureId = GetData().GetTag("structure");
                 TextAsset[] structures = Resources.LoadAll<TextAsset>("Structure/" + structureId);
+                if (structures.Length == 0)
+                {
+                    Debug.LogError("Error in loading structure '" + structureId + "', doesn't exist");
+                    return;
+                }
                 TextAsset structure =
                     structures[new Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
 
