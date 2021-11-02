@@ -1,10 +1,10 @@
 Air*0,0*
 Air*0,1*
-Air*0,2*
+Cobweb*0,2*
 
 Air*-1,0*
 Air*-1,1*
-Air*-1,2*
+Cobweb*-1,2*
 
 Air*-2,0*
 Air*-2,1*
@@ -20,7 +20,7 @@ Oak_Planks*-4,2*
 
 Air*-5,0*
 Air*-5,1*
-Air*-5,2*
+Cobweb*-5,2*
 
 Air*-6,0*
 Air*-6,1*

@@ -1,7 +1,7 @@
 Structure_Block*-1,-6*structure=Mineshaft/Left
 
 Air*0,-6*
-Air*0,-5*
+Cobweb*0,-5*
 Oak_Planks*0,-4*
 Stone*0,-3*
 Stone*0,-2*
@@ -18,7 +18,7 @@ Air*1,-2*
 Air*1,-1*
 Air*1,0*
 Air*1,1*
-Air*1,2*
+Cobweb*1,2*
 
 Air*2,-6*
 Air*2,-5*
