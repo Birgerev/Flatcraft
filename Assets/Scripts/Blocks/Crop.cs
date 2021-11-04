@@ -20,6 +20,13 @@ public class Crop : Block
             SetData(GetData().SetTag("crop_stage", "0"));
     }
 
+    public override void Initialize()
+    {
+        texture = crop_textures[GetStage()];
+        
+        base.Initialize();
+    }
+    
     public override void Tick()
     {
         texture = crop_textures[GetStage()];
@@ -50,7 +57,7 @@ public class Crop : Block
         if (GetStage() >= GetAmountOfStages() - 1)
             return;
 
-        location.SetData(GetData().SetTag("crop_stage", (GetStage() + 1).ToString()));
+        location.SetData(GetData().SetTag("crop_stage", (GetStage() + 1).ToString())).Tick();
     }
 
     public int GetAmountOfStages()
@@ -60,7 +67,10 @@ public class Crop : Block
 
     public int GetStage()
     {
-        return int.Parse(GetData().GetTag("crop_stage"));
+        int stage = -1;
+        string stageTag = GetData().GetTag("crop_stage");
+        int.TryParse(stageTag, out stage);
+        return stage;
     }
 
     public override void Drop()
