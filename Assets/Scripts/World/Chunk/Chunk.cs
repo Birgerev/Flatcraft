@@ -186,7 +186,7 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message);
+                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message + e.StackTrace);
             }
 
         StartCoroutine(BuildChunk());
@@ -274,7 +274,7 @@ public class Chunk : NetworkBehaviour
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Error chunk build block: " + e.Message);
+                    Debug.LogError("Error chunk build block: " + e.Message + e.StackTrace);
                 }
 
             yield return new WaitForSeconds(0f);
@@ -380,7 +380,7 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in Block:Initialize(): " + e.Message);
+                Debug.LogError("Error in Block:Initialize(): " + e.Message + e.StackTrace);
             }
 
             i++;

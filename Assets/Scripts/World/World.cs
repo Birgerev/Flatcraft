@@ -38,14 +38,21 @@ public class World
     public static World LoadWorld(string name)
     {
         World world = new World(name, 0);
-        Dictionary<string, string> worldData = new Dictionary<string, string>();
-        string[] data = File.ReadAllLines(world.GetPath() + "\\level.dat");
-        foreach (string dataLine in data)
-            worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
+        try
+        {
+            Dictionary<string, string> worldData = new Dictionary<string, string>();
+            string[] data = File.ReadAllLines(world.GetPath() + "\\level.dat");
+            foreach (string dataLine in data)
+                worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
 
-        world.seed = int.Parse(worldData["seed"]);
-        world.time = float.Parse(worldData["time"]);
-        world.versionId = int.Parse(worldData["versionId"]);
+            world.seed = int.Parse(worldData["seed"]);
+            world.time = float.Parse(worldData["time"]);
+            world.versionId = int.Parse(worldData["versionId"]);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to load world properties, error: " + e.Message + e.StackTrace);
+        }
 
         return world;
     }

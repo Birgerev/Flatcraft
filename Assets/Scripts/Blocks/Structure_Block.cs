@@ -62,7 +62,7 @@ public class Structure_Block : Block
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Error in loading structure for structure block, corrupted line: '" + blockText + "'.   " + e.Message);
+                        Debug.LogError("Error in loading structure for structure block, corrupted line: '" + blockText + "'.   " + e.Message + e.StackTrace);
                     }
                 }
 
