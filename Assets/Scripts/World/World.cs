@@ -12,15 +12,20 @@ public class World
     public int seed;
     public float time;
     public int versionId;
+    public WorldTemplate template;
 
     public World(string name, int seed)
     {
         this.name = name;
         this.seed = seed;
+        this.versionId = VersionController.CurrentVersionId;
+        this.template = WorldTemplate.Default;
     }
 
     public World()
     {
+        this.versionId = VersionController.CurrentVersionId;
+        this.template = WorldTemplate.Default;
     }
 
     public static string appPath
@@ -38,14 +43,23 @@ public class World
     public static World LoadWorld(string name)
     {
         World world = new World(name, 0);
-        Dictionary<string, string> worldData = new Dictionary<string, string>();
-        string[] data = File.ReadAllLines(world.GetPath() + "\\level.dat");
-        foreach (string dataLine in data)
-            worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
+        
+        try
+        {
+            Dictionary<string, string> worldData = new Dictionary<string, string>();
+            string[] data = File.ReadAllLines(world.GetPath() + "\\level.dat");
+            foreach (string dataLine in data)
+                worldData.Add(dataLine.Split('=')[0], dataLine.Split('=')[1]);
 
-        world.seed = int.Parse(worldData["seed"]);
-        world.time = float.Parse(worldData["time"]);
-        world.versionId = int.Parse(worldData["versionId"]);
+            world.seed = int.Parse(worldData["seed"]);
+            world.time = float.Parse(worldData["time"]);
+            world.versionId = int.Parse(worldData["versionId"]);
+            world.template = (WorldTemplate) Enum.Parse(typeof(WorldTemplate), worldData["template"]);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to load world properties, error: " + e.Message);
+        }
 
         return world;
     }
@@ -91,6 +105,7 @@ public class World
         data.Add("seed=" + seed);
         data.Add("time=" + time);
         data.Add("versionId=" + versionId);
+        data.Add("template=" + template);
 
         File.WriteAllLines(GetPath() + "\\level.dat", data);
     }

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,61 +9,93 @@ public class CreateWorldMenu : MonoBehaviour
 {
     public Button CreateButton;
     public Text errorText;
+    public Text worldTemplateButtonText;
     public InputField nameField;
     public InputField seedField;
 
-    public World world;
+    public World world = new World();
 
-    private bool switchingMenus;
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        world = new World();
-    }
-
+    private bool randomSeed = false;
+    private bool disableInput;
+    
     // Update is called once per frame
     private void Update()
     {
-        if (switchingMenus)
+        if (disableInput)
             return;
 
+        worldTemplateButtonText.text = "Template: " + world.template.ToString();
+        FetchNameField();
+        FetchSeedField();
+    }
+
+    private void FetchSeedField()
+    {
+        //Assign seed
+        bool seedFieldEmpty = (seedField.text.Length == 0);
+        if (!seedFieldEmpty)
+            world.seed = int.Parse(seedField.text);
+        randomSeed = seedFieldEmpty;
+    }
+
+    private void FetchNameField()
+    {
         //Filter non allowed characters
         nameField.text = Regex.Replace(nameField.text, "[^\\w\\._]", "");
-
+        
+        //Apply world name
         world.name = nameField.text;
-        if (seedField.text.Length > 0)
-            world.seed = int.Parse(seedField.text);
-        else
-            world.seed = 0;
-
-
-        bool worldExists = World.WorldExists(world.name);
-        bool nameEmpty = nameField.text == "";
-        bool error = worldExists || nameEmpty;
-
-        if (worldExists)
+        
+        bool error = false;
+        //Check if world name is taken
+        if (World.WorldExists(world.name))
+        {
             errorText.text = "World name is already taken!";
-        if (nameEmpty)
+            error = true;
+        }
+        //Check if name field is empty
+        if (nameField.text.Length == 0)
+        {
             errorText.text = "No world name!";
-
+            error = true;
+        }
+        //Check if name is too long
+        if (nameField.text.Length > 30)
+        {
+            errorText.text = "World too long!";
+            error = true;
+        }
+        //Error handling
         errorText.gameObject.SetActive(error);
         CreateButton.interactable = !error;
     }
 
     public void Create()
     {
-        switchingMenus = true;
+        disableInput = true;
 
-        if (world.seed == 0)
+        //Create random seed if seed field is empty
+        if (randomSeed)
             world.seed = new Random().Next();
-        world.versionId = VersionController.CurrentVersionId;
 
+        //Save world
         world.SaveData();
+        
+        //Load world
         WorldManager.world = world;
         SceneManager.LoadScene("Game");
         GameNetworkManager.connectionMode = ConnectionMode.Host;
         LoadingMenu.Create(LoadingMenuType.LoadWorld);
+    }
+
+    public void NextWorldTemplate()
+    {
+        int currentTemplateIndex = (int)world.template;
+        int templateAmount = Enum.GetNames(typeof(WorldTemplate)).Length;
+        int nextTemplateIndex = (currentTemplateIndex + 1) % templateAmount;
+        WorldTemplate nextTemplate = (WorldTemplate) nextTemplateIndex;
+        
+        world.template = nextTemplate;
     }
 
     public void Cancel()

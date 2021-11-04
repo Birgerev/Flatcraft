@@ -200,11 +200,20 @@ public class Chunk : NetworkBehaviour
     [Server]
     private IEnumerator GenerateBlocks()
     {
-        if (chunkPosition.dimension == Dimension.Overworld)
-            worldGenerator = new OverworldGenerator();
-        else if (chunkPosition.dimension == Dimension.Nether)
-            worldGenerator = new NetherGenerator();
-
+        //Assign world generator
+        switch (WorldManager.world.template)
+        {
+            case WorldTemplate.Default:
+                if (chunkPosition.dimension == Dimension.Overworld)
+                    worldGenerator = new OverworldGenerator();
+                else if (chunkPosition.dimension == Dimension.Nether)
+                    worldGenerator = new NetherGenerator();
+                break;
+            case WorldTemplate.Skyblock:
+                worldGenerator = new SkyblockGenerator();
+                break;
+        }
+        
         chunkPosition.CreateChunkPath();
 
         //Generate Caves
