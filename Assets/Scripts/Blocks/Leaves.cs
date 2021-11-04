@@ -15,7 +15,7 @@ public class Leaves : Block
     {
         Random r = new Random();
         
-        if(r.NextDouble() < 0.1f)
+        if(r.NextDouble() < 0.2f)
             return new ItemStack(Material.Oak_Sapling);
         //TODO if(r.NextDouble() < 0.03f)
         //    return new ItemStack(Material.Apple);
