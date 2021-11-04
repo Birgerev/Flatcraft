@@ -109,9 +109,9 @@ public class Block : MonoBehaviour
         return location.GetData();
     }
 
-    protected void SetData(BlockData data)
+    protected Location SetData(BlockData data)
     {
-        location.SetData(data);
+        return location.SetData(data);
     }
 
     public virtual void GeneratingTick()
