@@ -23,4 +23,8 @@ MonoBehaviour:
     data: 
     durability: 0
     material: 17
+  - amount: 5
+    data: 
+    durability: 0
+    material: 74
   rollItems: []
