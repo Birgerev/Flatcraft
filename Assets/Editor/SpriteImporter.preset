@@ -118,11 +118,11 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_TextureSettings.m_Aniso
-    value: -1
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_TextureSettings.m_MipBias
-    value: -100
+    value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_TextureSettings.m_WrapU
@@ -219,6 +219,14 @@ Preset:
   - target: {fileID: 0}
     propertyPath: m_SingleChannelComponent
     value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_FlipbookRows
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_FlipbookColumns
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_MaxTextureSizeSet
