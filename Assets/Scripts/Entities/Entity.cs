@@ -609,6 +609,9 @@ public class Entity : NetworkBehaviour
 
             if (portalTime >= 3)
             {
+                //Center player at portal
+                Location = portals[0].location;
+                
                 StartCoroutine(teleportNetherPortal());
                 portalTime = 0;
                 portalCooldown = true;
