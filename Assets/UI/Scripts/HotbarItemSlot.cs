@@ -15,7 +15,7 @@ public class HotbarItemSlot : ItemSlot
     // Update is called once per frame
     public override void UpdateSlot()
     {
-        if (Player.localEntity == null)
+        if (Player.localEntity == null || Player.localEntity.inventoryId == 0)
             return;
 
         base.UpdateSlot();

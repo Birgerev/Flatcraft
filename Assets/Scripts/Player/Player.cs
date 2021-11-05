@@ -20,7 +20,7 @@ public class Player : HumanEntity
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar] public float hunger;
 
-    [EntityDataTag(false)] [SyncVar] public int inventoryId;
+    [EntityDataTag(false)] [SyncVar] public int inventoryId = 0;
 
     [SyncVar] public float eatingTime;
 
@@ -94,7 +94,7 @@ public class Player : HumanEntity
     {
         base.Tick();
 
-        if (GetInventory() == null) //Make sure player has an inventory
+        if (inventoryId == 0) //Make sure player has an inventory
         {
             Inventory inv = PlayerInventory.CreatePreset();
             inventoryId = inv.id;
