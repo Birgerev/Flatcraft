@@ -1,0 +1,11 @@
+mirror*0*0
+Melon*1*
+Melon_Slice*0,0*
+Melon_Slice*1,0*
+Melon_Slice*2,0*
+Melon_Slice*0,1*
+Melon_Slice*1,1*
+Melon_Slice*2,1*
+Melon_Slice*0,2*
+Melon_Slice*1,2*
+Melon_Slice*2,2*
