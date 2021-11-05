@@ -1,0 +1,11 @@
+Sandstone*0,0*
+Sandstone*1,0*
+Sandstone*2,0*
+Sand*0,1*
+Sand*1,1*
+Sand*2,1*
+Sand*0,2*
+Sand*1,2*
+Sand*2,2*
+Cactus*0,3*
+Chest*2,3*rotated_x=true|rotated_y=false|loottable=SkyblockSandChest

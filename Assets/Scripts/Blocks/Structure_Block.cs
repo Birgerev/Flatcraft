@@ -35,7 +35,7 @@ public class Structure_Block : Block
 
                 BlockState replaceState = new BlockState(Material.Air);
 
-                foreach (string blockText in structure.text.Split('\n', '\r'))
+                foreach (string blockText in structure.text.Split(Environment.NewLine.ToCharArray()))
                 {
                     try
                     {

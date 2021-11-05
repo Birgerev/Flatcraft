@@ -12,15 +12,20 @@ public class World
     public int seed;
     public float time;
     public int versionId;
+    public WorldTemplate template;
 
     public World(string name, int seed)
     {
         this.name = name;
         this.seed = seed;
+        this.versionId = VersionController.CurrentVersionId;
+        this.template = WorldTemplate.Default;
     }
 
     public World()
     {
+        this.versionId = VersionController.CurrentVersionId;
+        this.template = WorldTemplate.Default;
     }
 
     public static string appPath
@@ -48,6 +53,7 @@ public class World
             world.seed = int.Parse(worldData["seed"]);
             world.time = float.Parse(worldData["time"]);
             world.versionId = int.Parse(worldData["versionId"]);
+            world.template = (WorldTemplate) Enum.Parse(typeof(WorldTemplate), worldData["template"]);
         }
         catch (Exception e)
         {
@@ -98,6 +104,7 @@ public class World
         data.Add("seed=" + seed);
         data.Add("time=" + time);
         data.Add("versionId=" + versionId);
+        data.Add("template=" + template);
 
         File.WriteAllLines(GetPath() + "\\level.dat", data);
     }

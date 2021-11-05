@@ -54,7 +54,6 @@ public class GameNetworkManager : NetworkManager
         if (connectionMode == ConnectionMode.Client)
         {
             World world = new World("multiplayer", 1);
-            world.versionId = VersionController.CurrentVersionId;
 
             WorldManager.world = world;
         }

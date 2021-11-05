@@ -104,4 +104,8 @@
     , Wipe
     , Oak_Sapling
     , Cobweb
+    , Melon_Slice
+    , Melon
+    , Melon_Seeds
+    , Melon_Crop
 }

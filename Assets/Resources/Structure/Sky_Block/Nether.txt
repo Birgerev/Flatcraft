@@ -1,0 +1,16 @@
+Netherrack*-1,0*
+Netherrack*0,0*
+Netherrack*1,0*
+Netherrack*2,0*
+Netherrack*3,0*
+Netherrack*-1,1*
+Netherrack*0,1*
+Netherrack*1,1*
+Netherrack*2,1*
+Netherrack*3,1*
+Netherrack*-1,2*
+Structure_Block*0,2*structure=Nether_Portal
+Netherrack*1,2*
+Netherrack*2,2*
+Netherrack*3,2*
+Chest*3,3*rotated_x=true|rotated_y=false|loottable=SkyblockNetherChest

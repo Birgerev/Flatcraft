@@ -200,11 +200,20 @@ public class Chunk : NetworkBehaviour
     [Server]
     private IEnumerator GenerateBlocks()
     {
-        if (chunkPosition.dimension == Dimension.Overworld)
-            worldGenerator = new OverworldGenerator();
-        else if (chunkPosition.dimension == Dimension.Nether)
-            worldGenerator = new NetherGenerator();
-
+        //Assign world generator
+        switch (WorldManager.world.template)
+        {
+            case WorldTemplate.Default:
+                if (chunkPosition.dimension == Dimension.Overworld)
+                    worldGenerator = new OverworldGenerator();
+                else if (chunkPosition.dimension == Dimension.Nether)
+                    worldGenerator = new NetherGenerator();
+                break;
+            case WorldTemplate.Skyblock:
+                worldGenerator = new SkyblockGenerator();
+                break;
+        }
+        
         chunkPosition.CreateChunkPath();
 
         //Generate Caves
@@ -727,7 +736,7 @@ public class Chunk : NetworkBehaviour
             result = blockObject.GetComponent<Block>();
         }
 
-        if (mat == Material.Portal_Frame)
+        if (mat == Material.Portal_Frame && netherPortal == null)
             netherPortal = (Portal_Frame) result;
 
         if (isLoaded)
@@ -753,10 +762,11 @@ public class Chunk : NetworkBehaviour
         for (int y = 0; y < maxPortalHeight; y++)
         {
             Location loc = new Location(x, y, chunkPosition.dimension);
-            if (loc.GetMaterial() == Material.Air)
+            Location locAbove = new Location(x, y + 1, chunkPosition.dimension);
+            if (loc.GetMaterial() != Material.Air && locAbove.GetMaterial() == Material.Air)
             {
-                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Nether_Portal")).Tick();
+                BlockState state = new BlockState(Material.Structure_Block, new BlockData("structure=Nether_Portal"));
+                loc.SetState(state).Tick();
                 return loc;
             }
         }

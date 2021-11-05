@@ -4,7 +4,7 @@ public class Tall_Grass : Block
 {
     public override string texture { get; set; } = "block_tall_grass_0";
 
-    public override string[] alternative_textures { get; } =
+    public override string[] alternativeTextures { get; } =
         {"block_tall_grass_0", "block_tall_grass_1", "block_tall_grass_2"};
 
     public override bool solid { get; set; } = false;
