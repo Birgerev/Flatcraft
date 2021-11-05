@@ -15,11 +15,8 @@
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
-
-        texture = open ? open_texture : closed_texture;
         solid = !open;
 
-        Render();
         UpdateColliders();
 
         base.Initialize();
@@ -32,6 +29,13 @@
         SetOpenState(open);
 
         base.Interact(player);
+    }
+
+    public override string GetTexture()
+    {
+        bool open = GetData().GetTag("open") == "true";
+
+        return open ? open_texture : closed_texture;
     }
 
     public void SetOpenState(bool open)

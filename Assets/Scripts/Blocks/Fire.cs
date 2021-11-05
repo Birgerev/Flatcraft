@@ -4,8 +4,8 @@ using Random = System.Random;
 public class Fire : Block
 {
     public override string texture { get; set; } = "block_fire_0";
-    public override string[] alternative_textures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
-    public override float change_texture_time { get; } = 0.3f;
+    public override string[] alternativeTextures { get; } = {"block_fire_0", "block_fire_1", "block_fire_2"};
+    public override float changeTextureTime { get; } = 0.3f;
 
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;

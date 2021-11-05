@@ -35,7 +35,7 @@ public class Structure_Block : Block
 
                 BlockState replaceState = new BlockState(Material.Air);
 
-                foreach (string blockText in structure.text.Split('\n', '\r'))
+                foreach (string blockText in structure.text.Split(Environment.NewLine.ToCharArray()))
                 {
                     try
                     {
@@ -62,7 +62,7 @@ public class Structure_Block : Block
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Error in loading structure for structure block, corrupted line: '" + blockText + "'.   " + e.Message);
+                        Debug.LogError("Error in loading structure for structure block, corrupted line: '" + blockText + "'.   " + e.Message + e.StackTrace);
                     }
                 }
 

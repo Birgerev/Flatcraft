@@ -7,6 +7,7 @@ public class Liquid : Block
     public override float breakTime { get; } = 100;
     public virtual int maxLiquidLevel { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
+    public virtual string[] liquidTextures { get; } = { };
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
 
@@ -35,7 +36,7 @@ public class Liquid : Block
     {
         if (!GetData().HasTag("liquid_level"))
         {
-            SetData(GetData().SetTag("liquid_level", maxLiquidLevel.ToString()));
+            SetData(GetData().SetTag("liquid_level", maxLiquidLevel.ToString())).Tick();
             return;
         }
         
@@ -257,13 +258,14 @@ public class Liquid : Block
 
     public override void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
     {
+        //Disable breaking
     }
 
-    public override Sprite getTexture()
+    public override string GetTexture()
     {
         if (!GetData().HasTag("liquid_level"))
-            return Resources.LoadAll<Sprite>("Sprites/" + texture)[maxLiquidLevel - 1];
+            return base.GetTexture();
 
-        return Resources.LoadAll<Sprite>("Sprites/" + texture)[int.Parse(GetData().GetTag("liquid_level")) - 1];
+        return liquidTextures[int.Parse(GetData().GetTag("liquid_level")) - 1];
     }
 }

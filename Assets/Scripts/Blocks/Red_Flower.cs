@@ -2,7 +2,7 @@
 {
     public override string texture { get; set; } = "block_red_flower_0";
 
-    public override string[] alternative_textures { get; } =
+    public override string[] alternativeTextures { get; } =
         {"block_red_flower_0", "block_red_flower_1", "block_red_flower_2"};
 
     public override bool solid { get; set; } = false;

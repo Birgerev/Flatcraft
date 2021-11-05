@@ -186,7 +186,7 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message);
+                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message + e.StackTrace);
             }
 
         StartCoroutine(BuildChunk());
@@ -283,7 +283,7 @@ public class Chunk : NetworkBehaviour
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Error chunk build block: " + e.Message);
+                    Debug.LogError("Error chunk build block: " + e.Message + e.StackTrace);
                 }
 
             yield return new WaitForSeconds(0f);
@@ -389,7 +389,7 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in Block:Initialize(): " + e.Message);
+                Debug.LogError("Error in Block:Initialize(): " + e.Message + e.StackTrace);
             }
 
             i++;
@@ -736,7 +736,7 @@ public class Chunk : NetworkBehaviour
             result = blockObject.GetComponent<Block>();
         }
 
-        if (mat == Material.Portal_Frame)
+        if (mat == Material.Portal_Frame && netherPortal == null)
             netherPortal = (Portal_Frame) result;
 
         if (isLoaded)
@@ -762,10 +762,11 @@ public class Chunk : NetworkBehaviour
         for (int y = 0; y < maxPortalHeight; y++)
         {
             Location loc = new Location(x, y, chunkPosition.dimension);
-            if (loc.GetMaterial() == Material.Air)
+            Location locAbove = new Location(x, y + 1, chunkPosition.dimension);
+            if (loc.GetMaterial() != Material.Air && locAbove.GetMaterial() == Material.Air)
             {
-                (loc + new Location(0, -1)).SetMaterial(Material.Structure_Block)
-                    .SetData(new BlockData("structure=Nether_Portal")).Tick();
+                BlockState state = new BlockState(Material.Structure_Block, new BlockData("structure=Nether_Portal"));
+                loc.SetState(state).Tick();
                 return loc;
             }
         }

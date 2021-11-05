@@ -19,9 +19,19 @@ public class InventoryContainer : Block
             Loottable loottable = Loottable.Load(loottableName);
             Inventory inv = GetInventory();
             Random random = new Random();
+            //For each loottable item
             foreach (ItemStack item in loottable.GetRandomItems())
             {
-                inv.SetItem(random.Next(0, inv.size), item);
+                //Keep on trying to find an empty slot to populate
+                for(int attempts = 0; attempts < 5; attempts++)
+                {
+                    int slot = random.Next(0, inv.size);
+                    if (inv.GetItem(slot).material == Material.Air)
+                    {
+                        inv.SetItem(slot, item);
+                        break;
+                    }
+                }
             }
             location.SetData(GetData().RemoveTag("loottable"));
         }
