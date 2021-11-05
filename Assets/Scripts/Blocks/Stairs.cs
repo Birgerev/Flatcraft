@@ -1,5 +1,5 @@
 ﻿public class Stairs : Block
 {
-    public override bool rotate_x { get; } = true;
-    public override bool rotate_y { get; } = true;
+    public override bool rotateX { get; } = true;
+    public override bool rotateY { get; } = true;
 }

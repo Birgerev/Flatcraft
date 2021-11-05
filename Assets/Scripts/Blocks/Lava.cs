@@ -2,7 +2,11 @@
 
 public class Lava : Liquid
 {
-    public override string texture { get; set; } = "block_lava";
+    public override string texture { get; set; } = "block_lava_3";
+    public override string[] liquidTextures { get; } =
+    {
+        "block_lava_0", "block_lava_1", "block_lava_2", "block_lava_3"
+    };
 
     public override int maxLiquidLevel { get; } = 4;
     public override int glowLevel { get; } = 15;
