@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimunRolls: 30
   maximumRolls: 40
+  confirmedItems: []
   rollItems:
   - material: 95
     minAmount: 1
@@ -47,6 +48,10 @@ MonoBehaviour:
     minAmount: 1
     maxAmount: 1
     chance: 0.218
+  - material: 106
+    minAmount: 2
+    maxAmount: 4
+    chance: 0.185
   - material: 52
     minAmount: 1
     maxAmount: 4

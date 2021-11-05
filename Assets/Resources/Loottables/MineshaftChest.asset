@@ -32,6 +32,10 @@ MonoBehaviour:
     minAmount: 2
     maxAmount: 4
     chance: 0.27
+  - material: 106
+    minAmount: 2
+    maxAmount: 4
+    chance: 0.27
   - material: 52
     minAmount: 1
     maxAmount: 5
