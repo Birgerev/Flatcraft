@@ -35,6 +35,9 @@ public class Chest : InventoryContainer
 
     private bool IsOpen()
     {
+        if (!GetData().HasTag("inventoryId"))
+            return false;
+        
         return GetInventory().open;
     }
 
