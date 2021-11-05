@@ -20,17 +20,13 @@ public class Crop : Block
             SetData(GetData().SetTag("crop_stage", "0"));
     }
 
-    public override void Initialize()
+    public override string GetTexture()
     {
-        texture = crop_textures[GetStage()];
-        
-        base.Initialize();
+        return crop_textures[GetStage()];
     }
     
     public override void Tick()
     {
-        texture = crop_textures[GetStage()];
-        Render();
         CheckFarmland();
 
         base.Tick();

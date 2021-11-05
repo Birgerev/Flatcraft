@@ -7,7 +7,7 @@ public class Chest : InventoryContainer
     public static string open_texture = "block_chest_open";
     public override string texture { get; set; } = closed_texture;
     public override bool solid { get; set; } = false;
-    public override bool rotate_x { get; } = true;
+    public override bool rotateX { get; } = true;
 
     public override float breakTime { get; } = 6;
 
@@ -49,7 +49,6 @@ public class Chest : InventoryContainer
             if (lastCheckOpen != IsOpen())
             {
                 yield return new WaitForSeconds(0.1f);
-                texture = IsOpen() ? open_texture : closed_texture;
                 Render();
 
                 lastCheckOpen = IsOpen();
@@ -76,5 +75,10 @@ public class Chest : InventoryContainer
 
             yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    public override string GetTexture()
+    {
+        return IsOpen() ? open_texture : closed_texture;
     }
 }
