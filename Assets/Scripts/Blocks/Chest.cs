@@ -49,7 +49,6 @@ public class Chest : InventoryContainer
             if (lastCheckOpen != IsOpen())
             {
                 yield return new WaitForSeconds(0.1f);
-                texture = IsOpen() ? open_texture : closed_texture;
                 Render();
 
                 lastCheckOpen = IsOpen();
@@ -76,5 +75,10 @@ public class Chest : InventoryContainer
 
             yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    public override string GetTexture()
+    {
+        return IsOpen() ? open_texture : closed_texture;
     }
 }

@@ -8,15 +8,14 @@
     public override Tool_Type properToolType { get; } = Tool_Type.Axe;
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
 
-    public override void Initialize()
+    public override string GetTexture()
     {
-        base.Initialize();
-
         bool leafTexture = GetData().GetTag("leaf_texture") == "true";
         if (leafTexture)
         {
-            texture = "block_logged_leaves";
-            Render();
+            return "block_logged_leaves";
         }
+
+        return base.GetTexture();
     }
 }

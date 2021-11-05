@@ -155,7 +155,7 @@ public class Block : MonoBehaviour
 
     public Color GetRandomColourFromTexture()
     {
-        Texture2D texture = getTexture().texture;
+        Texture2D texture = GetSprite().texture;
         Color[] pixels = texture.GetPixels();
         Random random = new Random(DateTime.Now.GetHashCode());
 
@@ -292,27 +292,33 @@ public class Block : MonoBehaviour
 
     public virtual void Render()
     {
-        GetComponent<SpriteRenderer>().sprite = getTexture();
+        GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
 
-    public virtual Sprite getTexture()
+    protected Sprite GetSprite()
     {
-        if (change_texture_time > 0 && alternative_textures.Length > 0)
-        {
-            float totalTimePerTextureLoop = change_texture_time * alternative_textures.Length;
-            int textureIndex = (int) (Time.time % totalTimePerTextureLoop / change_texture_time);
+        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+    }
 
-            return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
+    public virtual string GetTexture()
+    {
+        if (alternativeTextures.Length > 0)
+        {
+            //Default get a random alternative texture based on location
+            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternativeTextures.Length);
+
+            //Textures that change over time
+            if (changeTextureTime > 0)
+            {
+                float totalTimePerTextureLoop = changeTextureTime * alternativeTextures.Length;
+                textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
+            }
+
+            texture = alternativeTextures[textureIndex];
         }
 
-        if (alternative_textures.Length > 0)
-        {
-            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternative_textures.Length);
-
-            return Resources.Load<Sprite>("Sprites/" + alternative_textures[textureIndex]);
-        }
-
-        return Resources.Load<Sprite>("Sprites/" + texture);
+        //return
+        return texture;
     }
 
     public Material GetMaterial()
