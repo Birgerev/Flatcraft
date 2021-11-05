@@ -48,7 +48,7 @@ public class Crop : Block
             Break();
     }
 
-    public void Grow()
+    public virtual void Grow()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
             return;
