@@ -125,7 +125,7 @@ public class Inventory : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in loading item to inventory, corrupted line: '" + itemLine + "'   " + e.Message);
+                Debug.LogError("Error in loading item to inventory, corrupted line: '" + itemLine + "'   " + e.Message + e.StackTrace);
                 items.Add(new ItemStack());
             }
         }

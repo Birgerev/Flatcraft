@@ -43,7 +43,6 @@ public class World
     public static World LoadWorld(string name)
     {
         World world = new World(name, 0);
-        
         try
         {
             Dictionary<string, string> worldData = new Dictionary<string, string>();
@@ -58,7 +57,7 @@ public class World
         }
         catch (Exception e)
         {
-            Debug.LogError("Failed to load world properties, error: " + e.Message);
+            Debug.LogError("Failed to load world properties, error: " + e.Message + e.StackTrace);
         }
 
         return world;

@@ -566,7 +566,7 @@ public class Entity : NetworkBehaviour
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Error in loading field for entity: '" + this.GetType() + "', field: '" + field.Name + "'.   " +e.Message);
+                    Debug.LogError("Error in loading field for entity: '" + this.GetType() + "', field: '" + field.Name + "'.   " +e.Message + e.StackTrace);
                 }
                 
             }
@@ -741,6 +741,9 @@ public class Entity : NetworkBehaviour
         float closestEntityDistance = int.MaxValue;
         foreach (Entity entity in entities)
         {
+            if(!type.IsInstanceOfType(entity))
+                continue;
+            
             float distance = Vector2.Distance(entity.Location.GetPosition(), loc.GetPosition());
             if (!(distance < closestEntityDistance))
                 continue;
