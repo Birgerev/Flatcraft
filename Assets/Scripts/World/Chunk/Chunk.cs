@@ -736,7 +736,7 @@ public class Chunk : NetworkBehaviour
             result = blockObject.GetComponent<Block>();
         }
 
-        if (mat == Material.Portal_Frame)
+        if (mat == Material.Portal_Frame && netherPortal == null)
             netherPortal = (Portal_Frame) result;
 
         if (isLoaded)
