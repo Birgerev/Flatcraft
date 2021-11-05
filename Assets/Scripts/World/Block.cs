@@ -8,15 +8,9 @@ using Random = System.Random;
 public class Block : MonoBehaviour
 {
 
-    public float blockHealth;
-
-    public Location location;
-
-    private float time_of_last_hit;
-
     public virtual string texture { get; set; } = "";
-    public virtual string[] alternative_textures { get; } = { };
-    public virtual float change_texture_time { get; } = 0;
+    public virtual string[] alternativeTextures { get; } = { };
+    public virtual float changeTextureTime { get; } = 0;
 
     public virtual bool solid { get; set; } = true;
     public virtual bool isFlammable { get; } = false;
@@ -25,8 +19,8 @@ public class Block : MonoBehaviour
     public virtual bool requiresGround { get; } = false;
     public virtual float averageRandomTickDuration { get; } = 0;
     public virtual float breakTime { get; } = 0.75f;
-    public virtual bool rotate_x { get; } = false;
-    public virtual bool rotate_y { get; } = false;
+    public virtual bool rotateX { get; } = false;
+    public virtual bool rotateY { get; } = false;
 
     public virtual Tool_Type properToolType { get; } = Tool_Type.None;
     public virtual Tool_Level properToolLevel { get; } = Tool_Level.None;
@@ -34,6 +28,12 @@ public class Block : MonoBehaviour
     public virtual Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
     public virtual int glowLevel { get; } = 0;
+    
+    
+
+    public float blockHealth;
+    public Location location;
+    private float timeOfLastHit;
 
     public void OnDestroy()
     {
@@ -74,7 +74,7 @@ public class Block : MonoBehaviour
             source.UpdateLightLevel(glowLevel, true);
         }
 
-        if (change_texture_time != 0)
+        if (changeTextureTime != 0)
             StartCoroutine(animatedTextureRenderLoop());
 
         Render();
@@ -100,7 +100,7 @@ public class Block : MonoBehaviour
             Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f
                 , 1.5f);
 
-        if ((rotate_x || rotate_y) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
+        if ((rotateX || rotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
             RotateTowardsPlayer();
     }
 
@@ -136,7 +136,7 @@ public class Block : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(change_texture_time);
+            yield return new WaitForSeconds(changeTextureTime);
             Render();
         }
     }
@@ -171,9 +171,9 @@ public class Block : MonoBehaviour
         if (closestPlayer == null)
             return;
         
-        if (rotate_y)
+        if (rotateY)
             rotated_y = Player.localEntity.transform.position.y < location.y;
-        if (rotate_x)
+        if (rotateX)
             rotated_x = Player.localEntity.transform.position.x < location.x;
 
         BlockData newData = GetData();
@@ -203,7 +203,7 @@ public class Block : MonoBehaviour
 
     public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
     {
-        time_of_last_hit = Time.time;
+        timeOfLastHit = Time.time;
 
         bool properToolStats = false;
 
@@ -237,7 +237,7 @@ public class Block : MonoBehaviour
 
     private IEnumerator repairBlockDamageOnceViable()
     {
-        while (Time.time - time_of_last_hit < 1)
+        while (Time.time - timeOfLastHit < 1)
             yield return new WaitForSeconds(0.2f);
 
         blockHealth = breakTime;

@@ -7,7 +7,7 @@ public class Chest : InventoryContainer
     public static string open_texture = "block_chest_open";
     public override string texture { get; set; } = closed_texture;
     public override bool solid { get; set; } = false;
-    public override bool rotate_x { get; } = true;
+    public override bool rotateX { get; } = true;
 
     public override float breakTime { get; } = 6;
 

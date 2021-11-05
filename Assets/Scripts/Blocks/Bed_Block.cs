@@ -1,6 +1,6 @@
 ﻿public class Bed_Block : Block
 {
-    public override bool rotate_x { get; } = true;
+    public override bool rotateX { get; } = true;
     public override bool solid { get; set; } = false;
 
     public override float breakTime { get; } = 0.65f;
