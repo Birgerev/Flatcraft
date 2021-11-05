@@ -681,12 +681,12 @@ public class Player : HumanEntity
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem;
-        droppedItem.Amount = 1;
-        selectedItem.Amount--;
-
+        
         if (droppedItem.Amount <= 0)
             return;
 
+        droppedItem.Amount = 1;
+        selectedItem.Amount--;
         DropItem(droppedItem);
         GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
     }
