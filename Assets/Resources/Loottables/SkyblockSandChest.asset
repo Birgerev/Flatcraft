@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0ad68f421d8ca14cb5323eda08ea5db, type: 3}
-  m_Name: SkyblockChest
+  m_Name: SkyblockSandChest
   m_EditorClassIdentifier: 
   minimunRolls: 0
   maximumRolls: 0
   confirmedItems:
-  - amount: 1
+  - amount: 2
     data: 
     durability: 0
-    material: 98
+    material: 80
   - amount: 1
     data: 
-    durability: 0
-    material: 17
-  - amount: 5
+    durability: 64
+    material: 82
+  - amount: 1
     data: 
     durability: 0
     material: 74
