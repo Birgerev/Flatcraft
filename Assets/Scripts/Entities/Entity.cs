@@ -43,6 +43,7 @@ public class Entity : NetworkBehaviour
     public Vector2 lastFramePosition;
     public GameObject burningRender;
     private Vector2 _cachedposition;
+    private bool inLiquidLastFrame;
 
     public static int EntityCount => entities.Count;
 
@@ -105,6 +106,7 @@ public class Entity : NetworkBehaviour
     public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
+        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -237,7 +239,7 @@ public class Entity : NetworkBehaviour
     [Server]
     private void CheckWaterSplash()
     {
-        if (isInLiquid && GetVelocity().y < -2)
+        if (isInLiquid && !inLiquidLastFrame && GetVelocity().y < - 2)
         {
             bool isInWater = false;
             foreach (Liquid liquid in GetLiquidBlocksForEntity())
