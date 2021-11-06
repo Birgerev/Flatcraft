@@ -120,13 +120,28 @@ public class Liquid : Block
                 bool searchHolesLeft = true;
                 bool searchHolesRight = true;
                 
+                //Iterate outwards until we find a hole or run out of liquid
                 for (int x = 1; x < liquidLevel; x++)
                 {
+                    bool leftIterationEmpty = CanFlow(location + new Location(-x, 0), false);
+                    bool leftIterationHoleEmpty = CanFlow(location + new Location(-x, -1), false);
+                    bool rightIterationEmpty = CanFlow(location + new Location(x, 0), false);
+                    bool rightIterationHoleEmpty = CanFlow(location + new Location(x, -1), false);
+
+                    
+                    //Check for holes on both sides
+                    if (searchHolesLeft && searchHolesRight)
+                    {
+                        if (leftIterationEmpty && leftIterationHoleEmpty && rightIterationEmpty &&
+                            rightIterationHoleEmpty)
+                        {
+                            //If holes on both sides, dont target any direction
+                            break;
+                        }
+                    }
+                    //Check for hole on left
                     if (searchHolesLeft)
                     {
-                        bool leftIterationEmpty = CanFlow(location + new Location(-x, 0), false);
-                        bool leftIterationHoleEmpty = CanFlow(location + new Location(-x, -1), false);
-
                         //If obstacle, stop looking for holes in this direction
                         if (!leftIterationEmpty)
                             searchHolesLeft = false;
@@ -138,11 +153,9 @@ public class Liquid : Block
                             break;
                         }
                     }
+                    //Check for hole on right
                     if (searchHolesRight)
                     {
-                        bool rightIterationEmpty = CanFlow(location + new Location(x, 0), false);
-                        bool rightIterationHoleEmpty = CanFlow(location + new Location(x, -1), false);
-
                         //If obstacle, stop looking for holes in this direction
                         if (!rightIterationEmpty)
                             searchHolesRight = false;
