@@ -541,7 +541,7 @@ public class Chunk : NetworkBehaviour
             List<Block> blockList = new List<Block>(randomTickBlocks);
             foreach (Block block in blockList)
             {
-                Random r = new Random(block.location.GetHashCode() + i);
+                Random r = new Random(SeedGenerator.SeedByLocation(block.location) + i);
 
                 if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
                     try
