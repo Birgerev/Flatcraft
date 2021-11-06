@@ -228,7 +228,7 @@ public class Player : HumanEntity
         Material selectedMaterial = GetInventory().GetSelectedItem().material;
 
         if (selectedMaterial != actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
-            ActionBar.message = selectedMaterial.ToString();
+            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
 
         actionBarLastSelectedMaterial = selectedMaterial;
     }
