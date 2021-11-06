@@ -18,10 +18,6 @@ MonoBehaviour:
   - amount: 1
     data: 
     durability: 0
-    material: 100
-  - amount: 1
-    data: 
-    durability: 0
     material: 99
   - amount: 1
     data: 
