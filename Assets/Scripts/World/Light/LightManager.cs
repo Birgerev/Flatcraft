@@ -36,9 +36,11 @@ public class LightManager : MonoBehaviour
     {
         BlockColumn column = new BlockColumn(loc.x, loc.dimension);
 
-        if (instance.sunlightSources.ContainsKey(column))
-            if (loc.y >= instance.sunlightSources[column].transform.position.y)
-                return true;
+        if (!instance.sunlightSources.ContainsKey(column))
+            return true;
+        
+        if (loc.y >= instance.sunlightSources[column].transform.position.y)
+            return true;
 
         return false;
     }

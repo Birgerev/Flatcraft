@@ -84,7 +84,7 @@ public class Liquid : Block
         Location down = location + new Location(0, -1);
         Material downMat = down.GetMaterial();
 
-        if (TryFlow(new Location(0, -1), maxLiquidLevel))
+        if (TryFlow(down, maxLiquidLevel))
             return;
 
         if (downMat == GetMaterial())
@@ -94,73 +94,122 @@ public class Liquid : Block
 
         if (liquidLevel > 1)
         {
+            Location left = location + new Location(-1, 0);
+            Location right = location + new Location(1, 0);
             bool flowLeft = true;
             bool flowRight = true;
-
-            for (int x = 1; x < liquidLevel; x++)
+            
+            //Check for directly adjacent obstacles
+            if (!CanFlow(left, true))
             {
-                Location leftIteration = location + new Location(-x, 0);
-                Location rightIteration = location + new Location(x, 0);
-
-                if (CanFlowToLocation(leftIteration) && !CanFlowToLocation(rightIteration))
+                flowLeft = false;
+            }
+            if (!CanFlow(right, true))
+            {
+                flowRight = false;
+            }
+            
+            //Check for holes to target if necessary (if direction is contested)
+            //Does not account for other liquids in the way, since it would lead to weird "bouncing" of liquids
+            if (CanFlow(left, false) && CanFlow(right, false))
+            {
+                //Ultimate goal is to find hole, so we can target it specifically
+                //If we encounter an obstacle, stop searching for holes in that direction
+                //We only target a direction when a hole is found
+                
+                bool searchHolesLeft = true;
+                bool searchHolesRight = true;
+                
+                //Iterate outwards until we find a hole or run out of liquid
+                for (int x = 1; x < liquidLevel; x++)
                 {
-                    flowRight = false;
-                    break;
-                }
+                    bool leftIterationEmpty = CanFlow(location + new Location(-x, 0), false);
+                    bool leftIterationHoleEmpty = CanFlow(location + new Location(-x, -1), false);
+                    bool rightIterationEmpty = CanFlow(location + new Location(x, 0), false);
+                    bool rightIterationHoleEmpty = CanFlow(location + new Location(x, -1), false);
 
-                if (CanFlowToLocation(rightIteration) && !CanFlowToLocation(leftIteration))
-                {
-                    flowLeft = false;
-                    break;
+                    
+                    //Check for holes on both sides
+                    if (searchHolesLeft && searchHolesRight)
+                    {
+                        if (leftIterationEmpty && leftIterationHoleEmpty && rightIterationEmpty &&
+                            rightIterationHoleEmpty)
+                        {
+                            //If holes on both sides, dont target any direction
+                            break;
+                        }
+                    }
+                    //Check for hole on left
+                    if (searchHolesLeft)
+                    {
+                        //If obstacle, stop looking for holes in this direction
+                        if (!leftIterationEmpty)
+                            searchHolesLeft = false;
+
+                        //If we find a hole, target it and stop looking for more holes
+                        if (leftIterationEmpty && leftIterationHoleEmpty)
+                        {
+                            flowRight = false;
+                            break;
+                        }
+                    }
+                    //Check for hole on right
+                    if (searchHolesRight)
+                    {
+                        //If obstacle, stop looking for holes in this direction
+                        if (!rightIterationEmpty)
+                            searchHolesRight = false;
+
+                        //If we find a hole, target it and stop looking for more holes
+                        if (rightIterationEmpty && rightIterationHoleEmpty)
+                        {
+                            flowLeft = false;
+                            break;
+                        }
+                    }
                 }
             }
-
+            
             if (flowLeft)
-                TryFlow(new Location(-1, 0), liquidLevel - 1);
+                TryFlow(left, liquidLevel - 1);
 
             if (flowRight)
-                TryFlow(new Location(1, 0), liquidLevel - 1);
+                TryFlow(right, liquidLevel - 1);
         }
     }
     
-    private bool CanFlowToLocation(Location loc)
+    private bool CanFlow(Location loc, bool accountLiquidLevel)
     {
-        Location locBelow = loc + new Location(0, -1);
-        if (IsLocationSolid(loc) || IsLocationSolid(locBelow))
-            return false;
+        Material mat = loc.GetMaterial();
 
-        return true;
-    }
-    
-    private bool IsLocationSolid(Location loc)
-    {
-        Block block = loc.GetBlock();
-
-        if (block != null)
+        //Can always flow to air
+        if (mat == Material.Air)
         {
-            if(block.solid)
-                return true;
-
-            //Prevent flowing upstream
-            if (block.GetMaterial() == GetMaterial())
+            return true;
+        }
+            
+        if (mat == GetMaterial())
+        {
+            //Allow filling liquids with less level
+            if (accountLiquidLevel)
             {
                 int currentLevel = int.Parse(GetData().GetTag("liquid_level"));
-                int locLevel = int.Parse(block.GetData().GetTag("liquid_level"));
-                
-                if(locLevel >= currentLevel - 1)
+                int locLevel = int.Parse(loc.GetData().GetTag("liquid_level"));
+
+                //locLevel must be two less than current level
+                if (currentLevel - locLevel >= 2)
                     return true;
-            }
+            }//If we do not care about liquid level, we can flow to water
+            else return true;
         }
         
-
+        //Otherwise, we cant flow to block
         return false;
     }
     
-    public bool TryFlow(Location relativeLocation, int liquidLevel)
+    public bool TryFlow(Location loc, int liquidLevel)
     {
-        Location loc = location + relativeLocation;
-
-        if (!IsLocationSolid(loc)) //Flow if no block is in the way
+        if (CanFlow(loc, true)) //Flow if no block is in the way
         {
             BlockState newState = new BlockState(GetMaterial(), new BlockData("liquid_level=" + liquidLevel));
 
