@@ -73,7 +73,7 @@ public class Crop : Block
     {
         if (GetStage() == GetAmountOfStages() - 1)
         {
-            new ItemStack(seed, new Random().Next(0, 3)).Drop(location);
+            new ItemStack(seed, new Random().Next(1, 3 + 1)).Drop(location);
             new ItemStack(result, 1).Drop(location);
         }
         else
