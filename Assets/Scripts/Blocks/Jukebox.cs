@@ -54,6 +54,6 @@ public class Jukebox : Block
         inv.SetItem(inv.selectedSlot, heldDisc);
         ChatManager.instance.AddMessagePlayer("Now playing: C418 - Stal", player);
 
-        Sound.Play(location, "music/disc/stal/stal", SoundType.Music);
+        Sound.Play(location, "music/disc/stal/stal", SoundType.Music, 1, 1, 32);
     }
 }
