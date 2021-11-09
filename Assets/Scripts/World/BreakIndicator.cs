@@ -47,7 +47,8 @@ public class BreakIndicator : NetworkBehaviour
             return;
 
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-        int spriteIndex = (int) (blockHealth / maxBlockHealth * (sprites.Length - 1));
+        float breakProgress = (maxBlockHealth - blockHealth) / maxBlockHealth;
+        int spriteIndex = (int)( breakProgress * sprites.Length);
         Sprite sprite = sprites[spriteIndex];
 
         GetComponent<SpriteRenderer>().sprite = sprite;
