@@ -19,6 +19,7 @@ public class Chunk : NetworkBehaviour
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
+    public const int MaxBackgroundBlockLength = 20;
 
     private static readonly float animalGenerationChance = 0.1f;
     private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
@@ -588,46 +589,53 @@ public class Chunk : NetworkBehaviour
     {
         yield return new WaitForSeconds(0);
 
-        Material lastViableMaterial = Material.Air;
-        for (int y = Height - 1; y >= 0; y--)
+        //Look up which blocks in the column will create background blocks
+        Dictionary<Location, Material> solidMaterials = new Dictionary<Location, Material>();
+        for (int y = 0; y < Height; y++)
         {
             Location loc = new Location(x, y, chunkPosition.dimension);
             Material mat = loc.GetMaterial();
-
+            
+            //Clear out old background blocks
             if (backgroundBlocks.ContainsKey(new int2(loc.x, loc.y)))
             {
                 Destroy(backgroundBlocks[new int2(loc.x, loc.y)].gameObject);
                 backgroundBlocks.Remove(new int2(loc.x, loc.y));
             }
-
+            
             if (BackgroundBlock.viableMaterials.ContainsKey(mat))
-                lastViableMaterial = BackgroundBlock.viableMaterials[mat];
+                solidMaterials.Add(loc, BackgroundBlock.viableMaterials[mat]);
+        }
 
-            bool placeBackground = false;
+        for (int i = 0; i < solidMaterials.Count - 1; i++)
+        {
+            Location currentLoc = solidMaterials.Keys.ToArray()[i];
+            Location nextLoc = solidMaterials.Keys.ToArray()[i + 1];
+            int heightDistance = nextLoc.y - currentLoc.y;
+            
+            //Check so that blocks are not next to each other or too far apart
+            if(heightDistance <= 1 || heightDistance > MaxBackgroundBlockLength)
+                continue;
 
-            if (lastViableMaterial != Material.Air)
-            {
-                if (mat == Material.Air)
-                    placeBackground = true;
-                else if (loc.GetBlock() != null && !loc.GetBlock().solid)
-                    placeBackground = true;
-            }
+            //Look up which material will be used for the background
+            Material nextMat = solidMaterials[nextLoc];
+            Material nextBackgroundMaterial = BackgroundBlock.viableMaterials[nextMat];
 
-            if (placeBackground)
+            for (int y = currentLoc.y + 1; y < nextLoc.y; y++)
             {
                 GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
                 BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
 
-                blockObject.transform.position = loc.GetPosition();
-                backgroundBlock.material = lastViableMaterial;
-                backgroundBlocks.Add(new int2(loc.x, loc.y), backgroundBlock);
+                blockObject.transform.position = new Vector3(x, y);
+                backgroundBlock.material = nextBackgroundMaterial;
+                backgroundBlocks.Add(new int2(x, y), backgroundBlock);
 
                 if (updateLight)
-                    StartCoroutine(ScheduleBlockLightUpdate(loc));
+                    ScheduleBlockLightUpdate(new Location(x, y, chunkPosition.dimension));
             }
-
-            if (!isLoaded && y % 10 == 0)
-                yield return new WaitForSeconds(0);
+            
+            //if (!isLoaded && i % 10 == 0)
+            //    yield return new WaitForSeconds(0);
         }
     }
 
@@ -744,11 +752,17 @@ public class Chunk : NetworkBehaviour
             if (doesBlockChangeImpactSunlight)
                 LightManager.UpdateSunlightInColumn(new BlockColumn(location.x, chunkPosition.dimension), true);
             StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
-            StartCoroutine(ScheduleBlockLightUpdate(location));
+            ScheduleBlockLightUpdate(location);
         }
     }
 
-    private IEnumerator ScheduleBlockLightUpdate(Location loc)
+    public void ScheduleBlockLightUpdate(Location loc)
+    {
+        StartCoroutine(scheduleBlockLightUpdate(loc));
+    }
+    
+
+    private IEnumerator scheduleBlockLightUpdate(Location loc)
     {
         yield return new WaitForSeconds(0f);
         LightManager.UpdateBlockLight(loc);
