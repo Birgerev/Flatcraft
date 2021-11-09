@@ -8,6 +8,7 @@
     public override float changeTextureTime { get; } = 0.3f;
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.1f;
+    public override bool requiresGround { get; } = true;
 
     public override int glowLevel { get; } = 15;
 
