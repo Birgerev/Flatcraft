@@ -27,12 +27,12 @@ MonoBehaviour:
   amountText: {fileID: 3212591218148658154}
   durabilityBar: {fileID: 8329974156044369365}
   durabilityBarFiller: {fileID: 5818837991215631693}
+  texture: {fileID: 3198134042278412792}
   item:
     amount: 0
     data: 
     durability: 0
     material: 0
-  texture: {fileID: 3198134042278412792}
 --- !u!1 &6228801073477665568
 GameObject:
   m_ObjectHideFlags: 0
@@ -73,7 +73,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 14.599998, y: 35.9}
-  m_SizeDelta: {x: 0, y: 62.1877}
+  m_SizeDelta: {x: 211, y: 62.1877}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &6196368223820745165
 CanvasRenderer:
@@ -185,11 +185,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 887474255779853249, guid: b9379dde221be1a4bb99a3c445109a4f,
-        type: 3}
-      propertyPath: m_CullTransparentMesh
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4837457438770987874, guid: b9379dde221be1a4bb99a3c445109a4f,
         type: 3}
       propertyPath: m_Name
@@ -365,7 +360,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -375,12 +370,12 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 176
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -440,12 +435,12 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 104
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -37.079903
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
