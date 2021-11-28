@@ -57,6 +57,7 @@ public class PlayerInventory : Inventory
             GetItem(slot).Drop(holder);
             SetItem(slot, new ItemStack());
         }
+        SetItem(GetCraftingResultSlot(), new ItemStack());
     }
 
     public int GetFirstArmorSlot()
