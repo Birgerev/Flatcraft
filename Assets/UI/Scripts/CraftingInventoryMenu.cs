@@ -48,13 +48,20 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             pointerItem.material != Material.Air)
             return;
 
+        //Add items to pointer
         ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot());
+        int newAmount = pointerItem.Amount + inv.GetItem(inv.GetCraftingResultSlot()).Amount;
+        //Return if new item amount exceeds max stack size (64)
+        if (newAmount > Inventory.MaxStackSize)
+            return;
+        
         newPointerItem.Amount = pointerItem.Amount + inv.GetItem(inv.GetCraftingResultSlot()).Amount;
         SetPointerItem(newPointerItem);
 
         //Clear Crafting slot
         inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
 
+        //Remove items from recipe slots
         for (int i = 0; i <= 8; i++)
         {
             ItemStack newCraftingSlotItem = inv.GetItem(i);
@@ -65,6 +72,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             inv.SetItem(i, newCraftingSlotItem);
         }
 
+        //Update Inventory
         UpdateInventory();
     }
 }
