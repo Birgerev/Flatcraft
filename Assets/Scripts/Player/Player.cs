@@ -775,6 +775,7 @@ public class Player : HumanEntity
         File.Delete(SavePath());
         GetInventory().Delete();
         DeathMenuEffect();
+        Destroy(crosshair);
     }
 
     [ClientRpc]
