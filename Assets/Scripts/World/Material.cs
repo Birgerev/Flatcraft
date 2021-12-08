@@ -108,4 +108,5 @@
     , Melon
     , Melon_Seeds
     , Melon_Crop
+    , Sign
 }
