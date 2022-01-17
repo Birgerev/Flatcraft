@@ -11,7 +11,6 @@ public class Wolf : PassiveEntity
     protected override float walkSpeed { get; } = 6f;
     protected virtual float tameChance { get; } = 0.3f;
 
-    //TODO spawns
     public override EntityController GetController()
     {
         return new WolfController(this);
