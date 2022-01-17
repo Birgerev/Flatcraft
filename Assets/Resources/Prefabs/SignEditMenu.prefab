@@ -31,6 +31,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8712630191296626263}
   m_Father: {fileID: 0}
@@ -174,6 +175,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5270516261282660503}
   - {fileID: 8480814480937982708}
@@ -229,6 +231,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8712630191296626263}
   m_RootOrder: 4
@@ -304,6 +307,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2746732975938958168}
   m_Father: {fileID: 8712630191296626263}
@@ -373,7 +377,10 @@ MonoBehaviour:
   m_HideMobileInput: 0
   m_CharacterValidation: 0
   m_CharacterLimit: 15
-  m_OnEndEdit:
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnDidEndEdit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:
@@ -398,7 +405,6 @@ GameObject:
   - component: {fileID: 5270516261282660503}
   - component: {fileID: 7716422404868193278}
   - component: {fileID: 1746323599324140051}
-  - component: {fileID: 6080094893252815755}
   - component: {fileID: 7011386144043697159}
   m_Layer: 5
   m_Name: blackBackground
@@ -417,6 +423,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8712630191296626263}
   m_RootOrder: 0
@@ -464,18 +471,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6080094893252815755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5466795330638024811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5664ad8ad6b49a4095a7ee2a11155b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7011386144043697159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -520,7 +515,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6080094893252815755}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InventoryBackground, Assembly-CSharp
         m_MethodName: Click
         m_Mode: 1
@@ -560,6 +555,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8480814480937982708}
   m_RootOrder: 0
@@ -745,12 +741,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d94e05493ad3bb49b8b0735acf01ee6, type: 3}
---- !u!224 &4727642762285405123 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5227561469510516684, guid: 8d94e05493ad3bb49b8b0735acf01ee6,
-    type: 3}
-  m_PrefabInstance: {fileID: 655257798053374991}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4459128450809389581 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3816221025596755458, guid: 8d94e05493ad3bb49b8b0735acf01ee6,
@@ -763,6 +753,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 871f6b9e5d3856949b5cfe78ff1a9b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &4727642762285405123 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5227561469510516684, guid: 8d94e05493ad3bb49b8b0735acf01ee6,
+    type: 3}
+  m_PrefabInstance: {fileID: 655257798053374991}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7101733834623760605
 PrefabInstance:
   m_ObjectHideFlags: 0
