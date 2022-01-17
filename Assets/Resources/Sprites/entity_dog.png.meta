@@ -57,6 +57,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -256,7 +257,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: f6f194a19e0c10990800000000000000
-      internalID: -7421438603528954001
+      internalID: -182057704280641203
       vertices: []
       indices: 
       edges: []
@@ -340,7 +341,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 24e852ccdee1d1640800000000000000
-      internalID: 5052228363660660290
+      internalID: -126888856772261877
       vertices: []
       indices: 
       edges: []
@@ -355,6 +356,17 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      entity_dog_tail_high: -182057704280641203
+      entity_dog_tail_middle: 4076016251730378154
+      entity_dog_collar_0: 6684559669129102539
+      entity_dog_eyes_normal: -9131693867516904373
+      entity_dog_tail_low: -6172280360101219790
+      entity_dog_collar_1: -126888856772261877
+      entity_dog: 2352447024195531709
+      entity_dog_walk: 2190219862967676394
+      entity_dog_sit: 1957014214454071090
+      entity_dog_eyes_angry: 550997493604758292
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
