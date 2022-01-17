@@ -250,7 +250,7 @@ public class Player : HumanEntity
     [Client]
     private void PerformInput()
     {
-        if (ChatMenu.instance.open)
+        if (ChatMenu.instance.open || SignEditMenu.IsLocalMenuOpen())
             return;
 
         //Open inventory

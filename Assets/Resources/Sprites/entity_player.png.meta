@@ -51,6 +51,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -60,8 +61,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -328,6 +329,16 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      entity_player_legs_sneak: -1679096297131114224
+      entity_player_torso_punch: -6820706440114316998
+      entity_player_legs_normal: 170334841549676082
+      entity_player_6: 3286103931482931897
+      entity_player_legs_run: 1127600631557886868
+      entity_player_torso_normal: -5720121704238794268
+      entity_player_torso_holding: -2881087414050887620
+      entity_player_head: -3901893150071877136
+      entity_player_held_item: -5065158601477154626
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

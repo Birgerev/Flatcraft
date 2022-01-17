@@ -26,6 +26,7 @@ public class WorldManager : NetworkBehaviour
     public Dictionary<ChunkPosition, Biome> chunkBiomes = new Dictionary<ChunkPosition, Biome>();
 
     public Dictionary<int, Inventory> loadedInventories = new Dictionary<int, Inventory>();
+    public List<SignEditMenu> openSignMenus = new List<SignEditMenu>();
 
     // Start is called before the first frame update
     private void Start()
