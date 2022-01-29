@@ -1017,6 +1017,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xSpeed: 0.75
   maxX: 74
+--- !u!114 &525879426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525879420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1943e887b5c31b49978529f2e225533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  songs:
+  - music/ambient/sweden/sweden
+  - music/ambient/danny/danny
 --- !u!1001 &729809768
 PrefabInstance:
   m_ObjectHideFlags: 0
