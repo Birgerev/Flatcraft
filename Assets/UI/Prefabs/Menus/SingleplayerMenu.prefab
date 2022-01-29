@@ -517,7 +517,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &2614281875644071060
 MonoBehaviour:
@@ -555,10 +555,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  m_BlockingObjects: 3
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2147483647
 --- !u!114 &2614281875644071057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -571,6 +571,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2c03b2410501d4c8f7986d155b11c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deleteWorldMenuPrefab: {fileID: 5424256322485821435, guid: c76d8d2313f28d24da9a3387b589b5d5,
+    type: 3}
+  createWorldMenuPrefab: {fileID: 6920535588812196825, guid: b65ed6d7f7755ca409ca2f00d8dc8f1d,
+    type: 3}
   list: {fileID: 2614281874636272596}
   selectedWorld: -1
   worldPrefab: {fileID: 3022725410830800116, guid: 16d764d11cb0c5d4095d17dc43ebf170,

@@ -20,6 +20,6 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
 
     public void Cancel()
     {
-        SceneManager.LoadScene("MultiplayerMenu");
+        Destroy(gameObject);
     }
 }

@@ -425,7 +425,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &2509476074637250230
 MonoBehaviour:
@@ -463,10 +463,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  m_BlockingObjects: 3
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2147483647
 --- !u!114 &2509476074637250229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,6 +491,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 902b4cefaad5a794cb1dd19612b4fd8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  directConnectMenuPrefab: {fileID: 1882496917698196442, guid: 8940e99e5f630df46900e54aae8789b4,
+    type: 3}
   myServersButtonText: {fileID: 2652632002154724974}
   showMyServers: 1
   myServersSection: {fileID: 2509476074350204392}
@@ -630,7 +632,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2509476075061430779}
   m_HandleRect: {fileID: 2509476075061430778}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1360,7 +1362,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2509476075276662726}
   m_HandleRect: {fileID: 2509476075276662729}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

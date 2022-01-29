@@ -18,6 +18,10 @@ public class MultiplayerMenu : MonoBehaviour
     private const string GetServerByIdUrl = Url + "get-dedicated-server.php";
     private const string GetServerListUrl = Url + "get-dedicated-server-list.php";
     
+    public GameObject directConnectMenuPrefab;
+    
+    [Space][Space]
+    
     public Text myServersButtonText;
     public bool showMyServers = true;
     public CanvasGroup myServersSection;
@@ -31,6 +35,21 @@ public class MultiplayerMenu : MonoBehaviour
 
     private int browseServersIndex = 0;
 
+    public void ToggleShowMyServers()
+    {
+        showMyServers = !showMyServers;
+    }
+    
+    public void DirectConnect()
+    {
+        Instantiate(directConnectMenuPrefab);
+    }
+
+    public void Cancel()
+    {
+        Destroy(gameObject);
+    }
+    
     private void Start()
     {
         savedServersPath = Application.dataPath + "/../servers.dat";
@@ -58,21 +77,6 @@ public class MultiplayerMenu : MonoBehaviour
         {
             StartCoroutine(LoadMoreServerLists());
         }
-    }
-
-    public void ToggleShowMyServers()
-    {
-        showMyServers = !showMyServers;
-    }
-    
-    public void DirectConnect()
-    {
-        SceneManager.LoadScene("MultiplayerDirectConnectMenu");
-    }
-
-    public void Cancel()
-    {
-        SceneManager.LoadScene("MainMenu");
     }
 
     IEnumerator LoadMyServers()

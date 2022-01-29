@@ -626,6 +626,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   versionText: {fileID: 1085335860}
+  singleplayerMenuPrefab: {fileID: 2614281875644071066, guid: 121d5566f67a23f478789906152b5815,
+    type: 3}
+  multiplayerMenuPrefab: {fileID: 2509476074637250235, guid: ef8f7cda85d93414d96e8de371e5ec15,
+    type: 3}
+  optionsMenuPrefab: {fileID: 8189563067701013113, guid: a9e91ef8bf341f345aaf2ad2d92b7ce6,
+    type: 3}
 --- !u!114 &321422100
 MonoBehaviour:
   m_ObjectHideFlags: 0
