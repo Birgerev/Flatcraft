@@ -33,6 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.174314, y: 8.029414, z: -61.62591}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -125,6 +126,7 @@ MonoBehaviour:
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}
   worldTime: 0
+  openSignMenus: []
 --- !u!114 &3047292750534003042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,8 +195,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   ambientMusic:
-  - sweden
-  - danny
+  - music/ambient/sweden/sweden
+  - music/ambient/danny/danny
   checkDuration: 400
   checkChance: 0.33
 --- !u!114 &3047292750534002974
