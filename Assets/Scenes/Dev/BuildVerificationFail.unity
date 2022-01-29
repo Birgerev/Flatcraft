@@ -151,6 +151,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 715391123}
   m_RootOrder: 0
@@ -277,6 +278,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -293,6 +295,7 @@ GameObject:
   - component: {fileID: 715391122}
   - component: {fileID: 715391121}
   - component: {fileID: 715391120}
+  - component: {fileID: 715391125}
   - component: {fileID: 715391124}
   m_Layer: 5
   m_Name: Canvas
@@ -350,7 +353,7 @@ Canvas:
   m_GameObject: {fileID: 715391119}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -372,6 +375,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 56750506}
   - {fileID: 1425562907}
@@ -394,6 +398,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd3beef9c9d688c4e9d846dfa2b48e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &715391125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715391119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a893296d254742e4da9f779e805fe465, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1250345869
@@ -458,6 +474,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -477,11 +494,11 @@ PrefabInstance:
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_Text
-      value: 'This build has expired or hasn''t began yet!
+      value: 'This build has expired!
 
 
-        Stay tuned for
-        the next playtest session in the discord server
+        Stay tuned for the next playtest
+        session in the discord server
 
 
         discord.gg/kfY6MyTFNK'
@@ -624,7 +641,7 @@ PrefabInstance:
     - target: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Text
-      value: Click for success in life
+      value: Click for free puppies
       objectReference: {fileID: 0}
     - target: {fileID: 9203636279896232828, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}

@@ -7,6 +7,10 @@ public class MainMenu : MonoBehaviour
     public static string discordURL = "https://discord.gg/kfY6MyTFNK";
     public Text versionText;
 
+    public GameObject singleplayerMenuPrefab;
+    public GameObject multiplayerMenuPrefab;
+    public GameObject optionsMenuPrefab;
+    
     public void Start()
     {
         versionText.text = "Flatcraft " + VersionController.GetVersionName();
@@ -14,17 +18,17 @@ public class MainMenu : MonoBehaviour
 
     public void Singleplayer()
     {
-        SceneManager.LoadScene("SingleplayerMenu");
+        Instantiate(singleplayerMenuPrefab);
     }
 
     public void Multiplayer()
     {
-        SceneManager.LoadScene("MultiplayerMenu");
+        Instantiate(multiplayerMenuPrefab);
     }
 
     public void Options()
     {
-        SceneManager.LoadScene("Options");
+        Instantiate(optionsMenuPrefab);
     }
 
     public void Discord()

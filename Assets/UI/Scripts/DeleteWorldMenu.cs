@@ -18,12 +18,12 @@ public class DeleteWorldMenu : MonoBehaviour
 
     public void Cancel()
     {
-        SceneManager.LoadScene("SingleplayerMenu");
+        Destroy(gameObject);
     }
 
     public void Delete()
     {
         worlds[selectedWorld].Delete();
-        SceneManager.LoadScene("SingleplayerMenu");
+        Destroy(gameObject);
     }
 }
