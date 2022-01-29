@@ -35,6 +35,9 @@ public class WorldManager : NetworkBehaviour
         Entity.entities.Clear();
         Time.timeScale = 1;
         chunks.Clear();
+        //Update to current version
+        world.versionId = VersionController.CurrentVersionId;
+            
         StartCoroutine(SaveLoop());
     }
 
@@ -42,8 +45,10 @@ public class WorldManager : NetworkBehaviour
     {
         if (isServer)
         {
+            //Increment world time
             world.time += Time.deltaTime;
 
+            //Update world time (forces sync as well)
             if (Time.time % 0.5f - Time.deltaTime <= 0)
                 worldTime = world.time;
         }
