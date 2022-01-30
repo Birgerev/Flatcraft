@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class SingleplayerMenu : MonoBehaviour
 {
+    public GameObject deleteWorldMenuPrefab;
+    public GameObject createWorldMenuPrefab;
+    
+    [Space][Space]
+    
     public Transform list;
     public int selectedWorld = -1;
     public GameObject worldPrefab;
@@ -42,7 +47,7 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void Cancel()
     {
-        SceneManager.LoadScene("MainMenu");
+        Destroy(gameObject);
     }
 
     public void Play()
@@ -57,11 +62,11 @@ public class SingleplayerMenu : MonoBehaviour
     public void Delete()
     {
         DeleteWorldMenu.selectedWorld = selectedWorld;
-        SceneManager.LoadScene("DeleteWorld");
+        Instantiate(deleteWorldMenuPrefab);
     }
 
     public void Create()
     {
-        SceneManager.LoadScene("CreateWorldMenu");
+        Instantiate(createWorldMenuPrefab);
     }
 }

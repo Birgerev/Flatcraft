@@ -15,30 +15,30 @@ EditorBuildSettings:
     path: Assets/Scenes/Options.unity
     guid: b2f104e64b56b92469127894ce9a0792
   - enabled: 1
-    path: Assets/Scenes/SingleplayerMenu.unity
+    path: Assets/Scenes/Singleplayer/SingleplayerMenu.unity
     guid: 0f68b62dec9c625428430b589fb2c5bf
   - enabled: 1
-    path: Assets/Scenes/MultiplayerMenu.unity
+    path: Assets/Scenes/Multiplayer/MultiplayerMenu.unity
     guid: c5d7389f2fb8fd2448d344548a743f57
   - enabled: 1
-    path: Assets/Scenes/MultiplayerDirectConnectMenu.unity
+    path: Assets/Scenes/Multiplayer/MultiplayerDirectConnectMenu.unity
     guid: 5ef3531468d1596419b65631ad748673
   - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/CreateWorldMenu.unity
+    path: Assets/Scenes/Singleplayer/CreateWorldMenu.unity
     guid: 4e2afc93bbaf2834394314d3779f96d8
   - enabled: 1
-    path: Assets/Scenes/DeleteWorld.unity
+    path: Assets/Scenes/Singleplayer/DeleteWorld.unity
     guid: 8d56c74f1511eb24a9f536b21a36c188
   - enabled: 1
     path: Assets/Scenes/MultiplayerDisconnectedMenu.unity
     guid: 378ffd85df4bcc0488d4ad7fbcaf3332
   - enabled: 1
-    path: Assets/Scenes/BuildVerificationFail.unity
+    path: Assets/Scenes/Dev/BuildVerificationFail.unity
     guid: 73cf49a42ca4bb343827cbada38049a8
   - enabled: 1
-    path: Assets/Scenes/TestingCreateName.unity
+    path: Assets/Scenes/Dev/TestingCreateName.unity
     guid: fed1e538bb645af45a223c80dd8c21ca
   m_configObjects: {}

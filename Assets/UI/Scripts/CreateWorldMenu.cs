@@ -100,6 +100,6 @@ public class CreateWorldMenu : MonoBehaviour
 
     public void Cancel()
     {
-        SceneManager.LoadScene("SingleplayerMenu");
+        Destroy(gameObject);
     }
 }

@@ -6,11 +6,6 @@ using Random = System.Random;
 public class Sound : NetworkBehaviour
 {
     public static Sound instance;
-    public AudioMixerGroup blocksGroup;
-
-    public AudioMixerGroup entitiesGroup;
-    public AudioMixerGroup musicGroup;
-    public AudioMixerGroup weatherGroup;
 
     public void Start()
     {
@@ -73,34 +68,17 @@ public class Sound : NetworkBehaviour
         PlayLocal(loc, sound, soundIndex, type, pitch, distance, spacialPanning);
     }
 
-    public static void PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance
+    public static GameObject PlayLocal(Location loc, string sound, int soundIndex, SoundType type, float pitch, float distance
         , bool spacialPanning)
     {
-        if (instance == null)
-            return;
-        
         GameObject obj = new GameObject("sound " + sound);
         AudioSource source = obj.AddComponent<AudioSource>();
         AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
         AudioClip clip = clips[soundIndex];
-
-        AudioMixerGroup group = null;
-        switch (type)
-        {
-            case SoundType.Music:
-                group = instance.musicGroup;
-                break;
-            case SoundType.Weather:
-                group = instance.weatherGroup;
-                break;
-            case SoundType.Blocks:
-                group = instance.blocksGroup;
-                break;
-            case SoundType.Entities:
-                group = instance.entitiesGroup;
-                break;
-        }
-
+        
+        AudioMixer mixer = Resources.Load("Sounds/mixer") as AudioMixer;
+        AudioMixerGroup group = mixer.FindMatchingGroups(type.ToString())[0];
+        
         source.spatialBlend = spacialPanning ? 1 : 0;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.playOnAwake = false;
@@ -110,11 +88,11 @@ public class Sound : NetworkBehaviour
         source.pitch = pitch;
         source.maxDistance = distance;
         source.dopplerLevel = 0;
-        DontDestroyOnLoad(obj);
 
         source.Play();
 
         Destroy(obj, clip.length + 1);
+        return obj;
     }
 
     [Server]

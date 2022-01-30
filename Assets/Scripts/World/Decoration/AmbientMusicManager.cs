@@ -35,7 +35,7 @@ public class AmbientMusicManager : NetworkBehaviour
         Random random = new Random();
         string songName = ambientMusic[random.Next(0, ambientMusic.Count)];
 
-        Sound.Play(new Location(), "music/ambient/" + songName + "/" + songName, SoundType.Music, 1f, 1f, int.MaxValue
+        Sound.Play(new Location(), songName, SoundType.Music, 1f, 1f, int.MaxValue
             , false);
     }
 }
