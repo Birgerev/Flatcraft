@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3047292750534002975}
   - component: {fileID: 3047292750534002974}
   - component: {fileID: 4831411737367894585}
+  - component: {fileID: -5386586424793891005}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -141,14 +142,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  blocksGroup: {fileID: 2917957538123657003, guid: 65aeab9a269652646b6795e2912b735a,
-    type: 2}
-  entitiesGroup: {fileID: -433041381731868617, guid: 65aeab9a269652646b6795e2912b735a,
-    type: 2}
-  musicGroup: {fileID: 476619691098867234, guid: 65aeab9a269652646b6795e2912b735a,
-    type: 2}
-  weatherGroup: {fileID: 1035066888173012621, guid: 65aeab9a269652646b6795e2912b735a,
-    type: 2}
 --- !u!114 &3047292750534003041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,3 +223,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+--- !u!114 &-5386586424793891005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3047292750534003045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa0148658773f8b43831f5657dc8fd26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

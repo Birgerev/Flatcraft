@@ -21,7 +21,7 @@ public class OverworldSky : MonoBehaviour
         Sun.transform.rotation = Quaternion.identity;
         Moon.transform.rotation = Quaternion.identity;
 
-        timeOfDay = WorldManager.instance.worldTime % WorldManager.dayLength / WorldManager.dayLength;
+        timeOfDay = WorldManager.instance.worldTime % WorldManager.DayLength / WorldManager.DayLength;
         GetComponent<Animator>().SetFloat("time", timeOfDay * 100);
     }
 }

@@ -739,12 +739,16 @@ public class Player : HumanEntity
     [Server]
     public void Sleep()
     {
-        int currentDay = (int) (WorldManager.instance.worldTime / WorldManager.dayLength);
-        float newTime = (currentDay + 1) * WorldManager.dayLength;
-        bool isNight = WorldManager.instance.worldTime % WorldManager.dayLength > WorldManager.dayLength / 2;
+        int currentDay = (int) (WorldManager.instance.worldTime / WorldManager.DayLength);
+        float newTime = (currentDay + 1) * WorldManager.DayLength;
+        bool isNight = WorldManager.instance.worldTime % WorldManager.DayLength > WorldManager.DayLength / 2;
 
         if (isNight)
             WorldManager.world.time = newTime;
+        if (WorldManager.world.weather != Weather.Clear)
+        {
+            WeatherManager.instance.ChangeWeather();
+        }
     }
 
     [Server]

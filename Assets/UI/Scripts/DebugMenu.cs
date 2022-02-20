@@ -57,7 +57,7 @@ public class DebugMenu : MonoBehaviour
 
         text_seed.text = "seed: " + WorldManager.world.seed;
         text_time.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
-                         (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
+                         (int) (WorldManager.instance.worldTime / WorldManager.DayLength) + ")";
 
         Location location = player.GetBlockedMouseLocation();
         BlockState state = location.GetState();
