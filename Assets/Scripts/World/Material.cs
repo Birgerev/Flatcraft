@@ -109,4 +109,5 @@
     , Melon_Seeds
     , Melon_Crop
     , Sign
+    , Birch_Sapling
 }
