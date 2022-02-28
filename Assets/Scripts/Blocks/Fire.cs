@@ -36,7 +36,7 @@ public class Fire : Block
         bool spread = random.NextDouble() < 0.8d;
 
         if (ambinetSound)
-            Sound.Play(location, "block/fire/ambient", SoundType.Blocks, 0.8f, 1.2f);
+            Sound.Play(location, "block/fire/ambient", SoundType.Block, 0.8f, 1.2f);
 
         if (spread)
         {
