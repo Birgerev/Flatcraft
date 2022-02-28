@@ -19,6 +19,10 @@ public class PointerSlot : ItemSlot
     {
         base.UpdateSlot();
 
-        transform.position = Input.mousePosition;
+        //Move Pointer item to mouse position
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;
+        
+        transform.position = mousePos;
     }
 }
