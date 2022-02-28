@@ -120,7 +120,7 @@ public enum SoundType
 {
     Music
     , Weather
-    , Blocks
+    , Block
     , Entities
     , Menu
 }

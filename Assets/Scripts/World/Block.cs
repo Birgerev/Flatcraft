@@ -97,7 +97,7 @@ public class Block : MonoBehaviour
     public virtual void BuildTick()
     {
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f
+            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
                 , 1.5f);
 
         if ((rotateX || rotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
@@ -215,7 +215,7 @@ public class Block : MonoBehaviour
 
         blockHealth -= time;
 
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Blocks, 0.8f, 1.2f);
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
 
         if (!BreakIndicator.breakIndicators.ContainsKey(location))
             BreakIndicator.Spawn(location);
@@ -254,7 +254,7 @@ public class Block : MonoBehaviour
         if (drop)
             Drop();
 
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Blocks, 0.5f, 1.5f);
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
         Random r = new Random();
         for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
