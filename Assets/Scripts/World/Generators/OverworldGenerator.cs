@@ -148,12 +148,12 @@ public class OverworldGenerator : WorldGenerator
 
             //Trees
             if (biome.name == "forest" || biome.name == "forest_hills")
-                if (r.Next(0, 100) <= 20)
+                if (r.Next(0, 100) <= 25)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Oak_Tree"));
 
             //Birch Trees
             if (biome.name == "birch_forest")
-                if (r.Next(0, 100) <= 20)
+                if (r.Next(0, 100) <= 25)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Birch_Tree"));
 
             //Unlikely Trees
@@ -162,8 +162,10 @@ public class OverworldGenerator : WorldGenerator
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Oak_Tree"));
 
             //Large Trees
-            if (biome.name == "plains")
-                if (r.Next(0, 100) <= 1)
+            //Large Oak Trees
+            if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" || 
+                biome.name == "plains")
+                if (r.Next(0, 100) <= 2)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Large_Oak_Tree"));
 
             //Dead Bushes
