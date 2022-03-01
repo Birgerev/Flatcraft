@@ -7,7 +7,7 @@
     , Cobblestone
     , Bedrock
     , Oak_Log
-    , Leaves
+    , Oak_Leaves
     , Structure_Block
     , Tall_Grass
     , Red_Flower
@@ -110,4 +110,5 @@
     , Melon_Crop
     , Sign
     , Birch_Sapling
+    , Birch_Leaves
 }
