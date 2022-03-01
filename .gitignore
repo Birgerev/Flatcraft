@@ -12,6 +12,7 @@ Saves/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 /[Bb]uildServer/
+/UserSettings/
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
@@ -72,4 +73,3 @@ sunvox_log.txt
 *.sunpat
 testingProfile.dat
 serverConfig.dat
-UserSettings/Layouts/default-2021.dwlt
