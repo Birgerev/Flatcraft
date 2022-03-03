@@ -23,7 +23,7 @@ MonoBehaviour:
     data: 
     durability: 64
     material: 82
-  - amount: 1
+  - amount: 3
     data: 
     durability: 0
     material: 106
