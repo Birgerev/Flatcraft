@@ -7,6 +7,7 @@ using Random = System.Random;
 
 public class CreateWorldMenu : MonoBehaviour
 {
+    public GameObject singleplayerMenuPrefab;
     public Button CreateButton;
     public Text errorText;
     public Text worldTemplateButtonText;
@@ -100,6 +101,7 @@ public class CreateWorldMenu : MonoBehaviour
 
     public void Cancel()
     {
+        Instantiate(singleplayerMenuPrefab);
         Destroy(gameObject);
     }
 }
