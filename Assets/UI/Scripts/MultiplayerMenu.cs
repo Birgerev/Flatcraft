@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 public class MultiplayerMenu : MonoBehaviour
 {
-    private static string savedServersPath;
+    private static string savedServersPath => Application.persistentDataPath + "\\favouritedServers.dat";
     private const int BrowseServerLoadAmount = 4;
     private const string ServerAdress = "hille.evansson.se";
     private const string Url = "http://hille.evansson.se/flatcraft/";
@@ -52,8 +52,6 @@ public class MultiplayerMenu : MonoBehaviour
     
     private void Start()
     {
-        savedServersPath = Application.dataPath + "/../servers.dat";
-        
         if (!File.Exists(savedServersPath))
             File.Create(savedServersPath);
         
