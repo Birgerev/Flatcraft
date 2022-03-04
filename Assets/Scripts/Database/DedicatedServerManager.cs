@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class DedicatedServerManager
 {
-    private static string serverConfigPath = Application.dataPath + "/../serverConfig.dat";
+    private static string serverConfigPath = Application.persistentDataPath + "/serverConfig.dat";
     public static Dictionary<string, string> configValues = new Dictionary<string, string>();
     
     public static bool DedicatedServerCheck()

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class DeleteWorldMenu : MonoBehaviour
 {
     public static int selectedWorld = -1;
+    
+    public GameObject singleplayerMenuPrefab;
     public Text deleteText;
     public List<World> worlds = new List<World>();
 
@@ -18,12 +20,15 @@ public class DeleteWorldMenu : MonoBehaviour
 
     public void Cancel()
     {
+        Instantiate(singleplayerMenuPrefab);
         Destroy(gameObject);
     }
 
     public void Delete()
     {
         worlds[selectedWorld].Delete();
+        
+        Instantiate(singleplayerMenuPrefab);
         Destroy(gameObject);
     }
 }

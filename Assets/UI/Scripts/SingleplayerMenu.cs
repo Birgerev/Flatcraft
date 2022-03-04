@@ -31,9 +31,10 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void LoadWorlds()
     {
-        worlds.Clear();
+        //Fetch new worlds
         worlds = GetWorlds();
 
+        //Create new world buttons
         foreach (World world in worlds)
         {
             GameObject obj = Instantiate(worldPrefab, list, false);
@@ -63,10 +64,12 @@ public class SingleplayerMenu : MonoBehaviour
     {
         DeleteWorldMenu.selectedWorld = selectedWorld;
         Instantiate(deleteWorldMenuPrefab);
+        Destroy(gameObject);
     }
 
     public void Create()
     {
         Instantiate(createWorldMenuPrefab);
+        Destroy(gameObject);
     }
 }

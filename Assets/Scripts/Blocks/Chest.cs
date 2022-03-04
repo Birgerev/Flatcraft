@@ -69,9 +69,9 @@ public class Chest : InventoryContainer
             if (lastCheckOpen != IsOpen())
             {
                 if (IsOpen())
-                    Sound.Play(location, "random/door/door_open", SoundType.Blocks, 0.8f, 1.3f);
+                    Sound.Play(location, "random/door/door_open", SoundType.Block, 0.8f, 1.3f);
                 else
-                    Sound.Play(location, "random/door/door_close", SoundType.Blocks, 0.8f, 1.3f);
+                    Sound.Play(location, "random/door/door_close", SoundType.Block, 0.8f, 1.3f);
 
                 lastCheckOpen = IsOpen();
             }

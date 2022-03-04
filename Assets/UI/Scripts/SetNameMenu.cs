@@ -11,7 +11,7 @@ public class SetNameMenu : MonoBehaviour
 
     public void DoneButton()
     {
-        string testingNamePath = Application.dataPath + "/../testingProfile.dat";
+        string testingNamePath = Application.persistentDataPath + "\\testingProfile.dat";
         File.WriteAllText(testingNamePath, nameField.text);
         
         SceneManager.LoadScene("Boot");

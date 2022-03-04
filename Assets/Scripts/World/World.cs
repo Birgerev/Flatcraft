@@ -45,7 +45,7 @@ public class World
             if (cachedAppPath != "")
                 return cachedAppPath;
 
-            cachedAppPath = Application.dataPath;
+            cachedAppPath = Application.persistentDataPath;
             return cachedAppPath;
         }
     }
@@ -125,7 +125,7 @@ public class World
 
     public static string GetSavesPath()
     {
-        string savesPath = appPath + "\\..\\Saves\\";
+        string savesPath = appPath + "\\Saves\\";
 
         if (!Directory.Exists(savesPath))
             Directory.CreateDirectory(savesPath);

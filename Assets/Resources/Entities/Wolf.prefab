@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2384776945747381160}
   - {fileID: 2815422375951687369}
@@ -65,6 +66,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3200504573916294891}
   - {fileID: 7525775650925965488}
@@ -105,7 +107,7 @@ MonoBehaviour:
   displayName: 
 --- !u!95 &7371507656522640533
 Animator:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -118,6 +120,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -259,6 +262,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0.125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3200504573916294891}
   m_RootOrder: 0
@@ -274,6 +278,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -303,13 +308,13 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 3261783891082122722, guid: 4f63785f43bbafe41b5073028977afc0,
+  m_Sprite: {fileID: -9131693867516904373, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1.5}
+  m_Size: {x: 0.5, y: 0.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -358,6 +363,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6360266362977560002}
   - {fileID: 7671793149638150432}
@@ -375,6 +381,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -406,7 +413,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 2352447024195531709, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -484,6 +491,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3200504573916294891}
   m_RootOrder: 1
@@ -499,6 +507,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -528,9 +537,9 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9131693867516904373, guid: 4f63785f43bbafe41b5073028977afc0,
+  m_Sprite: {fileID: -182057704280641203, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -863,12 +872,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50b359c6063357f469d674201dc3ff67, type: 3}
---- !u!4 &7525775650925965488 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1574513011999529270, guid: 50b359c6063357f469d674201dc3ff67,
-    type: 3}
-  m_PrefabInstance: {fileID: 9054810491038181766}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &577193776036264863 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8479078001428566553, guid: 50b359c6063357f469d674201dc3ff67,
@@ -881,3 +884,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790e435a678327f4a9d75d8791cfa672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &7525775650925965488 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1574513011999529270, guid: 50b359c6063357f469d674201dc3ff67,
+    type: 3}
+  m_PrefabInstance: {fileID: 9054810491038181766}
+  m_PrefabAsset: {fileID: 0}

@@ -313,7 +313,7 @@ public class Player : HumanEntity
         }
 
         //Debug disable lighting
-        if (Input.GetKeyDown(KeyCode.F4))
+        if (Debug.isDebugBuild && Input.GetKeyDown(KeyCode.F4))
             LightManager.instance.doLight = !LightManager.instance.doLight;
 
         //Inventory Managment

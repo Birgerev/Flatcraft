@@ -119,6 +119,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2806676a29cefe04788dc8702294132c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singleplayerMenuPrefab: {fileID: 2614281875644071066, guid: 121d5566f67a23f478789906152b5815,
+    type: 3}
   deleteText: {fileID: 7623000774138983155}
   worlds: []
 --- !u!114 &5424256322485821425

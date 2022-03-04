@@ -12,6 +12,7 @@ Saves/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 /[Bb]uildServer/
+/UserSettings/
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
