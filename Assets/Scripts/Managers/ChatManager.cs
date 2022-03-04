@@ -71,7 +71,7 @@ public class ChatManager : NetworkBehaviour
                 int xSize = int.Parse(args[2]);
                 int ySize = int.Parse(args[3]);
                 Location playerLocation = player.playerEntity.GetComponent<Player>().Location;
-                string savePath = Application.dataPath + "\\..\\savedStructure.txt";
+                string savePath = Application.persistentDataPath + "\\savedStructure.txt";
                 List<string> lines = new List<string>();
 
                 AddMessage("Starting Structure Cloner");
@@ -105,7 +105,7 @@ public class ChatManager : NetworkBehaviour
             {
                 int xOffset = int.Parse(args[1]);
                 int yOffset = int.Parse(args[2]);
-                string savePath = Application.dataPath + "\\..\\savedStructure.txt";
+                string savePath = Application.persistentDataPath + "\\savedStructure.txt";
                 List<string> newLines = new List<string>();
                 
                 foreach (String line in File.ReadAllLines(savePath))

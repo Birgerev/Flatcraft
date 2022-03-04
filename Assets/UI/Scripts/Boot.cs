@@ -18,7 +18,7 @@ public class Boot : MonoBehaviour
 
     private bool CreateNameCheck()
     {
-        string testingNamePath = Application.dataPath + "/../testingProfile.dat";
+        string testingNamePath = Application.persistentDataPath + "\\testingProfile.dat";
         if(!File.Exists(testingNamePath))
         {
             SceneManager.LoadScene("TestingCreateName");
