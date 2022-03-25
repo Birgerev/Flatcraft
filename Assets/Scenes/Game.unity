@@ -9568,7 +9568,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -13248,9 +13248,9 @@ ParticleSystem:
     collidesWith:
       serializedVersion: 2
       m_Bits: 257
-    maxCollisionShapes: 256
-    quality: 0
-    voxelSize: 0.5
+    maxCollisionShapes: 1500
+    quality: 1
+    voxelSize: 1
     collisionMessages: 0
     collidesWithDynamic: 1
     interiorCollisions: 0
