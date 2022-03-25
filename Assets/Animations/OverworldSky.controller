@@ -213,7 +213,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sky-transition
+  m_Name: Transition
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -243,7 +243,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sky-night
+  m_Name: Night
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -542,13 +542,13 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: raining
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
-    m_Controller: {fileID: 0}
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Background
@@ -618,7 +618,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sky-day
+  m_Name: Day
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -672,7 +672,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: overworldsky-dayweather
+  m_Name: Day Rain
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -753,7 +753,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: overworldsky-rain
+  m_Name: Rain
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -836,7 +836,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: overworldsky-nightweather
+  m_Name: Night Rain
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -864,7 +864,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: overworldsky-stars
+  m_Name: Stars
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -989,7 +989,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: overworldsky-clear
+  m_Name: Clear
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
