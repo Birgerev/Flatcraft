@@ -10,6 +10,7 @@ public class WeatherManager : NetworkBehaviour
     
     [SyncVar] public Weather weather;
 
+    //TODO sound
     private void Start()
     {
         instance = this;
