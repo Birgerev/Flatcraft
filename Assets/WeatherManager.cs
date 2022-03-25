@@ -7,15 +7,12 @@ using UnityEngine;
 public class WeatherManager : NetworkBehaviour
 {
     public static WeatherManager instance;
-    public GameObject rainPrefab;
     
     [SyncVar] public Weather weather;
-    private GameObject rainEffect;
 
     private void Start()
     {
         instance = this;
-        Instantiate(rainPrefab);//TODO
     }
 
     private void Update()
@@ -36,16 +33,10 @@ public class WeatherManager : NetworkBehaviour
                 weather = WorldManager.world.weather;
             }
         }
-
-        if (weather == Weather.Raining)
-        {
-            //rainPrefab.GetComponent<ParticleSystem>().emission.
-        }
     }
 
     public void ChangeWeather()
     {
-        //TODO support for multiple weathers
         WorldManager.world.weather = (WorldManager.world.weather == Weather.Clear) ? Weather.Raining : Weather.Clear;
         WorldManager.world.weatherTime = NewWeatherTime(WorldManager.world.weather);
     }
