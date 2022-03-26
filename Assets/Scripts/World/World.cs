@@ -13,19 +13,29 @@ public class World
     public float time;
     public int versionId;
     public WorldTemplate template;
+    public float weatherTime;
+    public Weather weather;
 
     public World(string name, int seed)
     {
         this.name = name;
         this.seed = seed;
+        this.time = 0;
         this.versionId = VersionController.CurrentVersionId;
         this.template = WorldTemplate.Default;
+        weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
+        weather = Weather.Clear;
     }
 
     public World()
     {
+        this.name = "";
+        this.seed = 0;
+        this.time = 0;
         this.versionId = VersionController.CurrentVersionId;
         this.template = WorldTemplate.Default;
+        weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
+        weather = Weather.Clear;
     }
 
     public static string appPath
@@ -54,6 +64,8 @@ public class World
             world.time = float.Parse(worldData["time"]);
             world.versionId = int.Parse(worldData["versionId"]);
             world.template = (WorldTemplate) Enum.Parse(typeof(WorldTemplate), worldData["template"]);
+            world.weatherTime = float.Parse(worldData["weatherTime"]);
+            world.weather = (Weather) Enum.Parse(typeof(Weather), worldData["weather"]);
         }
         catch (Exception e)
         {
@@ -105,6 +117,8 @@ public class World
         data.Add("time=" + time);
         data.Add("versionId=" + versionId);
         data.Add("template=" + template);
+        data.Add("weatherTime=" + weatherTime);
+        data.Add("weather=" + weather);
 
         File.WriteAllLines(GetPath() + "\\level.dat", data);
     }

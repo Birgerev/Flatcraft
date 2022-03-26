@@ -7,7 +7,7 @@ public class WorldManager : NetworkBehaviour
 {
     public static WorldManager instance;
 
-    public static float dayLength = 60 * 20;
+    public const float DayLength = 60 * 20;
 
     public static World world;
 
@@ -56,7 +56,7 @@ public class WorldManager : NetworkBehaviour
     
     public static TimeOfDay GetTimeOfDay()
     {
-        return instance.worldTime % dayLength > dayLength / 2
+        return instance.worldTime % DayLength > DayLength / 2
             ? TimeOfDay.Night
             : TimeOfDay.Day;
     }

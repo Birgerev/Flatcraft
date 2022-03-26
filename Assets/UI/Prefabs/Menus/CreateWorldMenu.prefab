@@ -112,7 +112,7 @@ MonoBehaviour:
   m_BlockingObjects: 3
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 0
 --- !u!114 &6920535588812196831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +150,8 @@ MonoBehaviour:
     time: 0
     versionId: 0
     template: 0
+    weatherTime: 4800
+    weather: 0
 --- !u!1 &6920535589515629099
 GameObject:
   m_ObjectHideFlags: 0

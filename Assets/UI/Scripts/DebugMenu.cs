@@ -11,7 +11,8 @@ public class DebugMenu : MonoBehaviour
 
     public Text text_fps;
     public Text text_seed;
-    public Text text_time;
+    public Text text_worldTime;
+    public Text text_weatherTime;
     public Text text_x;
     public Text text_y;
     public Text text_blockInfo;
@@ -23,13 +24,13 @@ public class DebugMenu : MonoBehaviour
     {
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
 
-        updateState();
+        UpdateState();
 
         if (active)
-            updateText();
+            UpdateText();
     }
 
-    private void updateState()
+    private void UpdateState()
     {
         if (Input.GetKeyDown(KeyCode.F3))
             active = !active;
@@ -39,7 +40,7 @@ public class DebugMenu : MonoBehaviour
         GetComponent<CanvasGroup>().blocksRaycasts = active;
     }
 
-    private void updateText()
+    private void UpdateText()
     {
         text_title.text = "Flatcraft " + VersionController.GetVersionName();
         text_fps.text = "fps: " + (int) (1.0f / deltaTime);
@@ -55,9 +56,11 @@ public class DebugMenu : MonoBehaviour
         if (biome != null)
             text_biome.text = "biome: " + biome.name;
 
+        //TODO wont sync in multiplayer
         text_seed.text = "seed: " + WorldManager.world.seed;
-        text_time.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
-                         (int) (WorldManager.instance.worldTime / WorldManager.dayLength) + ")";
+        text_worldTime.text = "time: " + (int) WorldManager.instance.worldTime + ", (day " +
+                              (int) (WorldManager.instance.worldTime / WorldManager.DayLength) + ")";
+        text_weatherTime.text = "weather time: " + (int)WorldManager.world.weatherTime;
 
         Location location = player.GetBlockedMouseLocation();
         BlockState state = location.GetState();

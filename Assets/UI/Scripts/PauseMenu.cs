@@ -3,6 +3,7 @@
 public class PauseMenu : MonoBehaviour
 {
     public static bool active;
+    public GameObject optionsMenuPrefab;
 
     // Start is called before the first frame update
     private void Start()
@@ -15,6 +16,17 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             SetMenuActive(!active);
+    }
+
+    public void ToggleMultiplayer()
+    {
+        //TODO method
+        //TODO interractible button state
+    }
+
+    public void Options()
+    {
+        Instantiate(optionsMenuPrefab);
     }
 
     public void EnterMenu()
