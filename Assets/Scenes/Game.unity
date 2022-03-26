@@ -13412,7 +13412,7 @@ ParticleSystem:
     collidesWith:
       serializedVersion: 2
       m_Bits: 257
-    maxCollisionShapes: 1500
+    maxCollisionShapes: 3000
     quality: 1
     voxelSize: 1
     collisionMessages: 0
