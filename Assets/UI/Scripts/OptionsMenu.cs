@@ -10,12 +10,12 @@ public class OptionsMenu : MonoBehaviour
 
     private void Update()
     {
-        fullscreenText.text = "Fullscreen: " + (Screen.fullScreen ? "On" : "Off");
+        fullscreenText.text = "Fullscreen: " + (ScreenManager.IsFullscreen() ? "On" : "Off");
     }
 
     public void ToggleFullscreen()
     {
-        Screen.fullScreen = !Screen.fullScreen;
+        ScreenManager.ToggleFullscreen();
     }
     
     public void Close()
