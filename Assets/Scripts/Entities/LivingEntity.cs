@@ -401,7 +401,7 @@ public class LivingEntity : Entity
     {
         direction.Normalize();
 
-        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 5f, 6f);
+        GetComponent<Rigidbody2D>().velocity += new Vector2(direction.x * 5f, 5f);
     }
 
     [ClientRpc]
