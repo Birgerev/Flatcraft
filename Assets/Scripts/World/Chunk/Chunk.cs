@@ -626,7 +626,7 @@ public class Chunk : NetworkBehaviour
                 GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
                 BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
 
-                blockObject.transform.position = new Vector3(x, y);
+                blockObject.transform.position = new Location(x, y, chunkPosition.dimension).GetPosition();
                 backgroundBlock.material = nextBackgroundMaterial;
                 backgroundBlocks.Add(new int2(x, y), backgroundBlock);
 
