@@ -181,18 +181,18 @@ public class Liquid : Block
     
     private bool CanFlow(Location loc, bool accountLiquidLevel)
     {
-        Material mat = loc.GetMaterial();
+        BlockState state = loc.GetState();
 
         //Can always flow to air
-        if (mat == Material.Air)
+        if (state.material == Material.Air)
         {
             return true;
         }
             
-        if (mat == GetMaterial())
+        if (state.material == GetMaterial())
         {
             //Allow filling liquids with less level
-            if (accountLiquidLevel)
+            if (accountLiquidLevel && state.data.HasTag("liquid_level"))
             {
                 int currentLevel = int.Parse(GetData().GetTag("liquid_level"));
                 int locLevel = int.Parse(loc.GetData().GetTag("liquid_level"));
