@@ -111,4 +111,5 @@
     , Sign
     , Birch_Sapling
     , Birch_Leaves
+    , Nether_Bricks
 }
