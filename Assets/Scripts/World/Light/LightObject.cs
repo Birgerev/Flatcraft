@@ -26,19 +26,20 @@ public class LightObject : MonoBehaviour
 
     public void UpdateLightLevel(int lightLevel)
     {
-        lightLevel -= lightLevelDeduct;
-        lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.maxLightLevel);
-
-        Player player = Player.localEntity;
-        if (player == null)
-            return;
-
+        //Enforce minimum light level in nether
         if (GetLocation().dimension == Dimension.Nether)
             lightLevel = Mathf.Clamp(lightLevel, LightManager.netherLightLevel, int.MaxValue);
+        
+        //Deduct predefined light level
+        lightLevel -= lightLevelDeduct;
+        //Ensure light level is in correct range
+        lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.maxLightLevel);
 
-        float lightLevelFactor = lightLevel / (float) LightManager.maxLightLevel;
-        Color color = new Color(lightLevelFactor, lightLevelFactor, lightLevelFactor, 1);
+        //Calculate 01 value and then decide resulting color
+        float lightLevel01 = lightLevel / (float) LightManager.maxLightLevel;
+        Color color = new Color(lightLevel01, lightLevel01, lightLevel01, 1);
 
+        //Assign new color
         GetComponent<SpriteRenderer>().color = color;
     }
 }
