@@ -60,4 +60,19 @@ public class NetherGenerator : WorldGenerator
         
         return mat;
     }
+    
+    public override BlockState GenerateStructures(Location loc, Biome biome)
+    {
+        Random r = new Random(SeedGenerator.SeedByLocation(loc));
+        Material mat = loc.GetMaterial();
+        Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
+        
+        //Generate Liquid Pockets
+        if (loc.y == LavaLevel && mat == Material.Lava && r.NextDouble() <= 0.005d)
+        {
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Nether_Fortress"));
+        }
+
+        return new BlockState(Material.Air);
+    }
 }

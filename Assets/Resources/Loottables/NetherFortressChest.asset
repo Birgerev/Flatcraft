@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0ad68f421d8ca14cb5323eda08ea5db, type: 3}
+  m_Name: NetherFortressChest
+  m_EditorClassIdentifier: 
+  minimunRolls: 30
+  maximumRolls: 40
+  confirmedItems: []
+  rollItems:
+  - material: 53
+    minAmount: 1
+    maxAmount: 3
+    chance: 0.49
+  - material: 52
+    minAmount: 1
+    maxAmount: 5
+    chance: 0.19
+  - material: 55
+    minAmount: 1
+    maxAmount: 3
+    chance: 0.19
+  - material: 82
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.19
+  - material: 42
+    minAmount: 1
+    maxAmount: 1
+    chance: 0.19
+  - material: 80
+    minAmount: 2
+    maxAmount: 4
+    chance: 0.08
