@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,9 +31,9 @@ public class TestVerificationChecker : MonoBehaviour
             }
             else
             {
-                string verificationCode = www.downloadHandler.text;
+                int verificationId = Int32.Parse(www.downloadHandler.text);
                 
-                if (!verificationCode.Equals(VersionController.GetVersionName()))
+                if (verificationId != VersionController.CurrentVersionId)
                 {
                     VerificationTestFailed();
                 }
