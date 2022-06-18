@@ -14,7 +14,7 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
     public void ConnectButton()
     {
         GameNetworkManager.connectionMode = ConnectionMode.Client;
-        SceneManager.LoadScene("Game");
+        GameNetworkManager.StartGame();
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 

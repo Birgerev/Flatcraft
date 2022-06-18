@@ -36,7 +36,7 @@ public class DemoButton : MonoBehaviour
         
         //Load world
         WorldManager.world = demoWorld;
-        SceneManager.LoadScene("Game");
+        GameNetworkManager.StartGame();
         GameNetworkManager.connectionMode = ConnectionMode.Host;
         LoadingMenu.Create(LoadingMenuType.LoadWorld);
     }

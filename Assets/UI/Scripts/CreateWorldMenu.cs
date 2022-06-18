@@ -84,8 +84,8 @@ public class CreateWorldMenu : MonoBehaviour
         
         //Load world
         WorldManager.world = world;
-        SceneManager.LoadScene("Game");
         GameNetworkManager.connectionMode = ConnectionMode.Host;
+        GameNetworkManager.StartGame();
         LoadingMenu.Create(LoadingMenuType.LoadWorld);
     }
 

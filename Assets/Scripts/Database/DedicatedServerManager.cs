@@ -33,7 +33,7 @@ public class DedicatedServerManager
             //Start server
             GameNetworkManager.port = int.Parse(configValues["port"]);
             GameNetworkManager.connectionMode = ConnectionMode.DedicatedServer;
-            SceneManager.LoadScene("Game");
+            GameNetworkManager.StartGame();
             return true;
         }
         

@@ -140,7 +140,7 @@ public class MultiplayerMenu : MonoBehaviour
         GameNetworkManager.clientConnectionAddress = selectedServer.address;
         GameNetworkManager.port = selectedServer.port;
         GameNetworkManager.connectionMode = ConnectionMode.Client;
-        SceneManager.LoadScene("Game");
+        GameNetworkManager.StartGame();
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 

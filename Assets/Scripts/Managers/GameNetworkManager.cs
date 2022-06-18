@@ -88,6 +88,11 @@ public class GameNetworkManager : NetworkManager
         SceneManager.LoadScene("MultiplayerDisconnectedMenu");
     }
 
+    public static void StartGame()
+    {
+        SceneManager.LoadScene("Game");
+    }
+    
     public static void Disconnect()
     {
         switch (connectionMode)
