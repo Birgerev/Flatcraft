@@ -5,6 +5,6 @@ public class MultiplayerDisconnectedMenu : MonoBehaviour
 {
     public void BackToServerList()
     {
-        SceneManager.LoadScene("MultiplayerMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 }
