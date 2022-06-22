@@ -45,6 +45,7 @@ public class TestVerificationChecker : MonoBehaviour
 
     private void VerificationTestFailed()
     {
+        Debug.Log("Build verification failed");
         SceneManager.LoadScene("BuildVerificationFail");
         Destroy(gameObject);
     }
