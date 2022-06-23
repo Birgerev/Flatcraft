@@ -42,7 +42,7 @@ public class DebugMenu : MonoBehaviour
 
     private void UpdateText()
     {
-        text_title.text = "Flatcraft " + VersionController.GetVersionName();
+        text_title.text = "Flatcraft " + Version.CurrentName();
         text_fps.text = "fps: " + (int) (1.0f / deltaTime);
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;

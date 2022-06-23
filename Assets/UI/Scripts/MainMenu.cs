@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
     
     public void Start()
     {
-        versionText.text = "Flatcraft " + VersionController.GetVersionName();
+        versionText.text = "Flatcraft " + Version.CurrentName();
     }
 
     public void Singleplayer()

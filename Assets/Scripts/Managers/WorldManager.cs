@@ -36,7 +36,7 @@ public class WorldManager : NetworkBehaviour
         Time.timeScale = 1;
         chunks.Clear();
         //Update to current version
-        world.versionId = VersionController.CurrentVersionId;
+        world.versionId = Version.currentId;
             
         StartCoroutine(SaveLoop());
     }

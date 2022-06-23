@@ -33,7 +33,7 @@ public class TestVerificationChecker : MonoBehaviour
             {
                 int verificationId = Int32.Parse(www.downloadHandler.text);
                 
-                if (verificationId != VersionController.CurrentVersionId)
+                if (verificationId != Version.currentId)
                 {
                     VerificationTestFailed();
                 }
