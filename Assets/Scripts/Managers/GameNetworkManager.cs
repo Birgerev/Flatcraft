@@ -81,9 +81,9 @@ public class GameNetworkManager : NetworkManager
             NetworkClient.Ready();
     }
 
-    public override void OnClientDisconnect(NetworkConnection conn)
+    public override void OnClientDisconnect()
     {
-        base.OnClientDisconnect(conn);
+        base.OnClientDisconnect();
 
         SceneManager.LoadScene("MultiplayerDisconnectedMenu");
     }
