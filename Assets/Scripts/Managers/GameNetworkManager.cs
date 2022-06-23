@@ -63,7 +63,6 @@ public class GameNetworkManager : NetworkManager
     {
         base.OnStopClient();
 
-        SceneManager.LoadScene("MainMenu");
         Destroy(gameObject);
     }
 
@@ -85,7 +84,10 @@ public class GameNetworkManager : NetworkManager
     {
         base.OnClientDisconnect();
 
-        SceneManager.LoadScene("MultiplayerDisconnectedMenu");
+        //If player still is in the game scene, the player did not disconnect manually
+        //Thus load the disconnected menu
+        if(SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Game"))
+            SceneManager.LoadScene("MultiplayerDisconnectedMenu");
     }
 
     public static void StartGame()
@@ -107,6 +109,8 @@ public class GameNetworkManager : NetworkManager
                 singleton.StopServer();
                 break;
         }
+        
+        SceneManager.LoadScene("MainMenu");
     }
 }
 
