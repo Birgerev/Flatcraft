@@ -13,7 +13,7 @@ public class Spider : Monster
         List<ItemStack> result = new List<ItemStack>();
         Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
-        result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 1 + 1)));
+        result.Add(new ItemStack(Material.Cobweb, r.Next(0, 1 + 1)));
 
         return result;
     }
