@@ -34,7 +34,8 @@
 
     public bool IsBottomDoorPart()
     {
-        return GetMaterial() == Material.Wooden_Door_Bottom;
+        //TODO this relies on being oak
+        return GetMaterial() == Material.Oak_Door_Bottom;
     }
 
     public override void Break()

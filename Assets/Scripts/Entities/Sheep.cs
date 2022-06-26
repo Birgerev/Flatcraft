@@ -12,7 +12,7 @@ public class Sheep : PassiveEntity
         List<ItemStack> result = new List<ItemStack>();
         Random r = new Random(SeedGenerator.SeedByLocation(Location));
 
-        result.Add(new ItemStack(Material.Wool_Block, r.Next(0, 3 + 1)));
+        result.Add(new ItemStack(Material.White_Wool, r.Next(0, 3 + 1)));
 
         return result;
     }

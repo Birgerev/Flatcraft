@@ -63,11 +63,11 @@
     , Raw_Chicken
     , Cooked_Chicken
     , Oak_Plank_Stairs
-    , Wooden_Trapdoor
-    , Wooden_Door
-    , Wooden_Door_Top
-    , Wooden_Door_Bottom
-    , Wool_Block
+    , Oak_Trapdoor
+    , Oak_Door
+    , Oak_Door_Top
+    , Oak_Door_Bottom
+    , White_Wool
     , Bed_Bottom
     , Bed_Top
     , Bed
@@ -108,7 +108,7 @@
     , Melon
     , Melon_Seeds
     , Melon_Crop
-    , Sign
+    , Oak_Sign
     , Birch_Sapling
     , Birch_Leaves
     , Nether_Bricks

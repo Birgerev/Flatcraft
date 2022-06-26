@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sign : Block
+public class Oak_Sign : Block
 {
     public override string texture { get; set; } = "block_sign";
     public override bool solid { get; set; } = false;

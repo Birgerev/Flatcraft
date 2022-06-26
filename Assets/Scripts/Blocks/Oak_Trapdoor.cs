@@ -1,4 +1,4 @@
-﻿public class Wooden_Trapdoor : Door
+﻿public class Oak_Trapdoor : Door
 {
     public override string texture { get; set; } = "block_wooden_trapdoor_close";
     public override string open_texture { get; } = "block_wooden_trapdoor_open";

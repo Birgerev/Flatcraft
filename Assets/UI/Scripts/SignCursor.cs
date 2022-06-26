@@ -17,7 +17,7 @@ public class SignCursor : MonoBehaviour
             BlockState state = Player.localEntity.GetBlockedMouseLocation().GetState();
 
             //Show if block is sign
-            if (state.material == Material.Sign)
+            if (state.material == Material.Oak_Sign)
             {
                 //Move to mouse
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

@@ -1,4 +1,4 @@
-﻿public class Wooden_Door_Top : Wooden_Door_Block
+﻿public class Oak_Door_Top : Oak_Door_Block
 {
     public override string texture { get; set; } = "block_wooden_door_top_close";
     public override bool rotateX { get; } = true;
