@@ -12,6 +12,9 @@ public class OverworldSky : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (WorldManager.instance == null)
+            return;
+        
         //Calculate time of day value between 0 and 1
         float timeOfDay01 = WorldManager.instance.worldTime % WorldManager.DayLength / WorldManager.DayLength;
         
