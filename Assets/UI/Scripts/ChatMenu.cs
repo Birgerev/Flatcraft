@@ -10,7 +10,7 @@ public class ChatMenu : MonoBehaviour
 
     public InputField inputField;
     public bool open;
-
+    
     // Start is called before the first frame update
     private void Start()
     {
