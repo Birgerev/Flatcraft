@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -41,9 +42,6 @@ public class CreateWorldMenu : MonoBehaviour
 
     private void FetchNameField()
     {
-        //Filter non allowed characters
-        nameField.text = Regex.Replace(nameField.text, "[^\\w\\._]", "");
-        
         //Apply world name
         world.name = nameField.text;
         
@@ -64,6 +62,10 @@ public class CreateWorldMenu : MonoBehaviour
         if (nameField.text.Length > 30)
         {
             errorText.text = "World too long!";
+        //Check if name is valid file name
+        if (nameField.text.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+        {
+            errorText.text = "Unsupported character!";
             error = true;
         }
         //Error handling
