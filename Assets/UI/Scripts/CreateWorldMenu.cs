@@ -61,7 +61,9 @@ public class CreateWorldMenu : MonoBehaviour
         //Check if name is too long
         if (nameField.text.Length > 30)
         {
-            errorText.text = "World too long!";
+            errorText.text = "World name too long!";
+            error = true;
+        }
         //Check if name is valid file name
         if (nameField.text.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
         {
