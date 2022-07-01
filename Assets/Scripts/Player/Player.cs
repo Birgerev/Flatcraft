@@ -775,6 +775,7 @@ public class Player : HumanEntity
         if (dead)
             return;
 
+        ChatManager.instance.AddMessage(displayName + " died");
         base.Die();
         File.Delete(SavePath());
         GetInventory().Delete();
