@@ -144,6 +144,9 @@ public class Inventory : NetworkBehaviour
     [Server]
     public void Delete()
     {
+        //Make sure inventory menu is closed
+        Close();
+        
         string path = WorldManager.world.GetPath() + "\\inventories\\" + id;
         Directory.Delete(path, true);
         NetworkServer.Destroy(gameObject);
