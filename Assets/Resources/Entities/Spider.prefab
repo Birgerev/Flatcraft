@@ -33,6 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5294156491451610000}
   - {fileID: 8143408612665229389}
@@ -73,7 +74,7 @@ MonoBehaviour:
   displayName: 
 --- !u!95 &6312389284420042247
 Animator:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -86,6 +87,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -114,8 +116,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.74, y: 0.49}
-  m_EdgeRadius: 0.13
+  m_Size: {x: 1.7, y: 0.45}
+  m_EdgeRadius: 0.15
 --- !u!50 &1999866454145100795
 Rigidbody2D:
   serializedVersion: 4
@@ -152,7 +154,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: befe78fc14d844e4d859042c8e503cd2
   hasSpawned: 0
 --- !u!114 &4638806342675433347
 MonoBehaviour:
@@ -169,14 +171,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
-  interpolateRotation: 1
-  interpolatePosition: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
   syncScale: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  onlySyncOnChange: 1
+  bufferResetMultiplier: 5
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &3097267307161096843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,6 +241,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.375, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 642069774084008980}
   m_Father: {fileID: 3735909940835760781}
@@ -244,6 +258,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -350,6 +365,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4902884299857352403}
   - {fileID: 4755947508244366258}
@@ -384,6 +400,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.375, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5294156491451610000}
   m_RootOrder: 0
@@ -399,6 +416,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -763,12 +781,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50b359c6063357f469d674201dc3ff67, type: 3}
---- !u!4 &8143408612665229389 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1574513011999529270, guid: 50b359c6063357f469d674201dc3ff67,
-    type: 3}
-  m_PrefabInstance: {fileID: 7267395563903179131}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1256861940064996194 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8479078001428566553, guid: 50b359c6063357f469d674201dc3ff67,
@@ -781,3 +793,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790e435a678327f4a9d75d8791cfa672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &8143408612665229389 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1574513011999529270, guid: 50b359c6063357f469d674201dc3ff67,
+    type: 3}
+  m_PrefabInstance: {fileID: 7267395563903179131}
+  m_PrefabAsset: {fileID: 0}
