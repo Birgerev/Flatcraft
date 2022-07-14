@@ -590,6 +590,7 @@ public class Chunk : NetworkBehaviour
         yield return new WaitForSeconds(0);
 
         //Look up which blocks in the column will create background blocks
+        List<int> transparentHeight = new List<int>();
         Dictionary<Location, Material> solidMaterials = new Dictionary<Location, Material>();
         for (int y = 0; y < Height; y++)
         {
@@ -605,6 +606,8 @@ public class Chunk : NetworkBehaviour
             
             if (BackgroundBlock.viableMaterials.ContainsKey(mat))
                 solidMaterials.Add(loc, BackgroundBlock.viableMaterials[mat]);
+            if (BackgroundBlock.transparentBackgrounds.Contains(mat))
+                transparentHeight.Add(y);
         }
 
         for (int i = 0; i < solidMaterials.Count - 1; i++)
@@ -621,21 +624,23 @@ public class Chunk : NetworkBehaviour
             Material nextMat = solidMaterials[nextLoc];
             Material nextBackgroundMaterial = BackgroundBlock.viableMaterials[nextMat];
 
+            //Create background blocks up to the next solid
             for (int y = currentLoc.y + 1; y < nextLoc.y; y++)
             {
-                GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
-                BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
+                //Don't place background at transparent blocks (such as glass)
+                if(transparentHeight.Contains(y))
+                    continue;
+                    
+                GameObject backgroundblockObject = Instantiate(backgroundBlockPrefab, transform, true);
+                BackgroundBlock backgroundBlock = backgroundblockObject.GetComponent<BackgroundBlock>();
 
-                blockObject.transform.position = new Location(x, y, chunkPosition.dimension).GetPosition();
+                backgroundblockObject.transform.position = new Location(x, y, chunkPosition.dimension).GetPosition();
                 backgroundBlock.material = nextBackgroundMaterial;
                 backgroundBlocks.Add(new int2(x, y), backgroundBlock);
 
                 if (updateLight)
                     ScheduleBlockLightUpdate(new Location(x, y, chunkPosition.dimension));
             }
-            
-            //if (!isLoaded && i % 10 == 0)
-            //    yield return new WaitForSeconds(0);
         }
     }
 
