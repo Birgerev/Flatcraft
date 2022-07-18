@@ -12,6 +12,7 @@ public class BackgroundBlock : MonoBehaviour
         , {Material.Oak_Door_Bottom, Material.Oak_Planks}, {Material.Oak_Door_Top, Material.Oak_Planks}
         , {Material.Oak_Trapdoor, Material.Oak_Planks}, {Material.Farmland_Dry, Material.Dirt}
         , {Material.Farmland_Wet, Material.Dirt}, {Material.Nether_Bricks, Material.Nether_Bricks}
+        , {Material.Bedrock, Material.Bedrock}
     };
     
     public static List<Material> transparentBackgrounds = new List<Material>
