@@ -19,7 +19,6 @@ public class Chunk : NetworkBehaviour
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
-    public const int MaxBackgroundBlockLength = 20;
 
     private static readonly float animalGenerationChance = 0.1f;
     private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
@@ -617,7 +616,7 @@ public class Chunk : NetworkBehaviour
             int heightDistance = nextLoc.y - currentLoc.y;
             
             //Check so that blocks are not next to each other or too far apart
-            if(heightDistance <= 1 || heightDistance > MaxBackgroundBlockLength)
+            if(heightDistance <= 1 || heightDistance > BackgroundBlock.MaxLengthFromSolid)
                 continue;
 
             //Look up which material will be used for the background
