@@ -1,4 +1,4 @@
 mirror*0*0
 Wipe*1*
-Wool_Block*0,0*
-Wool_Block*0,1*
+White_Wool*0,0*
+White_Wool*0,1*

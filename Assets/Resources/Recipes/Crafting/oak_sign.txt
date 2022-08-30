@@ -1,5 +1,5 @@
 mirror*0*0
-Sign*1*
+Oak_Sign*1*
 Stick*1,0*
 Oak_Planks*0,1*
 Oak_Planks*1,1*

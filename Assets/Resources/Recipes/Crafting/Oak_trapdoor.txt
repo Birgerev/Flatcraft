@@ -1,8 +1,8 @@
 mirror*0*0
-Wooden_Door*3*
+Oak_Trapdoor*2*
 Oak_Planks*0,0*
 Oak_Planks*1,0*
+Oak_Planks*2,0*
 Oak_Planks*0,1*
 Oak_Planks*1,1*
-Oak_Planks*0,2*
-Oak_Planks*1,2*
+Oak_Planks*2,1
