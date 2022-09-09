@@ -61,22 +61,24 @@ public class PlayerInventoryMenu : InventoryMenu
 
         if (resultItem.material == Material.Air)
             return;
-
         if (resultItem.material != newPointerItem.material &&
             newPointerItem.material != Material.Air)
             return;
-        
-        int amountToMove = resultItem.Amount;
-        if (newPointerItem.Amount + amountToMove >= Inventory.MaxStackSize)
-            amountToMove = Inventory.MaxStackSize - newPointerItem.Amount;
-        
-        newPointerItem.material = resultItem.material;
-        newPointerItem.Amount += amountToMove;
 
-        resultItem.amount -= amountToMove;
+        //Set pointer material to result material
+        newPointerItem.material = resultItem.material;
+
+        while (resultItem.amount > 0 && //Keep moving items until result slot is empty
+               newPointerItem.Amount < Inventory.MaxStackSize)  //Stop if pointer amount exceeds 64
+        {
+            newPointerItem.Amount += 1;
+            resultItem.amount -= 1;
+        }
+
+        //Properly clear result slot if necessary
         if (resultItem.amount <= 0)
             resultItem = new ItemStack();
-        
+                
         //Apply item stack changes
         SetPointerItem(newPointerItem);
         inv.SetItem(inv.GetCraftingResultSlot(), resultItem);
