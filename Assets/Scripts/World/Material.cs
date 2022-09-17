@@ -112,4 +112,5 @@
     , Birch_Sapling
     , Birch_Leaves
     , Nether_Bricks
+    , Blaze_Rod
 }
