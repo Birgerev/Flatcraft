@@ -113,4 +113,5 @@
     , Birch_Leaves
     , Nether_Bricks
     , Blaze_Powder
+    , Eye_Of_Ender
 }
