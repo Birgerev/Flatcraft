@@ -113,4 +113,5 @@
     , Birch_Leaves
     , Nether_Bricks
     , Stone_Brick
+    , Stone_Brick_Stairs
 }
