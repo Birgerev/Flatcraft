@@ -57,19 +57,33 @@ public class PlayerInventoryMenu : InventoryMenu
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
         ItemStack newPointerItem = pointerItem;
+        ItemStack resultItem = inv.GetItem(inv.GetCraftingResultSlot());
 
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material == Material.Air)
+        if (resultItem.material == Material.Air)
             return;
-
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material != newPointerItem.material &&
+        if (resultItem.material != newPointerItem.material &&
             newPointerItem.material != Material.Air)
             return;
+        if (newPointerItem.amount >= Inventory.MaxStackSize)
+            return;
 
+        //Set pointer material to result material
+        newPointerItem.material = resultItem.material;
 
-        newPointerItem.material = inv.GetItem(inv.GetCraftingResultSlot()).material;
-        newPointerItem.Amount += inv.GetItem(inv.GetCraftingResultSlot()).Amount;
-        inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
+        while (resultItem.amount > 0 && //Keep moving items until result slot is empty
+               newPointerItem.Amount < Inventory.MaxStackSize)  //Stop if pointer amount exceeds 64
+        {
+            newPointerItem.Amount += 1;
+            resultItem.amount -= 1;
+        }
+
+        //Properly clear result slot if necessary
+        if (resultItem.amount <= 0)
+            resultItem = new ItemStack();
+                
+        //Apply item stack changes
         SetPointerItem(newPointerItem);
+        inv.SetItem(inv.GetCraftingResultSlot(), resultItem);
 
         for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
         {
