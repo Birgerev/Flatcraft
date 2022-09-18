@@ -1,0 +1,3 @@
+mirror*0*0
+Blaze_Powder*3*
+Blaze_Rod*0,0*
