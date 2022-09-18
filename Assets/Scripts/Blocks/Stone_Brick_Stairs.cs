@@ -1,4 +1,4 @@
-﻿public class Oak_Plank_Stairs : Stairs
+﻿public class Stone_Brick_Stairs : Stairs
 {
     public override string texture { get; set; } = "block_stone_brick_stairs";
     public override float breakTime { get; } = 6;
