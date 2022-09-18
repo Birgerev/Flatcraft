@@ -49,6 +49,8 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         if (resultItem.material != pointerItem.material &&
             pointerItem.material != Material.Air)
             return;
+        if (newPointerItem.amount >= Inventory.MaxStackSize)
+            return;
 
         //Set pointer material to result material
         newPointerItem.material = resultItem.material;

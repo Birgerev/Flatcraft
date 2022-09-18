@@ -64,6 +64,8 @@ public class PlayerInventoryMenu : InventoryMenu
         if (resultItem.material != newPointerItem.material &&
             newPointerItem.material != Material.Air)
             return;
+        if (newPointerItem.amount >= Inventory.MaxStackSize)
+            return;
 
         //Set pointer material to result material
         newPointerItem.material = resultItem.material;
