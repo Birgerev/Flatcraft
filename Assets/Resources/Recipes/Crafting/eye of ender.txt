@@ -1,0 +1,4 @@
+mirror*0*1
+Eye_Of_Ender*1*
+Blaze_Powder*0,0*
+Enderpearl*1,0*

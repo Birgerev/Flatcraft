@@ -172,7 +172,7 @@ public class Block : MonoBehaviour
             return;
         
         if (rotateY)
-            rotated_y = Player.localEntity.transform.position.y < location.y;
+            rotated_y = (Player.localEntity.transform.position.y + 1) < location.y;
         if (rotateX)
             rotated_x = Player.localEntity.transform.position.x < location.x;
 
