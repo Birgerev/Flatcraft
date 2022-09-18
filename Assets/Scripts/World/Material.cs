@@ -112,6 +112,7 @@
     , Birch_Sapling
     , Birch_Leaves
     , Nether_Bricks
+    , Enderpearl
     , Blaze_Rod
     , Blaze_Powder
 }
