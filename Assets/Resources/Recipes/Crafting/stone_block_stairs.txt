@@ -1,5 +1,5 @@
 mirror*1*0
-Oak_Plank_Stairs*4*
+Stone_Brick_Stairs*4*
 Stone_Brick*0,0*
 Stone_Brick*1,0*
 Stone_Brick*2,0*
