@@ -41,25 +41,34 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     public virtual void OnClickCraftingResultSlot()
     {
         CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
+        ItemStack resultItem = inv.GetItem(inv.GetCraftingResultSlot());
+        ItemStack newPointerItem = pointerItem;
 
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material == Material.Air)
+        if (resultItem.material == Material.Air)
             return;
-        if (inv.GetItem(inv.GetCraftingResultSlot()).material != pointerItem.material &&
+        if (resultItem.material != pointerItem.material &&
             pointerItem.material != Material.Air)
             return;
-
-        //Add items to pointer
-        ItemStack newPointerItem = inv.GetItem(inv.GetCraftingResultSlot());
-        int newAmount = pointerItem.Amount + inv.GetItem(inv.GetCraftingResultSlot()).Amount;
-        //Return if new item amount exceeds max stack size (64)
-        if (newAmount > Inventory.MaxStackSize)
+        if (newPointerItem.amount >= Inventory.MaxStackSize)
             return;
-        
-        newPointerItem.Amount = pointerItem.Amount + inv.GetItem(inv.GetCraftingResultSlot()).Amount;
-        SetPointerItem(newPointerItem);
 
-        //Clear Crafting slot
-        inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
+        //Set pointer material to result material
+        newPointerItem.material = resultItem.material;
+
+        while (resultItem.amount > 0 && //Keep moving items until result slot is empty
+               newPointerItem.Amount < Inventory.MaxStackSize)  //Stop if pointer amount exceeds 64
+        {
+            newPointerItem.Amount += 1;
+            resultItem.amount -= 1;
+        }
+
+        //Properly clear result slot if necessary
+        if (resultItem.amount <= 0)
+            resultItem = new ItemStack();
+                
+        //Apply item stack changes
+        SetPointerItem(newPointerItem);
+        inv.SetItem(inv.GetCraftingResultSlot(), resultItem);
 
         //Remove items from recipe slots
         for (int i = 0; i <= 8; i++)
