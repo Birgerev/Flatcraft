@@ -1,4 +1,4 @@
-public class Blaze_Powder : Item
+public class Enderpearl : Item
 {
-    public override string texture { get; set; } = "item_blaze_powder";
+    public override string texture { get; set; } = "item_enderpearl";
 }

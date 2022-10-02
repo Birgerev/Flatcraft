@@ -247,7 +247,7 @@ public class LivingEntity : Entity
     [Server]
     private void FallDamageCheck()
     {
-        if (isOnGround && !isInLiquid)
+        if (isOnGround && !isInLiquid && age > 5)
         {
             float damage = highestYlevelsinceground - transform.position.y - 3;
             if (damage >= 1)

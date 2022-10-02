@@ -7,14 +7,18 @@ using UnityEngine.SceneManagement;
 
 public class TestVerificationChecker : MonoBehaviour
 {
+    public bool doCheck;
+    
     private const string Url = "http://hille.evansson.se/flatcraft/testingVerification.html";
     private const float LoopDuration = 10;
+    
     
     // Start is called before the first frame update
     void Start()
     {
         DontDestroyOnLoad(gameObject);
-        StartCoroutine(verificationLoop());
+        if(doCheck)
+            StartCoroutine(verificationLoop());
     }
 
     IEnumerator verificationLoop()

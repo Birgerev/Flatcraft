@@ -1,0 +1,6 @@
+mirror*0*0
+Stone_Brick*1*
+Stone*0,0*
+Stone*1,0*
+Stone*0,1*
+Stone*1,1*

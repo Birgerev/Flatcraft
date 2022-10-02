@@ -3,16 +3,17 @@ using UnityEngine;
 public class ParallaxBackground : MonoBehaviour
 {
     public Vector2 parallaxFactor;
+    [HideInInspector]
+    public Vector2 startPosition;
+    
     private Transform cameraTransform;
-
-    private float backgroundSpriteLength;
-    private Vector2 startPosition;
+    private float backgroundSpriteWidth;
 
     // Start is called before the first frame update
     private void Start()
     {
         startPosition = transform.position;
-        backgroundSpriteLength = GetComponentInChildren<SpriteRenderer>().bounds.size.x;
+        backgroundSpriteWidth = GetComponentInChildren<SpriteRenderer>().bounds.size.x;
     }
 
     // Update is called once per frame
@@ -23,14 +24,19 @@ public class ParallaxBackground : MonoBehaviour
             cameraTransform = CameraController.instance.transform;
 
         //Move transform with respect to the parallaxFactor
-        Vector2 distanceFromStartPosition = cameraTransform.position * parallaxFactor;
-        transform.position = startPosition + distanceFromStartPosition;
+        Vector2 cameraDeltaPos = (Vector2)cameraTransform.position - startPosition;
+        transform.position = startPosition + (cameraDeltaPos * parallaxFactor);
 
+        HorizontalWrapAround();
+    }
+
+    private void HorizontalWrapAround()
+    {
         //Move the object offset if the camera is further away than the sprite bound length
         float cameraXAhead = cameraTransform.position.x - transform.position.x;
-        if (cameraXAhead > backgroundSpriteLength)
-            startPosition += new Vector2(backgroundSpriteLength, 0);
-        else if (cameraXAhead < -backgroundSpriteLength)
-            startPosition += new Vector2(-backgroundSpriteLength, 0);
+        if (cameraXAhead > backgroundSpriteWidth)
+            startPosition += new Vector2(backgroundSpriteWidth, 0);
+        else if (cameraXAhead < -backgroundSpriteWidth)
+            startPosition += new Vector2(-backgroundSpriteWidth, 0);
     }
 }
