@@ -6,19 +6,20 @@ public class Eye_Of_Ender : Item
     {
         base.InteractRight(player, loc, firstFrameDown);
 
-        if (loc.GetMaterial() == Material.Air)
+        /*TODO enderportal place
+        if (loc.GetMaterial() == Material.End_Portal_Frame)
         {
-            //TODO
-            //Spawn Entity
-            Entity entity = Entity.Spawn("entity type here!");
-            entity.Teleport(loc);
-            //TODO set owner
+            return;
+        }*/
+        
+        Entity entity = Entity.Spawn("Chicken");
+        entity.Teleport(loc);
+        //TODO set owner
 
-            //Remove player item
-            PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
-            ItemStack selectedItem = inv.GetSelectedItem();
-            selectedItem.Amount--;
-            inv.SetItem(inv.selectedSlot, selectedItem);
-        }
+        //Remove player item
+        PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
+        ItemStack selectedItem = inv.GetSelectedItem();
+        selectedItem.Amount--;
+        inv.SetItem(inv.selectedSlot, selectedItem);
     }
 }
