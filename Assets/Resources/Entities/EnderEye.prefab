@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 1626151364595978352}
   - component: {fileID: 6744431471938863446}
   - component: {fileID: 4733296494326618322}
-  m_Layer: 20
+  m_Layer: 9
   m_Name: EnderEye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,6 +178,11 @@ MonoBehaviour:
   lastDamager: {fileID: 0}
   lastFramePosition: {x: 0, y: 0}
   burningRender: {fileID: 7361327405117884159}
+  movementAge: 4
+  deathAge: 7
+  HorizontalVelocity: 10
+  UpwardsVelocity: 4
+  DownwardsVelocity: -8
 --- !u!61 &3045138367806149472
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -217,9 +222,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -307,7 +312,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2513835064835061047}
-  m_Layer: 13
+  m_Layer: 9
   m_Name: _burning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,7 +346,7 @@ GameObject:
   - component: {fileID: 4228857923793572764}
   - component: {fileID: 6051061214905411865}
   - component: {fileID: 3540318040549579275}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: EntityFireAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
