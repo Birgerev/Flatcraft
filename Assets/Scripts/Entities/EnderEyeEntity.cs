@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = System.Random;
 
 public class EnderEyeEntity :  Entity
 {
+    private const double ShatterRate = 0.2d;
+    
     private const float MovementAge = 4;
     private const float DeathAge = 7; 
     
@@ -38,7 +41,6 @@ public class EnderEyeEntity :  Entity
             Die();
 
         //TODO particles
-        //TODO random drop rate
         //TODO proper target
         //TODO explode in wrong dimension
     }
@@ -62,9 +64,10 @@ public class EnderEyeEntity :  Entity
     
     public override List<ItemStack> GetDrops()
     {
-        //TODO random return
         List<ItemStack> result = new List<ItemStack>();
-        result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
+        
+        if(new Random().NextDouble() >= ShatterRate)
+            result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
 
         return result;
     }
