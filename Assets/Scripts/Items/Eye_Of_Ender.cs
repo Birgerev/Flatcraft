@@ -12,7 +12,7 @@ public class Eye_Of_Ender : Item
             return;
         }*/
         
-        Entity entity = Entity.Spawn("Chicken");
+        Entity entity = Entity.Spawn("EnderEye");
         entity.Teleport(loc);
         //TODO set owner
 
