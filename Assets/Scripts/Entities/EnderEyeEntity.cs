@@ -6,7 +6,11 @@ using UnityEngine;
 
 public class EnderEyeEntity :  Entity
 {
+    private const float MovementAge = 4;
+    private const float DeathAge = 7; 
     
+    private const int TravelDownwardsWithinDistance = 24;
+    private const int HorizontalTravelDistance = 12;
     
     private const float HorizontalVelocity = 10;
     private const float UpwardsVelocity = 4;
@@ -27,6 +31,7 @@ public class EnderEyeEntity :  Entity
     {
         base.Tick();
 
+        if(age <= MovementAge)
             Movement();
         
         if(age >= DeathAge)
