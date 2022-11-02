@@ -7,7 +7,6 @@ using UnityEngine;
 public class EnderEyeEntity :  Entity
 {
     
-    private int targetX;
     
     private const float HorizontalVelocity = 10;
     private const float UpwardsVelocity = 4;
@@ -20,8 +19,7 @@ public class EnderEyeEntity :  Entity
     {
         base.Spawn();
 
-        
-        targetX = 0;
+        _targetX = 0;
     }
 
     [Server]
