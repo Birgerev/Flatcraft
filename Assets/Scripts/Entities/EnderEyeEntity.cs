@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class EnderEyeEntity :  Entity
 {
-    //TODO private const
-    public int TravelDownwardsWithinDistance = 24;
-    public int HorizontalTravelDistance = 12;
-    public float HorizontalVelocity = 4;
-    public float UpwardsVelocity = 2;
-    public float DownwardsVelocity = -2;
     
     private int targetX;
+    
+    private const float HorizontalVelocity = 10;
+    private const float UpwardsVelocity = 4;
+    private const float DownwardsVelocity = -8;
+    
+    private int _targetX;
     
     [Server]
     public override void Spawn()
@@ -29,7 +29,20 @@ public class EnderEyeEntity :  Entity
     {
         base.Tick();
 
-        int offsetToTarget = targetX - Location.x;
+            Movement();
+        
+        if(age >= DeathAge)
+            Die();
+
+        //TODO particles
+        //TODO random drop rate
+        //TODO proper target
+        //TODO explode in wrong dimension
+    }
+
+    private void Movement()
+    {
+        int offsetToTarget = _targetX - Location.x;
         int distanceToTarget = Mathf.Abs(offsetToTarget);
         
         bool targetIsRight = (offsetToTarget > 0);
@@ -41,8 +54,7 @@ public class EnderEyeEntity :  Entity
         if(doHorizontalTravel)
             newVelocity.x = targetIsRight ? HorizontalVelocity : -HorizontalVelocity;
         
-        //TODO particles
-        //TODO drop
+        GetComponent<Rigidbody2D>().velocity += newVelocity * Time.deltaTime;
     }
     
     public override List<ItemStack> GetDrops()
