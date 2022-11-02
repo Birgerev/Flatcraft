@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class TestVerificationChecker : MonoBehaviour
 {
-    public bool doCheck;
+    public bool doVersionCheck;
     
     private const string Url = "http://hille.evansson.se/flatcraft/testingVerification.html";
     private const float LoopDuration = 10;
@@ -17,7 +17,7 @@ public class TestVerificationChecker : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
-        if(doCheck)
+        if(doVersionCheck)
             StartCoroutine(verificationLoop());
     }
 

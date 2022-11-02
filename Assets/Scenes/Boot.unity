@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd95cbee59c4eaa47ba98c114fe660b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doVersionCheck: 0
 --- !u!4 &414260226
 Transform:
   m_ObjectHideFlags: 0
@@ -321,3 +322,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c37fe8932eec8d0449b1bf3754c8f9b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoloadTestWorld: 1
