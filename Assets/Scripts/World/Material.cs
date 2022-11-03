@@ -117,4 +117,5 @@
     , Enderpearl
     , Blaze_Rod
     , Blaze_Powder
+    , End_Portal_Frame
 }
