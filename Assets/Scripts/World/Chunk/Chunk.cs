@@ -21,11 +21,11 @@ public class Chunk : NetworkBehaviour
     public const int TickRate = 1;
 
     private static readonly float animalGenerationChance = 0.1f;
-    private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
+    private static readonly List<string> DefaultOverworldAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
     
     private static readonly int monsterSpawningLightLevel = 7;
     private static readonly int monsterSpawnAmountCap = 1;
-    private static readonly List<string> CommonMonsters = new List<string> {"Zombie", "Creeper", "Spider", "Skeleton"};
+    private static readonly List<string> DefaultOverworldMonsters = new List<string> {"Zombie", "Creeper", "Spider", "Skeleton"};
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
@@ -456,8 +456,8 @@ public class Chunk : NetworkBehaviour
 
         Biome biome = GetBiome();
         List<string> possibleAnimals = biome.biomeSpecificAnimals;
-        if(biome.spawnDefaultAnimals)
-            possibleAnimals.AddRange(CommonAnimals);
+        if(biome.spawnDefaultOverworldAnimals)
+            possibleAnimals.AddRange(DefaultOverworldAnimals);
         
         //Choose a random animal type for this chunk
         string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];

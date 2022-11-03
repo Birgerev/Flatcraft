@@ -15,7 +15,7 @@ public class Biome
 
 
     [Space] [Header("Mob Generation")]
-    public bool spawnDefaultAnimals = true;
+    public bool spawnDefaultOverworldAnimals = true;
     public List<string> biomeSpecificAnimals;
 
     [Space] 

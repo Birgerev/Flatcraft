@@ -58,8 +58,8 @@ MonoBehaviour:
   - name: forest
     biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 5
-    spawnDefaultAnimals: 1
-    spawnDefaultMonsters: 1
+    spawnDefaultOverworldAnimals: 1
+    spawnDefaultOverworldMonsters: 1
     biomeSpecificAnimals:
     - Wolf
     biomeSpecificMonsters: []
@@ -73,8 +73,8 @@ MonoBehaviour:
   - name: desert
     biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
-    spawnDefaultAnimals: 1
-    spawnDefaultMonsters: 1
+    spawnDefaultOverworldAnimals: 1
+    spawnDefaultOverworldMonsters: 1
     biomeSpecificAnimals: []
     biomeSpecificMonsters: []
     landscapeLacunarity: 1
@@ -87,8 +87,8 @@ MonoBehaviour:
   - name: forest_hills
     biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    spawnDefaultAnimals: 1
-    spawnDefaultMonsters: 1
+    spawnDefaultOverworldAnimals: 1
+    spawnDefaultOverworldMonsters: 1
     biomeSpecificAnimals:
     - Wolf
     biomeSpecificMonsters: []
@@ -102,8 +102,8 @@ MonoBehaviour:
   - name: birch_forest
     biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    spawnDefaultAnimals: 1
-    spawnDefaultMonsters: 1
+    spawnDefaultOverworldAnimals: 1
+    spawnDefaultOverworldMonsters: 1
     biomeSpecificAnimals: []
     biomeSpecificMonsters: []
     landscapeLacunarity: 1.05
@@ -116,8 +116,8 @@ MonoBehaviour:
   - name: plains
     biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
-    spawnDefaultAnimals: 1
-    spawnDefaultMonsters: 1
+    spawnDefaultOverworldAnimals: 1
+    spawnDefaultOverworldMonsters: 1
     biomeSpecificAnimals: []
     biomeSpecificMonsters: []
     landscapeLacunarity: 1
@@ -131,8 +131,8 @@ MonoBehaviour:
     name: hell
     biomeMinimumChunkSize: 16
     biomeMaximumChunkSize: 16
-    spawnDefaultAnimals: 0
-    spawnDefaultMonsters: 0
+    spawnDefaultOverworldAnimals: 0
+    spawnDefaultOverworldMonsters: 0
     biomeSpecificAnimals: []
     biomeSpecificMonsters: []
     landscapeLacunarity: 0.86
