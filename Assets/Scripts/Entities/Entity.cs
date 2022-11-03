@@ -12,8 +12,7 @@ using Random = System.Random;
 public class Entity : NetworkBehaviour
 {
     public static List<Entity> entities = new List<Entity>();
-
-
+    
     //Entity data tags
     [EntityDataTag(false)] public float age;
 
