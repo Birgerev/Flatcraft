@@ -64,7 +64,7 @@ public class EnderEyeEntity :  Entity
     
     public override List<ItemStack> GetDrops()
     {
-        List<ItemStack> result = new List<ItemStack>();
+        List<ItemStack> result = new();
         
         if(new Random().NextDouble() >= ShatterRate)
             result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
