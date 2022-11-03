@@ -33,7 +33,7 @@ public struct ChunkPosition
         return Directory.Exists(path);
     }
 
-    public bool HasBeenGenerated()
+    public bool HasEverBeenGenerated()
     {
         if (!HasBeenSaved())
             return false;

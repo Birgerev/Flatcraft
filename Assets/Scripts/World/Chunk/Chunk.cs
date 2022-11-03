@@ -77,7 +77,7 @@ public class Chunk : NetworkBehaviour
         donePlacingBackgroundBlocks = false;
         isLightGenerated = false;
         blocksInitialized = false;
-        bool isGeneratingForFirstTime = false;
+        bool hasPreviouslyBeenGenerated = chunkPosition.HasEverBeenGenerated();
 
         if (isServer)
             areBlocksGenerated = false;
@@ -94,7 +94,7 @@ public class Chunk : NetworkBehaviour
 
         if (isServer)
         {
-            if (chunkPosition.HasBeenGenerated())
+            if (hasPreviouslyBeenGenerated)
             {
                 Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is loading...");
                 StartCoroutine(LoadBlocks());
@@ -102,7 +102,6 @@ public class Chunk : NetworkBehaviour
             }
             else
             {
-                isGeneratingForFirstTime = true;
                 Debug.Log("Chunk [" + chunkPosition.chunkX + ", " + chunkPosition.dimension + "] is generating...");
                 StartCoroutine(GenerateBlocks());
             }
@@ -119,7 +118,7 @@ public class Chunk : NetworkBehaviour
 
         if (isServer)
         {
-            if(isGeneratingForFirstTime)
+            if(!hasPreviouslyBeenGenerated)
                 GenerateAnimals();
             StartCoroutine(MobSpawnCycle());
             StartCoroutine(BlockRandomTickingCycle());
