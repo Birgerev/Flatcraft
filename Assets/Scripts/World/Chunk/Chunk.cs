@@ -449,15 +449,18 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void GenerateAnimals()
     {
-        Random r = new Random(SeedGenerator.SeedByLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
-
+        Random r = new(SeedGenerator.SeedByLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
+        //Decide if this chunk should generate any animals
         if ((float) r.NextDouble() > animalGenerationChance)
             return;
 
-        List<string> entities = CommonAnimals;
-        entities.AddRange(GetBiome().biomeSpecificAnimals);
-        string entityType = entities[r.Next(0, entities.Count)];
+        Biome biome = GetBiome();
+        List<string> possibleAnimals = biome.biomeSpecificAnimals;
+        if(biome.spawnDefaultAnimals)
+            possibleAnimals.AddRange(CommonAnimals);
         
+        //Choose a random animal type for this chunk
+        string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
         for (int amount = 0; amount < 4; amount++)
         {
             int x = r.Next(0, Width) + chunkPosition.worldX;
