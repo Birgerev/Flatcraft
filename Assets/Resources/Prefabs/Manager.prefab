@@ -55,74 +55,92 @@ MonoBehaviour:
   syncInterval: 0
   caveGeneratedRegions: 
   overworldBiomes:
-  - biomeMinimumChunkSize: 3
+  - name: forest
+    biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 5
+    spawnDefaultAnimals: 1
+    spawnDefaultMonsters: 1
     biomeSpecificAnimals:
     - Wolf
-    landscapeHeightOverSeaLevel: -0.02
-    landscapeHeightWeight: 2.16
+    biomeSpecificMonsters: []
     landscapeLacunarity: 1
     landscapeOctaves: 4
     landscapePercistance: 2.13
     landscapeSize: 0.05
-    name: forest
+    landscapeHeightOverSeaLevel: -0.02
+    landscapeHeightWeight: 2.16
     stoneLayerNoiseValue: 6.86
-  - biomeMinimumChunkSize: 4
+  - name: desert
+    biomeMinimumChunkSize: 4
     biomeMaximumChunkSize: 10
+    spawnDefaultAnimals: 1
+    spawnDefaultMonsters: 1
     biomeSpecificAnimals: []
-    landscapeHeightOverSeaLevel: -0.02
-    landscapeHeightWeight: 1.23
+    biomeSpecificMonsters: []
     landscapeLacunarity: 1
     landscapeOctaves: 4
     landscapePercistance: 2.13
     landscapeSize: 0.05
-    name: desert
+    landscapeHeightOverSeaLevel: -0.02
+    landscapeHeightWeight: 1.23
     stoneLayerNoiseValue: 7
-  - biomeMinimumChunkSize: 3
+  - name: forest_hills
+    biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
+    spawnDefaultAnimals: 1
+    spawnDefaultMonsters: 1
     biomeSpecificAnimals:
     - Wolf
-    landscapeHeightOverSeaLevel: -0.08
-    landscapeHeightWeight: 1.23
+    biomeSpecificMonsters: []
     landscapeLacunarity: 1.05
     landscapeOctaves: 4
     landscapePercistance: 2.05
     landscapeSize: 0.06
-    name: forest_hills
-    stoneLayerNoiseValue: 4.63
-  - biomeMinimumChunkSize: 3
-    biomeMaximumChunkSize: 6
-    biomeSpecificAnimals: []
     landscapeHeightOverSeaLevel: -0.08
     landscapeHeightWeight: 1.23
+    stoneLayerNoiseValue: 4.63
+  - name: birch_forest
+    biomeMinimumChunkSize: 3
+    biomeMaximumChunkSize: 6
+    spawnDefaultAnimals: 1
+    spawnDefaultMonsters: 1
+    biomeSpecificAnimals: []
+    biomeSpecificMonsters: []
     landscapeLacunarity: 1.05
     landscapeOctaves: 4
     landscapePercistance: 2.05
     landscapeSize: 0.06
-    name: birch_forest
+    landscapeHeightOverSeaLevel: -0.08
+    landscapeHeightWeight: 1.23
     stoneLayerNoiseValue: 4.63
-  - biomeMinimumChunkSize: 3
+  - name: plains
+    biomeMinimumChunkSize: 3
     biomeMaximumChunkSize: 6
+    spawnDefaultAnimals: 1
+    spawnDefaultMonsters: 1
     biomeSpecificAnimals: []
-    landscapeHeightOverSeaLevel: -0.02
-    landscapeHeightWeight: 2.16
+    biomeSpecificMonsters: []
     landscapeLacunarity: 1
     landscapeOctaves: 4
     landscapePercistance: 1.86
     landscapeSize: 0.05
-    name: plains
+    landscapeHeightOverSeaLevel: -0.02
+    landscapeHeightWeight: 2.16
     stoneLayerNoiseValue: 6.86
   netherBiome:
+    name: hell
     biomeMinimumChunkSize: 16
     biomeMaximumChunkSize: 16
+    spawnDefaultAnimals: 0
+    spawnDefaultMonsters: 0
     biomeSpecificAnimals: []
-    landscapeHeightOverSeaLevel: -25.76
-    landscapeHeightWeight: -0.1
+    biomeSpecificMonsters: []
     landscapeLacunarity: 0.86
     landscapeOctaves: 4
     landscapePercistance: 1.84
     landscapeSize: 0.07
-    name: hell
+    landscapeHeightOverSeaLevel: -25.76
+    landscapeHeightWeight: -0.1
     stoneLayerNoiseValue: -7.9
   chunkPrefab: {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5,
     type: 3}
@@ -207,7 +225,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: e41b3e8278be1bb4b89298ef28183900
   hasSpawned: 0
 --- !u!114 &4831411737367894585
 MonoBehaviour:
@@ -235,3 +253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0148658773f8b43831f5657dc8fd26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  weather: 0
