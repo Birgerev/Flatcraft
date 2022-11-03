@@ -495,42 +495,55 @@ public class Chunk : NetworkBehaviour
     private void TrySpawnMonster()
     {
         //Define a random based on parameters specific to this chunk
-        int rSeed = SeedGenerator.SeedByParameters(
+        int randomSeed = SeedGenerator.SeedByParameters(
             WorldManager.world.seed, 
             chunkPosition.chunkX, 
             (int) chunkPosition.dimension, 
             (int)Time.time);
-        Random r = new Random(rSeed);
+        Random r = new(randomSeed);
         
         //Decide which column in the chunk we should attempt to spawn the entity
-        int xColumn = r.Next(0, Width) + chunkPosition.worldX;
+        int worldXPosition = r.Next(0, Width) + chunkPosition.worldX;
         Dimension dimension = chunkPosition.dimension;
         
-        //Find a solid block with air space above it, aswell as having a correct light level for spawning
-        int consecutiveAirBlocks = 0;
         List<Location> possibleSpawnLocations = new List<Location>();
+        //Find a viable y position with a solid block beneath and air space above it,
+        //As well having a correct light level for spawning
+        int consecutiveEmptyBlocks = 0;
         for (int y = Height - 1; y >= 0; y--)
         {
-            Location loc = new Location(xColumn, y, dimension);
+            Location loc = new(worldXPosition, y, dimension);
             Material mat = loc.GetMaterial();
 
-            if (mat != Material.Air && consecutiveAirBlocks >= 2)
-                if (LightManager.GetLightLevel(loc) <= monsterSpawningLightLevel)
-                    possibleSpawnLocations.Add(loc);
-
+            //Check whether block is empty
             if (mat == Material.Air)
-                consecutiveAirBlocks++;
-            else
-                consecutiveAirBlocks = 0;
+            {
+                consecutiveEmptyBlocks++;
+                continue;
+            }
+            
+            if(consecutiveEmptyBlocks >= 2 &&
+               LightManager.GetLightLevel(loc) <= monsterSpawningLightLevel)
+                possibleSpawnLocations.Add(loc);
+            
+            consecutiveEmptyBlocks = 0;
         }
 
         //Return if no spawn locations where found
         if (possibleSpawnLocations.Count == 0)
             return;
 
+        //Choose a random monster type based on the biome
+        Biome biome = GetBiome();
+        List<string> possibleAnimals = biome.biomeSpecificMonsters;
+        if(biome.spawnDefaultOverworldMonsters)
+            possibleAnimals.AddRange(DefaultOverworldMonsters);
+        
+        //TODO will fail if monster list is empty
+        string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
+        
         //Spawn a random monster at the location we decided
         Location spawnLocation = possibleSpawnLocations[r.Next(0, possibleSpawnLocations.Count)];
-        string entityType = CommonMonsters[r.Next(0, CommonMonsters.Count)];
         Entity entity = Entity.Spawn(entityType);
         entity.Teleport(spawnLocation);
     }
