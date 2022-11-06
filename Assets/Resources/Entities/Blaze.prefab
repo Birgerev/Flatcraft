@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5625101152134111947}
   - component: {fileID: 8002746945558322501}
   m_Layer: 12
-  m_Name: stick (1)
+  m_Name: stick1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 6989735333137510773}
   - component: {fileID: 5532279771438786233}
   m_Layer: 12
-  m_Name: stick
+  m_Name: stick2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 5792616493632990071}
   - component: {fileID: 7949629208534849445}
   m_Layer: 12
-  m_Name: stick (2)
+  m_Name: stick3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -241,7 +241,7 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 143828542, guid: 2db63dea36e3984439a38e08f52b599e, type: 3}
+  m_Sprite: {fileID: -1219689807, guid: 2db63dea36e3984439a38e08f52b599e, type: 3}
   m_Color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -367,7 +367,7 @@ Animator:
   m_GameObject: {fileID: 8281340068179227370}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a2b601ebcd26867408e678bda9f6241b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 455b2f751571e8e4e8e8c3c76fde1e07, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -508,7 +508,7 @@ GameObject:
   - component: {fileID: 5715612928597967622}
   - component: {fileID: 722168035341962546}
   m_Layer: 12
-  m_Name: stick (3)
+  m_Name: stick4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -522,7 +522,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8989063399974819460}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: -0.895, z: 0}
+  m_LocalPosition: {x: 0, y: -0.895, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -570,7 +570,7 @@ SpriteRenderer:
   m_SortingLayerID: -1018321379
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1219689807, guid: 2db63dea36e3984439a38e08f52b599e, type: 3}
+  m_Sprite: {fileID: 143828542, guid: 2db63dea36e3984439a38e08f52b599e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -997,6 +997,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4775171077408918281, guid: 50b359c6063357f469d674201dc3ff67,
+        type: 3}
+      propertyPath: m_Text
+      value: Bulldog
       objectReference: {fileID: 0}
     - target: {fileID: 7544501032481821973, guid: 50b359c6063357f469d674201dc3ff67,
         type: 3}
