@@ -259,7 +259,7 @@ public class Block : MonoBehaviour
         Random r = new Random();
         for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = location.GetPosition() +
                                       new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);

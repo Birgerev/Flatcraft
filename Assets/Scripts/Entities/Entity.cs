@@ -679,7 +679,7 @@ public class Entity : NetworkBehaviour
         Random r = new Random();
         for (int i = 0; i < 8; i++) //Spawn landing partickes
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
             part.color = GetLiquidBlocksForEntity()[0].GetRandomColourFromTexture();
@@ -712,7 +712,7 @@ public class Entity : NetworkBehaviour
         Random r = new Random();
         for (int i = 0; i < r.Next(2, 8); i++) //SpawnParticles
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
             part.color = new Color(0.854f, 0.788f, 0.694f);
