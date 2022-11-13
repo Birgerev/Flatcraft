@@ -68,6 +68,7 @@ public class EnderEyeEntity :  Entity
         
         if(new Random().NextDouble() >= ShatterRate)
             result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
+        //TODO shatter particle (maybe not in this function)
 
         return result;
     }
