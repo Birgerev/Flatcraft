@@ -504,13 +504,18 @@ public class Chunk : NetworkBehaviour
         
         //Decide which column in the chunk we should attempt to spawn the entity
         int worldXPosition = r.Next(0, Width) + chunkPosition.worldX;
+        int worldHeight = Height;
+        
         Dimension dimension = chunkPosition.dimension;
+        //No need to iterate beyond nether bedrock roof
+        if(dimension == Dimension.Nether)
+            worldHeight = 128;
         
         List<Location> possibleSpawnLocations = new List<Location>();
         //Find a viable y position with a solid block beneath and air space above it,
         //As well having a correct light level for spawning
         int consecutiveEmptyBlocks = 0;
-        for (int y = Height - 1; y >= 0; y--)
+        for (int y = worldHeight - 1; y >= 0; y--)
         {
             Location loc = new(worldXPosition, y, dimension);
             Material mat = loc.GetMaterial();
@@ -522,9 +527,13 @@ public class Chunk : NetworkBehaviour
                 continue;
             }
             
-            if(consecutiveEmptyBlocks >= 2 &&
-               LightManager.GetLightLevel(loc) <= monsterSpawningLightLevel)
-                possibleSpawnLocations.Add(loc);
+            if(consecutiveEmptyBlocks < 2)
+                continue;
+            if(LightManager.GetLightLevel(loc) > monsterSpawningLightLevel)
+                continue;
+            
+            
+            possibleSpawnLocations.Add(loc);
             
             consecutiveEmptyBlocks = 0;
         }
