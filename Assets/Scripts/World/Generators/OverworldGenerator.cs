@@ -229,7 +229,7 @@ public class OverworldGenerator : WorldGenerator
         return new BlockState(Material.Air);
     }
 
-    public int GetStrongholdLocation()
+    public static int GetStrongholdLocation()
     {
         Random r = new Random(WorldManager.world.seed);
         

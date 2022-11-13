@@ -25,8 +25,8 @@ public class EnderEyeEntity :  Entity
     public override void Spawn()
     {
         base.Spawn();
-
-        _targetX = 0;
+        
+        _targetX = OverworldGenerator.GetStrongholdLocation();
     }
 
     [Server]
