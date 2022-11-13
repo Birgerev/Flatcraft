@@ -9,7 +9,7 @@ public class NetherGenerator : WorldGenerator
         if (loc.y > 128)
             return Material.Air;
         
-        Random r = new Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         ChunkPosition cPos = new ChunkPosition(loc);
         Biome biome = Biome.GetBiomeAt(cPos);
 
@@ -63,7 +63,7 @@ public class NetherGenerator : WorldGenerator
     
     public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        Random r = new Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
         

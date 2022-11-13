@@ -8,23 +8,29 @@ using Random = System.Random;
 [Serializable]
 public class Biome
 {
-    [Space] [Header("Occourance Frequency")]
+    public string name = "";
+    [Header("Occourance Frequency")]
     public int biomeMinimumChunkSize;
-
     public int biomeMaximumChunkSize;
 
 
-    [Space] public List<string> biomeSpecificAnimals;
+    [Space] [Header("Mob Generation")]
+    public bool spawnDefaultOverworldAnimals = true;
+    public bool spawnDefaultOverworldMonsters = true;
+    public List<string> biomeSpecificAnimals;
+    public List<string> biomeSpecificMonsters;
 
-    public float landscapeHeightOverSeaLevel = 43;
-    public float landscapeHeightWeight = 0.08f;
+    [Space] 
 
-    [Space] [Header("Landscape")] public float landscapeLacunarity = 1f;
-
+    [Space] [Header("Landscape Generation")] 
+    public float landscapeLacunarity = 1f;
     public int landscapeOctaves = 2;
     public float landscapePercistance = 1f;
     public float landscapeSize = 0.05f;
-    public string name = "";
+    [Space]
+    public float landscapeHeightOverSeaLevel = 43;
+    public float landscapeHeightWeight = 0.08f;
+    [Space] 
     public float stoneLayerNoiseValue;
 
     public Perlin GetLandscapeNoise()
