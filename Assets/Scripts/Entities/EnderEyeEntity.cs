@@ -45,7 +45,6 @@ public class EnderEyeEntity :  Entity
             Die();
 
         //TODO particles
-        //TODO proper target
     }
 
     private void Movement()
