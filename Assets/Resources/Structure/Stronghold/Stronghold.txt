@@ -71,7 +71,7 @@ Air*8,5*
 Stone_Brick*8,6*
 
 Stone_Brick*9,0*
-Lava*9,1*
+Lava*9,1*source_block=true
 Air*9,2*
 Air*9,3*
 Air*9,4*
@@ -79,7 +79,7 @@ Air*9,5*
 Stone_Brick*9,6*
 
 Stone_Brick*10,0*
-Lava*10,1*
+Lava*10,1*source_block=true
 Air*10,2*
 Air*10,3*
 Air*10,4*
@@ -87,7 +87,7 @@ Air*10,5*
 Stone_Brick*10,6*
 
 Stone_Brick*11,0*
-Lava*11,1*
+Lava*11,1*source_block=true
 Air*11,2*
 Air*11,3*
 Air*11,4*
