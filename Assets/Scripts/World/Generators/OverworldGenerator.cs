@@ -5,7 +5,7 @@ using Random = System.Random;
 
 public class OverworldGenerator : WorldGenerator
 {
-    private const int MaxStrongholdDistance = 100;
+    private const int MaxStrongholdDistance = 4000;
     private const float CaveFrequency = 5;
     private const float CaveLacunarity = 0.6f;
     private const float CavePercistance = 2;
