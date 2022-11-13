@@ -26,6 +26,10 @@ public class EnderEyeEntity :  Entity
     {
         base.Spawn();
         
+        //Explode in wrong dimension
+        if(Location.dimension != Dimension.Overworld)
+            Die();
+        
         _targetX = OverworldGenerator.GetStrongholdLocation();
     }
 
@@ -42,7 +46,6 @@ public class EnderEyeEntity :  Entity
 
         //TODO particles
         //TODO proper target
-        //TODO explode in wrong dimension
     }
 
     private void Movement()
