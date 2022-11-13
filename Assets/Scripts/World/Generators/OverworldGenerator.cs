@@ -5,6 +5,7 @@ using Random = System.Random;
 
 public class OverworldGenerator : WorldGenerator
 {
+    private const int MaxStrongholdDistance = 100;
     private const float CaveFrequency = 5;
     private const float CaveLacunarity = 0.6f;
     private const float CavePercistance = 2;
@@ -41,7 +42,6 @@ public class OverworldGenerator : WorldGenerator
             materialPatchNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
                 WorldManager.world.seed, QualityMode.High);
     }
-
 
     public override Material GenerateTerrainBlock(Location loc)
     {
@@ -184,6 +184,9 @@ public class OverworldGenerator : WorldGenerator
             
         }
 
+        if(loc.y == 10 && loc.x == GetStrongholdLocation())
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold"));
+        
         //Generate Liquid Pockets
         if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
             if (mat == Material.Stone)
@@ -224,5 +227,12 @@ public class OverworldGenerator : WorldGenerator
         }
 
         return new BlockState(Material.Air);
+    }
+
+    public int GetStrongholdLocation()
+    {
+        Random r = new Random(WorldManager.world.seed);
+        
+        return r.Next(-MaxStrongholdDistance, MaxStrongholdDistance);
     }
 }
