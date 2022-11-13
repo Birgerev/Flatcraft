@@ -11,7 +11,7 @@ public class Spider : Monster
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new List<ItemStack>();
-        Random r = new Random(SeedGenerator.SeedByLocation(Location));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Cobweb, r.Next(0, 1 + 1)));
 

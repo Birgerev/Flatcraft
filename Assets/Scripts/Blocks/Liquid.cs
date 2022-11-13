@@ -239,7 +239,7 @@ public class Liquid : Block
     protected virtual void LiquidEncounterEffect(Location loc)
     {
         Sound.Play(loc, "block/fire/break", SoundType.Block, 0.8f, 1.2f);
-        Particle.Spawn_SmallSmoke(loc.GetPosition(), Color.black);
+        Particle.ClientSpawnSmallSmoke(loc.GetPosition(), Color.black);
     }
 
     protected Location FindSourceBlock()

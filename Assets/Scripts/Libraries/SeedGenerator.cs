@@ -2,7 +2,7 @@ using System.Text;
 
 public class SeedGenerator
 {
-    public static int SeedByLocation(Location loc)
+    public static int SeedByWorldLocation(Location loc)
     {
         return SeedByParameters(WorldManager.world.seed, loc.x, loc.y, (int)loc.dimension);
     }

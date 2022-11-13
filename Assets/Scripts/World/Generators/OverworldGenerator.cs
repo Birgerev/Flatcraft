@@ -111,7 +111,7 @@ public class OverworldGenerator : WorldGenerator
         //-Bedrock Generation-//
         if (loc.y <= 4)
         {
-            Random r = new Random(SeedGenerator.SeedByLocation(loc));
+            Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
 
             //Fill layer 0 and then progressively less chance of bedrock further up
             if (loc.y == 0)
@@ -125,7 +125,7 @@ public class OverworldGenerator : WorldGenerator
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        Random r = new Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
