@@ -118,4 +118,5 @@
     , Blaze_Rod
     , Blaze_Powder
     , End_Portal_Frame
+    , Eye_Of_Ender
 }

@@ -144,7 +144,7 @@ public class Block : MonoBehaviour
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollisionBlock");
+        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollision");
 
         GetComponent<Collider2D>().isTrigger = trigger;
         GetComponent<BoxCollider2D>().size =
