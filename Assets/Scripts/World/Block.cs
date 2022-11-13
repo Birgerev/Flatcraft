@@ -305,7 +305,7 @@ public class Block : MonoBehaviour
         if (alternativeTextures.Length > 0)
         {
             //Default get a random alternative texture based on location
-            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternativeTextures.Length);
+            int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, alternativeTextures.Length);
 
             //Textures that change over time
             if (changeTextureTime > 0)

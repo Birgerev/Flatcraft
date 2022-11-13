@@ -449,8 +449,8 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void GenerateAnimals()
     {
-        Random r = new(SeedGenerator.SeedByLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
-        //Decide if this chunk should generate any animals
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
+        
         if ((float) r.NextDouble() > animalGenerationChance)
             return;
 
@@ -566,7 +566,7 @@ public class Chunk : NetworkBehaviour
             List<Block> blockList = new List<Block>(randomTickBlocks);
             foreach (Block block in blockList)
             {
-                Random r = new Random(SeedGenerator.SeedByLocation(block.location) + i);
+                Random r = new Random(SeedGenerator.SeedByWorldLocation(block.location) + i);
 
                 if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
                     try
