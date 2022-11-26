@@ -6,7 +6,7 @@ using UnityEngine;
 using Random = System.Random;
 
 public class EnderEyeEntity :  Entity
-{
+{    
     private const double ShatterRate = 0.2d;
     
     private const float MovementAge = 4;
@@ -39,12 +39,23 @@ public class EnderEyeEntity :  Entity
     public override void Tick()
     {
         base.Tick();
-
+        
         if(age <= MovementAge)
             Movement();
         
         if(age >= DeathAge)
             Die();
+    }
+
+    public override void ClientUpdate()
+    {
+        base.ClientUpdate();
+
+        //Spawn particle trail every x frames
+        if(Time.frameCount % 5 == 0)
+            Particle.ClientSpawnVolume(
+                Location.GetPosition(), new Vector2(0.5f, 0.5f), new Vector2(0.3f, 0.3f), 
+                new float2(0.6f, 1f), new int2(0, 1), new Color(.8f, .25f, .8f));
     }
 
     private void Movement()
