@@ -32,6 +32,6 @@ public class Enderman : Monster
 
     public override EntityController GetController()
     {
-        return new ZombieController(this);
+        return new EndermanController(this);
     }
 }
