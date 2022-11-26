@@ -5,6 +5,7 @@ using Random = System.Random;
 
 public class OverworldGenerator : WorldGenerator
 {
+    private const int MaxStrongholdDistance = 4000;
     private const float CaveFrequency = 5;
     private const float CaveLacunarity = 0.6f;
     private const float CavePercistance = 2;
@@ -41,7 +42,6 @@ public class OverworldGenerator : WorldGenerator
             materialPatchNoise = new Perlin(CaveFrequency, CaveLacunarity, CavePercistance, CaveOctaves,
                 WorldManager.world.seed, QualityMode.High);
     }
-
 
     public override Material GenerateTerrainBlock(Location loc)
     {
@@ -111,7 +111,7 @@ public class OverworldGenerator : WorldGenerator
         //-Bedrock Generation-//
         if (loc.y <= 4)
         {
-            Random r = new Random(SeedGenerator.SeedByLocation(loc));
+            Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
 
             //Fill layer 0 and then progressively less chance of bedrock further up
             if (loc.y == 0)
@@ -125,7 +125,7 @@ public class OverworldGenerator : WorldGenerator
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
     {
-        Random r = new Random(SeedGenerator.SeedByLocation(loc));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
@@ -184,6 +184,9 @@ public class OverworldGenerator : WorldGenerator
             
         }
 
+        if(loc.y == 10 && loc.x == GetStrongholdLocation())
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold"));
+        
         //Generate Liquid Pockets
         if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
             if (mat == Material.Stone)
@@ -224,5 +227,12 @@ public class OverworldGenerator : WorldGenerator
         }
 
         return new BlockState(Material.Air);
+    }
+
+    public static int GetStrongholdLocation()
+    {
+        Random r = new Random(WorldManager.world.seed);
+        
+        return r.Next(-MaxStrongholdDistance, MaxStrongholdDistance);
     }
 }

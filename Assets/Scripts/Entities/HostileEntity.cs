@@ -6,6 +6,6 @@ public class HostileEntity : LivingEntity
     {
         base.Hit(damage, source);
 
-        Particle.Spawn_Number(transform.position + new Vector3(1, 2), (int) damage, Color.red);
+        Particle.ClientSpawnNumber(transform.position + new Vector3(1, 2), (int) damage, Color.red);
     }
 }

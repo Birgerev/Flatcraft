@@ -17,7 +17,7 @@ public class Creeper : Monster
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new List<ItemStack>();
-        Random r = new Random(SeedGenerator.SeedByLocation(Location));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Gunpowder, r.Next(0, 2 + 1)));
         if(dropDisc)
