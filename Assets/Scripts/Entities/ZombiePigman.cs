@@ -20,7 +20,7 @@ public class ZombiePigman : Monster
 
     public override EntityController GetController()
     {
-        return new ZombieController(this);
+        return new ZombiePigmanController(this);
     }
     
     public override void TakeFireDamage(float damage){ } //Disable fire damage
