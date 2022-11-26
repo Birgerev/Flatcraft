@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using Random = System.Random;
 
@@ -75,6 +76,7 @@ public class Particle : MonoBehaviour
 
     public static void ClientSpawnSmallSmoke(Vector2 position, Color color)
     {
+        //TODO replace with ClientSpawnVolume
         Random rand = new Random();
 
         for (int x = 0; x < 4; x++)
@@ -89,6 +91,60 @@ public class Particle : MonoBehaviour
                     part.velocity = new Vector2(0, 0.3f + (float) rand.NextDouble() * 0.5f);
                     part.maxAge = 0.5f + (float) rand.NextDouble();
                 }
+    }
+    
+    public static List<Particle> ClientSpawnVolume(Vector2 position, Vector2 boundsSize, Vector2 maxVelocity, float2 ageRange, int2 amountRange, Color color)
+    {
+        List<Particle> particles = new List<Particle>();
+        Random rand = new Random();
+        int particleAmount = rand.Next(amountRange.x, amountRange.y + 1);
+        
+        for (int i = 0; i < particleAmount; i++)
+        {
+            Particle part = ClientSpawn();
+            particles.Add(part);
+
+            part.transform.position = position + new Vector2(
+                (float)rand.NextDouble() * boundsSize.x, 
+                (float)rand.NextDouble() * boundsSize.y);
+            part.velocity = new Vector2(
+                (float)rand.NextDouble() * maxVelocity.x, 
+                (float)rand.NextDouble() * maxVelocity.y);
+            part.color = color;
+            part.doGravity = false;
+            //ageRange.x is lower limit, then multiply random double with upperLimit - lowerLimit (the random range)
+            part.maxAge = ageRange.x + (float) rand.NextDouble() * (ageRange.y - ageRange.x); 
+        }
+
+        return particles;
+    }
+    
+    public static List<Particle> ClientSpawnEnderShatter(Vector2 position, Color color)
+    {
+        List<Particle> particles = new List<Particle>();
+        Random rand = new Random();
+        int particleAmount = 20;
+        float circleRadius = 0.1f;
+        
+        //Calculate angle in radians per particle to evenly space in circle
+        float anglePerParticle = 2 * Mathf.PI / particleAmount;
+        for (int i = 0; i < particleAmount; i++)
+        {
+            //Calculate particle x & y in circle
+            Vector2 circlePos = new Vector2(
+                Mathf.Cos(anglePerParticle * i),
+                Mathf.Sin(anglePerParticle * i));
+            
+            Particle part = ClientSpawn();
+            particles.Add(part);
+            part.transform.position = position + (circlePos * circleRadius);
+            part.velocity = -circlePos * 1.7f;
+            part.color = color;
+            part.doGravity = false;
+            part.maxAge = (float) rand.NextDouble() * 0.6f;
+        }
+        
+        return particles;
     }
     
     public static void ClientSpawnNumber(Vector2 position, int number, Color color)

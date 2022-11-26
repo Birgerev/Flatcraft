@@ -6,7 +6,7 @@ using UnityEngine;
 using Random = System.Random;
 
 public class EnderEyeEntity :  Entity
-{
+{    
     private const double ShatterRate = 0.2d;
     
     private const float MovementAge = 4;
@@ -20,29 +20,42 @@ public class EnderEyeEntity :  Entity
     private const float DownwardsVelocity = -8;
     
     private int _targetX;
+    private bool _willShatter;
     
     [Server]
     public override void Spawn()
     {
         base.Spawn();
-
-        _targetX = 0;
+        
+        //Explode in wrong dimension
+        if(Location.dimension != Dimension.Overworld)
+            Die();
+        
+        _targetX = OverworldGenerator.GetStrongholdLocation();
+        _willShatter = new Random().NextDouble() < ShatterRate;
     }
 
     [Server]
     public override void Tick()
     {
         base.Tick();
-
+        
         if(age <= MovementAge)
             Movement();
         
         if(age >= DeathAge)
             Die();
+    }
 
-        //TODO particles
-        //TODO proper target
-        //TODO explode in wrong dimension
+    public override void ClientUpdate()
+    {
+        base.ClientUpdate();
+
+        //Spawn particle trail every x frames
+        if(Time.frameCount % 5 == 0)
+            Particle.ClientSpawnVolume(
+                Location.GetPosition(), new Vector2(0.5f, 0.5f), new Vector2(0.3f, 0.3f), 
+                new float2(0.6f, 1f), new int2(0, 1), new Color(.8f, .25f, .8f));
     }
 
     private void Movement()
@@ -61,15 +74,29 @@ public class EnderEyeEntity :  Entity
         
         GetComponent<Rigidbody2D>().velocity += newVelocity * Time.deltaTime;
     }
-    
+
+    public override void Die()
+    {
+        base.Die();
+        
+        if(_willShatter)
+            EyeShatterEffect();
+    }
+
     public override List<ItemStack> GetDrops()
     {
         List<ItemStack> result = new();
         
-        if(new Random().NextDouble() >= ShatterRate)
+        if(!_willShatter)
             result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
 
         return result;
+    }
+
+    [ClientRpc]
+    public void EyeShatterEffect()
+    {
+        Particle.ClientSpawnEnderShatter(Location.GetPosition(), new Color(.8f, .25f, .8f));
     }
 
     public override void TakeSuffocationDamage(float damage) { }//Disable suffocation damage
