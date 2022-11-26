@@ -20,6 +20,7 @@ public class EnderEyeEntity :  Entity
     private const float DownwardsVelocity = -8;
     
     private int _targetX;
+    private bool _willShatter;
     
     [Server]
     public override void Spawn()
@@ -31,6 +32,7 @@ public class EnderEyeEntity :  Entity
             Die();
         
         _targetX = OverworldGenerator.GetStrongholdLocation();
+        _willShatter = new Random().NextDouble() < ShatterRate;
     }
 
     [Server]
@@ -43,8 +45,6 @@ public class EnderEyeEntity :  Entity
         
         if(age >= DeathAge)
             Die();
-
-        //TODO particles
     }
 
     private void Movement()
@@ -63,16 +63,29 @@ public class EnderEyeEntity :  Entity
         
         GetComponent<Rigidbody2D>().velocity += newVelocity * Time.deltaTime;
     }
-    
+
+    public override void Die()
+    {
+        base.Die();
+        
+        if(_willShatter)
+            EyeShatterEffect();
+    }
+
     public override List<ItemStack> GetDrops()
     {
         List<ItemStack> result = new();
         
-        if(new Random().NextDouble() >= ShatterRate)
+        if(!_willShatter)
             result.Add(new ItemStack(Material.Eye_Of_Ender, 1));
-        //TODO shatter particle (maybe not in this function)
 
         return result;
+    }
+
+    [ClientRpc]
+    public void EyeShatterEffect()
+    {
+        Particle.ClientSpawnEnderShatter(Location.GetPosition(), new Color(.8f, .25f, .8f));
     }
 
     public override void TakeSuffocationDamage(float damage) { }//Disable suffocation damage

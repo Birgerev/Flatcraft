@@ -91,6 +91,34 @@ public class Particle : MonoBehaviour
                 }
     }
     
+    public static List<Particle> ClientSpawnEnderShatter(Vector2 position, Color color)
+    {
+        List<Particle> particles = new List<Particle>();
+        Random rand = new Random();
+        int particleAmount = 20;
+        float circleRadius = 0.1f;
+        
+        //Calculate angle in radians per particle to evenly space in circle
+        float anglePerParticle = 2 * Mathf.PI / particleAmount;
+        for (int i = 0; i < particleAmount; i++)
+        {
+            //Calculate particle x & y in circle
+            Vector2 circlePos = new Vector2(
+                Mathf.Cos(anglePerParticle * i),
+                Mathf.Sin(anglePerParticle * i));
+            
+            Particle part = ClientSpawn();
+            particles.Add(part);
+            part.transform.position = position + (circlePos * circleRadius);
+            part.velocity = -circlePos * 1.7f;
+            part.color = color;
+            part.doGravity = false;
+            part.maxAge = (float) rand.NextDouble() * 0.6f;
+        }
+        
+        return particles;
+    }
+    
     public static void ClientSpawnNumber(Vector2 position, int number, Color color)
     {
         Random rand = new Random();
