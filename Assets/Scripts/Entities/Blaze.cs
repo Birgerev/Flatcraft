@@ -18,7 +18,7 @@ public class Blaze : Monster
 
     public override EntityController GetController()
     {
-        return new ZombieController(this);
+        return new BlazeController(this);
     }
     
     public override void TakeFireDamage(float damage){ } //Disable fire damage
