@@ -5,6 +5,8 @@ using Random = System.Random;
 
 public class DroppedItem : Entity
 {
+    private const float BobAmplitude = 0.1f;
+    private const float BobOffset = 0.35f;
     //Entity State
     private float cosIndex;
     //Entity Properties
@@ -79,10 +81,11 @@ public class DroppedItem : Entity
     [Client]
     public override void ClientUpdate()
     {
-        GetRenderer().sprite = item.GetSprite();
+        //Item color
+        GetRenderer().color = item.GetTextureColors()[0];
 
         //Bobbing
-        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * 0.1f) + 0.4f);
+        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * BobAmplitude) + BobOffset);
         cosIndex += 2f * Time.deltaTime;
 
         base.ClientUpdate();
