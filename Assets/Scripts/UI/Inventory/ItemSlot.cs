@@ -11,7 +11,7 @@ public class ItemSlot : MonoBehaviour
     public ItemStack item;
 
     // Update is called once per frame
-    public virtual void UpdateSlot()
+    public virtual void UpdateSlotContents()
     {
         if (item.Amount == 0)
         {

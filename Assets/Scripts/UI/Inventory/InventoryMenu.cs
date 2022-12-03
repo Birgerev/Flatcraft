@@ -114,13 +114,13 @@ public class InventoryMenu : NetworkBehaviour
             for (int slotId = 0; slotId < slots.Length; slotId++)
             {
                 slots[slotId].item = GetItem(inventoryIndex, slotId);
-                slots[slotId].UpdateSlot();
+                slots[slotId].UpdateSlotContents();
             }
         }
 
         //Update the pointer slot aswell
         pointerSlot.item = pointerItem;
-        pointerSlot.UpdateSlot();
+        pointerSlot.UpdateSlotContents();
     }
 
     [Client]
