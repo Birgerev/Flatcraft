@@ -56,10 +56,10 @@ MonoBehaviour:
     defaultState: 1
   intensity:
     overrideState: 1
-    value: 0.15
+    value: 0.1
   fastMode:
     overrideState: 0
-    value: 1
+    value: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
     value: 100
   lift:
     overrideState: 1
-    value: {x: 1, y: 0.93188137, z: 0.8784554, w: 0}
+    value: {x: 1, y: 0.9374847, z: 0.9401275, w: 0}
   gamma:
     overrideState: 1
     value: {x: 0.73973536, y: 1, z: 0.9119478, w: 0}
