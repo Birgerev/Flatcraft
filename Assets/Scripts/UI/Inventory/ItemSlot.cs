@@ -54,9 +54,20 @@ public class ItemSlot : MonoBehaviour
 
     public virtual void Hover(bool hover)
     {
+        //Tooltips
         if (hover)
             Tooltip.hoveredItem = item;
         if (!hover && Tooltip.hoveredItem.Equals(item))
             Tooltip.hoveredItem = new ItemStack();
+        
+        //Drag detection
+        if (hover && Input.GetMouseButton(1))
+        {
+            InventoryMenu menu = GetComponentInParent<InventoryMenu>();
+            int inventoryIndex = menu.GetSlotInventoryIndex(this);
+            int slotId = menu.GetSlotIndex(this);
+
+            menu.OnClickSlot(inventoryIndex, slotId, ClickType.RightHold);
+        }
     }
 }

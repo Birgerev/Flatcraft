@@ -195,6 +195,8 @@ public class InventoryMenu : NetworkBehaviour
             OnLeftClickSlot(inventoryIndex, slotIndex);
         else if (clickType == ClickType.RightClick)
             OnRightClickSlot(inventoryIndex, slotIndex);
+        else if(clickType == ClickType.RightHold)
+            OnRightClickSlot(inventoryIndex, slotIndex);
     }
 
     [Command(requiresAuthority = false)]
@@ -204,7 +206,7 @@ public class InventoryMenu : NetworkBehaviour
 
         //Right Click to leave one item
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= 64)
+            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= Inventory.MaxStackSize)
         {
             SlotAction_LeaveOne(inventoryIndex, slotIndex);
 
@@ -229,6 +231,20 @@ public class InventoryMenu : NetworkBehaviour
             SlotAction_MergeSlot(inventoryIndex, slotIndex);
     }
 
+    [Command(requiresAuthority = false)]
+    public virtual void OnRightDragSlot(int inventoryIndex, int slotIndex)
+    {
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+
+        //Right Click to leave one item
+        if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
+            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= Inventory.MaxStackSize)
+        {
+            SlotAction_LeaveOne(inventoryIndex, slotIndex);
+            return;
+        }
+    }
+    
     [Server]
     public virtual void SlotAction_LeaveOne(int inventoryIndex, int slotIndex)
     {
