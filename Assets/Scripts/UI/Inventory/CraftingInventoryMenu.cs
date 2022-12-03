@@ -24,7 +24,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     }
 
     [Client]
-    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
         CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
 

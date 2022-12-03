@@ -189,11 +189,11 @@ public class InventoryMenu : NetworkBehaviour
     }
     
     [Client]
-    public virtual void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public virtual void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
-        if (clickType == 0)
+        if (clickType == ClickType.LeftClick)
             OnLeftClickSlot(inventoryIndex, slotIndex);
-        else if (clickType == 1)
+        else if (clickType == ClickType.RightClick)
             OnRightClickSlot(inventoryIndex, slotIndex);
     }
 

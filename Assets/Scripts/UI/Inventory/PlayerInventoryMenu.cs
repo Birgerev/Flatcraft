@@ -33,7 +33,7 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Client]
-    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
 
@@ -53,7 +53,7 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickCraftingResultSlot(int inventoryIndex, int slotIndex, int clickType)
+    public virtual void OnClickCraftingResultSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
         ItemStack newPointerItem = pointerItem;
@@ -99,7 +99,7 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickArmorSlot(int slotIndex, int clickType)
+    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
     {
     }
 }
