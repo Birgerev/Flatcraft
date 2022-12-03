@@ -29977,7 +29977,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4376917305422253475}
   m_Layer: 0
-  m_Name: Main menu world
+  m_Name: Main menu background world
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
