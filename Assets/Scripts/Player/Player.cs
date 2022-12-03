@@ -696,8 +696,8 @@ public class Player : HumanEntity
     {
         ItemStack droppedItem = item;
         
-        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
-            , new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 1)
+            , new Vector2(3 * (facingLeft ? -1 : 1), 0f));
     }
 
     [Server]
