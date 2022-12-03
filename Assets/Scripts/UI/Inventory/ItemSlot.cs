@@ -49,7 +49,7 @@ public class ItemSlot : MonoBehaviour
         int slotId = menu.GetSlotIndex(this);
 
         //If we detect click event, check if click was left, otherwise it was right click
-        menu.OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonUp(0) ? ClickType.LeftClick : ClickType.RightClick);
+        menu.OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonDown(0) ? ClickType.LeftClick : ClickType.RightClick);
     }
 
     public virtual void Hover(bool hover)
