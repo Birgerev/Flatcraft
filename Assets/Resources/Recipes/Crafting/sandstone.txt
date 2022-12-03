@@ -1,0 +1,6 @@
+mirror*0*0
+Sandstone*1*
+Sand*0,0*
+Sand*0,1*
+Sand*1,0*
+Sand*1,1*
