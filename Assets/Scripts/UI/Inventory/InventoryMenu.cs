@@ -191,12 +191,21 @@ public class InventoryMenu : NetworkBehaviour
     [Client]
     public virtual void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
-        if (clickType == ClickType.LeftClick)
-            OnLeftClickSlot(inventoryIndex, slotIndex);
-        else if (clickType == ClickType.RightClick)
-            OnRightClickSlot(inventoryIndex, slotIndex);
-        else if(clickType == ClickType.RightHold)
-            OnRightClickSlot(inventoryIndex, slotIndex);
+        switch (clickType)
+        {
+            case ClickType.LeftClick:
+                OnLeftClickSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.RightClick:
+                OnRightClickSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.RightHold:
+                OnRightDragSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.ShiftClick:
+                OnShiftClickSlot(inventoryIndex, slotIndex);
+                break;
+        }
     }
 
     [Command(requiresAuthority = false)]
@@ -245,6 +254,17 @@ public class InventoryMenu : NetworkBehaviour
         }
     }
     
+    [Command(requiresAuthority = false)]
+    public virtual void OnShiftClickSlot(int inventoryIndex, int slotIndex)
+    {
+        //If two inventories are open
+        if(inventoryIds.Keys.Count >= 2)
+        {
+            SlotAction_MoveStackToSecondInventory(inventoryIndex, slotIndex);
+            return;
+        }
+    }
+
     [Server]
     public virtual void SlotAction_LeaveOne(int inventoryIndex, int slotIndex)
     {
@@ -312,6 +332,26 @@ public class InventoryMenu : NetworkBehaviour
         SetItem(inventoryIndex, slotIndex, slotItem);
         SetPointerItem(newPointerItem);
 
+        UpdateInventory();
+    }
+    
+    [Server]
+    public virtual void SlotAction_MoveStackToSecondInventory(int inventoryIndex, int slotIndex)
+    {
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+        
+        //If current inventory index is 0, other inventory index is 1, and vice versa
+        int otherInventoryIndex = (inventoryIndex == 0 ? 1 : 0);
+        Inventory otherInventory = Inventory.Get(inventoryIds[otherInventoryIndex]);
+
+        //Try to add stack to other inventory
+        if (otherInventory.AddItem(slotItem))
+        {
+            //If successful, remove stack in this inventory
+            slotItem = new ItemStack();
+        }
+        
+        SetItem(inventoryIndex, slotIndex, slotItem);
         UpdateInventory();
     }
 }

@@ -47,9 +47,13 @@ public class ItemSlot : MonoBehaviour
         InventoryMenu menu = GetComponentInParent<InventoryMenu>();
         int inventoryIndex = menu.GetSlotInventoryIndex(this);
         int slotId = menu.GetSlotIndex(this);
+        ClickType clickType = Input.GetMouseButtonDown(0) ? ClickType.LeftClick : ClickType.RightClick;
+
+        if (Input.GetKey(KeyCode.LeftShift))
+            clickType = ClickType.ShiftClick;
 
         //If we detect click event, check if click was left, otherwise it was right click
-        menu.OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonDown(0) ? ClickType.LeftClick : ClickType.RightClick);
+        menu.OnClickSlot(inventoryIndex, slotId, clickType);
     }
 
     public virtual void Hover(bool hover)

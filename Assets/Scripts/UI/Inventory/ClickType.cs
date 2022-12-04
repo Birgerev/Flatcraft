@@ -7,4 +7,5 @@ public enum ClickType
     LeftClick,
     RightClick,
     RightHold,
+    ShiftClick,
 }
