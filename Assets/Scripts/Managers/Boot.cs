@@ -6,12 +6,23 @@ using UnityEngine;
 
 public class Boot : MonoBehaviour
 {
+    public bool autoloadTestWorld;
+    
     void Start()
     {
         if (DedicatedServerManager.DedicatedServerCheck())
             return;
         if(CreateNameCheck())
             return;
+
+        //Option to immediately load test world in editor
+        if (autoloadTestWorld && Application.isEditor)
+        {
+            WorldManager.world = World.LoadWorld("Test");
+            GameNetworkManager.connectionMode = ConnectionMode.Host;
+            GameNetworkManager.StartGame();
+            return;
+        }
         
         SceneManager.LoadScene("MainMenu");
     }

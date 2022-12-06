@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
@@ -8,6 +9,9 @@ using UnityEngine;
 public class ChatManager : NetworkBehaviour
 {
     public static ChatManager instance;
+
+    public readonly Command[] commands = {new GiveCommand(), new HealCommand(), new HelpCommand(), new OffsetSavedStructureCommand()
+        , new SaveStructureCommand(), new SummonCommand(), new TimeCommand(), new WeatherCommand()};
 
     public void Start()
     {
@@ -32,113 +36,14 @@ public class ChatManager : NetworkBehaviour
     public void ExcecuteCommand(string[] args, PlayerInstance player)
     {
         Debug.Log("executing command> " + args[0]);
+        string[] param = args.Skip(1).ToArray();
 
-        if (args[0].Equals("/give"))
-            try
-            {
-                ItemStack item = new ItemStack((Material) Enum.Parse(typeof(Material), args[1]), int.Parse(args[2]));
-
-                player.playerEntity.GetComponent<Player>().GetInventory().AddItem(item);
-                AddMessage("Gave " + player.playerName + " " + item.Amount + " " + item.material + "'s");
-            }
-            catch (Exception e)
-            {
-                AddMessage("/give command failed");
-                Debug.LogError("chat error: " + e.StackTrace);
-            }
-        if (args[0].Equals("/stork"))
-            AddMessage("meeeeeee");
-        
-        if (args[0].Equals("/spawn"))
-            try
-            {
-                string entityType = args[1];
-
-                Entity entity = Entity.Spawn(entityType);
-                entity.Teleport(player.playerEntity.GetComponent<Player>().Location);
-                AddMessage("Spawned " + entityType);
-            }
-            catch (Exception e)
-            {
-                AddMessage("/spawn command failed");
-                Debug.LogError("chat error: " + e.StackTrace);
-            }
-        
-        if (args[0].Equals("/structure"))
-            try
-            {
-                bool includeAir = args[1].ToLower().Equals("true");
-                int xSize = int.Parse(args[2]);
-                int ySize = int.Parse(args[3]);
-                Location playerLocation = player.playerEntity.GetComponent<Player>().Location;
-                string savePath = Application.persistentDataPath + "\\savedStructure.txt";
-                List<string> lines = new List<string>();
-
-                AddMessage("Starting Structure Cloner");
-                for (int localX = 0; localX < xSize; localX++)
-                {
-                    for (int localY = 0; localY < ySize; localY++)
-                    {
-                        Location worldLocation = playerLocation + new Location(localX, localY);
-                        Material mat = worldLocation.GetMaterial();
-                        BlockData data = worldLocation.GetData();
-                        
-                        if(mat == Material.Air && !includeAir)
-                            continue;
-                        
-                        lines.Add(mat.ToString() + "*" + localX + "," + localY + "*" + data.ToString());
-                    }
-                }
-                
-                File.WriteAllLines(savePath, lines);
-                AddMessage("Structure saved to: " + savePath);
-            }
-            catch (Exception e)
-            {
-                AddMessage("/spawn command failed");
-                Debug.LogError("chat error: " + e.StackTrace);
-            }
-        
-        
-        if (args[0].Equals("/offsetstructure"))
-            try
-            {
-                int xOffset = int.Parse(args[1]);
-                int yOffset = int.Parse(args[2]);
-                string savePath = Application.persistentDataPath + "\\savedStructure.txt";
-                List<string> newLines = new List<string>();
-                
-                foreach (String line in File.ReadAllLines(savePath))
-                {
-                    string mat = line.Split('*')[0];
-                    string locString = line.Split('*')[1];
-                    int2 loc = new int2(
-                        int.Parse(locString.Split(',')[0]),
-                        int.Parse(locString.Split(',')[1])
-                        );
-                    string data = line.Split('*')[2];
-
-                    loc += new int2(xOffset, yOffset);
-                    
-                    newLines.Add(mat + "*" + loc.x + "," + loc.y + "*" + data);
-                }
-                
-                File.WriteAllLines(savePath, newLines);
-                AddMessage("Structure saved to: " + savePath);
-            }
-            catch (Exception e)
-            {
-                AddMessage("/spawn command failed");
-                Debug.LogError("chat error: " + e.StackTrace);
-            }
-
-        if (args[0].Equals("/help"))
+        foreach (Command cmd in commands)
         {
-            AddMessage("---- Commands ----");
-            AddMessage("/give <Material> <Amount>");
-            AddMessage("/spawn <Entity Type>");
-            AddMessage("/structure <Air> <x-size> <y-size>");
-            AddMessage("/offsetstructure <x-offset> <y-offset>");
+            if (cmd.name.Equals(args[0].Replace("/", "").ToLower()))
+            {
+                cmd.Execute(param, player);
+            }
         }
     }
 

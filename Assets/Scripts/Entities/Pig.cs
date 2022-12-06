@@ -10,7 +10,7 @@ public class Pig : PassiveEntity
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new List<ItemStack>();
-        Random r = new Random(SeedGenerator.SeedByLocation(Location));
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Raw_Porkchop, r.Next(1, 3 + 1)));
 

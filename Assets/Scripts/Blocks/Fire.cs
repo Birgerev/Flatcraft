@@ -11,8 +11,8 @@ public class Fire : Block
     public override bool trigger { get; set; } = true;
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
-    public override float averageRandomTickDuration { get; } = 5;
-    public override int glowLevel { get; } = 15;
+    public override float averageRandomTickDuration { get; } = 1;
+    public override int glowLevel { get; } = 5;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;
 
@@ -32,35 +32,17 @@ public class Fire : Block
     public override void RandomTick()
     {
         Random random = new Random();
-        bool ambinetSound = random.NextDouble() < 0.5d;
-        bool spread = random.NextDouble() < 0.8d;
+        bool ambinetSound = random.NextDouble() < 0.2d;
+        bool spread = random.NextDouble() < 1d;
+        bool burnUp = random.NextDouble() < 0.6d;
 
         if (ambinetSound)
             Sound.Play(location, "block/fire/ambient", SoundType.Block, 0.8f, 1.2f);
 
         if (spread)
-        {
-            Location spreadLocation = new Location();
-
-            int attempts = 0;
-            while (spreadLocation.Equals(new Location()))
-            {
-                int x = random.Next(-1, 1 + 1); //+1 because upper bound is exclusive
-                int y = random.Next(-2, 2 + 1);
-
-                if ((location + new Location(x, y)).GetMaterial() == Material.Air &&
-                    (location + new Location(x, y - 1)).GetMaterial() != Material.Air &&
-                    (location + new Location(x, y - 1)).GetBlock().isFlammable)
-                    (location + new Location(x, y)).SetMaterial(Material.Fire);
-
-                if (attempts > 20)
-                    return;
-                attempts++;
-            }
-
-            spreadLocation.SetMaterial(Material.Fire).Tick();
-        }
-        else
+            AttemptSpreadFire();
+        
+        if(burnUp)
         {
             bool netherrackBelow = (location + new Location(0, -1)).GetMaterial() == Material.Netherrack;
 
@@ -73,5 +55,33 @@ public class Fire : Block
         }
 
         base.RandomTick();
+    }
+    
+    private void AttemptSpreadFire()
+    {
+        Random random = new Random();
+
+        for (int attempt = 0; attempt < 10; attempt++)
+        {
+            //+1 because upper bound is exclusive
+            Location loc = (location + new Location(random.Next(-1, 1 + 1), random.Next(-2, 2 + 1)));
+
+            //Skip location if it goes out of bounds
+            if (loc.y <= 0 || loc.y > Chunk.Height)
+                continue;
+
+            Block blockBelow = (loc + new Location(0, -1)).GetBlock();
+
+            //If target loc isn't empty
+            if (loc.GetMaterial() != Material.Air)
+                continue;
+            //If below target loc is empty or isn't flammable
+            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.isFlammable)
+                continue;
+
+            //Otherwise, ignite
+            loc.SetMaterial(Material.Fire);
+            return;
+        }
     }
 }

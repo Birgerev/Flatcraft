@@ -6,10 +6,9 @@ using UnityEngine;
 public class WorldManager : NetworkBehaviour
 {
     public static WorldManager instance;
+    public static World world;
 
     public const float DayLength = 60 * 20;
-
-    public static World world;
 
     public HashSet<Location> caveHollowBlocks = new HashSet<Location>();
     public List<int> caveGeneratedRegions = new List<int>();
@@ -36,7 +35,7 @@ public class WorldManager : NetworkBehaviour
         Time.timeScale = 1;
         chunks.Clear();
         //Update to current version
-        world.versionId = VersionController.CurrentVersionId;
+        world.versionId = Version.currentId;
             
         StartCoroutine(SaveLoop());
     }

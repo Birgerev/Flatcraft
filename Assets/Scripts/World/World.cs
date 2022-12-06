@@ -21,7 +21,7 @@ public class World
         this.name = name;
         this.seed = seed;
         this.time = 0;
-        this.versionId = VersionController.CurrentVersionId;
+        this.versionId = Version.currentId;
         this.template = WorldTemplate.Default;
         weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
         weather = Weather.Clear;
@@ -32,7 +32,7 @@ public class World
         this.name = "";
         this.seed = 0;
         this.time = 0;
-        this.versionId = VersionController.CurrentVersionId;
+        this.versionId = Version.currentId;
         this.template = WorldTemplate.Default;
         weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
         weather = Weather.Clear;

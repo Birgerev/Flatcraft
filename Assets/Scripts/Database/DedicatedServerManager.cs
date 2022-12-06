@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class DedicatedServerManager
 {
-    private static string serverConfigPath = Application.persistentDataPath + "/serverConfig.dat";
+    private static string serverConfigPath = Application.dataPath + "/../serverConfig.dat";
     public static Dictionary<string, string> configValues = new Dictionary<string, string>();
     
     public static bool DedicatedServerCheck()
@@ -14,26 +14,48 @@ public class DedicatedServerManager
         //TODO ports, database
         if(File.Exists(serverConfigPath))
         {
-            string[] lines = File.ReadAllLines(serverConfigPath);
-            foreach (string line in lines)
-            {
-                string[] parts = line.Split('=');
-                configValues.Add(parts[0], parts[1]);
-            }
+            Debug.Log("A server config was found, starting a dedicated server");
+            Debug.Log("Reading config file");
+            ReadInConfigValues();
+            if (!DoesMandatoryConfigValueExist("port") || !DoesMandatoryConfigValueExist("worldName"))
+                return false;
+            
+            Debug.Log("Config read was succesful");
             
             //Load or create a world
-            World world = new World("world", new System.Random().Next());
-            if (World.LoadWorlds().Count > 0)
-                world = World.LoadWorlds()[0];
+            World world = new World(configValues["worldName"], new System.Random().Next());
+
+            if (World.WorldExists(configValues["worldName"]))
+                world = World.LoadWorld(configValues["worldName"]);
             WorldManager.world = world;
+            Debug.Log("Loaded server world '" + configValues["worldName"] + "'");
             
             //Start server
             GameNetworkManager.port = int.Parse(configValues["port"]);
             GameNetworkManager.connectionMode = ConnectionMode.DedicatedServer;
-            SceneManager.LoadScene("Game");
+            GameNetworkManager.StartGame();
             return true;
         }
         
+        return false;
+    }
+
+    private static void ReadInConfigValues()
+    {
+        string[] lines = File.ReadAllLines(serverConfigPath);
+        foreach (string line in lines)
+        {
+            string[] parts = line.Split('=');
+            configValues.Add(parts[0], parts[1]);
+        }
+    }
+    
+    private static bool DoesMandatoryConfigValueExist(string key)
+    {
+        if (configValues.ContainsKey(key))
+            return true;
+        
+        Debug.LogError("Server config file '" + serverConfigPath + "' does not specify a '" + key + "' value, can't start dedicated server");
         return false;
     }
 }

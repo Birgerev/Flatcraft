@@ -247,7 +247,7 @@ public class LivingEntity : Entity
     [Server]
     private void FallDamageCheck()
     {
-        if (isOnGround && !isInLiquid)
+        if (isOnGround && !isInLiquid && age > 5)
         {
             float damage = highestYlevelsinceground - transform.position.y - 3;
             if (damage >= 1)
@@ -284,7 +284,7 @@ public class LivingEntity : Entity
         int particleAmount = r.Next(4, 8);
         for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
@@ -306,7 +306,7 @@ public class LivingEntity : Entity
             if (blockBeneath == null)
                 return;
 
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = blockBeneath.GetRandomColourFromTexture();
@@ -413,13 +413,13 @@ public class LivingEntity : Entity
     [ClientRpc]
     public virtual void DeathSmokeEffect()
     {
-        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+        Particle.ClientSpawnSmallSmoke(transform.position, Color.white);
     }
 
     [ClientRpc]
     public virtual void DamageNumberEffect(int damage, Color color)
     {
-        Particle.Spawn_Number(transform.position + new Vector3(1, 2), damage, color);
+        Particle.ClientSpawnNumber(transform.position + new Vector3(1, 2), damage, color);
     }
     
     private IEnumerator TurnRedByDamage()

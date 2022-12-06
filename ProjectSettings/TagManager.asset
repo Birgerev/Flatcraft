@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - Block
-  - NoCollisionBlock
+  - NoCollision
   - BackgroundBlock
   - 
   - Renderer

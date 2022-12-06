@@ -1,6 +1,6 @@
 public class PlaceableEntityItem : Item
 {
-    public virtual string entityType { get; } = "PaintingEntity";
+    public virtual string entityType { get; } = "None Assigned";
 
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {

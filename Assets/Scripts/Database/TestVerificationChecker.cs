@@ -7,14 +7,18 @@ using UnityEngine.SceneManagement;
 
 public class TestVerificationChecker : MonoBehaviour
 {
+    public bool doVersionCheck;
+    
     private const string Url = "http://hille.evansson.se/flatcraft/testingVerification.html";
     private const float LoopDuration = 10;
+    
     
     // Start is called before the first frame update
     void Start()
     {
         DontDestroyOnLoad(gameObject);
-        StartCoroutine(verificationLoop());
+        if(doVersionCheck)
+            StartCoroutine(verificationLoop());
     }
 
     IEnumerator verificationLoop()
@@ -33,7 +37,7 @@ public class TestVerificationChecker : MonoBehaviour
             {
                 int verificationId = Int32.Parse(www.downloadHandler.text);
                 
-                if (verificationId != VersionController.CurrentVersionId)
+                if (verificationId != Version.currentId)
                 {
                     VerificationTestFailed();
                 }
@@ -45,6 +49,7 @@ public class TestVerificationChecker : MonoBehaviour
 
     private void VerificationTestFailed()
     {
+        Debug.Log("Build verification failed");
         SceneManager.LoadScene("BuildVerificationFail");
         Destroy(gameObject);
     }

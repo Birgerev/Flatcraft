@@ -77,6 +77,6 @@ public class Dog : PassiveEntity
     [ClientRpc]
     private void PlaySmokeEffect(Color color)
     {
-        Particle.Spawn_SmallSmoke(transform.position + new Vector3(0, 2), color);
+        Particle.ClientSpawnSmallSmoke(transform.position + new Vector3(0, 2), color);
     }
 }

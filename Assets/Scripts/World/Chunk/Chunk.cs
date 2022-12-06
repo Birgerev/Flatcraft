@@ -19,14 +19,13 @@ public class Chunk : NetworkBehaviour
     public const int AmountOfChunksInRegion = 16;
     public const int OutsideRenderDistanceUnloadTime = 10;
     public const int TickRate = 1;
-    public const int MaxBackgroundBlockLength = 20;
 
     private static readonly float animalGenerationChance = 0.1f;
-    private static readonly List<string> CommonAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
+    private static readonly List<string> DefaultOverworldAnimals = new List<string> {"Chicken", "Sheep", "Cow", "Pig"};
     
     private static readonly int monsterSpawningLightLevel = 7;
     private static readonly int monsterSpawnAmountCap = 1;
-    private static readonly List<string> CommonMonsters = new List<string> {"Zombie", "Creeper", "Spider", "Skeleton"};
+    private static readonly List<string> DefaultOverworldMonsters = new List<string> {"Zombie", "Creeper", "Spider", "Skeleton", "Enderman"};
 
     public GameObject blockPrefab;
     public GameObject backgroundBlockPrefab;
@@ -450,15 +449,18 @@ public class Chunk : NetworkBehaviour
     [Server]
     private void GenerateAnimals()
     {
-        Random r = new Random(SeedGenerator.SeedByLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
-
+        Random r = new Random(SeedGenerator.SeedByWorldLocation(new Location(chunkPosition.worldX, 0, chunkPosition.dimension)));
+        
         if ((float) r.NextDouble() > animalGenerationChance)
             return;
 
-        List<string> entities = CommonAnimals;
-        entities.AddRange(GetBiome().biomeSpecificAnimals);
-        string entityType = entities[r.Next(0, entities.Count)];
+        Biome biome = GetBiome();
+        List<string> possibleAnimals = biome.biomeSpecificAnimals;
+        if(biome.spawnDefaultOverworldAnimals)
+            possibleAnimals.AddRange(DefaultOverworldAnimals);
         
+        //Choose a random animal type for this chunk
+        string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
         for (int amount = 0; amount < 4; amount++)
         {
             int x = r.Next(0, Width) + chunkPosition.worldX;
@@ -493,42 +495,64 @@ public class Chunk : NetworkBehaviour
     private void TrySpawnMonster()
     {
         //Define a random based on parameters specific to this chunk
-        int rSeed = SeedGenerator.SeedByParameters(
+        int randomSeed = SeedGenerator.SeedByParameters(
             WorldManager.world.seed, 
             chunkPosition.chunkX, 
             (int) chunkPosition.dimension, 
             (int)Time.time);
-        Random r = new Random(rSeed);
+        Random r = new(randomSeed);
         
         //Decide which column in the chunk we should attempt to spawn the entity
-        int xColumn = r.Next(0, Width) + chunkPosition.worldX;
-        Dimension dimension = chunkPosition.dimension;
+        int worldXPosition = r.Next(0, Width) + chunkPosition.worldX;
+        int worldHeight = Height;
         
-        //Find a solid block with air space above it, aswell as having a correct light level for spawning
-        int consecutiveAirBlocks = 0;
+        Dimension dimension = chunkPosition.dimension;
+        //No need to iterate beyond nether bedrock roof
+        if(dimension == Dimension.Nether)
+            worldHeight = 128;
+        
         List<Location> possibleSpawnLocations = new List<Location>();
-        for (int y = Height - 1; y >= 0; y--)
+        //Find a viable y position with a solid block beneath and air space above it,
+        //As well having a correct light level for spawning
+        int consecutiveEmptyBlocks = 0;
+        for (int y = worldHeight - 1; y >= 0; y--)
         {
-            Location loc = new Location(xColumn, y, dimension);
+            Location loc = new(worldXPosition, y, dimension);
             Material mat = loc.GetMaterial();
 
-            if (mat != Material.Air && consecutiveAirBlocks >= 2)
-                if (LightManager.GetLightLevel(loc) <= monsterSpawningLightLevel)
-                    possibleSpawnLocations.Add(loc);
-
+            //Check whether block is empty
             if (mat == Material.Air)
-                consecutiveAirBlocks++;
-            else
-                consecutiveAirBlocks = 0;
+            {
+                consecutiveEmptyBlocks++;
+                continue;
+            }
+            
+            if(consecutiveEmptyBlocks < 2)
+                continue;
+            if(LightManager.GetLightLevel(loc) > monsterSpawningLightLevel)
+                continue;
+            
+            
+            possibleSpawnLocations.Add(loc);
+            
+            consecutiveEmptyBlocks = 0;
         }
 
         //Return if no spawn locations where found
         if (possibleSpawnLocations.Count == 0)
             return;
 
+        //Choose a random monster type based on the biome
+        Biome biome = GetBiome();
+        List<string> possibleAnimals = biome.biomeSpecificMonsters;
+        if(biome.spawnDefaultOverworldMonsters)
+            possibleAnimals.AddRange(DefaultOverworldMonsters);
+        
+        //TODO will fail if monster list is empty
+        string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
+        
         //Spawn a random monster at the location we decided
         Location spawnLocation = possibleSpawnLocations[r.Next(0, possibleSpawnLocations.Count)];
-        string entityType = CommonMonsters[r.Next(0, CommonMonsters.Count)];
         Entity entity = Entity.Spawn(entityType);
         entity.Teleport(spawnLocation);
     }
@@ -542,7 +566,7 @@ public class Chunk : NetworkBehaviour
             List<Block> blockList = new List<Block>(randomTickBlocks);
             foreach (Block block in blockList)
             {
-                Random r = new Random(SeedGenerator.SeedByLocation(block.location) + i);
+                Random r = new Random(SeedGenerator.SeedByWorldLocation(block.location) + i);
 
                 if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
                     try
@@ -590,6 +614,7 @@ public class Chunk : NetworkBehaviour
         yield return new WaitForSeconds(0);
 
         //Look up which blocks in the column will create background blocks
+        List<int> transparentHeight = new List<int>();
         Dictionary<Location, Material> solidMaterials = new Dictionary<Location, Material>();
         for (int y = 0; y < Height; y++)
         {
@@ -605,6 +630,8 @@ public class Chunk : NetworkBehaviour
             
             if (BackgroundBlock.viableMaterials.ContainsKey(mat))
                 solidMaterials.Add(loc, BackgroundBlock.viableMaterials[mat]);
+            if (BackgroundBlock.transparentBackgrounds.Contains(mat))
+                transparentHeight.Add(y);
         }
 
         for (int i = 0; i < solidMaterials.Count - 1; i++)
@@ -614,28 +641,30 @@ public class Chunk : NetworkBehaviour
             int heightDistance = nextLoc.y - currentLoc.y;
             
             //Check so that blocks are not next to each other or too far apart
-            if(heightDistance <= 1 || heightDistance > MaxBackgroundBlockLength)
+            if(heightDistance <= 1 || heightDistance > BackgroundBlock.MaxLengthFromSolid)
                 continue;
 
             //Look up which material will be used for the background
             Material nextMat = solidMaterials[nextLoc];
             Material nextBackgroundMaterial = BackgroundBlock.viableMaterials[nextMat];
 
+            //Create background blocks up to the next solid
             for (int y = currentLoc.y + 1; y < nextLoc.y; y++)
             {
-                GameObject blockObject = Instantiate(backgroundBlockPrefab, transform, true);
-                BackgroundBlock backgroundBlock = blockObject.GetComponent<BackgroundBlock>();
+                //Don't place background at transparent blocks (such as glass)
+                if(transparentHeight.Contains(y))
+                    continue;
+                    
+                GameObject backgroundblockObject = Instantiate(backgroundBlockPrefab, transform, true);
+                BackgroundBlock backgroundBlock = backgroundblockObject.GetComponent<BackgroundBlock>();
 
-                blockObject.transform.position = new Location(x, y, chunkPosition.dimension).GetPosition();
+                backgroundblockObject.transform.position = new Location(x, y, chunkPosition.dimension).GetPosition();
                 backgroundBlock.material = nextBackgroundMaterial;
                 backgroundBlocks.Add(new int2(x, y), backgroundBlock);
 
                 if (updateLight)
                     ScheduleBlockLightUpdate(new Location(x, y, chunkPosition.dimension));
             }
-            
-            //if (!isLoaded && i % 10 == 0)
-            //    yield return new WaitForSeconds(0);
         }
     }
 

@@ -7,4 +7,9 @@
     public override int glowLevel { get; } = 10;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Glass;
+    
+    public override ItemStack GetDrop()
+    {
+        return new ItemStack(Material.Air, 0);
+    }
 }

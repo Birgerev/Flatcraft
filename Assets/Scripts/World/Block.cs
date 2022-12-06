@@ -144,7 +144,7 @@ public class Block : MonoBehaviour
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollisionBlock");
+        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollision");
 
         GetComponent<Collider2D>().isTrigger = trigger;
         GetComponent<BoxCollider2D>().size =
@@ -172,7 +172,7 @@ public class Block : MonoBehaviour
             return;
         
         if (rotateY)
-            rotated_y = Player.localEntity.transform.position.y < location.y;
+            rotated_y = (Player.localEntity.transform.position.y + 1) < location.y;
         if (rotateX)
             rotated_x = Player.localEntity.transform.position.x < location.x;
 
@@ -259,7 +259,7 @@ public class Block : MonoBehaviour
         Random r = new Random();
         for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
 
             part.transform.position = location.GetPosition() +
                                       new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
@@ -305,7 +305,7 @@ public class Block : MonoBehaviour
         if (alternativeTextures.Length > 0)
         {
             //Default get a random alternative texture based on location
-            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternativeTextures.Length);
+            int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, alternativeTextures.Length);
 
             //Textures that change over time
             if (changeTextureTime > 0)

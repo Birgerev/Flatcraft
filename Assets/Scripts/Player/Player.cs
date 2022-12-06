@@ -776,6 +776,8 @@ public class Player : HumanEntity
             return;
 
         base.Die();
+        
+        ChatManager.instance.AddMessage(displayName + " died");
         File.Delete(SavePath());
         GetInventory().Delete();
         DeathMenuEffect();
@@ -837,7 +839,7 @@ public class Player : HumanEntity
         Random r = new Random();
         for (int i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
             Color color = colors[r.Next(0, colors.Length)];
             part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
             part.color = color;
