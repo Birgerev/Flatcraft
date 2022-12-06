@@ -9,7 +9,7 @@ public class Blaze : Monster
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new();
-        Random r = new(SeedGenerator.SeedByLocation(Location));
+        Random r = new(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Blaze_Rod, r.Next(0, 1 + 1)));
 

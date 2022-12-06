@@ -9,7 +9,7 @@ public class ZombiePigman : Monster
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new();
-        Random r = new(SeedGenerator.SeedByLocation(Location));
+        Random r = new(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Rotten_Flesh, r.Next(0, 1 + 1)));
         if(r.NextDouble() < 0.025d)
