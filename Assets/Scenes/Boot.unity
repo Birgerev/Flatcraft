@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 414260226}
   - component: {fileID: 414260225}
   m_Layer: 0
-  m_Name: TestVerificationChecker
+  m_Name: Verification Checker (Persistent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 643624433}
   - component: {fileID: 643624435}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: Application Manager (Persistent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 1812474479}
   - component: {fileID: 1812474480}
   m_Layer: 0
-  m_Name: Boot
+  m_Name: Boot Scripts
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
