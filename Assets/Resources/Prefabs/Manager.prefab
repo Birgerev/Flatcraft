@@ -134,7 +134,9 @@ MonoBehaviour:
     spawnDefaultOverworldAnimals: 0
     spawnDefaultOverworldMonsters: 0
     biomeSpecificAnimals: []
-    biomeSpecificMonsters: []
+    biomeSpecificMonsters:
+    - Blaze
+    - ZombiePigman
     landscapeLacunarity: 0.86
     landscapeOctaves: 4
     landscapePercistance: 1.84
