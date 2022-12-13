@@ -86,15 +86,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         inv.SetItem(inv.GetCraftingResultSlot(), resultItem);
 
         //Remove items from recipe slots
-        for (int i = 0; i <= 8; i++)
-        {
-            ItemStack newCraftingSlotItem = inv.GetItem(i);
-            if(newCraftingSlotItem.material == Material.Air)
-                continue;
-            
-            newCraftingSlotItem.Amount--;
-            inv.SetItem(i, newCraftingSlotItem);
-        }
+        DecrementCraftingRecipeSlots();
 
         //Update Inventory
         UpdateInventory();
@@ -115,15 +107,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
                 break;
             
             //Subtract items from recipe slots
-            for (int i = 0; i <= 8; i++)
-            {
-                ItemStack newCraftingSlotItem = craftingInventory.GetItem(i);
-                if(newCraftingSlotItem.material == Material.Air)
-                    continue;
-            
-                newCraftingSlotItem.Amount--;
-                craftingInventory.SetItem(i, newCraftingSlotItem);
-            }
+            DecrementCraftingRecipeSlots();
                 
             //Clear result slot
             craftingInventory.SetItem(craftingInventory.GetCraftingResultSlot(), new ItemStack());
@@ -137,5 +121,21 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         
         //Update Inventory
         UpdateInventory();
+    }
+
+    [Server]
+    private void DecrementCraftingRecipeSlots()
+    {
+        CraftingInventory craftingInventory = (CraftingInventory) Inventory.Get(inventoryIds[0]);
+        
+        for (int i = 0; i <= 8; i++)
+        {
+            ItemStack newCraftingSlotItem = craftingInventory.GetItem(i);
+            if(newCraftingSlotItem.material == Material.Air)
+                continue;
+            
+            newCraftingSlotItem.Amount--;
+            craftingInventory.SetItem(i, newCraftingSlotItem);
+        }
     }
 }
