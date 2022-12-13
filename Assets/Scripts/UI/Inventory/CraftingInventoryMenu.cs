@@ -12,6 +12,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     public void RefreshCraftingResultSlot()
     {
         CraftingInventory inv = (CraftingInventory) Inventory.Get(inventoryIds[0]);
+        
         //Try to find a matching recipe
         CraftingRecipe curRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
 
@@ -128,14 +129,14 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
     {
         CraftingInventory craftingInventory = (CraftingInventory) Inventory.Get(inventoryIds[0]);
         
-        for (int i = 0; i <= 8; i++)
+        for (int slot = 0; slot <= 8; slot++)
         {
-            ItemStack newCraftingSlotItem = craftingInventory.GetItem(i);
+            ItemStack newCraftingSlotItem = craftingInventory.GetItem(slot);
             if(newCraftingSlotItem.material == Material.Air)
                 continue;
             
             newCraftingSlotItem.Amount--;
-            craftingInventory.SetItem(i, newCraftingSlotItem);
+            craftingInventory.SetItem(slot, newCraftingSlotItem);
         }
     }
 }
