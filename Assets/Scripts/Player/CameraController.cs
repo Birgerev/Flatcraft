@@ -43,9 +43,6 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if(Input.GetKey(KeyCode.F10))
-            shake = 5;
-        
         if (target == null)
             return;
 
