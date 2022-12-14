@@ -13,12 +13,9 @@ public class CameraController : MonoBehaviour
     //Camera transform variables
     [Header("Transform Values")] 
     public Vector2 offset;
-    public float roll;
 
     //Shake
     [Header("Shake Values")] 
-    public float shake;
-
     public float shakeDropoffFactorPerFrame = 0.8f;
     public float shakeSpeed = 0.8f;
     public float maxOffset = 0.5f;
@@ -30,6 +27,8 @@ public class CameraController : MonoBehaviour
     public float normalFov;
     public float zoomedFov;
     
+    [HideInInspector] public float currentRoll;
+    [HideInInspector] public float currentShake;
     private float _currentSmoothZoomVelocity;
     private Vector3 _currentTargetSmoothVelocity;
     private Vector2 _currentShakeOffset;
@@ -64,13 +63,13 @@ public class CameraController : MonoBehaviour
     private void CalculateShakeThisFrame()
     {
         //Seeds needs to use fractal numbers
-        roll = maxRoll * shake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
-        _currentShakeOffset.x = maxOffset * shake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
-        _currentShakeOffset.y = maxOffset * shake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
+        currentRoll = maxRoll * currentShake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
+        _currentShakeOffset.x = maxOffset * currentShake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
+        _currentShakeOffset.y = maxOffset * currentShake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
 
-        shake *= shakeDropoffFactorPerFrame;
-        if (shake < 0.001f)
-            shake = 0;
+        currentShake *= shakeDropoffFactorPerFrame;
+        if (currentShake < 0.001f)
+            currentShake = 0;
     }
 
     private void CalculateWhichZoomToTarget()
@@ -113,6 +112,6 @@ public class CameraController : MonoBehaviour
             dampTime);
         transform.position += (Vector3) _currentShakeOffset;
         
-        transform.rotation = Quaternion.Euler(0, 0, roll);
+        transform.rotation = Quaternion.Euler(0, 0, currentRoll);
     }
 }

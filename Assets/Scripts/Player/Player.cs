@@ -830,7 +830,7 @@ public class Player : HumanEntity
     public void PlayClientCameraShakeEffect()
     {
         if (hasAuthority)
-            CameraController.instance.shake = 5;
+            CameraController.instance.currentShake = 5;
     }
 
     [ClientRpc]
