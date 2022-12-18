@@ -26,12 +26,16 @@ public class CameraController : MonoBehaviour
     public int roofCheckMaxDistance = 5;
     public float normalFov;
     public float zoomedFov;
+
+    [Header("Mouse Panning")] 
+    public Vector2 mousePanningMagnitude;
     
     [HideInInspector] public float currentRoll;
     [HideInInspector] public float currentShake;
     private float _currentSmoothZoomVelocity;
     private Vector3 _currentTargetSmoothVelocity;
     private Vector2 _currentShakeOffset;
+    private Vector2 _currentMousePanOffset;
     private float _targetFov;
 
     // Start is called before the first frame update
@@ -47,6 +51,7 @@ public class CameraController : MonoBehaviour
             return;
 
         //Smoothly target player
+        CalculateMousePanning();
         CalculateShakeThisFrame();
         SetTranslation();
         
@@ -67,6 +72,16 @@ public class CameraController : MonoBehaviour
         currentShake *= shakeDropoffFactorPerFrame;
         if (currentShake < 0.001f)
             currentShake = 0;
+    }
+    
+    private void CalculateMousePanning()
+    {
+        //Mouse position between 0 and 1
+        Vector2 mouseScreenPosition01 = Input.mousePosition / new Vector2(Screen.width, Screen.height);
+        //Mouse position between -1 and 1, with 0 being centre
+        Vector2 mouseScreenPositionCentered = (mouseScreenPosition01 * 2) + new Vector2(-1, -1);
+        
+        _currentMousePanOffset = mousePanningMagnitude * mouseScreenPositionCentered;
     }
 
     private void CalculateWhichZoomToTarget()
@@ -103,7 +118,11 @@ public class CameraController : MonoBehaviour
 
     private void SetTranslation()
     {
-        Vector3 targetPosition = target.position + (Vector3) offset + new Vector3(0 , 0, -10);
+        Vector3 targetPosition = target.position + new Vector3(0 , 0, -10);
+        targetPosition += (Vector3)defaultOffset;
+        targetPosition += (Vector3)_currentMousePanOffset;
+        
+        //Smoothly move towards target position
         transform.position = 
             Vector3.SmoothDamp(transform.position, targetPosition, ref _currentTargetSmoothVelocity,
             dampTime);
