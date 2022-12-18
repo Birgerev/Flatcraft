@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
 
     //Camera transform variables
     [Header("Transform Values")] 
-    public Vector2 offset;
+    public Vector2 defaultOffset;
 
     //Shake
     [Header("Shake Values")] 
@@ -30,8 +30,9 @@ public class CameraController : MonoBehaviour
     [Header("Mouse Panning")] 
     public Vector2 mousePanningMagnitude;
     
-    [HideInInspector] public float currentRoll;
     [HideInInspector] public float currentShake;
+    
+    private float _currentRoll;
     private float _currentSmoothZoomVelocity;
     private Vector3 _currentTargetSmoothVelocity;
     private Vector2 _currentShakeOffset;
@@ -61,11 +62,10 @@ public class CameraController : MonoBehaviour
     }
     
     
-
     private void CalculateShakeThisFrame()
     {
         //Seeds needs to use fractal numbers
-        currentRoll = maxRoll * currentShake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
+        _currentRoll = maxRoll * currentShake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
         _currentShakeOffset.x = maxOffset * currentShake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
         _currentShakeOffset.y = maxOffset * currentShake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
 
@@ -126,8 +126,11 @@ public class CameraController : MonoBehaviour
         transform.position = 
             Vector3.SmoothDamp(transform.position, targetPosition, ref _currentTargetSmoothVelocity,
             dampTime);
+        
+        //Add non smoothed offsets
         transform.position += (Vector3) _currentShakeOffset;
         
-        transform.rotation = Quaternion.Euler(0, 0, currentRoll);
+        //Assign current roll
+        transform.rotation = Quaternion.Euler(0, 0, _currentRoll);
     }
 }
