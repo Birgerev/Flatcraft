@@ -10462,7 +10462,7 @@ PrefabInstance:
     - target: {fileID: 8837113516097911637, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3.5000916
+      value: 3.500122
       objectReference: {fileID: 0}
     - target: {fileID: 8837113516097911637, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
@@ -10697,11 +10697,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914777d32b2b9f747b248ea713a67ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dampTime: 0.15
+  dampTime: 0.2
   target: {fileID: 0}
-  offset: {x: 0, y: 0}
-  roll: 0
-  shake: 0
+  defaultOffset: {x: 0, y: 1}
   shakeDropoffFactorPerFrame: 0.8
   shakeSpeed: 10
   maxOffset: 1
@@ -10710,6 +10708,8 @@ MonoBehaviour:
   roofCheckMaxDistance: 5
   normalFov: 13
   zoomedFov: 9
+  mousePanningMagnitude: {x: 1.5, y: 1.5}
+  currentShake: 0
 --- !u!1001 &1982835370
 PrefabInstance:
   m_ObjectHideFlags: 0
