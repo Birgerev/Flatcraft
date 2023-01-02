@@ -321,7 +321,7 @@ public class LivingEntity : Entity
     public override void Hit(float damage, Entity source)
     {
         base.Hit(damage, source);
-
+        
         Knockback(transform.position - source.transform.position);
     }
 

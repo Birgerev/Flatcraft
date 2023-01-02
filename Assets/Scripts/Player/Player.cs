@@ -655,6 +655,8 @@ public class Player : HumanEntity
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
+        
+        ShakeOwnerCamera(1);
     }
     
     [Command]
@@ -823,14 +825,14 @@ public class Player : HumanEntity
     {
         base.Damage(damage);
 
-        PlayClientCameraShakeEffect();
+        ShakeOwnerCamera(5);
     }
 
     [ClientRpc]
-    public void PlayClientCameraShakeEffect()
+    public void ShakeOwnerCamera(int shakeValue)
     {
         if (hasAuthority)
-            CameraController.instance.currentShake = 5;
+            CameraController.instance.currentShake = shakeValue;
     }
 
     [ClientRpc]
