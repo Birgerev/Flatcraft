@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameNetworkManager : NetworkManager
 {
     public static ConnectionMode connectionMode;
-    public static string clientConnectionAddress = "player";
+    public static string clientConnectionAddress = "Not Assigned";
     public static int port = 630;
     public static string playerName = "Steve";
 

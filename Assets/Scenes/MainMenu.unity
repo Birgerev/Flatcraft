@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: 1124074622}
   - component: {fileID: 1124074621}
   m_Layer: 0
-  m_Name: main-menu-world (1)
+  m_Name: main-menu-world right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
