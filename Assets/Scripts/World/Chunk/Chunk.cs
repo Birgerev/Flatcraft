@@ -901,17 +901,15 @@ public class Chunk : NetworkBehaviour
     public void BlockBreakParticleEffect(Location loc, Color[] textureColors)
     {
         Random r = new Random();
-        for (int i = 0; i < r.Next(8, 16); i++) //Spawn Particles
+        
+        //First spawn a volume of particles and then modify properties of all particles
+        foreach (Particle particle in Particle.ClientSpawnVolume(
+                     loc.GetPosition() - new Vector2(0.5f, 0.5f), 
+                     new Vector2(1, 1), new Vector2(1.3f, 4f), 
+                     new float2(.3f, .7f), new int2(10 ,16), Color.white))
         {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = loc.GetPosition() +
-                                      new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
-            part.color = textureColors[r.Next(textureColors.Length)];
-            part.doGravity = true;
-            part.velocity = Vector2.zero;//TODO?
-            part.maxAge = (float) r.NextDouble() * 0.8f;
-            part.maxBounces = 10;
+            particle.color = textureColors[r.Next(textureColors.Length)];
+            particle.doGravity = true;
         }
     }
 }
