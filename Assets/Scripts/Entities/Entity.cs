@@ -251,7 +251,7 @@ public class Entity : NetworkBehaviour
             if (isInWater)
             {
                 Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-                WaterSplashEffect();
+                LiquidSplashEffect();
             }
         }
     }
@@ -670,7 +670,7 @@ public class Entity : NetworkBehaviour
     }
 
     [ClientRpc]
-    public virtual void WaterSplashEffect()
+    public virtual void LiquidSplashEffect()
     {
         if (GetLiquidBlocksForEntity().Length == 0)
             return;
