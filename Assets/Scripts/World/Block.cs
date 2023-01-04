@@ -253,21 +253,9 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
-        Color[] textureColors = GetColorsInTexture();
-        Random r = new Random();
-        for (int i = 0; i < r.Next(8, 16); i++) //Spawn Particles
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = location.GetPosition() +
-                                      new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
-            part.color = textureColors[r.Next(textureColors.Length)];
-            part.doGravity = true;
-            part.velocity = Vector2.zero;
-            part.maxAge = (float) r.NextDouble() * 0.8f;
-            part.maxBounces = 10;
-        }
-
+        //Play block break effect to all clients
+        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
+            
         if (GetComponentInChildren<LightSource>() != null)
             LightManager.DestroySource(GetComponentInChildren<LightSource>());
 

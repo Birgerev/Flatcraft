@@ -703,7 +703,6 @@ public class Chunk : NetworkBehaviour
         StartCoroutine(ScheduleLocalBlockChange(loc, state));
     }
 
-
     private IEnumerator ScheduleLocalBlockChange(Location location, BlockState state)
     {
         //Schedule block change for next frame, since block data lists get synced late on clients
@@ -896,5 +895,23 @@ public class Chunk : NetworkBehaviour
     public Biome GetBiome()
     {
         return Biome.GetBiomeAt(chunkPosition);
+    }
+
+    [ClientRpc]
+    public void BlockBreakParticleEffect(Location loc, Color[] textureColors)
+    {
+        Random r = new Random();
+        for (int i = 0; i < r.Next(8, 16); i++) //Spawn Particles
+        {
+            Particle part = Particle.ClientSpawn();
+
+            part.transform.position = loc.GetPosition() +
+                                      new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
+            part.color = textureColors[r.Next(textureColors.Length)];
+            part.doGravity = true;
+            part.velocity = Vector2.zero;//TODO?
+            part.maxAge = (float) r.NextDouble() * 0.8f;
+            part.maxBounces = 10;
+        }
     }
 }
