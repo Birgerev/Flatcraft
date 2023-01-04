@@ -257,7 +257,7 @@ public class Block : MonoBehaviour
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
         Random r = new Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
+        for (int i = 0; i < r.Next(8, 16); i++) //Spawn Particles
         {
             Particle part = Particle.ClientSpawn();
 
@@ -266,7 +266,7 @@ public class Block : MonoBehaviour
             part.color = GetRandomColourFromTexture();
             part.doGravity = true;
             part.velocity = Vector2.zero;
-            part.maxAge = 1f + (float) r.NextDouble();
+            part.maxAge = (float) r.NextDouble() * 0.8f;
             part.maxBounces = 10;
         }
 
