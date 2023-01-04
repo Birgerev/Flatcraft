@@ -6,7 +6,7 @@ using Mirror;
 using UnityEngine;
 using Random = System.Random;
 
-public class Player : HumanEntity
+public class Player : LivingEntity
 {
     public static float interactionsPerPerSecond = 4.5f;
 
