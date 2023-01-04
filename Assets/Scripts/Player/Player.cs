@@ -109,7 +109,7 @@ public class Player : LivingEntity
 
         //Sprint particles    
         if (sprinting && isOnGround)
-            MovementParticlesEffect(0.2f);
+            MovementParticlesEffect(0.3f);
     }
 
     [Client]

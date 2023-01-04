@@ -77,7 +77,7 @@ public class LivingEntity : Entity
 
         //Walking particles    
         if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
-            MovementParticlesEffect(0.05f);
+            MovementParticlesEffect(0.1f);
 
         ProcessMovement();
         FallDamageCheck();
@@ -295,6 +295,7 @@ public class LivingEntity : Entity
     [ClientRpc]
     protected void MovementParticlesEffect(float chances)
     {
+        //TODO better calling
         Random r = new Random();
 
         if (r.NextDouble() < chances)
@@ -309,9 +310,10 @@ public class LivingEntity : Entity
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
-            part.velocity = -(GetVelocity() * 0.2f);
-            part.maxAge = (float) r.NextDouble();
-            part.maxBounces = 10;
+            part.velocity = new Vector2(
+                GetVelocity().x * -0.4f, 
+                Mathf.Abs(GetVelocity().x) * .8f + (float) r.NextDouble()*0.6f);
+            part.maxAge = (float) r.NextDouble() * .8f;
         }
     }
 
