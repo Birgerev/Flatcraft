@@ -281,13 +281,14 @@ public class LivingEntity : Entity
         if (blockBeneath == null)
             return;
 
+        Color[] textureColors = blockBeneath.GetColorsInTexture();
         int particleAmount = r.Next(4, 8);
         for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
         {
             Particle part = Particle.ClientSpawn();
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
             part.maxAge = 1f + (float) r.NextDouble();
@@ -307,9 +308,10 @@ public class LivingEntity : Entity
                 return;
 
             Particle part = Particle.ClientSpawn();
+            Color[] textureColors = blockBeneath.GetColorsInTexture();
 
             part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = -(GetVelocity() * 0.2f);
             part.maxAge = (float) r.NextDouble();
