@@ -240,8 +240,7 @@ public class Block : MonoBehaviour
 
         blockHealth = breakTime;
     }
-
-
+    
     public virtual void Break()
     {
         Break(true);
