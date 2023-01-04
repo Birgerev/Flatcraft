@@ -253,10 +253,14 @@ public class LivingEntity : Entity
             if (damage > 0)
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
-
-                FallDamageParticlesEffect();
-
+                
                 TakeFallDamage(damage);
+                
+                Block blockBelow = Location.LocationByPosition(transform.position - new Vector3(0, 0.2f))
+                    .GetBlock();
+                if(blockBelow != null)
+                    FallDamageParticlesEffect(blockBelow.location);
+                
             }
         }
 
@@ -265,6 +269,7 @@ public class LivingEntity : Entity
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }
+    
 
     [ClientRpc]
     private void FallDamageParticlesEffect()
