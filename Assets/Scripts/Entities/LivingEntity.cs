@@ -271,7 +271,7 @@ public class LivingEntity : Entity
     {
         Random r = new Random();
         Block blockBeneath = null;
-        for (int y = -1; blockBeneath == null && y > -3; y--)
+        for (int y = 0; blockBeneath == null && y > -3; y--)
         {
             Block block = (Location + new Location(0, y)).GetBlock();
             if (block != null)
@@ -283,7 +283,7 @@ public class LivingEntity : Entity
 
         Color[] textureColors = blockBeneath.GetColorsInTexture();
         int particleAmount = r.Next(4, 8);
-        for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
+        for (int i = 0; i < particleAmount; i++) //Spawn landing particles
         {
             Particle part = Particle.ClientSpawn();
 
