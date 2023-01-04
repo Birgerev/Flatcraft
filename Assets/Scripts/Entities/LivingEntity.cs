@@ -272,27 +272,18 @@ public class LivingEntity : Entity
     
 
     [ClientRpc]
-    private void FallDamageParticlesEffect()
+    private void FallDamageParticlesEffect(Location groundLocation)
     {
+        Block blockBelow = groundLocation.GetBlock();
+        Color[] textureColors = blockBelow.GetColorsInTexture();
         Random r = new Random();
-        Block blockBeneath = null;
-        for (int y = 0; blockBeneath == null && y > -3; y--)
-        {
-            Block block = (Location + new Location(0, y)).GetBlock();
-            if (block != null)
-                blockBeneath = block;
-        }
 
-        if (blockBeneath == null)
-            return;
-
-        Color[] textureColors = blockBeneath.GetColorsInTexture();
-        int particleAmount = r.Next(4, 8);
-        for (int i = 0; i < particleAmount; i++) //Spawn landing particles
+        //Spawn landing particles
+        for (int i = 0; i < 10; i++) 
         {
             Particle part = Particle.ClientSpawn();
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
+            part.transform.position = blockBelow.location.GetPosition() + new Vector2(0, 0.6f);
             part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
