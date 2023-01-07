@@ -575,7 +575,7 @@ public class Chunk : NetworkBehaviour
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Error in Block:RandomTick(): " + e.Message);
+                        Debug.LogError("Error in Block:RandomTick(): " + e.Message + ", Stack trace: '" + e.StackTrace + "', Following is probably stack trace to this debug message: ");
                     }
             }
 
