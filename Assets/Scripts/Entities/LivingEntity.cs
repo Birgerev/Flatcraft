@@ -308,7 +308,7 @@ public class LivingEntity : Entity
             Particle part = Particle.ClientSpawn();
             Color[] textureColors = blockBeneath.GetColorsInTexture();
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
+            part.transform.position = transform.position + new Vector3(0, 0.2f);
             part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(
