@@ -312,9 +312,9 @@ public class LivingEntity : Entity
             part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(
-                GetVelocity().x * -0.4f, 
-                Mathf.Abs(GetVelocity().x) * .8f + (float) r.NextDouble()*0.6f);
-            part.maxAge = (float) r.NextDouble() * .8f;
+                GetVelocity().x * -0.3f,
+                Mathf.Abs(GetVelocity().x) * .8f + (float)r.NextDouble() * 0.4f);
+            part.maxAge = .4f + (float)r.NextDouble() * .6f;
         }
     }
 
