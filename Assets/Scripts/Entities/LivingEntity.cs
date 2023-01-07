@@ -267,7 +267,6 @@ public class LivingEntity : Entity
             highestYlevelsinceground = transform.position.y;
     }
     
-
     [ClientRpc]
     private void FallDamageParticlesEffect(Location groundLocation)
     {
@@ -288,11 +287,10 @@ public class LivingEntity : Entity
             part.maxBounces = 10;
         }
     }
-
+    
     [Client]
     protected void ClientMovementParticleEffect()
     {
-        //TODO not on client test
         if (!isOnGround)
             return;
 
@@ -313,7 +311,7 @@ public class LivingEntity : Entity
             part.doGravity = true;
             part.velocity = new Vector2(
                 GetVelocity().x * -0.3f,
-                Mathf.Abs(GetVelocity().x) * .8f + (float)r.NextDouble() * 0.4f);
+                Mathf.Abs(GetVelocity().x) * 1.3f *(float)r.NextDouble());
             part.maxAge = .4f + (float)r.NextDouble() * .6f;
         }
     }
