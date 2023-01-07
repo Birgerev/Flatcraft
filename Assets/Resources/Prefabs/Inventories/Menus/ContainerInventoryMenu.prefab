@@ -316,8 +316,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.4461746, y: 44.13684}
-  m_SizeDelta: {x: 788.4918, y: 803.1}
+  m_AnchoredPosition: {x: 4.2548, y: 44.9024}
+  m_SizeDelta: {x: 798.8735, y: 801.569}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5894192076025099323
 CanvasRenderer:
@@ -356,7 +356,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 4
+  m_PixelsPerUnitMultiplier: 2
 --- !u!1 &5222194568914996902
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +488,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: 29628c98e7e704a4c8fc5e9318602fe9
   hasSpawned: 0
 --- !u!114 &6953769306250848342
 MonoBehaviour:

@@ -2,12 +2,10 @@
 
 public class PlayerInventoryMenu : InventoryMenu
 {
-    private CraftingRecipe _curRecipe;
-
     [Server]
     public override void UpdateInventory()
     {
-        CheckCraftingRecepies();
+        RefreshCraftingResultSlot();
         base.UpdateInventory();
     }
 
@@ -16,24 +14,26 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Server]
-    public void CheckCraftingRecepies()
+    public void RefreshCraftingResultSlot()
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
-        CraftingRecipe newRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
+        
+        //Try to find a matching recipe
+        CraftingRecipe curRecipe = CraftingRecipe.FindRecipeByItems(inv.GetCraftingTableItems());
 
-        if (newRecipe == null)
+        //If no matching recipe was found, clear result slot
+        if (curRecipe == null)
         {
             inv.SetItem(inv.GetCraftingResultSlot(), new ItemStack());
             return;
         }
 
-        inv.SetItem(inv.GetCraftingResultSlot(), newRecipe.result);
-
-        _curRecipe = newRecipe;
+        //Otherwise fill result slot
+        inv.SetItem(inv.GetCraftingResultSlot(), curRecipe.result);
     }
 
     [Client]
-    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
 
@@ -45,7 +45,7 @@ public class PlayerInventoryMenu : InventoryMenu
 
         if (inventoryIndex == 0 && slotIndex == inv.GetCraftingResultSlot())
         {
-            OnClickCraftingResultSlot(inventoryIndex, slotIndex, clickType);
+            OnClickCraftingResultSlot(clickType);
             return;
         }
 
@@ -53,25 +53,42 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickCraftingResultSlot(int inventoryIndex, int slotIndex, int clickType)
+    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
+    {
+    }
+    
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickCraftingResultSlot(ClickType clickType)
+    {
+        if (clickType == ClickType.ShiftClick)
+            SlotAction_TransferResultSlotUntilEmpty();
+        else
+            SlotAction_GrabResultSlot();
+    }
+
+    [Server]
+    public virtual void SlotAction_GrabResultSlot()
     {
         PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
-        ItemStack newPointerItem = pointerItem;
         ItemStack resultItem = inv.GetItem(inv.GetCraftingResultSlot());
+        ItemStack newPointerItem = pointerItem;
 
+        //Cancel if result slot is empty
         if (resultItem.material == Material.Air)
             return;
-        if (resultItem.material != newPointerItem.material &&
-            newPointerItem.material != Material.Air)
+        //Cancel if pointer and result slot materials dont match
+        if (resultItem.material != pointerItem.material &&
+            pointerItem.material != Material.Air)
             return;
+        //Cancel if pointer slot is full
         if (newPointerItem.amount >= Inventory.MaxStackSize)
             return;
-
+        
         //Set pointer material to result material
         newPointerItem.material = resultItem.material;
-
-        while (resultItem.amount > 0 && //Keep moving items until result slot is empty
-               newPointerItem.Amount < Inventory.MaxStackSize)  //Stop if pointer amount exceeds 64
+        
+        //Keep moving items until result slot is empty or if pointer amount exceeds 64
+        while (resultItem.amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
         {
             newPointerItem.Amount += 1;
             resultItem.amount -= 1;
@@ -85,6 +102,48 @@ public class PlayerInventoryMenu : InventoryMenu
         SetPointerItem(newPointerItem);
         inv.SetItem(inv.GetCraftingResultSlot(), resultItem);
 
+        //Remove items from recipe slots
+        DecrementCraftingRecipeSlots();
+
+        //Update Inventory
+        UpdateInventory();
+    }
+    
+    [Server]
+    public virtual void SlotAction_TransferResultSlotUntilEmpty()
+    {
+        PlayerInventory playerInventory = (PlayerInventory) Inventory.Get(inventoryIds[0]);
+
+        while (true)
+        {
+            ItemStack resultItem = playerInventory.GetItem(playerInventory.GetCraftingResultSlot());
+            
+            //Stop transferring if result slot is empty
+            if (resultItem.material == Material.Air)
+                break;
+            
+            //Subtract items from recipe slots
+            DecrementCraftingRecipeSlots();
+                
+            //Clear result slot
+            playerInventory.SetItem(playerInventory.GetCraftingResultSlot(), new ItemStack());
+            
+            //Add result item to player inventory
+            playerInventory.AddItem(resultItem);
+            
+            //Refresh Crafting slot for next iteration
+            RefreshCraftingResultSlot();
+        }
+        
+        //Update Inventory
+        UpdateInventory();
+    }
+    
+    [Server]
+    private void DecrementCraftingRecipeSlots()
+    {
+        PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
+        
         for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
         {
             ItemStack newCraftingSlotItem = inv.GetItem(slot);
@@ -94,12 +153,5 @@ public class PlayerInventoryMenu : InventoryMenu
             newCraftingSlotItem.Amount--;
             inv.SetItem(slot, newCraftingSlotItem);
         }
-
-        UpdateInventory();
-    }
-
-    [Command(requiresAuthority = false)]
-    public virtual void OnClickArmorSlot(int slotIndex, int clickType)
-    {
     }
 }

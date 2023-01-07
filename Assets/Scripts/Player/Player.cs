@@ -6,7 +6,7 @@ using Mirror;
 using UnityEngine;
 using Random = System.Random;
 
-public class Player : HumanEntity
+public class Player : LivingEntity
 {
     public static float interactionsPerPerSecond = 4.5f;
 
@@ -107,9 +107,6 @@ public class Player : HumanEntity
         CheckStarvationDamage();
         ClimbableSound();
 
-        //Sprint particles    
-        if (sprinting && isOnGround)
-            MovementParticlesEffect(0.2f);
     }
 
     [Client]
@@ -655,6 +652,8 @@ public class Player : HumanEntity
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
+        
+        ShakeOwnerCamera(1);
     }
     
     [Command]
@@ -696,8 +695,8 @@ public class Player : HumanEntity
     {
         ItemStack droppedItem = item;
         
-        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
-            , new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 1)
+            , new Vector2(3 * (facingLeft ? -1 : 1), 0f));
     }
 
     [Server]
@@ -823,14 +822,14 @@ public class Player : HumanEntity
     {
         base.Damage(damage);
 
-        PlayClientCameraShakeEffect();
+        ShakeOwnerCamera(5);
     }
 
     [ClientRpc]
-    public void PlayClientCameraShakeEffect()
+    public void ShakeOwnerCamera(int shakeValue)
     {
         if (hasAuthority)
-            CameraController.instance.shake = 5;
+            CameraController.instance.currentShake = shakeValue;
     }
 
     [ClientRpc]

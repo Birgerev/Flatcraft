@@ -10,14 +10,14 @@ public class PointerSlot : ItemSlot
     private void Update()
     {
         //always update pointer (overriding previous if statements)
-        UpdateSlot();
+        UpdateSlotContents();
         Tooltip.isPointerHoldingItem = item.material != Material.Air;
     }
 
     // Update is called once per frame
-    public override void UpdateSlot()
+    public override void UpdateSlotContents()
     {
-        base.UpdateSlot();
+        base.UpdateSlotContents();
 
         //Move Pointer item to mouse position
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

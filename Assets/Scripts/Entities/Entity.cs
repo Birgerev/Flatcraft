@@ -251,7 +251,7 @@ public class Entity : NetworkBehaviour
             if (isInWater)
             {
                 Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-                WaterSplashEffect();
+                LiquidSplashEffect();
             }
         }
     }
@@ -670,18 +670,19 @@ public class Entity : NetworkBehaviour
     }
 
     [ClientRpc]
-    public virtual void WaterSplashEffect()
+    public virtual void LiquidSplashEffect()
     {
         if (GetLiquidBlocksForEntity().Length == 0)
             return;
 
+        Color textureColor = GetLiquidBlocksForEntity()[0].GetColorsInTexture()[0];
         Random r = new Random();
         for (int i = 0; i < 8; i++) //Spawn landing partickes
         {
             Particle part = Particle.ClientSpawn();
 
             part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
-            part.color = GetLiquidBlocksForEntity()[0].GetRandomColourFromTexture();
+            part.color = textureColor;
             part.doGravity = true;
             part.velocity = new Vector2((1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
                 , 3f + (float) r.NextDouble());

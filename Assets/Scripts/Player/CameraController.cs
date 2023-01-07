@@ -1,37 +1,43 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
-    public static float targetFov;
 
     //Camera target variables
-    [Header("Targeting Values")] public float dampTime = 0.15f;
-
+    [Header("Targeting Values")] 
+    public float dampTime = 0.15f;
     public Transform target;
 
     //Camera transform variables
-    [Header("Transform Values")] public float offsetX;
-
-    public float offsetY;
-    public float roll;
+    [Header("Transform Values")] 
+    public Vector2 defaultOffset;
 
     //Shake
-    [Header("Shake Values")] public float shake;
-
-    public float shakeDropoffPerFrame = 0.8f;
+    [Header("Shake Values")] 
+    public float shakeDropoffFactorPerFrame = 0.8f;
     public float shakeSpeed = 0.8f;
     public float maxOffset = 0.5f;
     public float maxRoll = 10;
 
-    [Header("Zoom Values")] public float zoomDampTime = 2f;
-
+    [Header("Zoom Values")] 
+    public float zoomDampTime = 2f;
     public int roofCheckMaxDistance = 5;
     public float normalFov;
     public float zoomedFov;
-    private float currentSmoothZoomVelocity;
-    private Vector3 currentTargetSmoothVelocity;
 
+    [Header("Mouse Panning")] 
+    public Vector2 mousePanningMagnitude;
+    
+    [HideInInspector] public float currentShake;
+    
+    private float _currentRoll;
+    private float _currentSmoothZoomVelocity;
+    private Vector3 _currentTargetSmoothVelocity;
+    private Vector2 _currentShakeOffset;
+    private Vector2 _currentMousePanOffset;
+    private float _targetFov;
 
     // Start is called before the first frame update
     private void Start()
@@ -46,60 +52,85 @@ public class CameraController : MonoBehaviour
             return;
 
         //Smoothly target player
-        CalculateShake();
+        CalculateMousePanning();
+        CalculateShakeThisFrame();
         SetTranslation();
-        CalculateTargetZoom();
-        SetSmoothTargetZoom();
+        
+        //Smoothly zoom
+        CalculateWhichZoomToTarget();
+        SmoothToTargetZoom();
     }
-
-    private void CalculateShake()
+    
+    
+    private void CalculateShakeThisFrame()
     {
         //Seeds needs to use fractal numbers
-        roll = maxRoll * shake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
-        offsetX = maxOffset * shake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
-        offsetY = maxOffset * shake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
+        _currentRoll = maxRoll * currentShake * (Mathf.PerlinNoise(0f, Time.time * shakeSpeed) - 0.5f);
+        _currentShakeOffset.x = maxOffset * currentShake * (Mathf.PerlinNoise(100f, Time.time * shakeSpeed) - 0.5f);
+        _currentShakeOffset.y = maxOffset * currentShake * (Mathf.PerlinNoise(200f, Time.time * shakeSpeed) - 0.5f);
 
-        shake *= shakeDropoffPerFrame;
-        if (shake < 0.001f)
-            shake = 0;
+        currentShake *= shakeDropoffFactorPerFrame;
+        if (currentShake < 0.001f)
+            currentShake = 0;
+    }
+    
+    private void CalculateMousePanning()
+    {
+        //Mouse position between 0 and 1
+        Vector2 mouseScreenPosition01 = Input.mousePosition / new Vector2(Screen.width, Screen.height);
+        //Mouse position between -1 and 1, with 0 being centre
+        Vector2 mouseScreenPositionCentered = (mouseScreenPosition01 * 2) + new Vector2(-1, -1);
+        
+        _currentMousePanOffset = mousePanningMagnitude * mouseScreenPositionCentered;
     }
 
-    private void CalculateTargetZoom()
+    private void CalculateWhichZoomToTarget()
     {
-        if (Time.time % 0.5f - Time.deltaTime <= 0)
+        //Only check block overhead every x seconds
+        if (Time.time % 0.5f - Time.deltaTime > 0)
+            return;
+        
+        _targetFov = normalFov;
+
+        //Look for blocks over player head
+        for (int y = 0; y < roofCheckMaxDistance; y++)
         {
-            targetFov = normalFov;
+            Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
 
-            for (int y = 0; y < roofCheckMaxDistance; y++)
+            if (block != null && block.solid)
             {
-                Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
+                _targetFov = zoomedFov;
 
-                if (block != null && block.solid)
-                {
-                    targetFov = zoomedFov;
-
-                    break;
-                }
+                break;
             }
         }
     }
 
-    private void SetSmoothTargetZoom()
+    private void SmoothToTargetZoom()
     {
         float currentFov = GetComponent<Camera>().orthographicSize;
 
         GetComponent<Camera>().orthographicSize = Mathf.SmoothDamp(currentFov,
-            targetFov,
-            ref currentSmoothZoomVelocity,
+            _targetFov,
+            ref _currentSmoothZoomVelocity,
             zoomDampTime);
     }
 
     private void SetTranslation()
     {
-        transform.position = Vector3.SmoothDamp(transform.position,
-            target.position + new Vector3(offsetX, offsetY, -10),
-            ref currentTargetSmoothVelocity,
+        Vector3 targetPosition = target.position + new Vector3(0 , 0, -10);
+        targetPosition += (Vector3)defaultOffset;
+        targetPosition += (Vector3)_currentMousePanOffset;
+        
+        //Smoothly move towards target position
+        transform.position = 
+            Vector3.SmoothDamp(transform.position, targetPosition, ref _currentTargetSmoothVelocity,
             dampTime);
-        transform.rotation = Quaternion.Euler(0, 0, roll);
+        
+        //Add non smoothed offsets
+        transform.position += (Vector3) _currentShakeOffset;
+        
+        //Assign current roll
+        transform.rotation = Quaternion.Euler(0, 0, _currentRoll);
     }
 }

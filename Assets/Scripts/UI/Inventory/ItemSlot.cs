@@ -11,7 +11,7 @@ public class ItemSlot : MonoBehaviour
     public ItemStack item;
 
     // Update is called once per frame
-    public virtual void UpdateSlot()
+    public virtual void UpdateSlotContents()
     {
         if (item.Amount == 0)
         {
@@ -47,15 +47,31 @@ public class ItemSlot : MonoBehaviour
         InventoryMenu menu = GetComponentInParent<InventoryMenu>();
         int inventoryIndex = menu.GetSlotInventoryIndex(this);
         int slotId = menu.GetSlotIndex(this);
+        ClickType clickType = Input.GetMouseButtonDown(0) ? ClickType.LeftClick : ClickType.RightClick;
 
-        GetComponentInParent<InventoryMenu>().OnClickSlot(inventoryIndex, slotId, Input.GetMouseButtonUp(0) ? 0 : 1);
+        if (Input.GetKey(KeyCode.LeftShift))
+            clickType = ClickType.ShiftClick;
+
+        //If we detect click event, check if click was left, otherwise it was right click
+        menu.OnClickSlot(inventoryIndex, slotId, clickType);
     }
 
     public virtual void Hover(bool hover)
     {
+        //Tooltips
         if (hover)
             Tooltip.hoveredItem = item;
         if (!hover && Tooltip.hoveredItem.Equals(item))
             Tooltip.hoveredItem = new ItemStack();
+        
+        //Drag detection
+        if (hover && Input.GetMouseButton(1))
+        {
+            InventoryMenu menu = GetComponentInParent<InventoryMenu>();
+            int inventoryIndex = menu.GetSlotInventoryIndex(this);
+            int slotId = menu.GetSlotIndex(this);
+
+            menu.OnClickSlot(inventoryIndex, slotId, ClickType.RightHold);
+        }
     }
 }

@@ -153,13 +153,11 @@ public class Block : MonoBehaviour
                 : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
 
-    public Color GetRandomColourFromTexture()
+    public Color[] GetColorsInTexture()
     {
         Texture2D texture = GetSprite().texture;
-        Color[] pixels = texture.GetPixels();
-        Random random = new Random(DateTime.Now.GetHashCode());
 
-        return pixels[random.Next(pixels.Length)];
+        return texture.GetPixels();
     }
 
     public void RotateTowardsPlayer()
@@ -242,8 +240,7 @@ public class Block : MonoBehaviour
 
         blockHealth = breakTime;
     }
-
-
+    
     public virtual void Break()
     {
         Break(true);
@@ -256,20 +253,9 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
-        Random r = new Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = location.GetPosition() +
-                                      new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
-            part.color = GetRandomColourFromTexture();
-            part.doGravity = true;
-            part.velocity = Vector2.zero;
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-
+        //Play block break effect to all clients
+        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
+            
         if (GetComponentInChildren<LightSource>() != null)
             LightManager.DestroySource(GetComponentInChildren<LightSource>());
 

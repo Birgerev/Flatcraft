@@ -1253,6 +1253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -3053,7 +3054,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -0.5, y: 118.34241}
+  m_AnchoredPosition: {x: -0.5, y: 120}
   m_SizeDelta: {x: 899.8389, y: 236.6847}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &515523491
@@ -4691,7 +4692,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -256.29996, y: -55}
+  m_AnchoredPosition: {x: -250.94, y: -47.164005}
   m_SizeDelta: {x: 388, y: 30.594704}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &751627992
@@ -5349,8 +5350,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 168.19}
-  m_SizeDelta: {x: 899, y: 136.99}
+  m_AnchoredPosition: {x: -4.5629, y: 168.19}
+  m_SizeDelta: {x: 889.8741, y: 136.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &801854464
 PrefabInstance:
@@ -8274,7 +8275,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 258.8701, y: -55.01127}
+  m_AnchoredPosition: {x: 246.2, y: -47}
   m_SizeDelta: {x: 387.45, y: 30.921337}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1553697200
@@ -10461,7 +10462,7 @@ PrefabInstance:
     - target: {fileID: 8837113516097911637, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3.5
+      value: 3.500122
       objectReference: {fileID: 0}
     - target: {fileID: 8837113516097911637, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
@@ -10696,20 +10697,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914777d32b2b9f747b248ea713a67ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dampTime: 0.15
+  dampTime: 0.2
   target: {fileID: 0}
-  offsetX: 0
-  offsetY: -0
-  roll: -0
-  shake: 0
-  shakeDropoffPerFrame: 0.7
-  shakeSpeed: 6
-  maxOffset: 3
-  maxRoll: 3
+  defaultOffset: {x: 0, y: 1}
+  shakeDropoffFactorPerFrame: 0.8
+  shakeSpeed: 10
+  maxOffset: 1
+  maxRoll: 5
   zoomDampTime: 1
   roofCheckMaxDistance: 5
   normalFov: 13
   zoomedFov: 9
+  mousePanningMagnitude: {x: 1.5, y: 1.5}
+  currentShake: 0
 --- !u!1001 &1982835370
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,6 +5,9 @@ using Random = System.Random;
 
 public class DroppedItem : Entity
 {
+    private static readonly Vector2 SpawnVelocity = new Vector2(1.5f, 3.5f);
+    private const float BobAmplitude = 0.1f;
+    private const float BobOffset = 0.35f;
     //Entity State
     private float cosIndex;
     //Entity Properties
@@ -23,6 +26,22 @@ public class DroppedItem : Entity
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
         base.Initialize();
+    }
+
+    [Server]
+    public override void Spawn()
+    {
+        base.Spawn();
+    
+        //If entity has no velocity when spawned,
+        if (GetComponent<Rigidbody2D>().velocity.magnitude < 0.1f)
+        {
+            //Apply velocity left or right randomly
+            Vector2 velocity = SpawnVelocity;
+            if (new Random().NextDouble() < 0.5f)
+                velocity.x *= -1;
+            GetComponent<Rigidbody2D>().velocity += velocity;
+        }
     }
 
     [Server]
@@ -79,10 +98,11 @@ public class DroppedItem : Entity
     [Client]
     public override void ClientUpdate()
     {
-        GetRenderer().sprite = item.GetSprite();
+        //Item color
+        GetRenderer().color = item.GetTextureColors()[0];
 
         //Bobbing
-        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * 0.1f) + 0.4f);
+        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * BobAmplitude) + BobOffset);
         cosIndex += 2f * Time.deltaTime;
 
         base.ClientUpdate();

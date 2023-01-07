@@ -39,7 +39,7 @@ public class FurnaceInventoryMenu : ContainerInventoryMenu
     }
 
     [Client]
-    public override void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public override void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
         FurnaceInventory inv = (FurnaceInventory) Inventory.Get(inventoryIds[0]);
 

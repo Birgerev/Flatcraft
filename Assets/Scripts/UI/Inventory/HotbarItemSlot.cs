@@ -9,16 +9,16 @@ public class HotbarItemSlot : ItemSlot
     private void Update()
     {
         if (Time.frameCount % 2 == 0)
-            UpdateSlot();
+            UpdateSlotContents();
     }
 
     // Update is called once per frame
-    public override void UpdateSlot()
+    public override void UpdateSlotContents()
     {
         if (Player.localEntity == null || Player.localEntity.inventoryId == 0)
             return;
 
-        base.UpdateSlot();
+        base.UpdateSlotContents();
 
         item = Player.localEntity.GetInventory().GetHotbarItems()[transform.GetSiblingIndex()];
 

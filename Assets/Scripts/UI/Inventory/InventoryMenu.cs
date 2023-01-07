@@ -114,13 +114,13 @@ public class InventoryMenu : NetworkBehaviour
             for (int slotId = 0; slotId < slots.Length; slotId++)
             {
                 slots[slotId].item = GetItem(inventoryIndex, slotId);
-                slots[slotId].UpdateSlot();
+                slots[slotId].UpdateSlotContents();
             }
         }
 
         //Update the pointer slot aswell
         pointerSlot.item = pointerItem;
-        pointerSlot.UpdateSlot();
+        pointerSlot.UpdateSlotContents();
     }
 
     [Client]
@@ -189,12 +189,23 @@ public class InventoryMenu : NetworkBehaviour
     }
     
     [Client]
-    public virtual void OnClickSlot(int inventoryIndex, int slotIndex, int clickType)
+    public virtual void OnClickSlot(int inventoryIndex, int slotIndex, ClickType clickType)
     {
-        if (clickType == 0)
-            OnLeftClickSlot(inventoryIndex, slotIndex);
-        else if (clickType == 1)
-            OnRightClickSlot(inventoryIndex, slotIndex);
+        switch (clickType)
+        {
+            case ClickType.LeftClick:
+                OnLeftClickSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.RightClick:
+                OnRightClickSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.RightHold:
+                OnRightDragSlot(inventoryIndex, slotIndex);
+                break;
+            case ClickType.ShiftClick:
+                OnShiftClickSlot(inventoryIndex, slotIndex);
+                break;
+        }
     }
 
     [Command(requiresAuthority = false)]
@@ -204,7 +215,7 @@ public class InventoryMenu : NetworkBehaviour
 
         //Right Click to leave one item
         if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
-            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= 64)
+            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= Inventory.MaxStackSize)
         {
             SlotAction_LeaveOne(inventoryIndex, slotIndex);
 
@@ -227,6 +238,31 @@ public class InventoryMenu : NetworkBehaviour
         else
             //Left click to add pointer to slot
             SlotAction_MergeSlot(inventoryIndex, slotIndex);
+    }
+
+    [Command(requiresAuthority = false)]
+    public virtual void OnRightDragSlot(int inventoryIndex, int slotIndex)
+    {
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+
+        //Right Click to leave one item
+        if ((slotItem.material == Material.Air || slotItem.material == pointerItem.material)
+            && pointerItem.Amount > 0 && slotItem.Amount + 1 <= Inventory.MaxStackSize)
+        {
+            SlotAction_LeaveOne(inventoryIndex, slotIndex);
+            return;
+        }
+    }
+    
+    [Command(requiresAuthority = false)]
+    public virtual void OnShiftClickSlot(int inventoryIndex, int slotIndex)
+    {
+        //If two inventories are open
+        if(inventoryIds.Keys.Count >= 2)
+        {
+            SlotAction_MoveStackToSecondInventory(inventoryIndex, slotIndex);
+            return;
+        }
     }
 
     [Server]
@@ -296,6 +332,26 @@ public class InventoryMenu : NetworkBehaviour
         SetItem(inventoryIndex, slotIndex, slotItem);
         SetPointerItem(newPointerItem);
 
+        UpdateInventory();
+    }
+    
+    [Server]
+    public virtual void SlotAction_MoveStackToSecondInventory(int inventoryIndex, int slotIndex)
+    {
+        ItemStack slotItem = GetItem(inventoryIndex, slotIndex);
+        
+        //If current inventory index is 0, other inventory index is 1, and vice versa
+        int otherInventoryIndex = (inventoryIndex == 0 ? 1 : 0);
+        Inventory otherInventory = Inventory.Get(inventoryIds[otherInventoryIndex]);
+
+        //Try to add stack to other inventory
+        if (otherInventory.AddItem(slotItem))
+        {
+            //If successful, remove stack in this inventory
+            slotItem = new ItemStack();
+        }
+        
+        SetItem(inventoryIndex, slotIndex, slotItem);
         UpdateInventory();
     }
 }

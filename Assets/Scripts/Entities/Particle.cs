@@ -108,8 +108,8 @@ public class Particle : MonoBehaviour
                 (float)rand.NextDouble() * boundsSize.x, 
                 (float)rand.NextDouble() * boundsSize.y);
             part.velocity = new Vector2(
-                (float)rand.NextDouble() * maxVelocity.x, 
-                (float)rand.NextDouble() * maxVelocity.y);
+                (rand.Next(0, 1 + 1) == 0 ? 1 : -1) * (float)rand.NextDouble() * maxVelocity.x, 
+                (rand.Next(0, 1 + 1) == 0 ? 1 : -1) * (float)rand.NextDouble() * maxVelocity.y);
             part.color = color;
             part.doGravity = false;
             //ageRange.x is lower limit, then multiply random double with upperLimit - lowerLimit (the random range)

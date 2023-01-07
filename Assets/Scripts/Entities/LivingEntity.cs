@@ -75,10 +75,6 @@ public class LivingEntity : Entity
         if (controller != null)
             controller.Tick();
 
-        //Walking particles    
-        if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
-            MovementParticlesEffect(0.05f);
-
         ProcessMovement();
         FallDamageCheck();
     }
@@ -97,6 +93,7 @@ public class LivingEntity : Entity
 
         UpdateAnimatorValues();
         UpdateNameplate();
+        ClientMovementParticleEffect();
     }
 
     [Server]
@@ -250,13 +247,17 @@ public class LivingEntity : Entity
         if (isOnGround && !isInLiquid && age > 5)
         {
             float damage = highestYlevelsinceground - transform.position.y - 3;
-            if (damage >= 1)
+            if (damage > 0)
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
-
-                FallDamageParticlesEffect();
-
+                
                 TakeFallDamage(damage);
+                
+                Block blockBelow = Location.LocationByPosition(transform.position - new Vector3(0, 0.2f))
+                    .GetBlock();
+                if(blockBelow != null)
+                    FallDamageParticlesEffect(blockBelow.location);
+                
             }
         }
 
@@ -265,29 +266,22 @@ public class LivingEntity : Entity
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }
+    
 
     [ClientRpc]
-    private void FallDamageParticlesEffect()
+    private void FallDamageParticlesEffect(Location groundLocation)
     {
+        Block blockBelow = groundLocation.GetBlock();
+        Color[] textureColors = blockBelow.GetColorsInTexture();
         Random r = new Random();
-        Block blockBeneath = null;
-        for (int y = -1; blockBeneath == null && y > -3; y--)
-        {
-            Block block = (Location + new Location(0, y)).GetBlock();
-            if (block != null)
-                blockBeneath = block;
-        }
 
-        if (blockBeneath == null)
-            return;
-
-        int particleAmount = r.Next(4, 8);
-        for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
+        //Spawn landing particles
+        for (int i = 0; i < 10; i++) 
         {
             Particle part = Particle.ClientSpawn();
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.transform.position = blockBelow.location.GetPosition() + new Vector2(0, 0.6f);
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
             part.maxAge = 1f + (float) r.NextDouble();
@@ -295,25 +289,32 @@ public class LivingEntity : Entity
         }
     }
 
-    [ClientRpc]
-    protected void MovementParticlesEffect(float chances)
+    [Client]
+    protected void ClientMovementParticleEffect()
     {
+        //TODO not on client test
+        if (!isOnGround)
+            return;
+
+        float walkParticleChance = 1.5f;
         Random r = new Random();
 
-        if (r.NextDouble() < chances)
+        if (r.NextDouble() < walkParticleChance * Time.deltaTime * Mathf.Abs(GetVelocity().x))
         {
             Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
             if (blockBeneath == null)
                 return;
 
             Particle part = Particle.ClientSpawn();
+            Color[] textureColors = blockBeneath.GetColorsInTexture();
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.transform.position = transform.position + new Vector3(0, 0.2f);
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
-            part.velocity = -(GetVelocity() * 0.2f);
-            part.maxAge = (float) r.NextDouble();
-            part.maxBounces = 10;
+            part.velocity = new Vector2(
+                GetVelocity().x * -0.3f,
+                Mathf.Abs(GetVelocity().x) * .8f + (float)r.NextDouble() * 0.4f);
+            part.maxAge = .4f + (float)r.NextDouble() * .6f;
         }
     }
 
@@ -321,7 +322,7 @@ public class LivingEntity : Entity
     public override void Hit(float damage, Entity source)
     {
         base.Hit(damage, source);
-
+        
         Knockback(transform.position - source.transform.position);
     }
 
