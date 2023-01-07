@@ -32,13 +32,13 @@ public class Lava : Liquid
             if (loc.y <= 0 || loc.y > Chunk.Height)
                 continue;
 
-            Block blockBelow = (loc + new Location(0, -1)).GetBlock();
+            Location blockBelow = (loc + new Location(0, -1));
 
             //If target loc isn't empty
             if (loc.GetMaterial() != Material.Air)
                 continue;
             //If below target loc is empty or isn't flammable
-            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.isFlammable)
+            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.GetBlock().isFlammable)
                 continue;
 
             //Otherwise, ignite
