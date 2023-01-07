@@ -107,9 +107,6 @@ public class Player : LivingEntity
         CheckStarvationDamage();
         ClimbableSound();
 
-        //Sprint particles    
-        if (sprinting && isOnGround)
-            MovementParticlesEffect(0.3f);
     }
 
     [Client]

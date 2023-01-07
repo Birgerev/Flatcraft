@@ -75,10 +75,6 @@ public class LivingEntity : Entity
         if (controller != null)
             controller.Tick();
 
-        //Walking particles    
-        if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
-            MovementParticlesEffect(0.1f);
-
         ProcessMovement();
         FallDamageCheck();
     }
@@ -97,6 +93,7 @@ public class LivingEntity : Entity
 
         UpdateAnimatorValues();
         UpdateNameplate();
+        ClientMovementParticleEffect();
     }
 
     [Server]
@@ -292,13 +289,17 @@ public class LivingEntity : Entity
         }
     }
 
-    [ClientRpc]
-    protected void MovementParticlesEffect(float chances)
+    [Client]
+    protected void ClientMovementParticleEffect()
     {
-        //TODO better calling
+        //TODO not on client test
+        if (!isOnGround)
+            return;
+
+        float walkParticleChance = 1.5f;
         Random r = new Random();
 
-        if (r.NextDouble() < chances)
+        if (r.NextDouble() < walkParticleChance * Time.deltaTime * Mathf.Abs(GetVelocity().x))
         {
             Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
             if (blockBeneath == null)
