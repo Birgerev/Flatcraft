@@ -149,7 +149,7 @@ MonoBehaviour:
     seed: 0
     time: 0
     versionId: 0
-    template: 0
+    template: 1
     weatherTime: 4800
     weather: 0
 --- !u!1 &6920535589515629099
@@ -1785,6 +1785,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TemplateButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
