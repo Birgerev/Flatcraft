@@ -423,14 +423,8 @@ public class LivingEntity : Entity
     
     private IEnumerator TurnRedByDamage()
     {
-        Color baseColor = GetRenderer().color;
-
-        for (int i = 0; i < 15; i++)
-        {
-            GetRenderer().color = damageColor;
-            yield return new WaitForSeconds(0.01f);
-        }
-
-        GetRenderer().color = baseColor;
+        GetRenderer().color = damageColor;
+        yield return new WaitForSeconds(0.2f);
+        GetRenderer().color = Color.white;
     }
 }
