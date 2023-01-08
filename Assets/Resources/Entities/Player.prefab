@@ -518,6 +518,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rendererToMimic: {fileID: 1149122272203067694}
+  brightnessValue: 1
+  color: 1
 --- !u!1 &6536377479616840242
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,6 +531,7 @@ GameObject:
   - component: {fileID: 1384443646631476411}
   - component: {fileID: 3190483317827036484}
   - component: {fileID: 6031265691855983832}
+  - component: {fileID: 6207441763474339567}
   m_Layer: 12
   m_Name: itemInHand
   m_TagString: Untagged
@@ -616,6 +619,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1149122272397806829}
+--- !u!114 &6207441763474339567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536377479616840242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rendererToMimic: {fileID: 1149122272203067694}
+  brightnessValue: 1
+  color: 0
 --- !u!1 &6737750770108508421
 GameObject:
   m_ObjectHideFlags: 0
@@ -715,6 +733,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rendererToMimic: {fileID: 1149122272203067694}
+  brightnessValue: 1
+  color: 1
 --- !u!1 &6989216072998217274
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,6 +919,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rendererToMimic: {fileID: 1149122272203067694}
+  brightnessValue: 1
+  color: 1
 --- !u!1001 &841954829102773707
 PrefabInstance:
   m_ObjectHideFlags: 0
