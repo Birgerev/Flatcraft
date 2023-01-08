@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class LightObject : MonoBehaviour
@@ -23,7 +24,7 @@ public class LightObject : MonoBehaviour
     {
         return Location.LocationByPosition(GetPosition());
     }
-
+    
     public void UpdateLightLevel(int lightLevel)
     {
         //Enforce minimum light level in nether
@@ -40,5 +41,10 @@ public class LightObject : MonoBehaviour
 
         //Assign new color
         GetComponent<SpriteRenderer>().material.SetFloat("_BrightnessValue", lightLevel01);
+    }
+
+    public void RequestLightUpdate()
+    {
+        LightManager.UpdateLightObject(this);
     }
 }
