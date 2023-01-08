@@ -6,12 +6,15 @@ using Random = System.Random;
 
 public class Particle : MonoBehaviour
 {
+    public LightObject lightObject;
     public bool doGravity = true;
     public float maxAge = 5;
     public int maxBounces = 3;
     public string spriteSheet = "particle_dot";
     public int animationLength = -1;
     public float animationDuration = -1;
+    
+    
     private int bounces;
 
     public Color color
@@ -29,6 +32,9 @@ public class Particle : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+        //Manually force light update
+        lightObject.RequestLightUpdate();
+        
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 

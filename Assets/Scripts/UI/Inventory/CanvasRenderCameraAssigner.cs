@@ -22,7 +22,7 @@ public class CanvasRenderCameraAssigner : MonoBehaviour
     {
         if (_canvas.worldCamera == null)
         {
-            _canvas.worldCamera = Camera.current;
+            _canvas.worldCamera = Camera.main;
             _canvas.sortingLayerName = "UI";
         }
     }
