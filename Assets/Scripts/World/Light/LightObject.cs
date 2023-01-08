@@ -37,9 +37,8 @@ public class LightObject : MonoBehaviour
 
         //Calculate 01 value and then decide resulting color
         float lightLevel01 = lightLevel / (float) LightManager.maxLightLevel;
-        Color color = new Color(lightLevel01, lightLevel01, lightLevel01, 1);
 
         //Assign new color
-        GetComponent<SpriteRenderer>().color = color;
+        GetComponent<SpriteRenderer>().material.SetFloat("_BrightnessValue", lightLevel01);
     }
 }
