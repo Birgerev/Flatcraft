@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 414260226}
   - component: {fileID: 414260225}
+  - component: {fileID: 414260227}
   m_Layer: 0
   m_Name: Verification Checker (Persistent)
   m_TagString: Untagged
@@ -168,6 +169,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &414260227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414260224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bccc4ea325788b145bafc248e4e6c974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &643624432
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,6 +192,8 @@ GameObject:
   - component: {fileID: 643624434}
   - component: {fileID: 643624433}
   - component: {fileID: 643624435}
+  - component: {fileID: 643624437}
+  - component: {fileID: 643624436}
   m_Layer: 0
   m_Name: Application Manager (Persistent)
   m_TagString: Untagged
@@ -223,6 +238,30 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b66d2debf62a90e4197b5a13b6d94a1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &643624436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643624432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bccc4ea325788b145bafc248e4e6c974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &643624437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643624432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848a7ef70f8bd934686a193b9f7691d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1812474476

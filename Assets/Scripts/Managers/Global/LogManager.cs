@@ -20,7 +20,6 @@ public class LogManager : MonoBehaviour
         File.Delete(logPath);
         
         Application.logMessageReceived += Log;
-        DontDestroyOnLoad(gameObject);
     }
 
     void OnDisable()
