@@ -87,7 +87,7 @@ public class CameraController : MonoBehaviour
     private void CalculateWhichZoomToTarget()
     {
         //Only check block overhead every x seconds
-        if (Time.time % 0.5f - Time.deltaTime > 0)
+        if ((Time.time % 0.25f) - Time.deltaTime > 0)
             return;
         
         _targetFov = normalFov;
