@@ -1,0 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+public class SteamManager : MonoBehaviour
+{
+    public bool autoloadTestWorld;
+    
+    private void Awake() {
+        try {
+            Steamworks.SteamClient.Init(123123);
+        } catch (System.Exception e){
+            Debug.LogError("Steam manager connection failed");
+        }
+    }
+    
+    private void OnDisable()
+    {
+        Steamworks.SteamCLient.Shutdown();
+    }
+    
+    private void Update()
+    {
+        Steamworks.SteamCLient.RunCallbacks();
+    }
+}
