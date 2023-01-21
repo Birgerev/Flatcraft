@@ -22,6 +22,9 @@ public class SettingsManager : MonoBehaviour
 
     private void LoadSettings()
     {
+        if(!File.Exists(GetPath()))
+            return;
+        
         string[] lines = File.ReadAllLines(GetPath());
 
         foreach (var line in lines)
@@ -46,7 +49,21 @@ public class SettingsManager : MonoBehaviour
         
         File.WriteAllLines(GetPath(), lines);
     }
-
+    
+    private void SaveSettings()
+    {
+        List<String> lines = new List<string>();
+        
+        foreach (string keyName in Values.Keys)
+        {
+            string value = Values[keyName];
+            
+            lines.Add(keyName + "=" + value);
+        }
+        
+        File.WriteAllLines(GetPath(), lines);
+    }
+    
     public string GetPath()
     {
         return Application.persistentDataPath + "\\options.txt";
