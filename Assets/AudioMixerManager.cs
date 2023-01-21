@@ -19,6 +19,6 @@ public class AudioMixerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mixer.SetFloat("MusicVolume", Mathf.Log10(debugVolume) * 20);
+        mixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Clamp01(debugVolume) + 0.0001f) * 20);
     }
 }
