@@ -76,7 +76,7 @@ public class Sound : NetworkBehaviour
         AudioClip[] clips = Resources.LoadAll<AudioClip>("Sounds/" + sound);
         AudioClip clip = clips[soundIndex];
         
-        AudioMixer mixer = Resources.Load("Sounds/mixer") as AudioMixer;
+        AudioMixer mixer = AudioMixerManager.instance.mixer;
         AudioMixerGroup group = mixer.FindMatchingGroups(type.ToString())[0];
         
         source.spatialBlend = spacialPanning ? 1 : 0;

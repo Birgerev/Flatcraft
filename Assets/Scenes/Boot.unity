@@ -264,6 +264,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 848a7ef70f8bd934686a193b9f7691d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mixer: {fileID: 24100000, guid: 65aeab9a269652646b6795e2912b735a, type: 2}
+  debugVolume: 0
 --- !u!1 &1812474476
 GameObject:
   m_ObjectHideFlags: 0
