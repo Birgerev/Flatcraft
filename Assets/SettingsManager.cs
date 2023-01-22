@@ -9,19 +9,29 @@ public class SettingsManager : MonoBehaviour
     public static SettingsManager instance;
 
     public static Dictionary<string, string> Values = new Dictionary<string, string>();
-
+    
+    private static readonly Dictionary<string, string> DefaultValues = new Dictionary<string, string>()
+    {
+        {"soundCategory_music", "100"}
+    };
+    
     // Start is called before the first frame update
     void Awake()
     {
         instance = this;
-        
-        LoadSettings();
+
+        if (File.Exists(GetPath()))
+            LoadSettings();
+        else
+            RestoreDefaultSettings();
         
         InvokeRepeating(nameof(SaveSettings), 5f, 5f);
     }
 
     public static string GetStringValue(string key)
     {
+        if(!DefaultValues.ContainsKey(key))
+            Debug.LogWarning("Default Settings Values does not contain an entry for the key: '" + key + "'");
 
         if (!Values.ContainsKey(key))
         {
