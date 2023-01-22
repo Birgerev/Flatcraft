@@ -11,7 +11,8 @@ public class OptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        musicSlider.value = int.Parse(SettingsManager.Values["soundCategory_music"]);
+        //Assign current values to UI elements
+        musicSlider.value = SettingsManager.GetIntValue("soundCategory_music");
     }
 
     private void Update()

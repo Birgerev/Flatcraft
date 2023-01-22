@@ -20,6 +20,28 @@ public class SettingsManager : MonoBehaviour
         InvokeRepeating(nameof(SaveSettings), 5f, 5f);
     }
 
+    public static string GetStringValue(string key)
+    {
+
+        if (!Values.ContainsKey(key))
+        {
+            Debug.LogWarning("Tried and failed to fetch settings value with key: '" + key + "', errors might follow");
+            return "";
+        }
+
+        return Values[key];
+    }
+    
+    public static int GetIntValue(string key)
+    {
+        string stringValue = GetStringValue(key);
+
+        if(!int.TryParse(stringValue, out var intValue))
+            Debug.LogWarning("Failed to parse settings value to int, key: '" + key + "', string: '" + stringValue + "'");
+
+        return intValue;
+    }
+
     private void LoadSettings()
     {
         if(!File.Exists(GetPath()))
@@ -50,18 +72,9 @@ public class SettingsManager : MonoBehaviour
         File.WriteAllLines(GetPath(), lines);
     }
     
-    private void SaveSettings()
+    private void RestoreDefaultSettings()
     {
-        List<String> lines = new List<string>();
-        
-        foreach (string keyName in Values.Keys)
-        {
-            string value = Values[keyName];
-            
-            lines.Add(keyName + "=" + value);
-        }
-        
-        File.WriteAllLines(GetPath(), lines);
+        Values = new Dictionary<string, string>(DefaultValues);
     }
     
     public string GetPath()

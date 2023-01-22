@@ -19,7 +19,7 @@ public class AudioMixerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float musicValue = (float)int.Parse(SettingsManager.Values["soundCategory_music"]) / 100;
+        float musicValue = (float)SettingsManager.GetIntValue("soundCategory_music") / 100;
         
         mixer.SetFloat("MusicVolume", Mathf.Log10(musicValue + 0.00001f) * 20);
     }
