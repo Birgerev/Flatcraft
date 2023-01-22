@@ -23,10 +23,8 @@ public class SettingsManager : MonoBehaviour
     {
         instance = this;
 
-        if (File.Exists(GetPath()))
-            LoadSettings();
-        else
-            RestoreDefaultSettings();
+        LoadSettings();
+        PopulateMissingWithDefaultValues();
         
         InvokeRepeating(nameof(SaveSettings), 5f, 5f);
     }
@@ -85,7 +83,20 @@ public class SettingsManager : MonoBehaviour
         File.WriteAllLines(GetPath(), lines);
     }
     
-    private void RestoreDefaultSettings()
+    
+    private void PopulateMissingWithDefaultValues()
+    {
+        foreach (string defaultKey in DefaultValues.Keys)
+        {
+            //if values list does not contain a value that should be assigned
+            if (!Values.ContainsKey(defaultKey))
+                //Populate it with the default value
+                Values[defaultKey] = DefaultValues[defaultKey];
+        }
+
+    }
+    
+    private void OverwriteWithDefaultSettings()
     {
         Values = new Dictionary<string, string>(DefaultValues);
     }
