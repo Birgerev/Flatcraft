@@ -12,7 +12,10 @@ public class SettingsManager : MonoBehaviour
     
     private static readonly Dictionary<string, string> DefaultValues = new Dictionary<string, string>()
     {
-        {"soundCategory_music", "100"}
+        {"soundCategory_master", "100"},
+        {"soundCategory_entities", "100"},
+        {"soundCategory_block", "100"},
+        {"soundCategory_music", "100"},
     };
     
     // Start is called before the first frame update
