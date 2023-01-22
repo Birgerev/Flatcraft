@@ -7,8 +7,6 @@ public class AudioMixerManager : MonoBehaviour
 {
     public static AudioMixerManager instance;
     public AudioMixer mixer;
-
-    public float debugVolume;
     
     // Start is called before the first frame update
     void Awake()
@@ -19,6 +17,17 @@ public class AudioMixerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Clamp01(debugVolume) + 0.0001f) * 20);
+        AdjustChannelVolumeToSettingsValue("soundCategory_master", "MasterVolume");
+        AdjustChannelVolumeToSettingsValue("soundCategory_entities", "EntitiesVolume");
+        AdjustChannelVolumeToSettingsValue("soundCategory_block", "BlockVolume");
+        AdjustChannelVolumeToSettingsValue("soundCategory_music", "MusicVolume");
+    }
+
+    private void AdjustChannelVolumeToSettingsValue(string settingsKey, string channelVolumeName)
+    {
+        float channelVolume01 = (float)SettingsManager.GetIntValue(settingsKey) / 100;
+        float dbVolumeValue = Mathf.Log10(channelVolume01 + 0.00001f) * 20;
+        
+        mixer.SetFloat(channelVolumeName, dbVolumeValue);
     }
 }
