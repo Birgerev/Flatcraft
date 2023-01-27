@@ -192,8 +192,8 @@ GameObject:
   - component: {fileID: 643624433}
   - component: {fileID: 643624435}
   - component: {fileID: 643624437}
-  - component: {fileID: 643624436}
   - component: {fileID: 643624438}
+  - component: {fileID: 643624436}
   m_Layer: 0
   m_Name: Application Manager (Persistent)
   m_TagString: Untagged
@@ -265,7 +265,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mixer: {fileID: 24100000, guid: 65aeab9a269652646b6795e2912b735a, type: 2}
-  debugVolume: 0
 --- !u!114 &643624438
 MonoBehaviour:
   m_ObjectHideFlags: 0
