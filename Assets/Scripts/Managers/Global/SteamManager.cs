@@ -6,7 +6,6 @@ using UnityEngine;
 public class SteamManager : MonoBehaviour
 {
     public const int AppID = 2070630;
-    public bool autoloadTestWorld;
     
     private void Awake() {
         try {
