@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 3047292750534003041}
   - component: {fileID: 3047292750534003040}
   - component: {fileID: 3047292750534002975}
-  - component: {fileID: 3047292750534002974}
-  - component: {fileID: 4831411737367894585}
   - component: {fileID: -5386586424793891005}
+  - component: {fileID: 4831411737367894585}
+  - component: {fileID: 3047292750534002974}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -212,6 +212,35 @@ MonoBehaviour:
   - music/ambient/danny/danny
   checkDuration: 400
   checkChance: 0.33
+--- !u!114 &-5386586424793891005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3047292750534003045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa0148658773f8b43831f5657dc8fd26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  weather: 0
+--- !u!114 &4831411737367894585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3047292750534003045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c08f634d9ae97ba45b1cd63fcd615ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &3047292750534002974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,32 +258,3 @@ MonoBehaviour:
   visible: 0
   m_AssetId: e41b3e8278be1bb4b89298ef28183900
   hasSpawned: 0
---- !u!114 &4831411737367894585
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3047292750534003045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c08f634d9ae97ba45b1cd63fcd615ace, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
---- !u!114 &-5386586424793891005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3047292750534003045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa0148658773f8b43831f5657dc8fd26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  weather: 0
