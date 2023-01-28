@@ -148,12 +148,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 414260224}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd95cbee59c4eaa47ba98c114fe660b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doVersionCheck: 0
 --- !u!4 &414260226
 Transform:
   m_ObjectHideFlags: 0
@@ -193,6 +192,7 @@ GameObject:
   - component: {fileID: 643624433}
   - component: {fileID: 643624435}
   - component: {fileID: 643624437}
+  - component: {fileID: 643624438}
   - component: {fileID: 643624436}
   m_Layer: 0
   m_Name: Application Manager (Persistent)
@@ -262,6 +262,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 848a7ef70f8bd934686a193b9f7691d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mixer: {fileID: 24100000, guid: 65aeab9a269652646b6795e2912b735a, type: 2}
+--- !u!114 &643624438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643624432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6269b4fe5fbd9574487d8b8b77fd2f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1812474476

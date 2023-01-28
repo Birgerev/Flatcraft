@@ -36,7 +36,6 @@ public class LivingEntity : Entity
     private readonly float swimUpAcceleration = 45.0f;
     protected virtual float walkSpeed { get; } = 4.3f;
     protected virtual float stepSoundFrequencyMultiplier { get; } = 1.1f;
-    int checkDuration = 4;
 
     public virtual float maxHealth { get; } = 20;
 
