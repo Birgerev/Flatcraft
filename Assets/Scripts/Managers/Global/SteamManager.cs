@@ -5,23 +5,26 @@ using UnityEngine;
 
 public class SteamManager : MonoBehaviour
 {
+    public const int AppID = 2070630;
     public bool autoloadTestWorld;
     
     private void Awake() {
         try {
-            Steamworks.SteamClient.Init(123123);
+            Steamworks.SteamClient.Init(AppID);
+            Debug.LogError("Steam connection initialized");
         } catch (System.Exception e){
             Debug.LogError("Steam manager connection failed");
         }
     }
     
-    private void OnDisable()
+    private void OnApplicationQuit()
     {
-        Steamworks.SteamCLient.Shutdown();
+        Debug.LogError("Steam connection closing...");
+        Steamworks.SteamClient.Shutdown();
     }
     
     private void Update()
     {
-        Steamworks.SteamCLient.RunCallbacks();
+        Steamworks.SteamClient.RunCallbacks();
     }
 }
