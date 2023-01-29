@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MultiplayerMenu : MonoBehaviour
+public class OldMultiplayerMenu : MonoBehaviour
 {
     private static string savedServersPath => Application.persistentDataPath + "\\favouritedServers.dat";
     private const int BrowseServerLoadAmount = 4;

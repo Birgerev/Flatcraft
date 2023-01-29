@@ -13,11 +13,11 @@ public class DedicatedServerButton : MonoBehaviour
     public Text ownerText;
     public Text playerCountText;
     public Button button;
-    private MultiplayerMenu menuManager;
+    private OldMultiplayerMenu menuManager;
 
     private void Start()
     {
-        menuManager = GetComponentInParent<MultiplayerMenu>();
+        menuManager = GetComponentInParent<OldMultiplayerMenu>();
     }
 
     private void Update()
@@ -36,10 +36,10 @@ public class DedicatedServerButton : MonoBehaviour
 
     public void Click()
     {
-        GetComponentInParent<MultiplayerMenu>().selectedServer = server;
+        GetComponentInParent<OldMultiplayerMenu>().selectedServer = server;
 
         if (Time.time - lastClickTime < 0.3f)
-            GetComponentInParent<MultiplayerMenu>().Play();
+            GetComponentInParent<OldMultiplayerMenu>().Play();
 
         lastClickTime = Time.time;
     }

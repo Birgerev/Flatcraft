@@ -284,7 +284,7 @@ MonoBehaviour:
   versionText: {fileID: 8606480147798300332}
   singleplayerMenuPrefab: {fileID: 2614281875644071066, guid: 121d5566f67a23f478789906152b5815,
     type: 3}
-  multiplayerMenuPrefab: {fileID: 2509476074637250235, guid: ef8f7cda85d93414d96e8de371e5ec15,
+  multiplayerMenuPrefab: {fileID: 2509476074637250235, guid: 5c10b2ed3a94e7041867395be19d5f02,
     type: 3}
   optionsMenuPrefab: {fileID: 8189563067701013113, guid: a9e91ef8bf341f345aaf2ad2d92b7ce6,
     type: 3}
@@ -1068,7 +1068,7 @@ PrefabInstance:
     - target: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Text
-      value: Multiplayer
+      value: Play With Friends
       objectReference: {fileID: 0}
     - target: {fileID: 9203636279896232828, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
@@ -1258,7 +1258,7 @@ PrefabInstance:
     - target: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Text
-      value: Singleplayer
+      value: Load World
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448050, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
