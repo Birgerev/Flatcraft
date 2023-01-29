@@ -12,7 +12,7 @@ public class SteamManager : MonoBehaviour
     private void Awake() {
         try {
             Steamworks.SteamClient.Init(AppID);
-            Debug.LogError("Steam connection initialized");
+            Debug.Log("Steam connection initialized");
         } catch (System.Exception e){
             Debug.LogError("Steam manager connection failed");
         }
