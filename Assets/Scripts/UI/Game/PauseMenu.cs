@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Steamworks;
+using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class PauseMenu : MonoBehaviour
     {
         //TODO method
         //TODO interractible button state
+    }
+
+    public void Invite()
+    {
+        //TODO find lobby id
+        //SteamFriends.OpenGameInviteOverlay();
     }
 
     public void Options()
