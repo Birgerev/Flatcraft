@@ -10,10 +10,10 @@ public class Boot : MonoBehaviour
     
     void Start()
     {
-        if (DedicatedServerManager.DedicatedServerCheck())
-            return;
-        if(CreateNameCheck())
-            return;
+        //if (DedicatedServerManager.DedicatedServerCheck())
+        //    return;
+        //if(CreateNameCheck())
+        //    return;
 
         //Option to immediately load test world in editor
         if (autoloadTestWorld && Application.isEditor)
