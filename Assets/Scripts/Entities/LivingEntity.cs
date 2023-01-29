@@ -246,7 +246,7 @@ public class LivingEntity : Entity
         if (isOnGround && !isInLiquid && age > 5)
         {
             float damage = highestYlevelsinceground - transform.position.y - 3;
-            if (damage > 0)
+            if (damage >= 1)
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
                 

@@ -17,8 +17,7 @@ public class GameNetworkManager : NetworkManager
     public override void Start()
     {
         base.Start();
-        //Begin setup after entering loading scene
-
+        
         //Register all network prefabs to manager
         foreach (string dir in prefabDirectories)
         {
@@ -26,6 +25,8 @@ public class GameNetworkManager : NetworkManager
             foreach (GameObject prefab in prefabs)
                 NetworkClient.RegisterPrefab(prefab);
         }
+        
+        Debug.Log("Starting connection type: " + connectionMode);
 
         //Start Connection based on selected connection mode
         switch(connectionMode)
@@ -42,20 +43,6 @@ public class GameNetworkManager : NetworkManager
                 GetComponent<KcpTransport>().Port = (ushort)port;
                 StartServer();
                 break;
-        }
-        
-        Debug.Log("Starting " + connectionMode);
-    }
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-
-        if (connectionMode == ConnectionMode.Client)
-        {
-            World world = new World("multiplayer", 1);
-
-            WorldManager.world = world;
         }
     }
 
@@ -76,6 +63,7 @@ public class GameNetworkManager : NetworkManager
 
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
     {
+        //Once Scene is loaded on client, send ready message to server
         if (newSceneName.Equals(onlineScene))
             NetworkClient.Ready();
     }
