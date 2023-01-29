@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Steamworks;
+using Steamworks.Data;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
@@ -14,6 +16,8 @@ public class SteamManager : MonoBehaviour
         } catch (System.Exception e){
             Debug.LogError("Steam manager connection failed");
         }
+
+        SteamFriends.OnGameLobbyJoinRequested += SteamUIJoinFriend;
     }
     
     private void OnApplicationQuit()
@@ -25,5 +29,14 @@ public class SteamManager : MonoBehaviour
     private void Update()
     {
         Steamworks.SteamClient.RunCallbacks();
+    }
+
+    private void SteamUIJoinFriend(Lobby lobby, SteamId steamID)
+    {
+        GameNetworkManager.clientConnectionAddress = steamID.Value.ToString();
+        
+        GameNetworkManager.connectionMode = ConnectionMode.Client;
+        GameNetworkManager.StartGame();
+        LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 }
