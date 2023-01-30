@@ -8,14 +8,15 @@ public class MultiplayerDirectConnectMenu : MonoBehaviour
 
     private void Update()
     {
-        GameNetworkManager.clientConnectionAddress = addressField.text;
+        //GameNetworkManager.clientConnectionAddress = addressField.text;
     }
 
     public void ConnectButton()
     {
-        GameNetworkManager.connectionMode = ConnectionMode.Client;
-        GameNetworkManager.StartGame();
-        LoadingMenu.Create(LoadingMenuType.ConnectServer);
+        Debug.LogError("Trying to join using deprecated code");
+        /*GameNetworkManager.connectionMode = ConnectionMode.Client;
+        //GameNetworkManager.StartGame();
+        LoadingMenu.Create(LoadingMenuType.ConnectServer);*/
     }
 
     public void Cancel()

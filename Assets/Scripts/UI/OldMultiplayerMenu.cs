@@ -136,11 +136,12 @@ public class OldMultiplayerMenu : MonoBehaviour
     
     public void Play()
     {
-        GameNetworkManager.clientConnectionAddress = ServerAdress;
+        Debug.LogError("Trying to join using deprecated code");
+        /*GameNetworkManager.clientConnectionAddress = ServerAdress;
         GameNetworkManager.clientConnectionAddress = selectedServer.address;
         GameNetworkManager.port = selectedServer.port;
         GameNetworkManager.connectionMode = ConnectionMode.Client;
-        GameNetworkManager.StartGame();
+        GameNetworkManager.StartGame();*/
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 

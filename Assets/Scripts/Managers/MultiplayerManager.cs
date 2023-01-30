@@ -34,6 +34,11 @@ public class MultiplayerManager : NetworkManager
         multiplayerManager.StartHost();
     }
     
+    public static void JoinGameAsync(Lobby lobby)
+    {
+        SceneManager.LoadScene("Game");
+    }
+    
     private static async void HostSteamLobbyAsync()
     {
         //Host lobby
