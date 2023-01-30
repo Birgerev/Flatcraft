@@ -48,6 +48,7 @@ public class MultiplayerManager : NetworkManager
         Debug.Log("Successfully created steam lobby");
         
         _currentLobby = lobby.Value;
+        _currentLobby.SetFriendsOnly();
     }
 
     private static MultiplayerManager CreateMultiplayerManager()
