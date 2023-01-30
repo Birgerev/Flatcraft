@@ -1,22 +1,63 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using kcp2k;
 using Mirror;
+using Steamworks;
+using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameNetworkManager : NetworkManager
+public class MultiplayerManager : NetworkManager
 {
-    public static ConnectionMode connectionMode;
-    public static string clientConnectionAddress = "Not Assigned";
-    public static int port = 630;
-    public static string playerName = "Steve";
-
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
 
-    public override void Start()
+    private static Lobby _currentLobby;
+    private bool _initialized;
+
+    public static async void HostGameAsync()
     {
-        base.Start();
+        //Host lobby
+        HostSteamLobbyAsync();
+        
+        //Load game scene
+        SceneManager.LoadScene("Game");
+        
+        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
+
+        //Await manager initialized
+        while (!multiplayerManager._initialized)
+        {
+            await Task.Delay(100);
+        }
+        
+        multiplayerManager.StartHost();
+    }
+    
+    private static async void HostSteamLobbyAsync()
+    {
+        //Host lobby
+        Lobby? lobby = await SteamMatchmaking.CreateLobbyAsync();
+
+        if (!lobby.HasValue)
+        {
+            Debug.LogError("Failed to initialize steam lobby");
+            return;
+        }
+
+        Debug.Log("Successfully created steam lobby");
+        
+        _currentLobby = lobby.Value;
+    }
+
+    private static MultiplayerManager CreateMultiplayerManager()
+    {
+        return Instantiate(Resources.Load<GameObject>("Prefabs/Multiplayer Manager")).GetComponent<MultiplayerManager>();
+    }
+
+    public override void Awake()
+    {
+        base.Awake();
         
         //Register all network prefabs to manager
         foreach (string dir in prefabDirectories)
@@ -25,27 +66,34 @@ public class GameNetworkManager : NetworkManager
             foreach (GameObject prefab in prefabs)
                 NetworkClient.RegisterPrefab(prefab);
         }
-        
-        Debug.Log("Starting connection type: " + connectionMode);
+    }
+    
+    public override void Start()
+    {
+        base.Start();
 
-        //Start Connection based on selected connection mode
-        switch(connectionMode)
+        _initialized = true;
+    }
+    
+    public static void StopConnection()
+    {
+        /*TODO
+        switch (connectionMode)
         {
             case ConnectionMode.Client:
-                networkAddress = clientConnectionAddress;
-                GetComponent<KcpTransport>().Port = (ushort)port;
-                StartClient();
+                singleton.StopClient();
                 break;
             case ConnectionMode.Host:
-                StartHost();
+                singleton.StopHost();
                 break;
             case ConnectionMode.DedicatedServer:
-                GetComponent<KcpTransport>().Port = (ushort)port;
-                StartServer();
+                singleton.StopServer();
                 break;
-        }
+        }*/
+        
+        SceneManager.LoadScene("MainMenu");
     }
-
+    
     public override void OnStopClient()
     {
         base.OnStopClient();
@@ -57,6 +105,7 @@ public class GameNetworkManager : NetworkManager
     {
         base.OnStartServer();
 
+        //If game is starting on the server, Instantiate the world manager
         GameObject worldManager = Instantiate(WorldManagerPrefab);
         NetworkServer.Spawn(worldManager);
     }
@@ -77,34 +126,10 @@ public class GameNetworkManager : NetworkManager
         if(SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Game"))
             SceneManager.LoadScene("MultiplayerDisconnectedMenu");
     }
-
-    public static void StartGame()
-    {
-        SceneManager.LoadScene("Game");
-    }
-    
-    public static void Disconnect()
-    {
-        switch (connectionMode)
-        {
-            case ConnectionMode.Client:
-                singleton.StopClient();
-                break;
-            case ConnectionMode.Host:
-                singleton.StopHost();
-                break;
-            case ConnectionMode.DedicatedServer:
-                singleton.StopServer();
-                break;
-        }
-        
-        SceneManager.LoadScene("MainMenu");
-    }
 }
 
 public enum ConnectionMode
 {
     Client,
     Host,
-    DedicatedServer
 }

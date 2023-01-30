@@ -57,6 +57,6 @@ public class PauseMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        GameNetworkManager.Disconnect();
+        MultiplayerManager.StopConnection();
     }
 }

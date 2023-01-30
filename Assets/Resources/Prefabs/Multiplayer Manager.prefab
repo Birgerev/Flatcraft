@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4139658264260717356}
   - component: {fileID: 4139658264260717357}
-  - component: {fileID: 4139658264260717358}
   - component: {fileID: 8755022497519035693}
   m_Layer: 0
-  m_Name: MultiplayerManager
+  m_Name: Multiplayer Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,7 +51,7 @@ MonoBehaviour:
   serverTickRate: 60
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 4139658264260717358}
+  transport: {fileID: 8755022497519035693}
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
@@ -69,35 +68,6 @@ MonoBehaviour:
   - Prefabs/Inventories
   WorldManagerPrefab: {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900,
     type: 3}
---- !u!114 &4139658264260717358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4139658264260717359}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Port: 630
-  DualMode: 1
-  NoDelay: 1
-  Interval: 10
-  Timeout: 10000
-  FastResend: 2
-  CongestionWindow: 0
-  SendWindowSize: 4096
-  ReceiveWindowSize: 4096
-  MaxRetransmit: 40
-  NonAlloc: 1
-  MaximizeSendReceiveBuffersToOSLimit: 1
-  ReliableMaxMessageSize: 298449
-  UnreliableMaxMessageSize: 1199
-  debugLog: 0
-  statisticsGUI: 0
-  statisticsLog: 0
 --- !u!114 &8755022497519035693
 MonoBehaviour:
   m_ObjectHideFlags: 0
