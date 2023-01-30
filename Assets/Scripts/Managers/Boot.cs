@@ -10,17 +10,11 @@ public class Boot : MonoBehaviour
     
     void Start()
     {
-        //if (DedicatedServerManager.DedicatedServerCheck())
-        //    return;
-        //if(CreateNameCheck())
-        //    return;
-
         //Option to immediately load test world in editor
         if (autoloadTestWorld && Application.isEditor)
         {
             WorldManager.world = World.LoadWorld("Test");
-            GameNetworkManager.connectionMode = ConnectionMode.Host;
-            GameNetworkManager.StartGame();
+            MultiplayerManager.HostGameAsync();
             return;
         }
         
@@ -36,7 +30,7 @@ public class Boot : MonoBehaviour
             return true;
         }
         
-        GameNetworkManager.playerName = File.ReadAllText(testingNamePath);
+        //GameNetworkManager.playerName = File.ReadAllText(testingNamePath);
         return false;
     }
 }
