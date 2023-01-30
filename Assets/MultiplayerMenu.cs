@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class MultiplayerMenu : MonoBehaviour
 {
-    public Lobby selectedLobby;
+    public Lobby? selectedLobby;
 
     [Header("Prefabs")]
     public GameObject friendsWorldButtonPrefab;
@@ -68,7 +68,7 @@ public class MultiplayerMenu : MonoBehaviour
     public void Play()
     {
         //Dont play if lobby hasn't been assigned a value
-        if(selectedLobby.Equals(default(Lobby)))
+        if(!selectedLobby.HasValue)
             return;
         
         //TODO maybe selectedLobby.Join()
