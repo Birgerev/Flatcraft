@@ -24,7 +24,7 @@ public class MultiplayerMenu : MonoBehaviour
         playButton.onClick.AddListener(Play);
         cancelButton.onClick.AddListener(Cancel);
         
-        //InvokeRepeating(nameof(Refresh), 0, 2);
+        InvokeRepeating(nameof(Refresh), 0, 2);
     }
 
 
