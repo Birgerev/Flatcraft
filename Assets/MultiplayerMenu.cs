@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class MultiplayerMenu : MonoBehaviour
 {
     public Lobby? selectedLobby;
+    public Friend? selectedFriend;
 
     [Header("Prefabs")]
     public GameObject friendsWorldButtonPrefab;
@@ -24,7 +25,7 @@ public class MultiplayerMenu : MonoBehaviour
         playButton.onClick.AddListener(Play);
         cancelButton.onClick.AddListener(Cancel);
         
-        InvokeRepeating(nameof(Refresh), 0, 2);
+        InvokeRepeating(nameof(Refresh), 0, 5);
     }
 
 
@@ -40,8 +41,8 @@ public class MultiplayerMenu : MonoBehaviour
         var friends = SteamFriends.GetFriends();
 
         //Sort out a list of joinable lobbies from friends
-        List<Lobby> joinableLobbies = new List<Lobby>();
-        foreach (var friend in friends)
+        Dictionary<Friend, Lobby> friendsLobbies = new Dictionary<Friend, Lobby>();
+        foreach (Friend friend in friends)
         {
             if(friend.IsMe)
                 continue;
@@ -52,15 +53,18 @@ public class MultiplayerMenu : MonoBehaviour
             if(!friend.GameInfo.Value.Lobby.HasValue)
                 continue;
             
-            joinableLobbies.Add(friend.GameInfo.Value.Lobby.Value);
+            friendsLobbies.Add(friend, friend.GameInfo.Value.Lobby.Value);
         }
 
         //Create joinable buttons for each friend in a lobby
-        foreach (Lobby lobby in joinableLobbies)
+        foreach (Friend friend in friendsLobbies.Keys)
         {
+            Lobby lobby = friendsLobbies[friend];
+            
             GameObject buttonGameObject = Instantiate(friendsWorldButtonPrefab, friendWorldsContainer);
             FriendsWorldButton button = buttonGameObject.GetComponent<FriendsWorldButton>();
 
+            button.friend = friend;
             button.lobby = lobby;
         }
     }
@@ -68,7 +72,7 @@ public class MultiplayerMenu : MonoBehaviour
     public void Play()
     {
         //Dont play if lobby hasn't been assigned a value
-        if(!selectedLobby.HasValue)
+        if(!selectedLobby.HasValue || !selectedFriend.HasValue)
             return;
         
         //TODO maybe selectedLobby.Join()

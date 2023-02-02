@@ -10,6 +10,7 @@ public class FriendsWorldButton : MonoBehaviour
 {
     private const float DoubleClickMaxTime = 0.3f;
     public Lobby lobby;
+    public Friend friend;
     
     public Text titleText;
     public Text descriptionText;
@@ -35,7 +36,7 @@ public class FriendsWorldButton : MonoBehaviour
         if (_menuManager.selectedLobby.Equals(lobby))
             _button.Select();   //Make the UI button view as selected
 
-        titleText.text = lobby.Owner.Name + "'s World";
+        titleText.text = friend.Name + "'s World";
         descriptionText.text = "Join Friend's World";
         playerCountText.text = lobby.MemberCount.ToString();
     }
@@ -43,6 +44,7 @@ public class FriendsWorldButton : MonoBehaviour
     public void Click()
     {
         _menuManager.selectedLobby = lobby;
+        _menuManager.selectedFriend = friend;
 
         if (Time.time - _lastClickTime < DoubleClickMaxTime)
             _menuManager.Play();
