@@ -5,7 +5,7 @@ public class PlayerInstance : NetworkBehaviour
 {
     public static PlayerInstance localPlayerInstance;
 
-    [SyncVar] public string playerName = "null";
+    [SyncVar] public string playerName = "unassigned name";
     [SyncVar] public GameObject playerEntity;
 
     public void Update()
