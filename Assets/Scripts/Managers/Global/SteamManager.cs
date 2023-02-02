@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class SteamManager : MonoBehaviour
 {
-    public const int AppID = 2070630;
+    private const int AppID = 2070630;
     
     private void Awake() {
         try {
