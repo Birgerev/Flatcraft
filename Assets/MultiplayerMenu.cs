@@ -75,10 +75,7 @@ public class MultiplayerMenu : MonoBehaviour
         if(!selectedLobby.HasValue || !selectedFriend.HasValue)
             return;
         
-        //TODO maybe selectedLobby.Join()
-        GameNetworkManager.clientConnectionAddress = selectedLobby.Owner.Id.ToString();
-        GameNetworkManager.connectionMode = ConnectionMode.Client;
-        GameNetworkManager.StartGame();
+        MultiplayerManager.JoinGameAsync(selectedLobby.Value, selectedFriend.Value.Id);
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
     

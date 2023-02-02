@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using kcp2k;
 using Mirror;
+using Mirror.FizzySteam;
 using Steamworks;
 using Steamworks.Data;
 using UnityEngine;
@@ -34,9 +35,33 @@ public class MultiplayerManager : NetworkManager
         multiplayerManager.StartHost();
     }
     
-    public static void JoinGameAsync(Lobby lobby)
+    public static async void JoinGameAsync(Lobby lobby, SteamId steamID)
     {
+        Debug.Log("Joining steam lobby game, steam id: " + steamID.Value.ToString() + " lobbyID: " + lobby.Id.Value);
+        
+        //Attempt to join lobby
+        RoomEnter state = await lobby.Join();
+
+        //Check if join was successful
+        if (state != RoomEnter.Success)
+        {
+            Debug.LogError("Joining steam room failed, fail state: " + state);
+        }
+        
+        //Start to load game if success
         SceneManager.LoadScene("Game");
+        
+        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
+
+        //Await manager initialized
+        while (!multiplayerManager._initialized)
+        {
+            await Task.Delay(100);
+        }
+        
+        //Start server connection
+        multiplayerManager.networkAddress = steamID.Value.ToString();
+        multiplayerManager.StartClient();
     }
     
     private static async void HostSteamLobbyAsync()
@@ -44,12 +69,13 @@ public class MultiplayerManager : NetworkManager
         //Host lobby
         Lobby? lobby = await SteamMatchmaking.CreateLobbyAsync();
 
+        //Check if lobby was created successfully
         if (!lobby.HasValue)
         {
             Debug.LogError("Failed to initialize steam lobby");
             return;
         }
-
+        
         Debug.Log("Successfully created steam lobby");
         
         _currentLobby = lobby.Value;
@@ -83,19 +109,18 @@ public class MultiplayerManager : NetworkManager
     
     public static void StopConnection()
     {
-        /*TODO
-        switch (connectionMode)
+        switch (singleton.mode)
         {
-            case ConnectionMode.Client:
+            case NetworkManagerMode.ClientOnly:
                 singleton.StopClient();
                 break;
-            case ConnectionMode.Host:
+            case NetworkManagerMode.Host:
                 singleton.StopHost();
                 break;
-            case ConnectionMode.DedicatedServer:
-                singleton.StopServer();
-                break;
-        }*/
+        }
+        
+        Debug.Log("Leaving steam lobby");
+        _currentLobby.Leave();
         
         SceneManager.LoadScene("MainMenu");
     }
@@ -132,10 +157,4 @@ public class MultiplayerManager : NetworkManager
         if(SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Game"))
             SceneManager.LoadScene("MultiplayerDisconnectedMenu");
     }
-}
-
-public enum ConnectionMode
-{
-    Client,
-    Host,
 }

@@ -33,10 +33,7 @@ public class SteamManager : MonoBehaviour
 
     private void SteamUIJoinFriend(Lobby lobby, SteamId steamID)
     {
-        GameNetworkManager.clientConnectionAddress = steamID.Value.ToString();
-        
-        GameNetworkManager.connectionMode = ConnectionMode.Client;
-        GameNetworkManager.StartGame();
+        MultiplayerManager.JoinGameAsync(lobby, steamID);
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
 }
