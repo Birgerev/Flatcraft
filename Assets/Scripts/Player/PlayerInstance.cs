@@ -23,7 +23,7 @@ public class PlayerInstance : NetworkBehaviour
 
         Debug.Log("Starting local player instance");
         localPlayerInstance = this;
-        ChangeName(GameNetworkManager.playerName);
+        //TODO name ChangeName(GameNetworkManager.playerName);
         RequestJoinMessage();
     }
 
