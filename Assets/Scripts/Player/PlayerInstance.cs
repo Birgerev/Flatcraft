@@ -55,9 +55,9 @@ public class PlayerInstance : NetworkBehaviour
 
         Debug.Log("Spawning local player");
         GameObject player = Entity.Spawn("Player", playerName, new Vector2(0, 80)).gameObject;
-        player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
         player.GetComponent<Player>().displayName = playerName;
         player.GetComponent<Player>().playerInstance = gameObject;
         playerEntity = player;
+        player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
     }
 }
