@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using Mirror;
+using Steamworks;
 using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
@@ -57,6 +58,6 @@ public class PauseMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        MultiplayerManager.StopConnection();
+        ((MultiplayerManager)NetworkManager.singleton).StopConnection();
     }
 }

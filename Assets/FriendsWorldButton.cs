@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Steamworks;
-using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -9,8 +8,8 @@ using UnityEngine.UI;
 public class FriendsWorldButton : MonoBehaviour
 {
     private const float DoubleClickMaxTime = 0.3f;
-    public Lobby lobby;
-    public Friend friend;
+    public CSteamID lobbyId;
+    public CSteamID friendId;
     
     public Text titleText;
     public Text descriptionText;
@@ -30,21 +29,19 @@ public class FriendsWorldButton : MonoBehaviour
     {
         _menuManager = GetComponentInParent<MultiplayerMenu>();
     }
-
     private void Update()
     {
-        if (_menuManager.selectedLobby.Equals(lobby))
+        if (_menuManager.selectedLobby.Equals(lobbyId))
             _button.Select();   //Make the UI button view as selected
 
-        titleText.text = friend.Name + "'s World";
+        titleText.text = SteamFriends.GetFriendPersonaName(friendId) + "'s World";
         descriptionText.text = "Join Friend's World";
-        playerCountText.text = lobby.MemberCount.ToString();
+        playerCountText.text = SteamMatchmaking.GetNumLobbyMembers(lobbyId).ToString();
     }
 
     public void Click()
     {
-        _menuManager.selectedLobby = lobby;
-        _menuManager.selectedFriend = friend;
+        _menuManager.selectedLobby = lobbyId;
 
         if (Time.time - _lastClickTime < DoubleClickMaxTime)
             _menuManager.Play();

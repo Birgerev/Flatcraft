@@ -1,15 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Steamworks;
-using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MultiplayerMenu : MonoBehaviour
 {
-    public Lobby? selectedLobby;
-    public Friend? selectedFriend;
+    public CSteamID selectedLobby;
 
     [Header("Prefabs")]
     public GameObject friendsWorldButtonPrefab;
@@ -38,44 +36,44 @@ public class MultiplayerMenu : MonoBehaviour
         }
         
         //List of all Friends
-        var friends = SteamFriends.GetFriends();
-
-        //Sort out a list of joinable lobbies from friends
-        Dictionary<Friend, Lobby> friendsLobbies = new Dictionary<Friend, Lobby>();
-        foreach (Friend friend in friends)
+        EFriendFlags friendFlags = EFriendFlags.k_EFriendFlagImmediate;
+        int friendCount = SteamFriends.GetFriendCount(friendFlags);
+        
+        for (int i = 0; i < friendCount; i++)
         {
-            if(friend.IsMe)
-                continue;
-            if(!friend.IsPlayingThisGame)
-                continue;
-            if(!friend.GameInfo.HasValue)
-                continue;
-            if(!friend.GameInfo.Value.Lobby.HasValue)
-                continue;
+            CSteamID friendId = SteamFriends.GetFriendByIndex(i, friendFlags);
+            FriendGameInfo_t gameInfo;
             
-            friendsLobbies.Add(friend, friend.GameInfo.Value.Lobby.Value);
-        }
-
-        //Create joinable buttons for each friend in a lobby
-        foreach (Friend friend in friendsLobbies.Keys)
-        {
-            Lobby lobby = friendsLobbies[friend];
+            //Is friend playing a game?
+            if(!SteamFriends.GetFriendGamePlayed(friendId, out gameInfo)) continue;
             
-            GameObject buttonGameObject = Instantiate(friendsWorldButtonPrefab, friendWorldsContainer);
-            FriendsWorldButton button = buttonGameObject.GetComponent<FriendsWorldButton>();
+            //playing this game?
+            if(gameInfo.m_gameID.m_GameID != SteamManager.AppId) continue;
+            
+            //In a lobby?
+            CSteamID lobbyId = gameInfo.m_steamIDLobby;
+            if(lobbyId == CSteamID.Nil) continue;
 
-            button.friend = friend;
-            button.lobby = lobby;
+            CreateWorldButton(friendId, lobbyId);
         }
+    }
+
+    private void CreateWorldButton(CSteamID friendId, CSteamID lobbyId)
+    {
+        GameObject buttonGameObject = Instantiate(friendsWorldButtonPrefab, friendWorldsContainer);
+        FriendsWorldButton button = buttonGameObject.GetComponent<FriendsWorldButton>();
+
+        button.friendId = friendId;
+        button.lobbyId = lobbyId;
     }
     
     public void Play()
     {
         //Dont play if lobby hasn't been assigned a value
-        if(!selectedLobby.HasValue || !selectedFriend.HasValue)
+        if(selectedLobby == CSteamID.Nil)
             return;
         
-        MultiplayerManager.JoinGameAsync(selectedLobby.Value, selectedFriend.Value.Id);
+        MultiplayerManager.JoinGameAsync(selectedLobby);
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
     

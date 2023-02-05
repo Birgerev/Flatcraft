@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using kcp2k;
 using Mirror;
-using Mirror.FizzySteam;
 using Steamworks;
-using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,79 +10,11 @@ public class MultiplayerManager : NetworkManager
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
 
-    private static Lobby _currentLobby;
+    protected Callback<LobbyCreated_t> lobbyCreated;
+    protected Callback<LobbyEnter_t> lobbyEntered;
+
+    private CSteamID _lobbyId;
     private bool _initialized;
-
-    public static async void HostGameAsync()
-    {
-        //Host lobby
-        HostSteamLobbyAsync();
-        
-        //Load game scene
-        SceneManager.LoadScene("Game");
-        
-        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
-
-        //Await manager initialized
-        while (!multiplayerManager._initialized)
-        {
-            await Task.Delay(100);
-        }
-        
-        multiplayerManager.StartHost();
-    }
-    
-    public static async void JoinGameAsync(Lobby lobby, SteamId steamID)
-    {
-        Debug.Log("Joining steam lobby game, steam id: " + steamID.Value.ToString() + " lobbyID: " + lobby.Id.Value);
-        
-        //Attempt to join lobby
-        RoomEnter state = await lobby.Join();
-
-        //Check if join was successful
-        if (state != RoomEnter.Success)
-        {
-            Debug.LogError("Joining steam room failed, fail state: " + state);
-        }
-        
-        //Start to load game if success
-        SceneManager.LoadScene("Game");
-        
-        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
-
-        //Await manager initialized
-        while (!multiplayerManager._initialized)
-        {
-            await Task.Delay(100);
-        }
-        
-        //Start server connection
-        multiplayerManager.networkAddress = steamID.Value.ToString();
-        multiplayerManager.StartClient();
-    }
-    
-    private static async void HostSteamLobbyAsync()
-    {
-        //Host lobby
-        Lobby? lobby = await SteamMatchmaking.CreateLobbyAsync();
-
-        //Check if lobby was created successfully
-        if (!lobby.HasValue)
-        {
-            Debug.LogError("Failed to initialize steam lobby");
-            return;
-        }
-        
-        Debug.Log("Successfully created steam lobby");
-        
-        _currentLobby = lobby.Value;
-        _currentLobby.SetFriendsOnly();
-    }
-
-    private static MultiplayerManager CreateMultiplayerManager()
-    {
-        return Instantiate(Resources.Load<GameObject>("Prefabs/Multiplayer Manager")).GetComponent<MultiplayerManager>();
-    }
 
     public override void Awake()
     {
@@ -98,16 +27,105 @@ public class MultiplayerManager : NetworkManager
             foreach (GameObject prefab in prefabs)
                 NetworkClient.RegisterPrefab(prefab);
         }
-    }
-    
-    public override void Start()
-    {
-        base.Start();
+        
+        lobbyCreated = Callback<LobbyCreated_t>.Create(OnSteamLobbyCreated);
+        lobbyEntered = Callback<LobbyEnter_t>.Create(OnSteamLobbyJoined);
 
         _initialized = true;
     }
+
+    public static async void HostGameAsync()
+    {
+        //Load game scene
+        Debug.Log("Loading Game Scene");
+        AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Game");
+        while (!sceneLoad.isDone)
+        {
+            await Task.Delay(10);
+        }
+
+        //Await manager initialized
+        Debug.Log("Creating Multiplayer Manager");
+        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
+        while (!multiplayerManager._initialized)
+        {
+            await Task.Delay(10);
+        }
+        
+        //Start game server
+        multiplayerManager.StartHost();
+        
+        //Host steam lobby
+        Debug.Log("Creating steam lobby");
+        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, multiplayerManager.maxConnections);
+    }
     
-    public static void StopConnection()
+    public static async void JoinGameAsync(CSteamID lobbyId)
+    {
+        //Load game scene
+        Debug.Log("Loading Game Scene");
+        AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Game");
+        while (!sceneLoad.isDone)
+        {
+            await Task.Delay(10);
+        }
+
+        //Await manager initialized
+        Debug.Log("Creating Multiplayer Manager");
+        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
+        while (!multiplayerManager._initialized)
+        {
+            await Task.Delay(10);
+        }
+        
+        //Join steam lobby
+        Debug.Log("Joining steam lobby");
+        SteamMatchmaking.JoinLobby(lobbyId);
+        Debug.Log("Awaiting steam response...");
+        //Await the steam callback to update the lobby id
+        while (multiplayerManager._lobbyId == CSteamID.Nil)
+        {
+            await Task.Delay(10);
+        }
+        
+        //Get lobby owner, to use as server address
+        CSteamID lobbyOwnerId = SteamMatchmaking.GetLobbyOwner(lobbyId);
+        
+        //Start server connection
+        multiplayerManager.networkAddress = lobbyOwnerId.ToString();
+        multiplayerManager.StartClient();
+    }
+
+    private void OnSteamLobbyJoined(LobbyEnter_t callback)
+    {
+        Debug.Log("Steam lobby join success");
+        _lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
+    }
+    
+    private void OnSteamLobbyCreated(LobbyCreated_t callback)
+    {
+        if (NetworkServer.active)
+        {
+            Debug.LogError("Steam lobby creation failed, server already running");
+            return;
+        }
+        
+        if (callback.m_eResult != EResult.k_EResultOK)
+        {
+            Debug.LogError("Steam lobby creation failed, result: " + nameof(callback.m_eResult));
+            return;
+        }
+
+        _lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
+        Debug.Log("Steam lobby creation success");
+    }
+
+    private static MultiplayerManager CreateMultiplayerManager()
+    {
+        return Instantiate(Resources.Load<GameObject>("Prefabs/Multiplayer Manager")).GetComponent<MultiplayerManager>();
+    }
+    
+    public void StopConnection()
     {
         switch (singleton.mode)
         {
@@ -120,18 +138,11 @@ public class MultiplayerManager : NetworkManager
         }
         
         Debug.Log("Leaving steam lobby");
-        _currentLobby.Leave();
+        SteamMatchmaking.LeaveLobby(_lobbyId);
         
         SceneManager.LoadScene("MainMenu");
     }
     
-    public override void OnStopClient()
-    {
-        base.OnStopClient();
-
-        Destroy(gameObject);
-    }
-
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -156,5 +167,7 @@ public class MultiplayerManager : NetworkManager
         //Thus load the disconnected menu
         if(SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Game"))
             SceneManager.LoadScene("MultiplayerDisconnectedMenu");
+        
+        Destroy(gameObject);
     }
 }
