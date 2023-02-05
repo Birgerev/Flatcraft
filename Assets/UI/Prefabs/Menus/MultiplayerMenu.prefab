@@ -35,10 +35,10 @@ RectTransform:
   m_Father: {fileID: 2509476073899993542}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1364.4404, y: 170}
+  m_SizeDelta: {x: 0, y: 170}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2366720693436328001
 CanvasRenderer:
@@ -252,8 +252,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.1623148}
-  m_AnchoredPosition: {x: -0.24658203, y: 0.020019531}
-  m_SizeDelta: {x: -1.4000244, y: -0.77001953}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5919475062359113219
 CanvasRenderer:
@@ -501,6 +501,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 437800b3dfc1c67479824c308be486ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedLobby:
+    m_SteamID: 0
   friendsWorldButtonPrefab: {fileID: 5734447450253074719, guid: c7fe3f51c0a2a854dbcc34f8676ee032,
     type: 3}
   playButton: {fileID: 6731352428512830233}
@@ -524,7 +526,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2509476074837577774
 RectTransform:
   m_ObjectHideFlags: 0
@@ -713,7 +715,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -918,8 +920,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.7978704}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.014892578, y: 0.25}
-  m_SizeDelta: {x: -0.9000244, y: -1.3499756}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1955185896694974974
 CanvasRenderer:
