@@ -24,7 +24,7 @@ public class GiveCommand : Command
             ItemStack item = new ItemStack(mat, amount);
 
             player.playerEntity.GetComponent<Player>().GetInventory().AddItem(item);
-            ChatManager.instance.AddMessage("Gave " + player.playerName + " " + item.Amount + " " + item.material + "'s");
+            ChatManager.instance.AddMessage("Gave " + player.GetPlayerName() + " " + item.Amount + " " + item.material + "'s");
         }
         catch (Exception e){ SendCommandError(e.StackTrace); }
     }
