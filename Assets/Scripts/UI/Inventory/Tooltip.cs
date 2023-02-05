@@ -16,6 +16,6 @@ public class Tooltip : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
 
         canvasGroup.alpha = hoveredItem.material == Material.Air || isPointerHoldingItem ? 0 : 1;
-        tooltipTitle.text = hoveredItem.material.ToString();
+        tooltipTitle.text = hoveredItem.material.ToString().Replace('_', ' ');
     }
 }
