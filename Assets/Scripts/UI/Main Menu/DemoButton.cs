@@ -36,8 +36,7 @@ public class DemoButton : MonoBehaviour
         
         //Load world
         WorldManager.world = demoWorld;
-        GameNetworkManager.StartGame();
-        GameNetworkManager.connectionMode = ConnectionMode.Host;
+        MultiplayerManager.HostGameAsync();
         LoadingMenu.Create(LoadingMenuType.LoadWorld);
     }
 }

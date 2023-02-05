@@ -850,7 +850,7 @@ public class Player : LivingEntity
         }
     }
 
-
+    [Server]
     private void CalculateFlip()
     {
         if (Mathf.Abs(GetVelocity().x) > 0.1f)

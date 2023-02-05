@@ -1,36 +1,64 @@
-﻿using UnityEngine;
+﻿using System;
+using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIHeart : MonoBehaviour
 {
+    private const float BlinkDuration = 0.05;
+    
     public Sprite empty;
     public Sprite full;
     public Sprite half;
+    public Sprite blink;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
-
+    private float _lastFrameHealth; 
+    private float _lastBlinkTime;
+    
     // Update is called once per frame
     private void Update()
     {
-        float health;
-
-
         if (Player.localEntity == null)
-            health = 0;
-        else
-            health = Mathf.Round((Player.localEntity.health + 0.70f) * 2) / 2;
+            return;
 
-        float heartIndex = transform.GetSiblingIndex();
+        CalculateBlink();
+        CalculateSprite();
+        
+        _lastFrameHealth = Player.localEntity.health;
+    }
 
-        GetComponent<Image>().sprite = full;
+    private void CalculateSprite()
+    {
+        float playerHearts = Player.localEntity.health / 2;
+        int heartIndex = transform.GetSiblingIndex();
+        float heartPortion = playerHearts - heartIndex;
 
-        if ((int) health / 2 <= heartIndex)
+        //Test for empty
+        if (heartPortion <= 0)
+        {
             GetComponent<Image>().sprite = empty;
+            return;
+        }
 
-        if ((int) health % 2 == 1 && (int) health / 2 == heartIndex)
+        //If were still in blink period, show blink
+        if (Time.time - _lastBlinkTime < BlinkDuration)
+        {
+            GetComponent<Image>().sprite = blink;
+            return;
+        }
+        
+        //Test for half
+        if (heartPortion > 0)
             GetComponent<Image>().sprite = half;
+        
+        //Test for full
+        if (heartPortion > .5f)
+            GetComponent<Image>().sprite = full;
+    }
+    
+    private void CalculateBlink()
+    {
+        if (Player.localEntity.health < _lastFrameHealth)
+            _lastBlinkTime = Time.time;
     }
 }

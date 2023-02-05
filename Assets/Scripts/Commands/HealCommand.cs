@@ -21,7 +21,7 @@ public class HealCommand : Command
                 amount = int.Parse(param[0]);
 
             playerEntity.health += amount;
-            ChatManager.instance.AddMessage("Healed " + player.playerName);
+            ChatManager.instance.AddMessage("Healed " + player.GetPlayerName());
         }
         catch (Exception e){ SendCommandError(e.StackTrace); }
     }
