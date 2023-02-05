@@ -12,6 +12,13 @@ public class EndermanController : MonsterController
     public EndermanController(LivingEntity instance) : base(instance)
     {
     }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        ((Enderman)instance).angry = (target != null);
+    }
     
     //TODO run speed
     //TODO teleport

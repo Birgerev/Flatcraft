@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = System.Random;
@@ -6,6 +7,7 @@ using Random = System.Random;
 public class Enderman : Monster
 {
     public override float maxHealth { get; } = 40;
+    [SyncVar] public bool angry;
 
     public override List<ItemStack> GetDrops()
     {
@@ -17,7 +19,7 @@ public class Enderman : Monster
 
         return result;
     }
-
+    
     public override void ClientUpdate()
     {
         base.ClientUpdate();
@@ -28,6 +30,16 @@ public class Enderman : Monster
                 Location.GetPosition() + new Vector2(-0.5f, -0.5f), 
                 new Vector2(1.5f, 2.5f), new Vector2(0.8f, 0.8f), 
                 new float2(0.6f, 1f), new int2(0, 3), new Color(.8f, .25f, .8f));
+    }
+    
+    [Client]
+    public override void UpdateAnimatorValues()
+    {
+        base.UpdateAnimatorValues();
+
+        Animator anim = GetComponent<Animator>();
+
+        anim.SetBool("angry", angry);
     }
 
     public override EntityController GetController()
