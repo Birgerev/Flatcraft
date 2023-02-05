@@ -19,17 +19,11 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             SetMenuActive(!active);
     }
-
-    public void ToggleMultiplayer()
-    {
-        //TODO method
-        //TODO interractible button state
-    }
-
+    
     public void Invite()
     {
-        //TODO find lobby id
-        //SteamFriends.OpenGameInviteOverlay();
+        if(SteamManager.Initialized)
+            SteamFriends.ActivateGameOverlayInviteDialog(((MultiplayerManager)NetworkManager.singleton).lobbyId);
     }
 
     public void Options()

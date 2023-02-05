@@ -4,16 +4,17 @@ using Mirror;
 using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class MultiplayerManager : NetworkManager
 {
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
+    public CSteamID lobbyId;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
     protected Callback<LobbyEnter_t> lobbyEntered;
 
-    private CSteamID _lobbyId;
     private bool _initialized;
 
     public override void Awake()
@@ -88,7 +89,7 @@ public class MultiplayerManager : NetworkManager
         SteamMatchmaking.JoinLobby(lobbyId);
         Debug.Log("Awaiting steam response...");
         //Await the steam callback to update the lobby id
-        while (multiplayerManager._lobbyId == CSteamID.Nil)
+        while (multiplayerManager.lobbyId == CSteamID.Nil)
         {
             await Task.Delay(10);
         }
@@ -104,7 +105,7 @@ public class MultiplayerManager : NetworkManager
     private void OnSteamLobbyJoined(LobbyEnter_t callback)
     {
         Debug.Log("Steam lobby join success");
-        _lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
+        lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
     }
     
     private void OnSteamLobbyCreated(LobbyCreated_t callback)
@@ -115,7 +116,7 @@ public class MultiplayerManager : NetworkManager
             return;
         }
 
-        _lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
+        lobbyId = (CSteamID)callback.m_ulSteamIDLobby;
         Debug.Log("Steam lobby creation success");
     }
 
@@ -137,7 +138,7 @@ public class MultiplayerManager : NetworkManager
         }
         
         Debug.Log("Leaving steam lobby");
-        SteamMatchmaking.LeaveLobby(_lobbyId);
+        SteamMatchmaking.LeaveLobby(lobbyId);
         
         SceneManager.LoadScene("MainMenu");
     }
