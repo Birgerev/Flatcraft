@@ -13,7 +13,6 @@ public class FriendsWorldButton : MonoBehaviour
     
     public Text titleText;
     public Text descriptionText;
-    public Text playerCountText;
     
     private Button _button;
     private MultiplayerMenu _menuManager;
@@ -36,7 +35,6 @@ public class FriendsWorldButton : MonoBehaviour
 
         titleText.text = SteamFriends.GetFriendPersonaName(friendId) + "'s World";
         descriptionText.text = "Join Friend's World";
-        playerCountText.text = SteamMatchmaking.GetNumLobbyMembers(lobbyId).ToString();
     }
 
     public void Click()
