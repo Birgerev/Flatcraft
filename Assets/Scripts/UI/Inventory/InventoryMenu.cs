@@ -14,7 +14,7 @@ public class InventoryMenu : NetworkBehaviour
     public CanvasGroup canvasGroup;
     public Text inventoryTitle;
     private float inventoryAge;
-    public SyncDictionary<int, int> inventoryIds = new SyncDictionary<int, int>();
+    public readonly SyncDictionary<int, int> inventoryIds = new SyncDictionary<int, int>();
     [SyncVar] public ItemStack pointerItem = new ItemStack();
 
     public virtual void Update()

@@ -43,7 +43,7 @@ public class Chunk : NetworkBehaviour
     public Dictionary<int2, BackgroundBlock> backgroundBlocks = new Dictionary<int2, BackgroundBlock>();
     public Dictionary<int2, Block> blocks = new Dictionary<int2, Block>();
 
-    public SyncList<BlockState> blockStates = new SyncList<BlockState>();
+    public readonly SyncList<BlockState> blockStates = new SyncList<BlockState>();
 
     [SyncVar] public ChunkPosition chunkPosition;
 
