@@ -8,8 +8,9 @@ public class SteamInviteJoinManager : MonoBehaviour
 {
     protected Callback<GameLobbyJoinRequested_t> lobbyJoinRequested;
     
-    private void Awake() {
-        lobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(SteamUIJoinFriend);
+    private void Start() {
+        if (SteamManager.Initialized)
+            lobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(SteamUIJoinFriend);
     }
 
     private void SteamUIJoinFriend(GameLobbyJoinRequested_t callback)

@@ -56,12 +56,17 @@ public class MultiplayerManager : NetworkManager
         multiplayerManager.StartHost();
         
         //Host steam lobby
-        Debug.Log("Creating steam lobby");
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, multiplayerManager.maxConnections);
+        if (SteamManager.Initialized)
+        {
+            Debug.Log("Creating steam lobby");
+            SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, multiplayerManager.maxConnections);
+        }
     }
     
     public static async void JoinGameAsync(CSteamID lobbyId)
     {
+        if (!SteamManager.Initialized)
+            return;
         //Load game scene
         Debug.Log("Loading Game Scene");
         AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Game");
