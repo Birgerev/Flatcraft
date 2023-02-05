@@ -169,7 +169,7 @@ public class LivingEntity : Entity
 
     public void Walk(int direction)
     {
-        if (!hasAuthority && !isServer)
+        if (!isOwned && !isServer)
             return;
 
         if (GetVelocity().x < speed && GetVelocity().x > -speed)
@@ -192,7 +192,7 @@ public class LivingEntity : Entity
 
     public void Jump()
     {
-        if (!hasAuthority && !isServer)
+        if (!isOwned && !isServer)
             return;
 
         if (isOnGround && Time.time - lastJumpTime >= 0.3f)

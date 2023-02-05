@@ -113,7 +113,7 @@ public class Player : LivingEntity
     public override void ClientUpdate()
     {
         //Crosshair
-        if (hasAuthority)
+        if (isOwned)
         {
             PerformInput();
             CheckActionBarUpdate();
@@ -141,13 +141,13 @@ public class Player : LivingEntity
     [ClientRpc]
     public void TeleportOwningClientPlayer(Location loc)
     {
-        if (hasAuthority)
+        if (isOwned)
             Location = loc;
     }
 
     public override void ProcessMovement()
     {
-        if (!hasAuthority)
+        if (!isOwned)
             return;
 
         base.ProcessMovement();
@@ -172,7 +172,7 @@ public class Player : LivingEntity
     [Client]
     public override void UpdateNameplate()
     {
-        if (hasAuthority)
+        if (isOwned)
         {
             nameplate.text = "";
             return;
@@ -786,7 +786,7 @@ public class Player : LivingEntity
     [ClientRpc]
     public override void Knockback(Vector2 direction)
     {
-        if (hasAuthority)
+        if (isOwned)
             ClientKnockback(direction);
     }
 
@@ -798,7 +798,7 @@ public class Player : LivingEntity
     [ClientRpc]
     public void DeathMenuEffect()
     {
-        if (hasAuthority)
+        if (isOwned)
             DeathMenu.active = true;
     }
 
@@ -828,7 +828,7 @@ public class Player : LivingEntity
     [ClientRpc]
     public void ShakeOwnerCamera(int shakeValue)
     {
-        if (hasAuthority)
+        if (isOwned)
             CameraController.instance.currentShake = shakeValue;
     }
 
