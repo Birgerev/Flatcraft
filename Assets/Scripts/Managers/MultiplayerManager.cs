@@ -104,12 +104,6 @@ public class MultiplayerManager : NetworkManager
     
     private void OnSteamLobbyCreated(LobbyCreated_t callback)
     {
-        if (NetworkServer.active)
-        {
-            Debug.LogError("Steam lobby creation failed, server already running");
-            return;
-        }
-        
         if (callback.m_eResult != EResult.k_EResultOK)
         {
             Debug.LogError("Steam lobby creation failed, result: " + nameof(callback.m_eResult));
