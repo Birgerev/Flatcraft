@@ -32,10 +32,16 @@ public class Grass : Block
     public void TryDecay()
     {
         Block blockAbove = (location + new Location(0, 1)).GetBlock();
-        if (blockAbove != null)
-            //Turn to dirt if covered
-            if (blockAbove.solid)
-                location.SetMaterial(Material.Dirt);
+        
+        //Return if no block above
+        if (blockAbove == null)
+            return;
+        
+        //Return if neither solid nor liquid
+        if (!(blockAbove.solid || blockAbove is Liquid))
+            return;
+        
+        location.SetMaterial(Material.Dirt);
     }
 
     public void TrySpread()
