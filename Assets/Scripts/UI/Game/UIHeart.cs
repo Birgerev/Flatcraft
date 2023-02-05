@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIHeart : MonoBehaviour
 {
-    private const float BlinkDuration = 0.05;
+    private const float BlinkDuration = 0.05f;
     
     public Sprite empty;
     public Sprite full;
