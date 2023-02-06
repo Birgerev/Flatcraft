@@ -30,6 +30,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5220709383209455929}
   - {fileID: 9056225685716976120}
@@ -38,8 +39,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 693, y: 0}
-  m_SizeDelta: {x: 1385.9, y: 225.6}
+  m_AnchoredPosition: {x: 693, y: 36.3609}
+  m_SizeDelta: {x: 1385.9, y: 152.8783}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3022725410830800008
 CanvasRenderer:
@@ -161,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813724, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_Name
-      value: Text (3)
+      value: Description
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -186,7 +187,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_FontData.m_Alignment
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -271,12 +272,12 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 697.45
+      value: 685.75
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -102.3
+      value: -101.5
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -323,7 +324,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813724, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_Name
-      value: Text (2)
+      value: Title
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -333,7 +334,7 @@ PrefabInstance:
     - target: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_FontData.m_Alignment
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -418,12 +419,12 @@ PrefabInstance:
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 225.99994
+      value: 214.3
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -47.000015
+      value: -53
       objectReference: {fileID: 0}
     - target: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
         type: 3}
@@ -442,12 +443,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2545b076c3b573644831305fd15cd44f, type: 3}
---- !u!224 &5220709383209455929 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
-    type: 3}
-  m_PrefabInstance: {fileID: 7709930789470634406}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5220709383209455928 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2489508395992813726, guid: 2545b076c3b573644831305fd15cd44f,
@@ -460,3 +455,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &5220709383209455929 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2489508395992813727, guid: 2545b076c3b573644831305fd15cd44f,
+    type: 3}
+  m_PrefabInstance: {fileID: 7709930789470634406}
+  m_PrefabAsset: {fileID: 0}
