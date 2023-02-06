@@ -30,6 +30,9 @@ public class FriendsWorldButton : MonoBehaviour
     }
     private void Update()
     {
+        if (!SteamManager.Initialized)
+            return;
+        
         if (_menuManager.selectedLobby.Equals(lobbyId))
             _button.Select();   //Make the UI button view as selected
 

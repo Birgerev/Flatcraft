@@ -64,6 +64,9 @@ public class PlayerInstance : NetworkBehaviour
 
     public string GetPlayerName()
     {
+        if (!SteamManager.Initialized)
+            return "Steve";
+        
         return SteamFriends.GetFriendPersonaName((CSteamID)steamId);
     }
 }

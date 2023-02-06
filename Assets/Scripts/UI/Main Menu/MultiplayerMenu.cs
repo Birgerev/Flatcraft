@@ -29,6 +29,9 @@ public class MultiplayerMenu : MonoBehaviour
 
     public void Refresh()
     {
+        if (!SteamManager.Initialized)
+            return;
+        
         //Clear old servers
         foreach (FriendsWorldButton friendsWorldButton in GetComponentsInChildren<FriendsWorldButton>())
         {
