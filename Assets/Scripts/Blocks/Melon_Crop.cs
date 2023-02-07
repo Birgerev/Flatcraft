@@ -2,13 +2,12 @@
 
 public class Melon_Crop : Crop
 {
-    public override string texture { get; set; } = "block_melon_crop_5";
     private string melonLeftTexture { get; set; } = "block_melon_crop_left";
     private string melonRightTexture { get; set; } = "block_melon_crop_right";
 
     public override string[] crop_textures { get; } =
     {
-        "block_melon_crop_0", "block_melon_crop_1", "block_melon_crop_2", "block_melon_crop_3", 
+        "block_melon_crop", "block_melon_crop_1", "block_melon_crop_2", "block_melon_crop_3", 
         "block_melon_crop_4", "block_melon_crop_5"
     };
 

@@ -2,7 +2,6 @@
 
 public class Leaves : Block
 {
-    public override string texture { get; set; } = "block_leaves";
     public override bool solid { get; set; } = false;
     public override float averageRandomTickDuration { get; } = 100;
 

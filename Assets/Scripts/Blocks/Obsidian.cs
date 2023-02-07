@@ -1,6 +1,5 @@
 public class Obsidian : Block
 {
-    public override string texture { get; set; } = "block_obsidian";
     public override float breakTime { get; } = 250;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Pickaxe;

@@ -4,7 +4,6 @@ using Random = System.Random;
 
 public class Structure_Block : Block
 {
-    public override string texture { get; set; } = "block_structure";
     public override float breakTime { get; } = 10000000;
     private bool hasBeenTicked = false;
 

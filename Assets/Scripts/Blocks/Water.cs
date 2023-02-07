@@ -2,10 +2,9 @@
 
 public class Water : Liquid
 {
-    public override string texture { get; set; } = "block_water_3";
     public override string[] liquidTextures { get; } =
     {
-        "block_water_0", "block_water_0", 
+        "block_water", "block_water", 
         "block_water_1", "block_water_1", 
         "block_water_2", "block_water_2", 
         "block_water_3", "block_water_3"

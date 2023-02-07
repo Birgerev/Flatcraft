@@ -2,7 +2,6 @@
 
 public class Sand : Block
 {
-    public override string texture { get; set; } = "block_sand";
     public override float breakTime { get; } = 0.75f;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Shovel;

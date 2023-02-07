@@ -1,6 +1,5 @@
 ﻿public class Portal_Frame : Block
 {
-    public override string texture { get; set; } = "block_portal_frame";
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
 

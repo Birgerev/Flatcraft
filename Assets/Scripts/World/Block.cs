@@ -7,9 +7,7 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-
-    public virtual string texture { get; set; } = "";
-    public virtual string[] alternativeTextures { get; } = { };
+    public virtual string[] randomTextures { get; } = { };
     public virtual float changeTextureTime { get; } = 0;
 
     public virtual bool solid { get; set; } = true;
@@ -288,23 +286,26 @@ public class Block : MonoBehaviour
 
     public virtual string GetTexture()
     {
-        if (alternativeTextures.Length > 0)
+        if (randomTextures.Length > 0) 
+            return GetRandomTexture();
+        
+        //TODO replace all in project
+        return "block_" + GetMaterial().ToString();
+    }
+
+    private string GetRandomTexture()
+    {
+        //Default get a random alternative texture based on location
+        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, randomTextures.Length);
+
+        //Textures that change over time
+        if (changeTextureTime > 0)
         {
-            //Default get a random alternative texture based on location
-            int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, alternativeTextures.Length);
-
-            //Textures that change over time
-            if (changeTextureTime > 0)
-            {
-                float totalTimePerTextureLoop = changeTextureTime * alternativeTextures.Length;
-                textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
-            }
-
-            texture = alternativeTextures[textureIndex];
+            float totalTimePerTextureLoop = changeTextureTime * randomTextures.Length;
+            textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
         }
 
-        //return
-        return texture;
+        return randomTextures[textureIndex];
     }
 
     public Material GetMaterial()

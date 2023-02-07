@@ -2,10 +2,8 @@
 
 public class Tall_Grass : Block
 {
-    public override string texture { get; set; } = "block_tall_grass_0";
-
-    public override string[] alternativeTextures { get; } =
-        {"block_tall_grass_0", "block_tall_grass_1", "block_tall_grass_2"};
+    public override string[] randomTextures { get; } =
+        {"block_tall_grass", "block_tall_grass_1", "block_tall_grass_2"};
 
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.01f;
