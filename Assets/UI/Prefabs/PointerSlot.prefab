@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 282497716751977763}
   - component: {fileID: 9057796618808186885}
   - component: {fileID: 4883993633060735763}
+  - component: {fileID: 1074574153934332551}
   m_Layer: 5
   m_Name: Tooltip Panel
   m_TagString: Untagged
@@ -146,6 +147,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipTitle: {fileID: 7323298664570375980}
+--- !u!114 &1074574153934332551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6228801073477665568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.31764707}
+  m_EffectDistance: {x: 9.3, y: -9.3}
+  m_UseGraphicAlpha: 0
 --- !u!1001 &2361464636047734820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -153,6 +169,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3379526494235765770, guid: b9379dde221be1a4bb99a3c445109a4f,
+        type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 12.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379526494235765770, guid: b9379dde221be1a4bb99a3c445109a4f,
+        type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -12.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4837457438770987874, guid: b9379dde221be1a4bb99a3c445109a4f,
         type: 3}
       propertyPath: m_Name
