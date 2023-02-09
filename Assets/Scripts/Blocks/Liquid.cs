@@ -264,8 +264,8 @@ public class Liquid : Block
                 BlockData possibleSourceData = possibleSource.GetData();
                 if (possibleSourceData.HasTag("liquid_level"))
                 {
-                    int possibleSourceLiquidLevel = int.Parse(possibleSourceData.GetTag("liquid_level"));
-                    int currentLiquidLevel = int.Parse(GetData().GetTag("liquid_level"));
+                    int.TryParse(possibleSourceData.GetTag("liquid_level"), out int possibleSourceLiquidLevel);
+                    int.TryParse(GetData().GetTag("liquid_level"), out int currentLiquidLevel);
 
                     //Make sure the source is of a higher liquid level
                     ////If the source liquid level is less than 1, it's not a viable source
