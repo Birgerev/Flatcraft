@@ -24,7 +24,7 @@ public class Birch_Sapling : Block
         base.Tick();
         Material matBelow = (location + new Location(0, -1)).GetMaterial();
 
-        if (matBelow != Material.Grass && matBelow != Material.Dirt)
+        if (matBelow != Material.Grass_Block && matBelow != Material.Dirt)
         {
             Break();
         }

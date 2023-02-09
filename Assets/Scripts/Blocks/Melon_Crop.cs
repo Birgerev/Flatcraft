@@ -16,7 +16,7 @@ public class Melon_Crop : Crop
     
     private List<Material> viableMelonBlocks { get; } = new List<Material>
     {
-        Material.Grass, Material.Dirt, Material.Farmland_Dry, Material.Farmland_Wet
+        Material.Grass_Block, Material.Dirt, Material.Farmland_Dry, Material.Farmland_Wet
     };
 
     public override void Tick()

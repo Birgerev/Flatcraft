@@ -2,54 +2,22 @@
 
 public class Grass : Block
 {
-    public override float breakTime { get; } = 0.75f;
-    public override float averageRandomTickDuration { get; } = 20;
+    public override string[] randomTextures { get; } =
+        {"block_grass", "block_grass_1", "block_grass_2", "block_grass_3", "block_grass_4"};
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
+    public override bool solid { get; set; } = false;
+    public override float breakTime { get; } = 0.01f;
+    public override bool requiresGround { get; } = true;
+    public override bool isFlammable { get; } = true;
+
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+
 
     public override ItemStack GetDrop()
     {
-        return new ItemStack(Material.Dirt, 1);
-    }
+        if (new Random().NextDouble() <= 0.25f)
+            return new ItemStack(Material.Wheat_Seeds, 1);
 
-    public override void RandomTick()
-    {
-        TrySpread();
-        TryDecay();
-
-        base.RandomTick();
-    }
-
-    public override void GeneratingTick()
-    {
-        TryDecay();
-
-        base.GeneratingTick();
-    }
-
-    public void TryDecay()
-    {
-        Block blockAbove = (location + new Location(0, 1)).GetBlock();
-        
-        //Return if no block above
-        if (blockAbove == null)
-            return;
-        
-        //Return if neither solid nor liquid
-        if (!(blockAbove.solid || blockAbove is Liquid))
-            return;
-        
-        location.SetMaterial(Material.Dirt);
-    }
-
-    public void TrySpread()
-    {
-        Random r = new Random();
-
-        Location targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1 + 1));
-        Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
-        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.solid))
-            targetLoc.SetMaterial(Material.Grass);
+        return new ItemStack();
     }
 }

@@ -80,7 +80,7 @@ public class OverworldGenerator : WorldGenerator
             else if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                      biome.name == "plains")
             {
-                mat = Material.Grass;
+                mat = Material.Grass_Block;
             }
 
             if (noiseValue > biome.stoneLayerNoiseValue)
@@ -130,10 +130,10 @@ public class OverworldGenerator : WorldGenerator
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
         Material[] flowerMaterials = {Material.Red_Flower};
-        Material[] vegetationMaterials = {Material.Tall_Grass};
+        Material[] vegetationMaterials = {Material.Grass};
         
         //Topmost Terrain Blocks
-        if ((matBeneath == Material.Grass || matBeneath == Material.Sand) && mat == Material.Air)
+        if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
         {
             //Vegetation
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
