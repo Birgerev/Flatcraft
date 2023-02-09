@@ -15,17 +15,19 @@ public class Vegetation : Block
     {
         base.Tick();
         
-        if(!ValidGround())
+        if(!GroundCheck())
             Break();
     }
 
-    public virtual bool ValidGround()
+    private bool GroundCheck()
     {
-        Material below = (location + new Location(0, -1)).GetMaterial();
+        Material belowMat = (location + new Location(0, -1)).GetMaterial();
 
-        if (below == Material.Grass_Block)
-            return true;
-
-        return false;
+        return ValidGround().Contains(belowMat);
+    }
+    
+    protected virtual List<Material> ValidGround()
+    {
+        return new List<Material> { Material.Grass_Block};
     }
 }

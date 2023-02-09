@@ -121,4 +121,5 @@
     , Eye_Of_Ender
     , Tall_Grass
     , Yellow_Flower
+    , Sugar_Cane
 }

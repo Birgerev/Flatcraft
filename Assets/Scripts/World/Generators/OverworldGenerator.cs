@@ -134,6 +134,17 @@ public class OverworldGenerator : WorldGenerator
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
         {
+            //Sugar canes
+            if (loc.y == SeaLevel + 1)
+            {
+                Location belowLeft = loc + new Location(-1, -1);
+                Location belowRight = loc + new Location(1, -1);
+                
+                if(belowLeft.GetMaterial() == Material.Water || belowRight.GetMaterial() == Material.Water)
+                    if (r.Next(0, 100) <= 25)
+                        return new BlockState(Material.Sugar_Cane);
+            }
+            
             //Grass
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")

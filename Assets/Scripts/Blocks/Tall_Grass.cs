@@ -29,7 +29,7 @@ public class Tall_Grass : Vegetation
             below.GetBlock().Break(false);
     }
 
-    public override List<Material> ValidGround()
+    protected override List<Material> ValidGround()
     {
         List<Material> mats = base.ValidGround();
         
