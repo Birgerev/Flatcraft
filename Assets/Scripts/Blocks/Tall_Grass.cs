@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class Tall_Grass : Vegetation
 {
@@ -28,14 +29,13 @@ public class Tall_Grass : Vegetation
             below.GetBlock().Break(false);
     }
 
-    public override bool ValidGround()
+    public override List<Material> ValidGround()
     {
-        Material below = (location + new Location(0, -1)).GetMaterial();
-
-        //If were on top of tall grass, all is good
-        if (below == GetMaterial())
-            return true;
-
-        return base.ValidGround();
+        List<Material> mats = base.ValidGround();
+        
+        //Add current material as valid ground, to enable stacking
+        mats.Add(GetMaterial());
+        
+        return mats;
     }
 }
