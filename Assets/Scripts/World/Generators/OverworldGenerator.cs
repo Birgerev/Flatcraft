@@ -129,7 +129,7 @@ public class OverworldGenerator : WorldGenerator
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
-        Material[] flowerMaterials = {Material.Red_Flower};
+        Material[] flowerMaterials = {Material.Red_Flower, Material.Yellow_Flower};
         
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
