@@ -130,7 +130,6 @@ public class OverworldGenerator : WorldGenerator
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
         Material[] flowerMaterials = {Material.Red_Flower};
-        Material[] vegetationMaterials = {Material.Grass};
         
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
@@ -139,7 +138,12 @@ public class OverworldGenerator : WorldGenerator
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
                 if (r.Next(0, 100) <= 50)
-                    return new BlockState(vegetationMaterials[r.Next(0, vegetationMaterials.Length)]);
+                    return new BlockState(Material.Grass);
+            
+            if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
+                biome.name == "plains")
+                if (r.Next(0, 100) <= 15)
+                    return new BlockState(Material.Tall_Grass);
 
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
