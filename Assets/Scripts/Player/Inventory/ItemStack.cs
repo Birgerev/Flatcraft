@@ -83,7 +83,7 @@ public struct ItemStack
 
     public string GetTexturePath()
     {
-        string texturePath = "Sprites/item/item_" + material;
+        string texturePath = "Sprites/item/" + material;
         
         Type type = Type.GetType(material.ToString());
         if (type == null)
