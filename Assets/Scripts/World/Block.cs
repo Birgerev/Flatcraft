@@ -289,8 +289,7 @@ public class Block : MonoBehaviour
         if (randomTextures.Length > 0) 
             return GetRandomTexture();
         
-        //TODO replace all in project
-        return "block_" + GetMaterial().ToString();
+        return GetMaterial().ToString();
     }
 
     private string GetRandomTexture()

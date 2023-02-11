@@ -1,7 +1,7 @@
 ﻿public class Oak_Trapdoor : Door
 {
-    public override string open_texture { get; } = "block_wooden_trapdoor_open";
-    public override string closed_texture { get; } = "block_wooden_trapdoor";
+    public override string open_texture { get; } = "wooden_trapdoor_open";
+    public override string closed_texture { get; } = "wooden_trapdoor";
     public override float breakTime { get; } = 3f;
     public override bool isFlammable { get; } = true;
     public override bool climbable { get; } = true;

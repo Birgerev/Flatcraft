@@ -2,7 +2,7 @@
 {
     public override string[] randomTextures { get; } =
     {
-        "block_torch", "block_torch_1", "block_torch_2", "block_torch_3"
+        "torch", "torch_1", "torch_2", "torch_3"
     };
     public override float changeTextureTime { get; } = 0.3f;
     public override bool solid { get; set; } = false;

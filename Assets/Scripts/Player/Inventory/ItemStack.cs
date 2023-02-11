@@ -94,7 +94,7 @@ public struct ItemStack
 
         bool isBlock = type.IsSubclassOf(typeof(Block));
         if (isBlock && Resources.Load<Sprite>(texturePath) == null)
-            texturePath = "Sprites/block/block_" + material;
+            texturePath = "Sprites/block/" + material;
             
         return texturePath;
     }
