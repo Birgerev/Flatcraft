@@ -527,20 +527,17 @@ public class Chunk : NetworkBehaviour
             Location loc = new(worldXPosition, y, dimension);
             Material mat = loc.GetMaterial();
 
-            //Check whether block is empty
+            //Find solid block
             if (mat == Material.Air)
             {
+                //Count how many air blocks we've passed
                 consecutiveEmptyBlocks++;
                 continue;
             }
-            
-            if(consecutiveEmptyBlocks < 2)
-                continue;
-            if(LightManager.GetLightLevel(loc) > monsterSpawningLightLevel)
-                continue;
-            
-            
-            possibleSpawnLocations.Add(loc);
+
+            //Viable spawn location if, enough space, low enough light level
+            if (consecutiveEmptyBlocks >= 2 && LightManager.GetLightLevel(loc) <= monsterSpawningLightLevel)
+                possibleSpawnLocations.Add(loc);
             
             consecutiveEmptyBlocks = 0;
         }
@@ -551,12 +548,12 @@ public class Chunk : NetworkBehaviour
 
         //Choose a random monster type based on the biome
         Biome biome = GetBiome();
-        List<string> possibleAnimals = biome.biomeSpecificMonsters;
+        List<string> possibleEntityTypes = biome.biomeSpecificMonsters;
         if(biome.spawnDefaultOverworldMonsters)
-            possibleAnimals.AddRange(DefaultOverworldMonsters);
+            possibleEntityTypes.AddRange(DefaultOverworldMonsters);
         
         //TODO will fail if monster list is empty
-        string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
+        string entityType = possibleEntityTypes[r.Next(0, possibleEntityTypes.Count)];
         
         //Spawn a random monster at the location we decided
         Location spawnLocation = possibleSpawnLocations[r.Next(0, possibleSpawnLocations.Count)];
