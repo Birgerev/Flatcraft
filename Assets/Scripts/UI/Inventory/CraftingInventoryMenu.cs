@@ -70,6 +70,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         
         //Set pointer material to result material
         newPointerItem.material = resultItem.material;
+        newPointerItem.durability = resultItem.durability;
         
         //Keep moving items until result slot is empty or if pointer amount exceeds 64
         while (resultItem.amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
