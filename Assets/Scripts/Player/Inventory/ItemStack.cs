@@ -83,7 +83,7 @@ public struct ItemStack
 
     public string GetTexturePath()
     {
-        string texturePath = "Sprites/item_" + material;
+        string texturePath = "Sprites/item/item_" + material;
         
         Type type = Type.GetType(material.ToString());
         if (type == null)
@@ -94,7 +94,7 @@ public struct ItemStack
 
         bool isBlock = type.IsSubclassOf(typeof(Block));
         if (isBlock && Resources.Load<Sprite>(texturePath) == null)
-            texturePath = "Sprites/block_" + material;
+            texturePath = "Sprites/block/block_" + material;
             
         return texturePath;
     }

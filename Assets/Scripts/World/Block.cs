@@ -281,7 +281,7 @@ public class Block : MonoBehaviour
 
     protected Sprite GetSprite()
     {
-        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+        return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
     }
 
     public virtual string GetTexture()
