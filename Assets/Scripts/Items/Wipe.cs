@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Wipe : Item
 {
-    public override string texture { get; set; } = "item_wipe";
-    
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         base.InteractRight(player, loc, firstFrameDown);
