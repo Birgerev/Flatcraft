@@ -26,6 +26,10 @@ public class CreateWorldMenu : MonoBehaviour
         if (disableInput)
             return;
 
+        //Demo template
+        world.template = WorldTemplate.Skyblock;
+        
+        
         worldTemplateButtonText.text = "Template: " + world.template.ToString();
         FetchNameField();
         FetchSeedField();
@@ -94,12 +98,13 @@ public class CreateWorldMenu : MonoBehaviour
 
     public void NextWorldTemplate()
     {
+        /*Disabled for demo
         int currentTemplateIndex = (int)world.template;
         int templateAmount = Enum.GetNames(typeof(WorldTemplate)).Length;
         int nextTemplateIndex = (currentTemplateIndex + 1) % templateAmount;
         WorldTemplate nextTemplate = (WorldTemplate) nextTemplateIndex;
         
-        world.template = nextTemplate;
+        world.template = nextTemplate;*/
     }
 
     public void Cancel()
