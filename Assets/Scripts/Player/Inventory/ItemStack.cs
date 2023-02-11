@@ -84,8 +84,15 @@ public struct ItemStack
     public string GetTexturePath()
     {
         string texturePath = "Sprites/item_" + material;
-            
-        bool isBlock = Type.GetType(material.ToString()).IsSubclassOf(typeof(Block));
+        
+        Type type = Type.GetType(material.ToString());
+        if (type == null)
+        {
+            Debug.LogWarning("Tried getting texture for non existent Item: " + material);
+            return "";
+        }
+
+        bool isBlock = type.IsSubclassOf(typeof(Block));
         if (isBlock && Resources.Load<Sprite>(texturePath) == null)
             texturePath = "Sprites/block_" + material;
             
