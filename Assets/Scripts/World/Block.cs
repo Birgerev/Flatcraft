@@ -281,7 +281,7 @@ public class Block : MonoBehaviour
 
     protected Sprite GetSprite()
     {
-        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+        return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
     }
 
     public virtual string GetTexture()
@@ -289,8 +289,7 @@ public class Block : MonoBehaviour
         if (randomTextures.Length > 0) 
             return GetRandomTexture();
         
-        //TODO replace all in project
-        return "block_" + GetMaterial().ToString();
+        return GetMaterial().ToString();
     }
 
     private string GetRandomTexture()

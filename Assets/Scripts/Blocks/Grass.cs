@@ -1,17 +1,9 @@
 ﻿using System;
 
-public class Grass : Block
+public class Grass : Vegetation
 {
     public override string[] randomTextures { get; } =
-        {"block_grass", "block_grass_1", "block_grass_2", "block_grass_3", "block_grass_4"};
-
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool requiresGround { get; } = true;
-    public override bool isFlammable { get; } = true;
-
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
-
+        {"grass", "grass_1", "grass_2", "grass_3", "grass_4"};
 
     public override ItemStack GetDrop()
     {

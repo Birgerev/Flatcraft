@@ -1,6 +1,5 @@
 ﻿public class Flint_And_Steel : Item
 {
-    public override string texture { get; set; } = "item_flint_and_steel";
     public override int maxDurability { get; } = 64;
     
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)

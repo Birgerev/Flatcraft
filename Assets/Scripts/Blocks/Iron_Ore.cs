@@ -1,6 +1,6 @@
 ﻿public class Iron_Ore : Block
 {
-    public override string[] randomTextures { get; } = {"block_iron_ore", "block_iron_ore_1"};
+    public override string[] randomTextures { get; } = {"iron_ore", "iron_ore_1"};
 
     public override float breakTime { get; } = 6;
 

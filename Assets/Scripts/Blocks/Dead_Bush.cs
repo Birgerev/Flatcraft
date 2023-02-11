@@ -1,7 +1,7 @@
 ﻿public class Dead_Bush : Block
 {
     public override string[] randomTextures { get; } =
-        {"block_dead_bush", "block_dead_bush_1", "block_dead_bush_2"};
+        {"dead_bush", "dead_bush_1", "dead_bush_2"};
 
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.01f;

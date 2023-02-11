@@ -6,7 +6,6 @@ public class Item
 {
     public Dictionary<string, string> data = new Dictionary<string, string>();
 
-    public virtual string texture { get; set; } = "";
     public virtual int maxDurability { get; } = -1;
     public virtual float entityDamage { get; } = 1;
 
@@ -34,12 +33,7 @@ public class Item
         if (firstFrameDown && block != null)
             block.Interact(player);
     }
-
-    public virtual Sprite GetTexture()
-    {
-        return Resources.Load<Sprite>("Sprites/" + texture);
-    }
-
+    
     public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);

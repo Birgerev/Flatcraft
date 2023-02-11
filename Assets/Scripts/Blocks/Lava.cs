@@ -4,7 +4,7 @@ public class Lava : Liquid
 {
     public override string[] liquidTextures { get; } =
     {
-        "block_lava", "block_lava_1", "block_lava_2", "block_lava_3"
+        "lava", "lava_1", "lava_2", "lava_3"
     };
 
     public override int maxLiquidLevel { get; } = 4;

@@ -1,7 +1,5 @@
 ﻿public class Empty_Bucket : Item
 {
-    public override string texture { get; set; } = "item_empty_bucket";
-    
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         base.InteractRight(player, loc, firstFrameDown);

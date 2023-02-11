@@ -1,6 +1,6 @@
 ﻿public class Redstone_Ore : Block
 {
-    public override string[] randomTextures { get; } = {"block_redstone_ore", "block_redstone_ore_1"};
+    public override string[] randomTextures { get; } = {"redstone_ore", "redstone_ore_1"};
 
     public override float breakTime { get; } = 6;
 

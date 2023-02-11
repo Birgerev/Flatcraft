@@ -4,10 +4,10 @@ public class Water : Liquid
 {
     public override string[] liquidTextures { get; } =
     {
-        "block_water", "block_water", 
-        "block_water_1", "block_water_1", 
-        "block_water_2", "block_water_2", 
-        "block_water_3", "block_water_3"
+        "water", "water", 
+        "water_1", "water_1", 
+        "water_2", "water_2", 
+        "water_3", "water_3"
     };
     public override int maxLiquidLevel { get; } = 8;
 

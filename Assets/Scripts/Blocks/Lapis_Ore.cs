@@ -1,6 +1,6 @@
 ﻿public class Lapis_Ore : Block
 {
-    public override string[] randomTextures { get; } = {"block_lapis_ore", "block_lapis_ore_1"};
+    public override string[] randomTextures { get; } = {"lapis_ore", "lapis_ore_1"};
 
     public override float breakTime { get; } = 6;
 

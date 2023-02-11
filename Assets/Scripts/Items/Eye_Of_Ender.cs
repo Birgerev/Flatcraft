@@ -1,7 +1,5 @@
 public class Eye_Of_Ender : Item
 {
-    public override string texture { get; set; } = "item_eye_of_ender";
-
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
         base.InteractRight(player, loc, firstFrameDown);
