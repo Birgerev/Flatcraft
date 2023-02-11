@@ -129,18 +129,35 @@ public class OverworldGenerator : WorldGenerator
         Material mat = loc.GetMaterial();
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
 
-        Material[] flowerMaterials = {Material.Red_Flower};
-        Material[] vegetationMaterials = {Material.Grass};
+        Material[] flowerMaterials = {Material.Red_Flower, Material.Yellow_Flower};
         
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
         {
-            //Vegetation
+            //Sugar canes
+            if (loc.y == SeaLevel + 1)
+            {
+                Location belowLeft = loc + new Location(-1, -1);
+                Location belowRight = loc + new Location(1, -1);
+                
+                if(belowLeft.GetMaterial() == Material.Water || belowRight.GetMaterial() == Material.Water)
+                    if (r.Next(0, 100) <= 25)
+                        return new BlockState(Material.Sugar_Cane);
+            }
+            
+            //Grass
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
                 if (r.Next(0, 100) <= 50)
-                    return new BlockState(vegetationMaterials[r.Next(0, vegetationMaterials.Length)]);
+                    return new BlockState(Material.Grass);
+            
+            //Tall grass
+            if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
+                biome.name == "plains")
+                if (r.Next(0, 100) <= 20)
+                    return new BlockState(Material.Tall_Grass);
 
+            //Flowers
             if (biome.name == "forest" || biome.name == "forest_hills" || biome.name == "birch_forest" ||
                 biome.name == "plains")
                 if (r.Next(0, 100) <= 10)
