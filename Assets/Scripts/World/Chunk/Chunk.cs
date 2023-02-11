@@ -365,7 +365,14 @@ public class Chunk : NetworkBehaviour
             if (block == null || block.transform == null)
                 continue;
 
-            block.GeneratingTick();
+            try
+            {
+                block.GeneratingTick();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error in Block:GeneratingTick() caught: " + e.Message + e.StackTrace);
+            }
         }
     }
 
@@ -389,7 +396,7 @@ public class Chunk : NetworkBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Error in Block:Initialize(): " + e.Message + e.StackTrace);
+                Debug.LogError("Error in Block:Initialize() caught: " + e.Message + e.StackTrace);
             }
 
             i++;
