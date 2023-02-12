@@ -134,7 +134,7 @@ public class MultiplayerManager : NetworkManager
     private static void CreateSteamLobby()
     {
         Debug.Log("Creating steam lobby");
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, multiplayerManager.maxConnections);
+        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, singleton.maxConnections);
     }
 
     public static async void JoinGameAsync(CSteamID lobbyId)
