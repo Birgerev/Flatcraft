@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using Steamworks;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+
+#if !DISABLESTEAMWORKS
+using Steamworks;
+#endif
 
 public class MultiplayerMenu : MonoBehaviour
 {
-    public CSteamID selectedLobby;
-
     [Header("Prefabs")]
     public GameObject friendsWorldButtonPrefab;
     
@@ -16,6 +14,16 @@ public class MultiplayerMenu : MonoBehaviour
     public Button playButton;
     public Button cancelButton;
     public Transform friendWorldsContainer;
+    
+    
+    public void Cancel()
+    {
+        Destroy(gameObject);
+    }
+    
+
+#if !DISABLESTEAMWORKS
+    public CSteamID selectedLobby;
     
     // Start is called before the first frame update
     void Awake()
@@ -79,9 +87,5 @@ public class MultiplayerMenu : MonoBehaviour
         MultiplayerManager.JoinGameAsync(selectedLobby);
         LoadingMenu.Create(LoadingMenuType.ConnectServer);
     }
-    
-    public void Cancel()
-    {
-        Destroy(gameObject);
-    }
+#endif
 }

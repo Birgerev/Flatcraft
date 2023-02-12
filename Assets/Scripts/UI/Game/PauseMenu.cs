@@ -1,6 +1,9 @@
 ﻿using Mirror;
-using Steamworks;
 using UnityEngine;
+
+#if !DISABLESTEAMWORKS
+using Steamworks;
+#endif
 
 public class PauseMenu : MonoBehaviour
 {
@@ -22,8 +25,10 @@ public class PauseMenu : MonoBehaviour
     
     public void Invite()
     {
+#if !DISABLESTEAMWORKS
         if(SteamManager.Initialized)
             SteamFriends.ActivateGameOverlayInviteDialog(((MultiplayerManager)NetworkManager.singleton).lobbyId);
+#endif
     }
 
     public void Options()
