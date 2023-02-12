@@ -14,25 +14,25 @@ public class MultiplayerMenu : MonoBehaviour
     public Button playButton;
     public Button cancelButton;
     public Transform friendWorldsContainer;
-    
-    
+
     public void Cancel()
     {
         Destroy(gameObject);
     }
     
-
-#if !DISABLESTEAMWORKS
-    public CSteamID selectedLobby;
-    
     // Start is called before the first frame update
     void Awake()
     {
-        playButton.onClick.AddListener(Play);
         cancelButton.onClick.AddListener(Cancel);
         
+#if !DISABLESTEAMWORKS
+        playButton.onClick.AddListener(Play);
         InvokeRepeating(nameof(Refresh), 0, 5);
+#endif
     }
+
+#if !DISABLESTEAMWORKS
+    public CSteamID selectedLobby;
 
 
     public void Refresh()
