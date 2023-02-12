@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using Steamworks;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+
+#if !DISABLESTEAMWORKS
+using Steamworks;
+#endif
 
 public class SteamInviteJoinManager : MonoBehaviour
 {
+#if !DISABLESTEAMWORKS
     protected Callback<GameLobbyJoinRequested_t> lobbyJoinRequested;
     
     private void Start() {
@@ -18,4 +19,5 @@ public class SteamInviteJoinManager : MonoBehaviour
         Debug.Log("Accepted steam UI overlay invite, joining friends lobby!");
         MultiplayerManager.JoinGameAsync(callback.m_steamIDLobby);
     }
+#endif
 }
