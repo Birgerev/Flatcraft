@@ -54,7 +54,8 @@ public class DroppedItem : Entity
             Remove();
 
         if (isOnGround)
-            GetComponent<Rigidbody2D>().velocity *= 0.95f;
+            GetComponent<Rigidbody2D>().velocity *= 0.93f;
+        //TODO hitbox
 
         CheckTrigger();
     }
@@ -62,7 +63,7 @@ public class DroppedItem : Entity
     [Server]
     private void CheckTrigger()
     {
-        if (Time.time % 1f - Time.deltaTime > 0 || dead)
+        if (Time.time % .2f - Time.deltaTime > 0 || dead)
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
