@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4139658264260717356}
   - component: {fileID: 4139658264260717357}
-  - component: {fileID: 6192640876098220377}
+  - component: {fileID: 2109593814567552473}
   m_Layer: 0
   m_Name: Multiplayer Manager
   m_TagString: Untagged
@@ -52,7 +52,7 @@ MonoBehaviour:
   sendRate: 60
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 6192640876098220377}
+  transport: {fileID: 2109593814567552473}
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
@@ -70,7 +70,7 @@ MonoBehaviour:
   - Prefabs/Inventories
   WorldManagerPrefab: {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900,
     type: 3}
---- !u!114 &6192640876098220377
+--- !u!114 &2109593814567552473
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -79,10 +79,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 4139658264260717359}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6e55fca1f4e4844593a3dd65a3ecb39, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Channels: 0200000001000000
-  Timeout: 25
-  AllowSteamRelay: 1
-  UseNextGenSteamNetworking: 0
+  Port: 630
+  DualMode: 1
+  NoDelay: 1
+  Interval: 10
+  Timeout: 10000
+  FastResend: 2
+  SendWindowSize: 4096
+  ReceiveWindowSize: 4096
+  MaxRetransmit: 40
+  MaximizeSocketBuffers: 1
+  ReliableMaxMessageSize: 298449
+  UnreliableMaxMessageSize: 1199
+  debugLog: 0
+  statisticsGUI: 0
+  statisticsLog: 0
