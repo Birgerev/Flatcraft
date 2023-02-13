@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using Steamworks;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
+
+#if !DISABLESTEAMWORKS
+using Steamworks;
+#endif
 
 public class FriendsWorldButton : MonoBehaviour
 {
+#if !DISABLESTEAMWORKS
     private const float DoubleClickMaxTime = 0.3f;
     public CSteamID lobbyId;
     public CSteamID friendId;
@@ -49,4 +49,5 @@ public class FriendsWorldButton : MonoBehaviour
 
         _lastClickTime = Time.time;
     }
+#endif
 }

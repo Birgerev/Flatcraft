@@ -1,6 +1,9 @@
 using Mirror;
-using Steamworks;
 using UnityEngine;
+
+#if !DISABLESTEAMWORKS
+using Steamworks;
+#endif
 
 public class PlayerInstance : NetworkBehaviour
 {
@@ -24,7 +27,11 @@ public class PlayerInstance : NetworkBehaviour
 
         Debug.Log("Starting local player instance");
         localPlayerInstance = this;
+        
+#if !DISABLESTEAMWORKS
         ChangeSteamId(SteamUser.GetSteamID().m_SteamID);
+#endif
+        
         RequestJoinMessage();
     }
 
@@ -64,9 +71,10 @@ public class PlayerInstance : NetworkBehaviour
 
     public string GetPlayerName()
     {
-        if (!SteamManager.Initialized)
-            return "Steve";
-        
+#if !DISABLESTEAMWORKS
         return SteamFriends.GetFriendPersonaName((CSteamID)steamId);
+#endif
+        
+        return "Steve";
     }
 }
