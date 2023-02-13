@@ -466,6 +466,9 @@ public class Chunk : NetworkBehaviour
         if(biome.spawnDefaultOverworldAnimals)
             possibleAnimals.AddRange(DefaultOverworldAnimals);
         
+        if(possibleAnimals.Count == 0)
+            return;
+        
         //Choose a random animal type for this chunk
         string entityType = possibleAnimals[r.Next(0, possibleAnimals.Count)];
         for (int amount = 0; amount < 4; amount++)
