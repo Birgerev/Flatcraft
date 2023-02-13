@@ -27,6 +27,6 @@ public class BackgroundBlock : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 
-        spriteRenderer.sprite = new ItemStack(material).GetSprite();
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/block/" + material.ToString());
     }
 }
