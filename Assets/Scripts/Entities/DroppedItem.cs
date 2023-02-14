@@ -63,7 +63,7 @@ public class DroppedItem : Entity
     [Server]
     private void CheckTrigger()
     {
-        if (Time.time % .2f - Time.deltaTime > 0 || dead)
+        if (dead || Time.frameCount % 4 != 0)
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
