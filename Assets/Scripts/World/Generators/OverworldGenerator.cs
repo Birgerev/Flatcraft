@@ -142,7 +142,7 @@ public class OverworldGenerator : WorldGenerator
                 
                 if(belowLeft.GetMaterial() == Material.Water || belowRight.GetMaterial() == Material.Water)
                     if (r.Next(0, 100) <= 25)
-                        return new BlockState(Material.Sugar_Cane);
+                        return new BlockState(Material.Structure_Block, new BlockData("structure=Sugar_Cane"));
             }
             
             //Grass
@@ -193,6 +193,7 @@ public class OverworldGenerator : WorldGenerator
             if (biome.name == "desert")
                 if (r.Next(0, 100) <= 5)
                     return new BlockState(Material.Structure_Block, new BlockData("structure=Cactus"));
+            //TODO streamline cactus & sugarcane generation
             
             //Desert Temple
             if (biome.name == "desert")
@@ -236,7 +237,7 @@ public class OverworldGenerator : WorldGenerator
             
             //Generate Dungeon
             if (r.NextDouble() < DungeonChance)
-                return new BlockState(Material.Structure_Block, new BlockData("structure=Dungeon"));
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Dungeon"));//Generate floors separately
             
             //Generate Mineshaft
             if (r.NextDouble() < MineshaftChance && loc.y > 30 && loc.y < 50)
