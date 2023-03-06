@@ -17,13 +17,13 @@ public class CreateWorldMenu : MonoBehaviour
 
     public World world = new World();
 
-    private bool randomSeed = false;
-    private bool disableInput;
+    private bool _useRandomSeed = false;
+    private bool _disableInput;
     
     // Update is called once per frame
     private void Update()
     {
-        if (disableInput)
+        if (_disableInput)
             return;
 
         worldTemplateButtonText.text = "Template: " + world.template.ToString();
@@ -36,8 +36,8 @@ public class CreateWorldMenu : MonoBehaviour
         //Assign seed
         bool seedFieldEmpty = (seedField.text.Length == 0);
         if (!seedFieldEmpty)
-            world.seed = int.Parse(seedField.text);
-        randomSeed = seedFieldEmpty;
+            world.seed = seedField.text.GetHashCode();
+        _useRandomSeed = seedFieldEmpty;
     }
 
     private void FetchNameField()
@@ -77,10 +77,10 @@ public class CreateWorldMenu : MonoBehaviour
 
     public void Create()
     {
-        disableInput = true;
+        _disableInput = true;
 
         //Create random seed if seed field is empty
-        if (randomSeed)
+        if (_useRandomSeed)
             world.seed = new Random().Next();
 
         //Save world

@@ -724,13 +724,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 715561473303728934, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
-      propertyPath: m_ContentType
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 715561473303728934, guid: b692bf6afcf0230498b9685a3aece538,
-        type: 3}
       propertyPath: m_KeyboardType
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 715561473303728934, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
@@ -740,7 +735,7 @@ PrefabInstance:
     - target: {fileID: 715561473303728934, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
       propertyPath: m_CharacterValidation
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2228476690500408501, guid: b692bf6afcf0230498b9685a3aece538,
         type: 3}
