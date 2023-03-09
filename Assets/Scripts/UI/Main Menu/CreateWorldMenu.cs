@@ -34,10 +34,11 @@ public class CreateWorldMenu : MonoBehaviour
     private void FetchSeedField()
     {
         //Assign seed
-        bool seedFieldEmpty = (seedField.text.Length == 0);
-        if (!seedFieldEmpty)
+        bool isSeedFieldEmpty = (seedField.text.Length == 0);
+        if (!isSeedFieldEmpty)
             world.seed = seedField.text.GetHashCode();
-        _useRandomSeed = seedFieldEmpty;
+
+        _useRandomSeed = isSeedFieldEmpty;
     }
 
     private void FetchNameField()
