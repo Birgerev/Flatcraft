@@ -2,7 +2,7 @@
   "dependencies": {
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.burst": "1.6.6",
-    "com.unity.collab-proxy": "2.0.0",
+    "com.unity.collab-proxy": "2.0.1",
     "com.unity.ext.nunit": "1.0.6",
     "com.unity.ide.rider": "3.0.18",
     "com.unity.ide.vscode": "1.2.5",
