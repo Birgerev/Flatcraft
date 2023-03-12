@@ -25,7 +25,7 @@ public class FallingBlock : Entity
     [Client]
     public override void ClientInitialize()
     {
-        GetRenderer().sprite = new ItemStack(material).GetSprite();
+        GetRenderer().sprite = Resources.Load<Sprite>("Sprites/block/" + material.ToString());//TODO test
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 
         base.ClientInitialize();
