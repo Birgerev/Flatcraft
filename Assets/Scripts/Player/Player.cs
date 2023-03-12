@@ -595,6 +595,7 @@ public class Player : LivingEntity
             {
                 RequestInteract(GetBlockedMouseLocation(), 0, false);
                 lastBlockInteractionTime = Time.time;
+                ShakeClientCamera(10f * Time.deltaTime);
             }
         }
     }
@@ -652,7 +653,7 @@ public class Player : LivingEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
         
-        ShakeOwnerCamera(.5f);
+        ShakeOwnersCamera(.5f);
     }
     
     [Command]
@@ -821,15 +822,22 @@ public class Player : LivingEntity
     {
         base.Damage(damage);
 
-        ShakeOwnerCamera(5);
+        ShakeOwnersCamera(5);
     }
 
     [ClientRpc]
-    public void ShakeOwnerCamera(float shakeValue)
+    public void ShakeOwnersCamera(float shakeValue)
     {
         if (isOwned)
-            CameraController.instance.currentShake = shakeValue;
+            ShakeClientCamera(shakeValue);
     }
+    
+    [Client]
+    public void ShakeClientCamera(float shakeValue)
+    {
+        CameraController.instance.currentShake = shakeValue;
+    }
+
 
     [ClientRpc]
     public void PlayEatEffect(Color[] colors)
