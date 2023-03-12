@@ -636,8 +636,7 @@ public class Player : LivingEntity
         Entity entity = entityObj.GetComponent<Entity>();
         bool criticalHit = false;
         float damage = GetInventory().GetSelectedItem().GetItemEntityDamage();
-
-
+        
         if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
@@ -653,7 +652,7 @@ public class Player : LivingEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
         
-        ShakeOwnerCamera(1);
+        ShakeOwnerCamera(.5f);
     }
     
     [Command]
@@ -826,7 +825,7 @@ public class Player : LivingEntity
     }
 
     [ClientRpc]
-    public void ShakeOwnerCamera(int shakeValue)
+    public void ShakeOwnerCamera(float shakeValue)
     {
         if (isOwned)
             CameraController.instance.currentShake = shakeValue;
