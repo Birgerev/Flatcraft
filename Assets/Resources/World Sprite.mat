@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sprite Custom
+  m_Name: World Sprite
   m_Shader: {fileID: -6465566751694194690, guid: 93b4a6b50bdb91246a08ee8d0e2673cc,
     type: 3}
   m_ValidKeywords: []
