@@ -839,7 +839,7 @@ MonoBehaviour:
   moon: {fileID: 1232150066}
 --- !u!95 &177703414
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -856,7 +856,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &190638441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10820,8 +10821,8 @@ MonoBehaviour:
   maxRoll: 5
   zoomDampTime: 1
   roofCheckMaxDistance: 5
-  normalFov: 13
-  zoomedFov: 9
+  normalFov: 12
+  zoomedFov: 8
   mousePanningMagnitude: {x: 1.5, y: 1.5}
   currentShake: 0
 --- !u!1001 &1982835370
