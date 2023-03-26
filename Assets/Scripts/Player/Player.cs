@@ -309,9 +309,12 @@ public class Player : LivingEntity
             lastDoubleTapSprintTap = Time.time;
         }
 
-        //Debug disable lighting
-        if (Debug.isDebugBuild && Input.GetKeyDown(KeyCode.F4))
-            LightManager.instance.doLight = !LightManager.instance.doLight;
+        //Toggle Debug disabled lighting
+        if (Input.GetKeyDown(KeyCode.F4) && Debug.isDebugBuild)
+        {
+            LightManager.DoLight = !LightManager.DoLight;
+            LightManager.UpdateAllLight();
+        }
 
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))

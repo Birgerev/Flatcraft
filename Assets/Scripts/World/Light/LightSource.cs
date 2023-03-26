@@ -6,9 +6,11 @@ public class LightSource : MonoBehaviour
     public Vector3 position;
     public Location location;
 
-    public void UpdateLight()
+    public void UpdateLightWithinReach()
     {
-        LightManager.UpdateLightInArea(location + new Location(-15, -15), location + new Location(15, 15));
+        LightManager.UpdateLightInArea(
+            location + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel), 
+            location + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel));
     }
 
     public void UpdateLightLevel(int value, bool updateLight)
@@ -18,12 +20,12 @@ public class LightSource : MonoBehaviour
         bool chunkLoaded = new ChunkPosition(location).IsChunkLoaded();
 
         if (updateLight && chunkLoaded)
-            UpdateLight();
+            UpdateLightWithinReach();
     }
 
     public static LightSource Create(Transform parent)
     {
-        GameObject obj = Instantiate(LightManager.instance.lightSourcePrefab, parent);
+        GameObject obj = Instantiate(LightManager.Instance.lightSourcePrefab, parent);
         LightSource source = obj.GetComponent<LightSource>();
         obj.transform.localPosition = Vector3.zero;
 

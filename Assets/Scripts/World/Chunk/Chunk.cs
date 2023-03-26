@@ -160,7 +160,7 @@ public class Chunk : NetworkBehaviour
     public void GenerateSunlightSources()
     {
         for (int x = 0; x < Width; x++)
-            LightManager.UpdateSunlightInColumn(new BlockColumn(chunkPosition.worldX + x, chunkPosition.dimension),
+            LightManager.UpdateSunlightInColumn(new LightColumn(chunkPosition.worldX + x, chunkPosition.dimension),
                 false);
     }
 
@@ -784,7 +784,7 @@ public class Chunk : NetworkBehaviour
         if (isLoaded)
         {
             if (doesBlockChangeImpactSunlight)
-                LightManager.UpdateSunlightInColumn(new BlockColumn(location.x, chunkPosition.dimension), true);
+                LightManager.UpdateSunlightInColumn(new LightColumn(location.x, chunkPosition.dimension), true);
             StartCoroutine(UpdateBackgroundBlockColumn(location.x, true));
             ScheduleBlockLightUpdate(location);
         }
