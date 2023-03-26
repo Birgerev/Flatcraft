@@ -19,7 +19,7 @@ public class Inventory : NetworkBehaviour
 
     public GameObject inventoryMenuPrefab;
 
-    public SyncList<ItemStack> items = new SyncList<ItemStack>();
+    public readonly SyncList<ItemStack> items = new SyncList<ItemStack>();
 
     private void Start()
     {

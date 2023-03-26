@@ -7,9 +7,7 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-
-    public virtual string texture { get; set; } = "";
-    public virtual string[] alternativeTextures { get; } = { };
+    public virtual string[] randomTextures { get; } = { };
     public virtual float changeTextureTime { get; } = 0;
 
     public virtual bool solid { get; set; } = true;
@@ -144,7 +142,7 @@ public class Block : MonoBehaviour
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollisionBlock");
+        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollision");
 
         GetComponent<Collider2D>().isTrigger = trigger;
         GetComponent<BoxCollider2D>().size =
@@ -153,13 +151,11 @@ public class Block : MonoBehaviour
                 : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
 
-    public Color GetRandomColourFromTexture()
+    public Color[] GetColorsInTexture()
     {
         Texture2D texture = GetSprite().texture;
-        Color[] pixels = texture.GetPixels();
-        Random random = new Random(DateTime.Now.GetHashCode());
 
-        return pixels[random.Next(pixels.Length)];
+        return texture.GetPixels();
     }
 
     public void RotateTowardsPlayer()
@@ -242,8 +238,7 @@ public class Block : MonoBehaviour
 
         blockHealth = breakTime;
     }
-
-
+    
     public virtual void Break()
     {
         Break(true);
@@ -256,20 +251,9 @@ public class Block : MonoBehaviour
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
-        Random r = new Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //Spawn Particles
-        {
-            Particle part = Particle.Spawn();
-
-            part.transform.position = location.GetPosition() +
-                                      new Vector2((float) r.NextDouble() - 0.5f, (float) r.NextDouble() - 0.5f);
-            part.color = GetRandomColourFromTexture();
-            part.doGravity = true;
-            part.velocity = Vector2.zero;
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-
+        //Play block break effect to all clients
+        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
+            
         if (GetComponentInChildren<LightSource>() != null)
             LightManager.DestroySource(GetComponentInChildren<LightSource>());
 
@@ -297,28 +281,30 @@ public class Block : MonoBehaviour
 
     protected Sprite GetSprite()
     {
-        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+        return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
     }
 
     public virtual string GetTexture()
     {
-        if (alternativeTextures.Length > 0)
+        if (randomTextures.Length > 0) 
+            return GetRandomTexture();
+        
+        return GetMaterial().ToString();
+    }
+
+    private string GetRandomTexture()
+    {
+        //Default get a random alternative texture based on location
+        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, randomTextures.Length);
+
+        //Textures that change over time
+        if (changeTextureTime > 0)
         {
-            //Default get a random alternative texture based on location
-            int textureIndex = new Random(SeedGenerator.SeedByLocation(location)).Next(0, alternativeTextures.Length);
-
-            //Textures that change over time
-            if (changeTextureTime > 0)
-            {
-                float totalTimePerTextureLoop = changeTextureTime * alternativeTextures.Length;
-                textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
-            }
-
-            texture = alternativeTextures[textureIndex];
+            float totalTimePerTextureLoop = changeTextureTime * randomTextures.Length;
+            textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
         }
 
-        //return
-        return texture;
+        return randomTextures[textureIndex];
     }
 
     public Material GetMaterial()

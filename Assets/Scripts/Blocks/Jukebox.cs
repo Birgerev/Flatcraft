@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Jukebox : Block
 {
-    public override string texture { get; set; } = "block_jukebox";
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 6;
 

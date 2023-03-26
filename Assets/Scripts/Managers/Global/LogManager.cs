@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +16,10 @@ public class LogManager : MonoBehaviour
 
     void OnEnable()
     {
+        //Clear Log
+        File.Delete(logPath);
+        
         Application.logMessageReceived += Log;
-        DontDestroyOnLoad(gameObject);
     }
 
     void OnDisable()
@@ -40,3 +42,4 @@ public class LogManager : MonoBehaviour
         writer.Close();
     }
 }
+*/

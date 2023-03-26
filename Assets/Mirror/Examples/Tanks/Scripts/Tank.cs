@@ -7,8 +7,8 @@ namespace Mirror.Examples.Tanks
     {
         [Header("Components")]
         public NavMeshAgent agent;
-        public Animator animator;
-        public TextMesh healthBar;
+        public Animator  animator;
+        public TextMesh  healthBar;
         public Transform turret;
 
         [Header("Movement")]
@@ -17,7 +17,7 @@ namespace Mirror.Examples.Tanks
         [Header("Firing")]
         public KeyCode shootKey = KeyCode.Space;
         public GameObject projectilePrefab;
-        public Transform projectileMount;
+        public Transform  projectileMount;
 
         [Header("Stats")]
         [SyncVar] public int health = 4;
@@ -27,6 +27,9 @@ namespace Mirror.Examples.Tanks
             // always update health bar.
             // (SyncVar hook would only update on clients, not on server)
             healthBar.text = new string('-', health);
+            
+            // take input from focused window only
+            if(!Application.isFocused) return; 
 
             // movement for local player
             if (isLocalPlayer)

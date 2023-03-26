@@ -81,22 +81,31 @@ public struct ItemStack
         this.Amount = int.Parse(values[1]);
     }
 
-    public string GetTexture()
+    public string GetTexturePath()
     {
-        Type materialType = Type.GetType(material.ToString());
-        string texture = "invalid item class (not inheriting from Block nor Item)";
+        
+        Type type = Type.GetType(material.ToString());
+        if (type == null)
+        {
+            Debug.LogWarning("Tried getting texture for non existent Item: " + material);
+            return "";
+        }
 
-        if (materialType.IsSubclassOf(typeof(Block)))
-            texture = ((Block) Activator.CreateInstance(materialType)).texture;
-        else if (materialType.IsSubclassOf(typeof(Item)))
-            texture = ((Item) Activator.CreateInstance(materialType)).texture;
+        if (!type.IsSubclassOf(typeof(Block)))
+        {
+            return "Sprites/item/" + material;
+        }
 
-        return texture;
+        string blockItemPath = "Sprites/item/block_item/" + material;
+        if (Resources.Load<Sprite>(blockItemPath) != null)
+            return blockItemPath;
+        
+        return "Sprites/block/" + material;
     }
 
     public Sprite GetSprite()
     {
-        return Resources.Load<Sprite>("Sprites/" + GetTexture());
+        return Resources.Load<Sprite>(GetTexturePath());
     }
 
     public Color[] GetTextureColors()

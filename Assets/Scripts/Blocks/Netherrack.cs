@@ -1,6 +1,5 @@
 ﻿public class Netherrack : Block
 {
-    public override string texture { get; set; } = "block_netherrack";
     public override float breakTime { get; } = 2;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Pickaxe;

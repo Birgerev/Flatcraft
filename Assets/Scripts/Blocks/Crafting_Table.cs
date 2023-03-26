@@ -1,6 +1,5 @@
 ﻿public class Crafting_Table : InventoryContainer
 {
-    public override string texture { get; set; } = "block_crafting_table";
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 3;
 

@@ -1,7 +1,6 @@
 ﻿public class Gold_Ore : Block
 {
-    public override string texture { get; set; } = "block_gold_ore_0";
-    public override string[] alternativeTextures { get; } = {"block_gold_ore_0", "block_gold_ore_1"};
+    public override string[] randomTextures { get; } = {"gold_ore", "gold_ore_1"};
 
     public override float breakTime { get; } = 6;
 

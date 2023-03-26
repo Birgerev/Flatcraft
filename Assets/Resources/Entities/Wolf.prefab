@@ -298,7 +298,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f621d2c546d9eba4b8723933e6df8f13, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -321,7 +321,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_Sprite: {fileID: -9131693867516904373, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -343,8 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: 1
-  parentRenderer: {fileID: 4503540472401207469}
+  rendererToMimic: {fileID: 4503540472401207469}
 --- !u!1 &4526231899258673143
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,7 +400,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f621d2c546d9eba4b8723933e6df8f13, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -424,7 +423,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 2352447024195531709, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -527,7 +526,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f621d2c546d9eba4b8723933e6df8f13, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -550,7 +549,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: -182057704280641203, guid: 4f63785f43bbafe41b5073028977afc0,
     type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -572,8 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e77a2bd8630a0344910a7b5db52b224, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: 1
-  parentRenderer: {fileID: 4503540472401207469}
+  rendererToMimic: {fileID: 4503540472401207469}
 --- !u!1001 &7050218280984148764
 PrefabInstance:
   m_ObjectHideFlags: 0

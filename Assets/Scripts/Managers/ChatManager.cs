@@ -29,7 +29,7 @@ public class ChatManager : NetworkBehaviour
             return;
         }
 
-        AddMessage("<" + player.playerName + "> " + text);
+        AddMessage("<" + player.GetPlayerName() + "> " + text);
     }
 
     [Server]

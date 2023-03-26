@@ -5,6 +5,9 @@ using Random = System.Random;
 
 public class DroppedItem : Entity
 {
+    private static readonly Vector2 SpawnVelocity = new Vector2(1.5f, 3.5f);
+    private const float BobAmplitude = 0.1f;
+    private const float BobOffset = 0.35f;
     //Entity State
     private float cosIndex;
     //Entity Properties
@@ -26,6 +29,22 @@ public class DroppedItem : Entity
     }
 
     [Server]
+    public override void Spawn()
+    {
+        base.Spawn();
+    
+        //If entity has no velocity when spawned,
+        if (GetComponent<Rigidbody2D>().velocity.magnitude < 0.1f)
+        {
+            //Apply velocity left or right randomly
+            Vector2 velocity = SpawnVelocity;
+            if (new Random().NextDouble() < 0.5f)
+                velocity.x *= -1;
+            GetComponent<Rigidbody2D>().velocity += velocity;
+        }
+    }
+
+    [Server]
     public override void Tick()
     {
         base.Tick();
@@ -35,7 +54,8 @@ public class DroppedItem : Entity
             Remove();
 
         if (isOnGround)
-            GetComponent<Rigidbody2D>().velocity *= 0.95f;
+            GetComponent<Rigidbody2D>().velocity *= 0.93f;
+        //TODO hitbox
 
         CheckTrigger();
     }
@@ -43,7 +63,7 @@ public class DroppedItem : Entity
     [Server]
     private void CheckTrigger()
     {
-        if (Time.time % 1f - Time.deltaTime > 0 || dead)
+        if (dead || Time.frameCount % 4 != 0)
             return;
 
         Collider2D[] cols = Physics2D.OverlapBoxAll(triggerOffset + (Vector2)transform.position, triggerSize, 0);
@@ -79,10 +99,11 @@ public class DroppedItem : Entity
     [Client]
     public override void ClientUpdate()
     {
-        GetRenderer().sprite = item.GetSprite();
+        //Item color
+        GetRenderer().color = item.GetTextureColors()[0];
 
         //Bobbing
-        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * 0.1f) + 0.4f);
+        GetRenderer().transform.localPosition = new Vector3(0, (Mathf.Cos(cosIndex) * BobAmplitude) + BobOffset);
         cosIndex += 2f * Time.deltaTime;
 
         base.ClientUpdate();

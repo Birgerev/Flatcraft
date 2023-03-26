@@ -6,7 +6,7 @@ using UnityEngine;
 public class WorldManager : NetworkBehaviour
 {
     public static WorldManager instance;
-    public static World world;
+    public static World world = new World("multiplayerUnassigned", 0);
 
     public const float DayLength = 60 * 20;
 

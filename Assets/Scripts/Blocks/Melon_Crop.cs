@@ -2,14 +2,13 @@
 
 public class Melon_Crop : Crop
 {
-    public override string texture { get; set; } = "block_melon_crop_5";
-    private string melonLeftTexture { get; set; } = "block_melon_crop_left";
-    private string melonRightTexture { get; set; } = "block_melon_crop_right";
+    private string melonLeftTexture { get; set; } = "melon_crop_left";
+    private string melonRightTexture { get; set; } = "melon_crop_right";
 
     public override string[] crop_textures { get; } =
     {
-        "block_melon_crop_0", "block_melon_crop_1", "block_melon_crop_2", "block_melon_crop_3", 
-        "block_melon_crop_4", "block_melon_crop_5"
+        "melon_crop", "melon_crop_1", "melon_crop_2", "melon_crop_3", 
+        "melon_crop_4", "melon_crop_5"
     };
 
     public override Material seed { get; } = Material.Melon_Seeds;
@@ -17,7 +16,7 @@ public class Melon_Crop : Crop
     
     private List<Material> viableMelonBlocks { get; } = new List<Material>
     {
-        Material.Grass, Material.Dirt, Material.Farmland_Dry, Material.Farmland_Wet
+        Material.Grass_Block, Material.Dirt, Material.Farmland_Dry, Material.Farmland_Wet
     };
 
     public override void Tick()

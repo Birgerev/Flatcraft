@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class ScreenManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F11))

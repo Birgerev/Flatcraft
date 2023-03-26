@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Birch_Sapling : Block
 {
-    public override string texture { get; set; } = "block_birch_sapling";
-
     public override float averageRandomTickDuration { get; } = 20 * 60;
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.01f;
@@ -26,7 +24,7 @@ public class Birch_Sapling : Block
         base.Tick();
         Material matBelow = (location + new Location(0, -1)).GetMaterial();
 
-        if (matBelow != Material.Grass && matBelow != Material.Dirt)
+        if (matBelow != Material.Grass_Block && matBelow != Material.Dirt)
         {
             Break();
         }

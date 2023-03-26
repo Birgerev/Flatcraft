@@ -6,7 +6,7 @@ using Mirror;
 using UnityEngine;
 using Random = System.Random;
 
-public class Player : HumanEntity
+public class Player : LivingEntity
 {
     public static float interactionsPerPerSecond = 4.5f;
 
@@ -107,16 +107,13 @@ public class Player : HumanEntity
         CheckStarvationDamage();
         ClimbableSound();
 
-        //Sprint particles    
-        if (sprinting && isOnGround)
-            MovementParticlesEffect(0.2f);
     }
 
     [Client]
     public override void ClientUpdate()
     {
         //Crosshair
-        if (hasAuthority)
+        if (isOwned)
         {
             PerformInput();
             CheckActionBarUpdate();
@@ -144,13 +141,13 @@ public class Player : HumanEntity
     [ClientRpc]
     public void TeleportOwningClientPlayer(Location loc)
     {
-        if (hasAuthority)
+        if (isOwned)
             Location = loc;
     }
 
     public override void ProcessMovement()
     {
-        if (!hasAuthority)
+        if (!isOwned)
             return;
 
         base.ProcessMovement();
@@ -175,7 +172,7 @@ public class Player : HumanEntity
     [Client]
     public override void UpdateNameplate()
     {
-        if (hasAuthority)
+        if (isOwned)
         {
             nameplate.text = "";
             return;
@@ -598,6 +595,7 @@ public class Player : HumanEntity
             {
                 RequestInteract(GetBlockedMouseLocation(), 0, false);
                 lastBlockInteractionTime = Time.time;
+                ShakeClientCamera(10f * Time.deltaTime);
             }
         }
     }
@@ -639,8 +637,7 @@ public class Player : HumanEntity
         Entity entity = entityObj.GetComponent<Entity>();
         bool criticalHit = false;
         float damage = GetInventory().GetSelectedItem().GetItemEntityDamage();
-
-
+        
         if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
@@ -655,6 +652,8 @@ public class Player : HumanEntity
 
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
+        
+        ShakeOwnersCamera(.5f);
     }
     
     [Command]
@@ -696,8 +695,8 @@ public class Player : HumanEntity
     {
         ItemStack droppedItem = item;
         
-        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 0)
-            , new Vector2(3 * (facingLeft ? -1 : 1), 0));
+        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 1)
+            , new Vector2(3 * (facingLeft ? -1 : 1), 0f));
     }
 
     [Server]
@@ -787,7 +786,7 @@ public class Player : HumanEntity
     [ClientRpc]
     public override void Knockback(Vector2 direction)
     {
-        if (hasAuthority)
+        if (isOwned)
             ClientKnockback(direction);
     }
 
@@ -799,7 +798,7 @@ public class Player : HumanEntity
     [ClientRpc]
     public void DeathMenuEffect()
     {
-        if (hasAuthority)
+        if (isOwned)
             DeathMenu.active = true;
     }
 
@@ -823,15 +822,22 @@ public class Player : HumanEntity
     {
         base.Damage(damage);
 
-        PlayClientCameraShakeEffect();
+        ShakeOwnersCamera(5);
     }
 
     [ClientRpc]
-    public void PlayClientCameraShakeEffect()
+    public void ShakeOwnersCamera(float shakeValue)
     {
-        if (hasAuthority)
-            CameraController.instance.shake = 5;
+        if (isOwned)
+            ShakeClientCamera(shakeValue);
     }
+    
+    [Client]
+    public void ShakeClientCamera(float shakeValue)
+    {
+        CameraController.instance.currentShake = shakeValue;
+    }
+
 
     [ClientRpc]
     public void PlayEatEffect(Color[] colors)
@@ -839,7 +845,7 @@ public class Player : HumanEntity
         Random r = new Random();
         for (int i = 0; i < r.Next(6, 10); i++) //SpawnParticles
         {
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
             Color color = colors[r.Next(0, colors.Length)];
             part.transform.position = Location.GetPosition() + new Vector2(0, 0.2f);
             part.color = color;
@@ -851,7 +857,7 @@ public class Player : HumanEntity
         }
     }
 
-
+    [Server]
     private void CalculateFlip()
     {
         if (Mathf.Abs(GetVelocity().x) > 0.1f)

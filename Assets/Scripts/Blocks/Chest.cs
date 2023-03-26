@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class Chest : InventoryContainer
 {
-    public static string closed_texture = "block_chest_closed";
-    public static string open_texture = "block_chest_open";
-    public override string texture { get; set; } = closed_texture;
+    public static string closed_texture = "chest";
+    public static string open_texture = "chest_open";
     public override bool solid { get; set; } = false;
     public override bool rotateX { get; } = true;
 

@@ -4,7 +4,6 @@ using Random = System.Random;
 
 public class Structure_Block : Block
 {
-    public override string texture { get; set; } = "block_structure";
     public override float breakTime { get; } = 10000000;
     private bool hasBeenTicked = false;
 
@@ -31,7 +30,7 @@ public class Structure_Block : Block
                     return;
                 }
                 TextAsset structure =
-                    structures[new Random(SeedGenerator.SeedByLocation(location)).Next(0, structures.Length)];
+                    structures[new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, structures.Length)];
 
                 BlockState replaceState = new BlockState(Material.Air);
 

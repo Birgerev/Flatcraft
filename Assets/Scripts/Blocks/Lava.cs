@@ -2,10 +2,9 @@
 
 public class Lava : Liquid
 {
-    public override string texture { get; set; } = "block_lava_3";
     public override string[] liquidTextures { get; } =
     {
-        "block_lava_0", "block_lava_1", "block_lava_2", "block_lava_3"
+        "lava", "lava_1", "lava_2", "lava_3"
     };
 
     public override int maxLiquidLevel { get; } = 4;
@@ -32,13 +31,13 @@ public class Lava : Liquid
             if (loc.y <= 0 || loc.y > Chunk.Height)
                 continue;
 
-            Block blockBelow = (loc + new Location(0, -1)).GetBlock();
+            Location blockBelow = (loc + new Location(0, -1));
 
             //If target loc isn't empty
             if (loc.GetMaterial() != Material.Air)
                 continue;
             //If below target loc is empty or isn't flammable
-            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.isFlammable)
+            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.GetBlock().isFlammable)
                 continue;
 
             //Otherwise, ignite

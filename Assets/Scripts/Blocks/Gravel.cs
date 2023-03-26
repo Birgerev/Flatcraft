@@ -3,7 +3,6 @@ using Random = System.Random;
 
 public class Gravel : Block
 {
-    public override string texture { get; set; } = "block_gravel";
     public override float breakTime { get; } = 0.75f;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
@@ -11,7 +10,7 @@ public class Gravel : Block
 
     public override void Drop()
     {
-        if (new Random(SeedGenerator.SeedByLocation(location)).NextDouble() <= 0.1f)
+        if (new Random(SeedGenerator.SeedByWorldLocation(location)).NextDouble() <= 0.1f)
             new ItemStack(Material.Flint, 1).Drop(location);
         else
             new ItemStack(Material.Gravel, 1).Drop(location);

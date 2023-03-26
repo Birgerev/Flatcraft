@@ -1,6 +1,5 @@
 ﻿public class Ladder : Block
 {
-    public override string texture { get; set; } = "block_ladder";
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
     public override bool climbable { get; } = true;

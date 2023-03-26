@@ -8,7 +8,7 @@ public class Hoe : Tool
     
     protected override void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)
     {
-        if (loc.GetMaterial() == Material.Grass || loc.GetMaterial() == Material.Dirt)
+        if (loc.GetMaterial() == Material.Grass_Block || loc.GetMaterial() == Material.Dirt)
         {
             loc.SetMaterial(Material.Farmland_Dry).Tick();
             player.playerEntity.GetComponent<Player>().DoToolDurability();

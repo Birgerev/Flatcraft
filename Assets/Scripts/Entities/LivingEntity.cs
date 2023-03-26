@@ -36,7 +36,6 @@ public class LivingEntity : Entity
     private readonly float swimUpAcceleration = 45.0f;
     protected virtual float walkSpeed { get; } = 4.3f;
     protected virtual float stepSoundFrequencyMultiplier { get; } = 1.1f;
-    int checkDuration = 4;
 
     public virtual float maxHealth { get; } = 20;
 
@@ -75,10 +74,6 @@ public class LivingEntity : Entity
         if (controller != null)
             controller.Tick();
 
-        //Walking particles    
-        if (Mathf.Abs(GetVelocity().x) > 0.5f && isOnGround)
-            MovementParticlesEffect(0.05f);
-
         ProcessMovement();
         FallDamageCheck();
     }
@@ -97,6 +92,7 @@ public class LivingEntity : Entity
 
         UpdateAnimatorValues();
         UpdateNameplate();
+        ClientMovementParticleEffect();
     }
 
     [Server]
@@ -173,7 +169,7 @@ public class LivingEntity : Entity
 
     public void Walk(int direction)
     {
-        if (!hasAuthority && !isServer)
+        if (!isOwned && !isServer)
             return;
 
         if (GetVelocity().x < speed && GetVelocity().x > -speed)
@@ -196,7 +192,7 @@ public class LivingEntity : Entity
 
     public void Jump()
     {
-        if (!hasAuthority && !isServer)
+        if (!isOwned && !isServer)
             return;
 
         if (isOnGround && Time.time - lastJumpTime >= 0.3f)
@@ -253,10 +249,14 @@ public class LivingEntity : Entity
             if (damage >= 1)
             {
                 Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
-
-                FallDamageParticlesEffect();
-
+                
                 TakeFallDamage(damage);
+                
+                Block blockBelow = Location.LocationByPosition(transform.position - new Vector3(0, 0.2f))
+                    .GetBlock();
+                if(blockBelow != null)
+                    FallDamageParticlesEffect(blockBelow.location);
+                
             }
         }
 
@@ -265,55 +265,53 @@ public class LivingEntity : Entity
         else if (transform.position.y > highestYlevelsinceground)
             highestYlevelsinceground = transform.position.y;
     }
-
+    
     [ClientRpc]
-    private void FallDamageParticlesEffect()
+    private void FallDamageParticlesEffect(Location groundLocation)
     {
+        Block blockBelow = groundLocation.GetBlock();
+        Color[] textureColors = blockBelow.GetColorsInTexture();
         Random r = new Random();
-        Block blockBeneath = null;
-        for (int y = -1; blockBeneath == null && y > -3; y--)
+
+        //Spawn landing particles
+        for (int i = 0; i < 10; i++) 
         {
-            Block block = (Location + new Location(0, y)).GetBlock();
-            if (block != null)
-                blockBeneath = block;
-        }
+            Particle part = Particle.ClientSpawn();
 
-        if (blockBeneath == null)
-            return;
-
-        int particleAmount = r.Next(4, 8);
-        for (int i = 0; i < particleAmount; i++) //Spawn landing partickes
-        {
-            Particle part = Particle.Spawn();
-
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.transform.position = blockBelow.location.GetPosition() + new Vector2(0, 0.6f);
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
             part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
             part.maxAge = 1f + (float) r.NextDouble();
             part.maxBounces = 10;
         }
     }
-
-    [ClientRpc]
-    protected void MovementParticlesEffect(float chances)
+    
+    [Client]
+    protected void ClientMovementParticleEffect()
     {
+        if (!isOnGround)
+            return;
+
+        float walkParticleChance = 1.5f;
         Random r = new Random();
 
-        if (r.NextDouble() < chances)
+        if (r.NextDouble() < walkParticleChance * Time.deltaTime * Mathf.Abs(GetVelocity().x))
         {
             Block blockBeneath = (Location - new Location(0, 1)).GetBlock();
             if (blockBeneath == null)
                 return;
 
-            Particle part = Particle.Spawn();
+            Particle part = Particle.ClientSpawn();
+            Color[] textureColors = blockBeneath.GetColorsInTexture();
 
-            part.transform.position = blockBeneath.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = blockBeneath.GetRandomColourFromTexture();
+            part.transform.position = transform.position + new Vector3(0, 0.2f);
+            part.color = textureColors[r.Next(textureColors.Length)];
             part.doGravity = true;
-            part.velocity = -(GetVelocity() * 0.2f);
-            part.maxAge = (float) r.NextDouble();
-            part.maxBounces = 10;
+            part.velocity = new Vector2(
+                GetVelocity().x * -0.3f,
+                Mathf.Abs(GetVelocity().x) * 1.3f *(float)r.NextDouble());
+            part.maxAge = .4f + (float)r.NextDouble() * .6f;
         }
     }
 
@@ -321,7 +319,7 @@ public class LivingEntity : Entity
     public override void Hit(float damage, Entity source)
     {
         base.Hit(damage, source);
-
+        
         Knockback(transform.position - source.transform.position);
     }
 
@@ -413,25 +411,19 @@ public class LivingEntity : Entity
     [ClientRpc]
     public virtual void DeathSmokeEffect()
     {
-        Particle.Spawn_SmallSmoke(transform.position, Color.white);
+        Particle.ClientSpawnSmallSmoke(transform.position, Color.white);
     }
 
     [ClientRpc]
     public virtual void DamageNumberEffect(int damage, Color color)
     {
-        Particle.Spawn_Number(transform.position + new Vector3(1, 2), damage, color);
+        Particle.ClientSpawnNumber(transform.position + new Vector3(1, 2), damage, color);
     }
     
     private IEnumerator TurnRedByDamage()
     {
-        Color baseColor = GetRenderer().color;
-
-        for (int i = 0; i < 15; i++)
-        {
-            GetRenderer().color = damageColor;
-            yield return new WaitForSeconds(0.01f);
-        }
-
-        GetRenderer().color = baseColor;
+        GetRenderer().color = damageColor;
+        yield return new WaitForSeconds(0.2f);
+        GetRenderer().color = Color.white;
     }
 }

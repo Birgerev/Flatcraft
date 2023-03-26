@@ -1,25 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 
-public class Tall_Grass : Block
+public class Tall_Grass : Vegetation
 {
-    public override string texture { get; set; } = "block_tall_grass_0";
-
-    public override string[] alternativeTextures { get; } =
-        {"block_tall_grass_0", "block_tall_grass_1", "block_tall_grass_2"};
-
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool requiresGround { get; } = true;
-    public override bool isFlammable { get; } = true;
-
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
-
-
     public override ItemStack GetDrop()
     {
         if (new Random().NextDouble() <= 0.25f)
             return new ItemStack(Material.Wheat_Seeds, 1);
 
         return new ItemStack();
+    }
+
+    public override void GeneratingTick()
+    {
+        base.GeneratingTick();
+        
+        Location above = (location + new Location(0, 1));
+        above.SetMaterial(Material.Tall_Grass);
+    }
+
+    public override void Break(bool drop)
+    {
+        base.Break(drop);
+        
+        //If this block is destroyed, destroy supporting tall grass block below 
+        Location below = (location + new Location(0, -1));
+        if (below.GetMaterial() == GetMaterial())
+            below.GetBlock().Break(false);
+    }
+
+    protected override List<Material> ValidGround()
+    {
+        List<Material> mats = base.ValidGround();
+        
+        //Add current material as valid ground, to enable stacking
+        mats.Add(GetMaterial());
+        
+        return mats;
     }
 }

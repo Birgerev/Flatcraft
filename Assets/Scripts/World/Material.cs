@@ -1,7 +1,7 @@
 ﻿public enum Material
 {
     Air
-    , Grass
+    , Grass_Block
     , Dirt
     , Stone
     , Cobblestone
@@ -9,7 +9,7 @@
     , Oak_Log
     , Oak_Leaves
     , Structure_Block
-    , Tall_Grass
+    , Grass
     , Red_Flower
     , Coal_Ore
     , Iron_Ore
@@ -117,4 +117,9 @@
     , Enderpearl
     , Blaze_Rod
     , Blaze_Powder
+    , End_Portal_Frame
+    , Eye_Of_Ender
+    , Tall_Grass
+    , Yellow_Flower
+    , Sugar_Cane
 }
