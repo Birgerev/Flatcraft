@@ -128,6 +128,7 @@ public class LightManager : MonoBehaviour
     {
         //TODO how can order be this way?
         source.UpdateLightWithinReach();
+        
         Destroy(source.gameObject);
     }
 
