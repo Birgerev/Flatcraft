@@ -10,7 +10,7 @@ public class LightSource : MonoBehaviour
     {
         LightManager.UpdateLightInArea(
             location + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel), 
-            location + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel));
+            location + new Location(LightManager.MaxLightLevel, LightManager.MaxLightLevel));
     }
 
     public void UpdateLightLevel(int value, bool updateLight)
