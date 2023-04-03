@@ -97,14 +97,12 @@ public class LightManager : MonoBehaviour
         if (Instance.sunlightSources.ContainsKey(column))
         {
             SunlightSource oldSunlightSource = Instance.sunlightSources[column];
-            Location oldSunlightLoc = oldSunlightSource.GetLocation();
             Instance.sunlightSources.Remove(column);
-            Destroy(oldSunlightSource.gameObject);
 
             if (updateLight)
-                UpdateLightInArea(
-                    oldSunlightLoc + new Location(-MaxLightLevel, -MaxLightLevel), 
-                    oldSunlightLoc + new Location(MaxLightLevel, MaxLightLevel));
+                oldSunlightSource.lightSource.UpdateLightWithinReach();
+            
+            Destroy(oldSunlightSource.gameObject);
         }
 
         //Dont create sunlight sources if player is in the nether
@@ -117,20 +115,18 @@ public class LightManager : MonoBehaviour
         if (topmostBlock == null)
             return;
 
-        Location newSunlightLoc = topmostBlock.location;
         SunlightSource newSunlightSource =
             SunlightSource.Create(Location.LocationByPosition(topmostBlock.transform.position));
 
         Instance.sunlightSources.Add(column, newSunlightSource);
         if (updateLight)
-            UpdateLightInArea(
-                newSunlightLoc + new Location(-MaxLightLevel, -MaxLightLevel), 
-                newSunlightLoc + new Location(MaxLightLevel, MaxLightLevel));
+            newSunlightSource.lightSource.UpdateLightWithinReach();
     }
     #endregion
 
     public static void DestroySource(LightSource source)
     {
+        //TODO how can order be this way?
         source.UpdateLightWithinReach();
         Destroy(source.gameObject);
     }
