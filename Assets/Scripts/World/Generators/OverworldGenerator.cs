@@ -207,7 +207,7 @@ public class OverworldGenerator : WorldGenerator
         }
 
         if(loc.y == 10 && loc.x == GetStrongholdLocation())
-            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold"));
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold/Presets"));
         
         //Generate Liquid Pockets
         if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
