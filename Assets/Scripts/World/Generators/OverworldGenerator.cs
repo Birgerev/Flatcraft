@@ -133,7 +133,7 @@ public class OverworldGenerator : WorldGenerator
         
         //Debug Structure
         if(loc.x == 0 && loc.y == 50)
-            return new BlockState(Material.Structure_Block, new BlockData("structure=_Debug"));
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Debug"));
         
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
