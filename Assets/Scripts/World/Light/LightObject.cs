@@ -48,6 +48,7 @@ public class LightObject : MonoBehaviour
         Color brightnessColor = lightValues.sourceColor * lightLevel01;//TODO replace white with light color
         
         GetComponent<SpriteRenderer>().material.SetColor("_LightColor", brightnessColor);
+        GetComponent<SpriteRenderer>().material.SetFloat("_LightFlicker", lightValues.flicker?1:0);
         
         //TODO set flicker
     }
