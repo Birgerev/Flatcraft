@@ -25,8 +25,11 @@ public class MimicRendererProperties : MonoBehaviour
     {
         if(color)
             _thisRenderer.color = rendererToMimic.color;
-        
-        if(brightnessValue)
-            _thisRenderer.material.SetFloat("_BrightnessValue", rendererToMimic.material.GetFloat("_BrightnessValue"));
+
+        if (brightnessValue)
+        {
+            _thisRenderer.material.SetColor("_LightColor", rendererToMimic.material.GetColor("_LightColor"));
+            _thisRenderer.material.SetFloat("_LightFlicker", rendererToMimic.material.GetFloat("_LightFlicker"));
+        }
     }
 }

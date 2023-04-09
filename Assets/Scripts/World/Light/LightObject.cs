@@ -38,9 +38,14 @@ public class LightObject : MonoBehaviour
 
         //Calculate 01 value and then decide resulting color
         float lightLevel01 = lightLevel / (float) LightManager.MaxLightLevel;
+        
 
         //Assign new color
-        GetComponent<SpriteRenderer>().material.SetFloat("_BrightnessValue", lightLevel01);
+        Color brightnessColor = Color.white * lightLevel01;//TODO replace white with light color
+        
+        GetComponent<SpriteRenderer>().material.SetColor("_LightColor", brightnessColor);
+        
+        //TODO set flicker
     }
 
     public void RequestLightUpdate()
