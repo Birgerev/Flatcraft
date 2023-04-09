@@ -132,10 +132,10 @@ public class LightManager : MonoBehaviour
         Destroy(source.gameObject);
     }
 
-    public static int GetLightLevel(Location loc, List<LightSource> knownLightSources = null)
+    public static LightValues GetLightValuesAt(Location loc, List<LightSource> knownLightSources = null)
     {
         if (!DoLight)
-            return MaxLightLevel;
+            return new LightValues(MaxLightLevel);
         
         //If no set of light sources was supplied, automatically find them
         if(knownLightSources == null)
@@ -143,27 +143,36 @@ public class LightManager : MonoBehaviour
                 loc + new Location(-MaxLightLevel, -MaxLightLevel), 
                 loc + new Location(MaxLightLevel, MaxLightLevel));
         
+        Vector3 pos = loc.GetPosition();
+        
         //Find the brightest way to light 
-        Vector3 objectPos = loc.GetPosition();
-        int brightestRecordedLightLevel = 0;
+        LightValues brightestRecordedLight = new LightValues();
         foreach (LightSource source in knownLightSources)
         {
-            Vector3 sourcePos = source.position;
-            float objectDistance = Vector3.Distance(sourcePos, objectPos);
-            if (objectDistance > MaxLightLevel)
+            Vector3 lightSourcePos = source.position;
+            float sourceDistance = Vector3.Distance(lightSourcePos, pos);
+            
+            //If Source is outside of sphere of influence, ignore it
+            if (sourceDistance > MaxLightLevel)
                 continue;
+            
+            //Get light source values
+            LightValues sourceLight = source.lightValues;
+            
+            //Calculate object light values using this specific source
+            LightValues objectContextLight = sourceLight;
+            objectContextLight.lightLevel = sourceLight.lightLevel - (int) sourceDistance;
+            
+            //Use it if it is the brightest
+            if (objectContextLight.lightLevel > brightestRecordedLight.lightLevel)
+                brightestRecordedLight = objectContextLight;
 
-            int sourceBrightness = source.lightLevel;
-            int objectBrightness = sourceBrightness - (int) objectDistance;
-
-            if (objectBrightness > brightestRecordedLightLevel)
-                brightestRecordedLightLevel = objectBrightness;
-
-            if (brightestRecordedLightLevel == MaxLightLevel)
+            //If object light level is maxed, no need to keep iterating
+            if (brightestRecordedLight.lightLevel == MaxLightLevel)
                 break;
         }
 
-        return brightestRecordedLightLevel;
+        return brightestRecordedLight;
     }
 
     public static void UpdateBlockLight(Location loc)
@@ -182,9 +191,9 @@ public class LightManager : MonoBehaviour
 
     private static void UpdateLightObjectWithSpecificSources(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        int lightLevel = GetLightLevel(lightObject.GetLocation(), possibleLightSources);
+        LightValues lightValues = GetLightValuesAt(lightObject.GetLocation(), possibleLightSources);
 
-        lightObject.UpdateLightLevel(lightLevel);
+        lightObject.UpdateLightLevel(lightValues);
     }
 }
 
@@ -197,5 +206,27 @@ public struct LightColumn
     {
         this.x = x;
         dimension = dim;
+    }
+}
+
+public struct LightValues
+{
+    public int lightLevel;
+    public Color sourceColor;
+    public bool flicker;
+    
+    public LightValues(int lightLevel)
+    {
+        this.lightLevel = lightLevel;
+        
+        sourceColor = Color.white;
+        flicker = false;
+    }
+
+    public LightValues(int lightLevel, Color sourceColor, bool flicker)
+    {
+        this.lightLevel = lightLevel;
+        this.sourceColor = sourceColor;
+        this.flicker = flicker;
     }
 }

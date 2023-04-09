@@ -69,7 +69,7 @@ public class Block : MonoBehaviour
         {
             LightSource source = LightSource.Create(transform);
 
-            source.UpdateLightLevel(glowLevel, true);
+            source.UpdateLightValues(new LightValues(glowLevel), true);//TODO custom color & flicker
         }
 
         if (changeTextureTime != 0)

@@ -14,16 +14,18 @@ public class SunlightSource : MonoBehaviour
     private IEnumerator UpdateTimeOfDayLoop()
     {
         TimeOfDay lastUpdated = WorldManager.GetTimeOfDay();
-        lightSource.UpdateLightLevel(
-            WorldManager.GetTimeOfDay() == TimeOfDay.Night ? LightManager.NightLightLevel : LightManager.MaxLightLevel,
+        lightSource.UpdateLightValues(
+            new LightValues(WorldManager.GetTimeOfDay() == TimeOfDay.Night ? 
+                    LightManager.NightLightLevel : LightManager.MaxLightLevel),
             false);
 
         while (true)
         {
             if (WorldManager.GetTimeOfDay() != lastUpdated)
             {
-                lightSource.UpdateLightLevel(
-                    WorldManager.GetTimeOfDay() == TimeOfDay.Night ? LightManager.NightLightLevel : LightManager.MaxLightLevel,
+                lightSource.UpdateLightValues(
+                    new LightValues(WorldManager.GetTimeOfDay() == TimeOfDay.Night ? 
+                        LightManager.NightLightLevel : LightManager.MaxLightLevel),
                     true);
                 lastUpdated = WorldManager.GetTimeOfDay();
             }
