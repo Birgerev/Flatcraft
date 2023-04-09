@@ -245,7 +245,7 @@ public class OverworldGenerator : WorldGenerator
             
             //Generate Mineshaft
             if (r.NextDouble() < MineshaftChance && loc.y > 30 && loc.y < 50)
-                return new BlockState(Material.Structure_Block, new BlockData("structure=Mineshaft/Start_Room"));
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Mineshaft/Presets"));
         }
 
         return new BlockState(Material.Air);
