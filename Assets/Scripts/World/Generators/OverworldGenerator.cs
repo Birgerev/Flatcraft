@@ -131,6 +131,10 @@ public class OverworldGenerator : WorldGenerator
 
         Material[] flowerMaterials = {Material.Red_Flower, Material.Yellow_Flower};
         
+        //Debug Structure
+        if(loc.x == 0 && loc.y == 50)
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Debug"));
+        
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
         {
@@ -203,7 +207,7 @@ public class OverworldGenerator : WorldGenerator
         }
 
         if(loc.y == 10 && loc.x == GetStrongholdLocation())
-            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold"));
+            return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold/Presets"));
         
         //Generate Liquid Pockets
         if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
@@ -241,7 +245,7 @@ public class OverworldGenerator : WorldGenerator
             
             //Generate Mineshaft
             if (r.NextDouble() < MineshaftChance && loc.y > 30 && loc.y < 50)
-                return new BlockState(Material.Structure_Block, new BlockData("structure=Mineshaft/Start_Room"));
+                return new BlockState(Material.Structure_Block, new BlockData("structure=Mineshaft/Presets"));
         }
 
         return new BlockState(Material.Air);

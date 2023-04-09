@@ -10,8 +10,8 @@ public class ChatManager : NetworkBehaviour
 {
     public static ChatManager instance;
 
-    public readonly Command[] commands = {new GiveCommand(), new HealCommand(), new HelpCommand(), new OffsetSavedStructureCommand()
-        , new SaveStructureCommand(), new SummonCommand(), new TimeCommand(), new WeatherCommand()};
+    public readonly Command[] commands = {new GiveCommand(), new HealCommand(), new HelpCommand(),
+        new SaveStructureCommand(), new SummonCommand(), new TimeCommand(), new WeatherCommand()};
 
     public void Start()
     {

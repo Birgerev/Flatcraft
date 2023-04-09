@@ -1,2 +1,0 @@
-Cobblestone*0,0*
-Cobblestone*0,1*

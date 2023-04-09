@@ -53,5 +53,3 @@ Air*10,-6*
 Air*10,-5*
 Air*10,-4*
 Air*10,-3*
-
-Structure_Block*11,-6*structure=Mineshaft
