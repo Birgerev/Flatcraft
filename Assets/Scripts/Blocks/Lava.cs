@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using Random = System.Random;
 
 public class Lava : Liquid
 {
@@ -8,7 +9,7 @@ public class Lava : Liquid
     };
 
     public override int maxLiquidLevel { get; } = 4;
-    public override int glowLevel { get; } = 15;
+    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1f, 0.38f, 0.3f), true);
     public override float averageRandomTickDuration { get; } = 40;
 
     public override void RandomTick()

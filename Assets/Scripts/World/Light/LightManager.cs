@@ -209,6 +209,7 @@ public struct LightColumn
     }
 }
 
+[Serializable]
 public struct LightValues
 {
     public int lightLevel;
