@@ -42,5 +42,3 @@ Cobweb*8,0*
 Air*8,1*
 Oak_Planks*8,2*
 Oak_Planks*8,3*
-
-Structure_Block*9,0*structure=Mineshaft/Right

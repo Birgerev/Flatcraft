@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Boot : MonoBehaviour
 {
+    private const string TestWorldName = "Test";
+    
     public bool autoloadTestWorld;
     
     void Start()
@@ -13,7 +15,11 @@ public class Boot : MonoBehaviour
         //Option to immediately load test world in editor
         if (autoloadTestWorld && Application.isEditor)
         {
-            WorldManager.world = World.LoadWorld("Test");
+            if(World.WorldExists(TestWorldName))
+                WorldManager.world = World.LoadWorld(TestWorldName);
+            else
+                WorldManager.world = new World(TestWorldName, (new System.Random()).Next());
+            
             MultiplayerManager.HostGameAsync();
             return;
         }

@@ -1,5 +1,3 @@
-Structure_Block*0,0*structure=Mineshaft/Left/Parts
-
 Dirt*1,-2*
 Air*1,-1*
 Air*1,0*
@@ -64,5 +62,3 @@ Air*10,-1*
 Air*10,0*
 Air*10,1*
 Air*10,2*
-
-Structure_Block*11,0*structure=Mineshaft/Right/Parts
