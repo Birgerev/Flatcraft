@@ -147,6 +147,7 @@ public class LightManager : MonoBehaviour
         
         //Find the brightest way to light 
         LightValues brightestRecordedLight = new LightValues();
+        Color finalColor = Color.white;
         foreach (LightSource source in knownLightSources)
         {
             Vector3 lightSourcePos = source.position;
@@ -160,18 +161,30 @@ public class LightManager : MonoBehaviour
             LightValues sourceLight = source.lightValues;
             
             //Calculate object light values using this specific source
-            LightValues objectContextLight = sourceLight;
-            objectContextLight.lightLevel = sourceLight.lightLevel - (int) sourceDistance;
+            LightValues contextLight = sourceLight;
+            contextLight.lightLevel = sourceLight.lightLevel - (int) sourceDistance;
             
-            //Use it if it is the brightest
-            if (objectContextLight.lightLevel > brightestRecordedLight.lightLevel)
-                brightestRecordedLight = objectContextLight;
-
+            //If resulting light level is 0 or less, ignore it
+            if(contextLight.lightLevel <= 0)
+                continue;
+            
+            //If resulting light level is the highest one so far, store it
+            if (contextLight.lightLevel > brightestRecordedLight.lightLevel)
+                brightestRecordedLight = contextLight;
+            
+            //Blend light source colors, with their context strength as weights
+            float contextSourceLightWeight =
+                (float)contextLight.lightLevel / Mathf.Max(contextLight.lightLevel, brightestRecordedLight.lightLevel);
+            
+            finalColor = Color.Lerp(finalColor, sourceLight.sourceColor, contextSourceLightWeight);
+            
+            //TODO delete?
             //If object light level is maxed, no need to keep iterating
             if (brightestRecordedLight.lightLevel == MaxLightLevel)
                 break;
         }
 
+        brightestRecordedLight.sourceColor = finalColor;
         return brightestRecordedLight;
     }
 
