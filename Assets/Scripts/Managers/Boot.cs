@@ -18,6 +18,6 @@ public class Boot : MonoBehaviour
             return;
         }
         
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Intro");
     }
 }
