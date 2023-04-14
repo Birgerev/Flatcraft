@@ -132,8 +132,8 @@ public class OverworldGenerator : WorldGenerator
         Material[] flowerMaterials = {Material.Red_Flower, Material.Yellow_Flower};
         
         //Debug Structure
-        if(loc.x == 0 && loc.y == 50)
-            return new BlockState(Material.Structure_Block, new BlockData("structure=Debug"));
+        //if(loc.x == 0 && loc.y == 50)
+        //    return new BlockState(Material.Structure_Block, new BlockData("structure=Debug"));
         
         //Topmost Terrain Blocks
         if ((matBeneath == Material.Grass_Block || matBeneath == Material.Sand) && mat == Material.Air)
