@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class LightSource : MonoBehaviour
 {
-    public int lightLevel;
+    public LightValues lightValues;
+    
     public Vector3 position;
     public Location location;
 
@@ -13,13 +14,13 @@ public class LightSource : MonoBehaviour
             location + new Location(LightManager.MaxLightLevel, LightManager.MaxLightLevel));
     }
 
-    public void UpdateLightLevel(int value, bool updateLight)
+    public void UpdateLightValues(LightValues values, bool updateSurroundingLight)
     {
-        lightLevel = value;
+        lightValues = values;
 
         bool chunkLoaded = new ChunkPosition(location).IsChunkLoaded();
 
-        if (updateLight && chunkLoaded)
+        if (updateSurroundingLight && chunkLoaded)
             UpdateLightWithinReach();
     }
 
