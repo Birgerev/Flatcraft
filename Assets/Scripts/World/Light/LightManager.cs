@@ -177,11 +177,6 @@ public class LightManager : MonoBehaviour
                 (float)contextLight.lightLevel / Mathf.Max(contextLight.lightLevel, brightestRecordedLight.lightLevel);
             
             finalColor = Color.Lerp(finalColor, sourceLight.sourceColor, contextSourceLightWeight);
-            
-            //TODO delete?
-            //If object light level is maxed, no need to keep iterating
-            if (brightestRecordedLight.lightLevel == MaxLightLevel)
-                break;
         }
 
         brightestRecordedLight.sourceColor = finalColor;
