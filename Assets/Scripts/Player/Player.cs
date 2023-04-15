@@ -656,6 +656,7 @@ public class Player : LivingEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
         
+        Sound.Play(Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
         ShakeOwnersCamera(.5f);
     }
     
