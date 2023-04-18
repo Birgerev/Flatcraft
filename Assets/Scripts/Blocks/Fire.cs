@@ -11,7 +11,7 @@ public class Fire : Block
     public override float breakTime { get; } = 0.01f;
     public override bool requiresGround { get; } = true;
     public override float averageRandomTickDuration { get; } = 1;
-    public override int glowLevel { get; } = 5;
+    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;
 

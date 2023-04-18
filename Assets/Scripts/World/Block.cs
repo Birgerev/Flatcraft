@@ -25,7 +25,7 @@ public class Block : MonoBehaviour
 
     public virtual Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
 
-    public virtual int glowLevel { get; } = 0;
+    public virtual LightValues lightSourceValues { get; } = new LightValues(0);
     
     
 
@@ -65,11 +65,11 @@ public class Block : MonoBehaviour
         RenderRotate();
         UpdateColliders();
 
-        if (glowLevel > 0)
+        if (lightSourceValues.lightLevel > 0)
         {
             LightSource source = LightSource.Create(transform);
 
-            source.UpdateLightLevel(glowLevel, true);
+            source.UpdateLightValues(lightSourceValues, true);
         }
 
         if (changeTextureTime != 0)

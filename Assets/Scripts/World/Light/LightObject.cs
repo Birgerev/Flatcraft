@@ -25,22 +25,32 @@ public class LightObject : MonoBehaviour
         return Location.LocationByPosition(GetPosition());
     }
     
-    public void UpdateLightLevel(int lightLevel)
+    public void UpdateLightLevel(LightValues lightValues)
     {
-        //Enforce minimum light level in nether
-        if (GetLocation().dimension == Dimension.Nether)
-            lightLevel = Mathf.Clamp(lightLevel, LightManager.NetherLightLevel, int.MaxValue);
         
         //Deduct predefined light level
-        lightLevel -= lightLevelDeduct;
-        //Ensure light level is in correct range
-        lightLevel = Mathf.Clamp(lightLevel, 0, LightManager.MaxLightLevel);
+        lightValues.lightLevel -= lightLevelDeduct;
+        
+        //Ensure light level is within valid range
+        int minLightLevel = 0;
+        
+        //Enforce minimum light level in nether
+        if (GetLocation().dimension == Dimension.Nether)
+            minLightLevel = LightManager.NetherLightLevel;
+        
+        lightValues.lightLevel = Mathf.Clamp(lightValues.lightLevel, minLightLevel, LightManager.MaxLightLevel);
 
         //Calculate 01 value and then decide resulting color
-        float lightLevel01 = lightLevel / (float) LightManager.MaxLightLevel;
+        float lightLevel01 = lightValues.lightLevel / (float) LightManager.MaxLightLevel;
+        
 
         //Assign new color
-        GetComponent<SpriteRenderer>().material.SetFloat("_BrightnessValue", lightLevel01);
+        Color brightnessColor = lightValues.sourceColor * lightLevel01;//TODO replace white with light color
+        
+        GetComponent<SpriteRenderer>().material.SetColor("_LightColor", brightnessColor);
+        GetComponent<SpriteRenderer>().material.SetFloat("_LightFlicker", lightValues.flicker?1:0);
+        
+        //TODO set flicker
     }
 
     public void RequestLightUpdate()

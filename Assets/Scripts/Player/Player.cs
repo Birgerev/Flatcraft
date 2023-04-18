@@ -462,7 +462,7 @@ public class Player : LivingEntity
             return;
         }
 
-        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Time.time % 0.2f - Time.deltaTime <= 0 &&
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - .5f && Time.time % 0.2f - Time.deltaTime <= 0 &&
             Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
             RequestEat();
     }
@@ -656,6 +656,7 @@ public class Player : LivingEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
         
+        Sound.Play(Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
         ShakeOwnersCamera(.5f);
     }
     

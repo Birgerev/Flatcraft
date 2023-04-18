@@ -1,4 +1,6 @@
-﻿public class Torch : Block
+﻿using UnityEngine;
+
+public class Torch : Block
 {
     public override string[] randomTextures { get; } =
     {
@@ -8,7 +10,7 @@
     public override bool solid { get; set; } = false;
     public override float breakTime { get; } = 0.1f;
 
-    public override int glowLevel { get; } = 15;
+    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
     

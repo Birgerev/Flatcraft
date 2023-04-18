@@ -132,10 +132,10 @@ public class LightManager : MonoBehaviour
         Destroy(source.gameObject);
     }
 
-    public static int GetLightLevel(Location loc, List<LightSource> knownLightSources = null)
+    public static LightValues GetLightValuesAt(Location loc, List<LightSource> knownLightSources = null)
     {
         if (!DoLight)
-            return MaxLightLevel;
+            return new LightValues(MaxLightLevel);
         
         //If no set of light sources was supplied, automatically find them
         if(knownLightSources == null)
@@ -143,27 +143,44 @@ public class LightManager : MonoBehaviour
                 loc + new Location(-MaxLightLevel, -MaxLightLevel), 
                 loc + new Location(MaxLightLevel, MaxLightLevel));
         
+        Vector3 pos = loc.GetPosition();
+        
         //Find the brightest way to light 
-        Vector3 objectPos = loc.GetPosition();
-        int brightestRecordedLightLevel = 0;
+        LightValues brightestRecordedLight = new LightValues();
+        Color finalColor = Color.white;
         foreach (LightSource source in knownLightSources)
         {
-            Vector3 sourcePos = source.position;
-            float objectDistance = Vector3.Distance(sourcePos, objectPos);
-            if (objectDistance > MaxLightLevel)
+            Vector3 lightSourcePos = source.position;
+            float sourceDistance = Vector3.Distance(lightSourcePos, pos);
+            
+            //If Source is outside of sphere of influence, ignore it
+            if (sourceDistance > MaxLightLevel)
                 continue;
-
-            int sourceBrightness = source.lightLevel;
-            int objectBrightness = sourceBrightness - (int) objectDistance;
-
-            if (objectBrightness > brightestRecordedLightLevel)
-                brightestRecordedLightLevel = objectBrightness;
-
-            if (brightestRecordedLightLevel == MaxLightLevel)
-                break;
+            
+            //Get light source values
+            LightValues sourceLight = source.lightValues;
+            
+            //Calculate object light values using this specific source
+            LightValues contextLight = sourceLight;
+            contextLight.lightLevel = sourceLight.lightLevel - (int) sourceDistance;
+            
+            //If resulting light level is 0 or less, ignore it
+            if(contextLight.lightLevel <= 0)
+                continue;
+            
+            //If resulting light level is the highest one so far, store it
+            if (contextLight.lightLevel > brightestRecordedLight.lightLevel)
+                brightestRecordedLight = contextLight;
+            
+            //Blend light source colors, with their context strength as weights
+            float contextSourceLightWeight =
+                (float)contextLight.lightLevel / Mathf.Max(contextLight.lightLevel, brightestRecordedLight.lightLevel);
+            
+            finalColor = Color.Lerp(finalColor, sourceLight.sourceColor, contextSourceLightWeight);
         }
 
-        return brightestRecordedLightLevel;
+        brightestRecordedLight.sourceColor = finalColor;
+        return brightestRecordedLight;
     }
 
     public static void UpdateBlockLight(Location loc)
@@ -182,9 +199,9 @@ public class LightManager : MonoBehaviour
 
     private static void UpdateLightObjectWithSpecificSources(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        int lightLevel = GetLightLevel(lightObject.GetLocation(), possibleLightSources);
+        LightValues lightValues = GetLightValuesAt(lightObject.GetLocation(), possibleLightSources);
 
-        lightObject.UpdateLightLevel(lightLevel);
+        lightObject.UpdateLightLevel(lightValues);
     }
 }
 
@@ -197,5 +214,28 @@ public struct LightColumn
     {
         this.x = x;
         dimension = dim;
+    }
+}
+
+[Serializable]
+public struct LightValues
+{
+    public int lightLevel;
+    public Color sourceColor;
+    public bool flicker;
+    
+    public LightValues(int lightLevel)
+    {
+        this.lightLevel = lightLevel;
+        
+        sourceColor = Color.white;
+        flicker = false;
+    }
+
+    public LightValues(int lightLevel, Color sourceColor, bool flicker)
+    {
+        this.lightLevel = lightLevel;
+        this.sourceColor = sourceColor;
+        this.flicker = flicker;
     }
 }
