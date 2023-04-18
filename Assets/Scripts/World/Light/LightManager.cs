@@ -37,7 +37,7 @@ public class LightManager : MonoBehaviour
             new Location(chunk.worldX + Chunk.Width, Chunk.Height, chunk.dimension));
     }
 
-    public static void UpdateLightInArea(Location min, Location max)
+    public static async void UpdateLightInArea(Location min, Location max)
     {
         List<LightObject> lightObjects = GetLightObjectsForArea(min, max);
         List<LightSource> lightSources = GetLightSourcesForArea(min + new Location(-MaxLightLevel, -MaxLightLevel),
