@@ -150,7 +150,7 @@ public class LightManager : MonoBehaviour
         Color finalColor = Color.white;
         foreach (LightSource source in knownLightSources)
         {
-            Vector3 lightSourcePos = source.position;
+            Vector3 lightSourcePos = source.GetLocation().GetPosition();
             float sourceDistance = Vector3.Distance(lightSourcePos, pos);
             
             //If Source is outside of sphere of influence, ignore it

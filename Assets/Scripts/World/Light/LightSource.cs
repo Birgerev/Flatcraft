@@ -4,21 +4,20 @@ public class LightSource : MonoBehaviour
 {
     public LightValues lightValues;
     
-    public Vector3 position;
-    public Location location;
+    private Location _cachedLocation;
 
     public void UpdateLightWithinReach()
     {
         LightManager.UpdateLightInArea(
-            location + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel), 
-            location + new Location(LightManager.MaxLightLevel, LightManager.MaxLightLevel));
+            GetLocation() + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel), 
+            GetLocation() + new Location(LightManager.MaxLightLevel, LightManager.MaxLightLevel));
     }
 
     public void UpdateLightValues(LightValues values, bool updateSurroundingLight)
     {
         lightValues = values;
 
-        bool chunkLoaded = new ChunkPosition(location).IsChunkLoaded();
+        bool chunkLoaded = new ChunkPosition(GetLocation()).IsChunkLoaded();
 
         if (updateSurroundingLight && chunkLoaded)
             UpdateLightWithinReach();
@@ -30,9 +29,14 @@ public class LightSource : MonoBehaviour
         LightSource source = obj.GetComponent<LightSource>();
         obj.transform.localPosition = Vector3.zero;
 
-        source.position = obj.transform.position;
-        source.location = Location.LocationByPosition(source.position);
-
         return source;
+    }
+
+    public virtual Location GetLocation()
+    {
+        if(_cachedLocation.Equals(default(Location)))
+            _cachedLocation = Location.LocationByPosition(transform.position);
+
+        return _cachedLocation;
     }
 }
