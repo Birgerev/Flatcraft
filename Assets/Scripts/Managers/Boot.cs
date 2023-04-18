@@ -24,19 +24,6 @@ public class Boot : MonoBehaviour
             return;
         }
         
-        SceneManager.LoadScene("MainMenu");
-    }
-
-    private bool CreateNameCheck()
-    {
-        string testingNamePath = Application.persistentDataPath + "\\testingProfile.dat";
-        if(!File.Exists(testingNamePath))
-        {
-            SceneManager.LoadScene("TestingCreateName");
-            return true;
-        }
-        
-        //GameNetworkManager.playerName = File.ReadAllText(testingNamePath);
-        return false;
+        SceneManager.LoadScene("Intro");
     }
 }
