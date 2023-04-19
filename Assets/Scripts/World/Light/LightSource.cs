@@ -4,7 +4,7 @@ public class LightSource : MonoBehaviour
 {
     public LightValues lightValues;
     
-    private Location _cachedLocation;
+    private Location? _cachedLocation;
 
     public void UpdateLightWithinReach()
     {
@@ -34,9 +34,9 @@ public class LightSource : MonoBehaviour
 
     public virtual Location GetLocation()
     {
-        if(_cachedLocation.Equals(default(Location)))
+        if(!_cachedLocation.HasValue)
             _cachedLocation = Location.LocationByPosition(transform.position);
 
-        return _cachedLocation;
+        return _cachedLocation.Value;
     }
 }

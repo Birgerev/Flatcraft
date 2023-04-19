@@ -5,24 +5,17 @@ public class LightObject : MonoBehaviour
 {
     public int lightLevelDeduct;
     public bool staticObject;
-    private Vector3 position;
-
-    public Vector3 GetPosition()
-    {
-        if (staticObject)
-        {
-            if (position == Vector3.zero)
-                position = transform.position;
-
-            return position;
-        }
-
-        return position = transform.position;
-    }
+    private Location? _cachedLocation;
 
     public Location GetLocation()
     {
-        return Location.LocationByPosition(GetPosition());
+        if (staticObject)
+            return Location.LocationByPosition(transform.position);
+
+        if (!_cachedLocation.HasValue)
+            _cachedLocation = Location.LocationByPosition(transform.position);
+
+        return _cachedLocation.Value;
     }
     
     public void UpdateLightLevel(LightValues lightValues)
