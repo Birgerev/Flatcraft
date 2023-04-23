@@ -17,4 +17,23 @@ public class AchievementManager : MonoBehaviour
     {
     }
 
+    public void ResetAchievements()
+    {
+        SteamUserStats.ResetAllStats(true);
+    }
+}
+
+[CustomEditor(typeof(AchievementManager))]
+[CanEditMultipleObjects]
+public class AchievementManagerEditor : UnityEditor.Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (GUILayout.Button("Reset Achievements", EditorStyles.miniButton))
+        {
+            ((AchievementManager)target).ResetAchievements();
+        }
+        
+        DrawDefaultInspector ();
+    }
 }
