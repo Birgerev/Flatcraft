@@ -12,11 +12,13 @@ public class Achievement : MonoBehaviour
     
     private void Start()
     {
-        //No need to track achievement if we have it
+        //No need to track achievement if we already have it
         if (HasAchievement())
             performTracking = false;
     }
 
+    #region Achievement Status Handling
+    
     [ContextMenu("Grant Achievement")]
     public void GrantAchievement()
     {
@@ -24,18 +26,11 @@ public class Achievement : MonoBehaviour
     }
     
     [ContextMenu("Revoke Achievement")]
-    public void ResetAchievement()
+    public void RevokeAchievement()
     {
         SteamUserStats.ClearAchievement(achievementId);
     }
-    
-    [ContextMenu("Reset All Achievements")]
-    public void ResetAchievements()
-    {
-        SteamUserStats.ResetAllStats(true);
-    }
-    
-    [ContextMenu("Has Achievement?")]
+
     public bool HasAchievement()
     {
         SteamUserStats.GetAchievement(achievementId, out bool hasAchievement);
@@ -43,4 +38,17 @@ public class Achievement : MonoBehaviour
 
         return hasAchievement;
     }
+    
+    [ContextMenu("Has Achievement?")]
+    public void Debug_HasAchievement()
+    {
+        Debug.Log("Has achievement '" + achievementId + "' : " + HasAchievement());
+    }
+        
+    [ContextMenu("Reset All Achievements")]
+    public static void ResetAchievements()
+    {
+        SteamUserStats.ResetAllStats(true);
+    }
+    #endregion
 }
