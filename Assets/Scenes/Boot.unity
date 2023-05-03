@@ -287,10 +287,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 673694103}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ed723b13953e874e8ba071bab4dab4b, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   achievementId: ItemHeld_Diamond
+  requiredItem: 37000000
 --- !u!1 &1488499057
 GameObject:
   m_ObjectHideFlags: 0
