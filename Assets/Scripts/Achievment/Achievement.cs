@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Steamworks;
 using UnityEngine;
 
@@ -9,13 +10,33 @@ public class Achievement : MonoBehaviour
     public string achievementId;
 
     protected bool performTracking = true;
-    
-    private void Start()
+    protected virtual float TrackingLoopInterval => 2;
+
+    protected virtual void Start()
     {
         //No need to track achievement if we already have it
         if (HasAchievement())
             performTracking = false;
+        
+        TrackingLoopCaller();
     }
+
+    
+    private async void TrackingLoopCaller()
+    {
+        while (true)
+        {
+            if(!performTracking)
+                return;
+            
+            //Convert interval to milliseconds
+            await Task.Delay((int)(TrackingLoopInterval * 1000));
+
+            TrackingLoop();
+        }
+    }
+    
+    protected virtual void TrackingLoop(){}
 
     #region Achievement Status Handling
     
