@@ -44,29 +44,36 @@ public class Achievement : MonoBehaviour
     public void GrantAchievement()
     {
         SteamUserStats.SetAchievement(achievementId);
+        Debug.Log("Granted achievement id: " + achievementId);
     }
     
     [ContextMenu("Revoke Achievement")]
     public void RevokeAchievement()
     {
         SteamUserStats.ClearAchievement(achievementId);
+        Debug.Log("Revoked achievement id: " + achievementId);
     }
 
     public bool HasAchievement()
     {
         SteamUserStats.GetAchievement(achievementId, out bool hasAchievement);
-        Debug.Log(achievementId + " : " + hasAchievement);
 
         return hasAchievement;
     }
     
     [ContextMenu("Has Achievement?")]
-    public void Debug_HasAchievement()
+    public void Debug_HasAchievementMessage()
     {
         Debug.Log("Has achievement '" + achievementId + "' : " + HasAchievement());
     }
         
     [ContextMenu("Reset All Achievements")]
+    public void Debug_ResetAchievements()
+    {
+        //Wrapper function as we cant use context menu attribute on static method
+        ResetAchievements();
+    }
+    
     public static void ResetAchievements()
     {
         SteamUserStats.ResetAllStats(true);
