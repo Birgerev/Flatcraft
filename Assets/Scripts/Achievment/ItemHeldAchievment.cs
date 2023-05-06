@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ItemHeldAchievment : Achievement
 {
-    public Material[] requiredItem;
+    public Material[] materialCriteria;
 
     protected override void TrackingLoop()
     {
@@ -21,7 +21,7 @@ public class ItemHeldAchievment : Achievement
 
         PlayerInventory inventory = playerEntity.GetInventory();
 
-        foreach (Material matAlternative in requiredItem)
+        foreach (Material matAlternative in materialCriteria)
         {
             if (inventory.Contains(matAlternative))
             {

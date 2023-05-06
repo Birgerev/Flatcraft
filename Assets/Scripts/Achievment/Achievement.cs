@@ -8,6 +8,8 @@ using UnityEngine;
 public class Achievement : MonoBehaviour
 {
     public string achievementId;
+    
+    [Space]
 
     protected bool performTracking = true;
     protected virtual float TrackingLoopInterval => 2;
