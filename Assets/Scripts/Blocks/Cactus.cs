@@ -5,7 +5,7 @@
     public override float breakTime { get; } = 0.65f;
     public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 18 * 60;
-    private int maxHeight = 3;
+    private const int MaxHeight = 3;
 
     public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wool;
 
@@ -20,18 +20,18 @@
 
     public override void RandomTick()
     {
-        Grow();
-
         base.RandomTick();
+        
+        Grow();
     }
 
     private void Grow()
     {
         Location aboveLoc = location + new Location(0, 1);
 
-        if (aboveLoc.GetMaterial() == Material.Air && GetHeight() < maxHeight)
+        if (aboveLoc.GetMaterial() == Material.Air && GetHeight() < MaxHeight)
         {
-            aboveLoc.SetMaterial(Material.Cactus);
+            aboveLoc.SetMaterial(GetMaterial());
         }
     }
 
@@ -39,7 +39,7 @@
     {
         int height = 0;
         Location loc = location;
-        while (loc.GetMaterial() == Material.Cactus)
+        while (loc.GetMaterial() == GetMaterial())
         {
             height++;
             loc = loc + new Location(0, -1);

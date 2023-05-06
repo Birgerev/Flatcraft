@@ -309,9 +309,12 @@ public class Player : LivingEntity
             lastDoubleTapSprintTap = Time.time;
         }
 
-        //Debug disable lighting
-        if (Debug.isDebugBuild && Input.GetKeyDown(KeyCode.F4))
-            LightManager.instance.doLight = !LightManager.instance.doLight;
+        //Toggle Debug disabled lighting
+        if (Input.GetKeyDown(KeyCode.F4) && Debug.isDebugBuild)
+        {
+            LightManager.DoLight = !LightManager.DoLight;
+            LightManager.UpdateAllLight();
+        }
 
         //Inventory Managment
         if (Input.GetKeyDown(KeyCode.Q))
@@ -459,7 +462,7 @@ public class Player : LivingEntity
             return;
         }
 
-        if (Input.GetMouseButton(1) && hunger <= maxHunger - 1 && Time.time % 0.2f - Time.deltaTime <= 0 &&
+        if (Input.GetMouseButton(1) && hunger <= maxHunger - .5f && Time.time % 0.2f - Time.deltaTime <= 0 &&
             Type.GetType(GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
             RequestEat();
     }
@@ -595,6 +598,7 @@ public class Player : LivingEntity
             {
                 RequestInteract(GetBlockedMouseLocation(), 0, false);
                 lastBlockInteractionTime = Time.time;
+                ShakeClientCamera(10f * Time.deltaTime);
             }
         }
     }
@@ -636,8 +640,7 @@ public class Player : LivingEntity
         Entity entity = entityObj.GetComponent<Entity>();
         bool criticalHit = false;
         float damage = GetInventory().GetSelectedItem().GetItemEntityDamage();
-
-
+        
         if (GetVelocity().y < -0.5f)
             criticalHit = true;
 
@@ -653,7 +656,8 @@ public class Player : LivingEntity
         entity.transform.GetComponent<Entity>().Hit(damage, this);
         lastHitTime = NetworkTime.time;
         
-        ShakeOwnerCamera(1);
+        Sound.Play(Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
+        ShakeOwnersCamera(.5f);
     }
     
     [Command]
@@ -822,15 +826,22 @@ public class Player : LivingEntity
     {
         base.Damage(damage);
 
-        ShakeOwnerCamera(5);
+        ShakeOwnersCamera(5);
     }
 
     [ClientRpc]
-    public void ShakeOwnerCamera(int shakeValue)
+    public void ShakeOwnersCamera(float shakeValue)
     {
         if (isOwned)
-            CameraController.instance.currentShake = shakeValue;
+            ShakeClientCamera(shakeValue);
     }
+    
+    [Client]
+    public void ShakeClientCamera(float shakeValue)
+    {
+        CameraController.instance.currentShake = shakeValue;
+    }
+
 
     [ClientRpc]
     public void PlayEatEffect(Color[] colors)

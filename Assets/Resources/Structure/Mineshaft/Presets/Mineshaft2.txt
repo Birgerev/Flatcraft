@@ -1,0 +1,13 @@
+Structure_Block*-23,-6*structure=Mineshaft/Parts/Corridor
+
+Structure_Block*-13,0*structure=Mineshaft/Parts/Crossing
+
+Structure_Block*-10,0*structure=Mineshaft/Parts/Corridor
+
+Structure_Block*0,0*structure=Mineshaft/Parts/Crossing
+
+Structure_Block*3,-6*structure=Mineshaft/Parts/DirtRoom
+Structure_Block*3,0*structure=Mineshaft/Parts/Corridor
+
+Structure_Block*14,-6*structure=Mineshaft/Parts/Corridor
+Structure_Block*24,-6*structure=Mineshaft/Parts/LootRoom
