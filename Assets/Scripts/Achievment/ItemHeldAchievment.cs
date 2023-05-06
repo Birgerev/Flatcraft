@@ -14,12 +14,12 @@ public class ItemHeldAchievment : Achievement
         if (!localPlayerInstance)
             return;
 
-        Player player = localPlayerInstance.playerEntity?.GetComponent<Player>();
+        Player playerEntity = localPlayerInstance.playerEntity?.GetComponent<Player>();
 
-        if (!player)
+        if (!playerEntity)
             return;
 
-        PlayerInventory inventory = player.GetInventory();
+        PlayerInventory inventory = playerEntity.GetInventory();
 
         foreach (Material matAlternative in requiredItem)
         {
