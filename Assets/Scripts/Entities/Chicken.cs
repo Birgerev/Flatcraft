@@ -22,7 +22,7 @@ public class Chicken : PassiveEntity
     {
         base.Tick();
 
-
+        //Fall speed
         if (!isOnGround && GetVelocity().y < -1)
             SetVelocity(new Vector2(GetVelocity().x, -1));
     }
