@@ -11,6 +11,8 @@ public class Wolf : PassiveEntity
     protected override float walkSpeed { get; } = 6f;
     protected virtual float tameChance { get; } = 0.3f;
 
+    [SyncVar] public bool visuallyAngry;
+
     public override EntityController GetController()
     {
         return new WolfController(this);
@@ -44,7 +46,17 @@ public class Wolf : PassiveEntity
             }
         }
     }
-    
+
+    [Client]
+    public override void UpdateAnimatorValues()
+    {
+        base.UpdateAnimatorValues();
+
+        Animator anim = GetComponent<Animator>();
+
+        anim.SetBool("angry", visuallyAngry);
+    }
+
     [ClientRpc]
     private void PlaySmokeEffect(Color color)
     {
