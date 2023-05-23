@@ -106,6 +106,7 @@ MonoBehaviour:
   nameplate: {fileID: 577193776036264863}
   health: 0
   displayName: 
+  visuallyAngry: 0
 --- !u!95 &7371507656522640533
 Animator:
   serializedVersion: 5
