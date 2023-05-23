@@ -24,6 +24,10 @@ public class OptionsMenu : MonoBehaviour
 
     private void Update()
     {
+        //Close menu on ESC
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Close();
+
         //TODO fullscreen settings manager
         fullscreenText.text = "Fullscreen: " + (ScreenManager.IsFullscreen() ? "On" : "Off");
         
