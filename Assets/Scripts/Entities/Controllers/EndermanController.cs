@@ -17,7 +17,7 @@ public class EndermanController : MonsterController
     {
         base.Tick();
 
-        ((Enderman)instance).angry = (target != null);
+        ((Enderman)instance).visuallyAngry = (target != null);
     }
     
     //TODO run speed
