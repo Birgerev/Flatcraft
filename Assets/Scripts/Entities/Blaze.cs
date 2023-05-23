@@ -1,5 +1,7 @@
+using Mirror;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Blaze : Monster
 {
@@ -9,11 +11,27 @@ public class Blaze : Monster
     {
         //Drop a random amount of a certain item
         List<ItemStack> result = new();
-        Random r = new(SeedGenerator.SeedByWorldLocation(Location));
+        System.Random r = new(SeedGenerator.SeedByWorldLocation(Location));
 
         result.Add(new ItemStack(Material.Blaze_Rod, r.Next(0, 1 + 1)));
 
         return result;
+    }
+
+    [Server]
+    public override void Tick()
+    {
+        base.Tick();
+
+        //Fall speed
+        if (!isOnGround && GetVelocity().y < -1)
+            SetVelocity(new Vector2(GetVelocity().x, -1));
+    }
+
+    [Server]
+    public override void TakeFallDamage(float damage)
+    {
+        //Disable fall damage
     }
 
     public override EntityController GetController()
@@ -22,5 +40,4 @@ public class Blaze : Monster
     }
     
     public override void TakeFireDamage(float damage){ } //Disable fire damage
-    public override void TakeLavaDamage(float damage){ } //Disable lava damage
 }

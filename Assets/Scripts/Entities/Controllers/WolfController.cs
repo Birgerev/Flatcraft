@@ -13,4 +13,11 @@ public class WolfController : AnimalController
     public WolfController(LivingEntity instance) : base(instance)
     {
     }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        ((Wolf)instance).visuallyAngry = (target != null);
+    }
 }

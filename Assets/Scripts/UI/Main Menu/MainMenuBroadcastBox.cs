@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MainMenuBroadcastBox : MonoBehaviour
 {
-    private const string Url = "http://hille.evansson.se/flatcraft/broadcast.html";
+    private const string Url = "";
     public Text text;
     private CanvasGroup thisGroup;
     
