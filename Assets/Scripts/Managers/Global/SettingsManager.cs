@@ -53,6 +53,11 @@ public class SettingsManager : MonoBehaviour
         return intValue;
     }
 
+    public static void OverwriteWithDefaultSettings()
+    {
+        Values = new Dictionary<string, string>(DefaultValues);
+    }
+
     private void LoadSettings()
     {
         if(!File.Exists(GetPath()))
@@ -94,11 +99,6 @@ public class SettingsManager : MonoBehaviour
                 Values[defaultKey] = DefaultValues[defaultKey];
         }
 
-    }
-    
-    private void OverwriteWithDefaultSettings()
-    {
-        Values = new Dictionary<string, string>(DefaultValues);
     }
     
     public string GetPath()

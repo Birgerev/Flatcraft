@@ -41,7 +41,12 @@ public class OptionsMenu : MonoBehaviour
     {
         ScreenManager.ToggleFullscreen();
     }
-    
+
+    public void ResetDefaultSettings()
+    {
+        SettingsManager.OverwriteWithDefaultSettings();
+    }
+
     public void Close()
     {
         Destroy(gameObject);
