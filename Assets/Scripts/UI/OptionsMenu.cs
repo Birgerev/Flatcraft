@@ -15,11 +15,7 @@ public class OptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        //Assign current values to UI elements
-        masterSlider.value = SettingsManager.GetIntValue("soundCategory_master");
-        entitiesSlider.value = SettingsManager.GetIntValue("soundCategory_entities");
-        blockSlider.value = SettingsManager.GetIntValue("soundCategory_block");
-        musicSlider.value = SettingsManager.GetIntValue("soundCategory_music");
+        LoadUIValues();
     }
 
     private void Update()
@@ -28,6 +24,20 @@ public class OptionsMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             Close();
 
+        ApplyUIValues();
+    }
+
+    private void LoadUIValues()
+    {
+        //Assign current values to UI elements
+        masterSlider.value = SettingsManager.GetIntValue("soundCategory_master");
+        entitiesSlider.value = SettingsManager.GetIntValue("soundCategory_entities");
+        blockSlider.value = SettingsManager.GetIntValue("soundCategory_block");
+        musicSlider.value = SettingsManager.GetIntValue("soundCategory_music");
+    }
+
+    private void ApplyUIValues()
+    {
         //TODO fullscreen settings manager
         fullscreenText.text = "Fullscreen: " + (ScreenManager.IsFullscreen() ? "On" : "Off");
         
@@ -41,7 +51,13 @@ public class OptionsMenu : MonoBehaviour
     {
         ScreenManager.ToggleFullscreen();
     }
-    
+
+    public void ResetDefaultSettings()
+    {
+        SettingsManager.OverwriteWithDefaultSettings();
+        LoadUIValues();
+    }
+
     public void Close()
     {
         Destroy(gameObject);
