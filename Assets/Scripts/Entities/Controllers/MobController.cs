@@ -49,7 +49,9 @@ public class MobController : EntityController
             MoveToTarget();
         Pathfind();
 
-        Walking();
+        if(isWalking)
+            Walking();
+
         Swim();
         if (hitTargetDamage > 0)
             TryHit();
@@ -109,19 +111,16 @@ public class MobController : EntityController
 
     protected virtual void Walking()
     {
-        if (isWalking)
-        {
-            instance.Walk(instance.facingLeft ? -1 : 1);
+        instance.Walk(instance.facingLeft ? -1 : 1);
 
-            Vector3 locInFront = instance.transform.position + new Vector3(
-                (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
-                0);
-            Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
+        Vector3 locInFront = instance.transform.position + new Vector3(
+            (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
+            0);
+        Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
 
-            //Jump when there is a block in front of entity
-            if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)
-                instance.Jump();
-        }
+        //Jump when there is a block in front of entity
+        if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)
+            instance.Jump();
     }
 
     protected virtual void Swim()

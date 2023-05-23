@@ -37,6 +37,7 @@ public class CreeperController : MonsterController
 
     protected override void Walking()
     {
+        //Don't walk when ignited
         if (((Creeper) instance).ignited)
             return;
 
