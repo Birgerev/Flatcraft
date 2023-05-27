@@ -54,7 +54,7 @@ public class SettingsMenu : MonoBehaviour
 
     public void ResetDefaultSettings()
     {
-        SettingsManager.OverwriteWithDefaultSettings();
+        SettingsManager.OverwriteWithDefaultSettings();//TODO get componentinchildren<SettingsUIElement>().LoadValue();
         LoadUIValues();
     }
 
