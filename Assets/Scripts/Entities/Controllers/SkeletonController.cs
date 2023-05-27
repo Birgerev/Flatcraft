@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SkeletonController : MonsterController
 {
-    protected override bool targetDamagerIfAttacked { get; } = true;
     protected override float targetSearchRange { get; } = 12;
     protected override float targetLooseRange { get; } = 18;
     protected override float pathfindingKeepDistanceToTarget { get; } = 10;

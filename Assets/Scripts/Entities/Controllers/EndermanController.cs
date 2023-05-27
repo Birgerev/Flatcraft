@@ -5,7 +5,6 @@ public class EndermanController : MonsterController
 {
     protected override List<Type> targetSearchEntityTypes { get; } = new List<Type>() {};
     
-    protected override bool targetDamagerIfAttacked { get; } = true;
     protected override float targetLooseRange { get; } = 100;
     protected override float hitTargetDamage { get; } = 10.5f;
     

@@ -1,6 +1,5 @@
 public class BlazeController : MonsterController
 {
-    protected override bool targetDamagerIfAttacked { get; } = true;
     protected override float targetSearchRange { get; } = 48;
     protected override float targetLooseRange { get; } = 50;
     
