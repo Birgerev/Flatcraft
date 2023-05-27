@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Blaze : Monster
 {
+    private readonly float flyUpSpeed = 2.0f;
+    protected override float walkSpeed { get; } = 1f;
     public override float maxHealth { get; } = 20;
 
     public override List<ItemStack> GetDrops()
@@ -28,16 +30,19 @@ public class Blaze : Monster
             SetVelocity(new Vector2(GetVelocity().x, -1));
     }
 
-    [Server]
-    public override void TakeFallDamage(float damage)
+    public void Fly()
     {
-        //Disable fall damage
+        if(GetVelocity().y < flyUpSpeed)
+            SetVelocity(GetVelocity() + new Vector2(0, 25 * Time.deltaTime));
     }
 
     public override EntityController GetController()
     {
         return new BlazeController(this);
     }
+
+    [Server]
+    public override void TakeFallDamage(float damage) { }//Disable fall damage
     
     public override void TakeFireDamage(float damage){ } //Disable fire damage
 }
