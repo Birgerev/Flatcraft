@@ -6449,6 +6449,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   optionsMenuPrefab: {fileID: 8189563067701013113, guid: a9e91ef8bf341f345aaf2ad2d92b7ce6,
     type: 3}
+  multiplayerEnabledText: {fileID: 1816870313}
 --- !u!225 &1091150016
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9910,11 +9911,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
-      propertyPath: m_Interactable
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9203636280091448053, guid: b4cd6372c506dd240aa5b3b169938fdd,
-        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -9956,6 +9952,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1816870311}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1816870313 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1816870311}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1847021251
 PrefabInstance:
   m_ObjectHideFlags: 0

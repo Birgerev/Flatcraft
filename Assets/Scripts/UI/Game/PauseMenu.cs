@@ -1,5 +1,6 @@
 ﻿using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 #if !DISABLESTEAMWORKS
 using Steamworks;
@@ -9,6 +10,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool active;
     public GameObject optionsMenuPrefab;
+    public Text multiplayerEnabledText;
 
     // Start is called before the first frame update
     private void Start()
@@ -58,5 +60,11 @@ public class PauseMenu : MonoBehaviour
     public void BackToMainMenu()
     {
         ((MultiplayerManager)NetworkManager.singleton).StopConnection();
+    }
+
+    public void ToggleMultiplayer()
+    {
+        //((MultiplayerManager)NetworkManager.singleton)
+        multiplayerEnabledText.text = "bruh";
     }
 }
