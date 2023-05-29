@@ -13,7 +13,7 @@ public class SettingsSlider : SettingsUIElement
     
     private Slider _slider;
     private Text _text;
-//TODO boolean
+    
     private void Awake()
     {
         _slider = GetComponent<Slider>();
