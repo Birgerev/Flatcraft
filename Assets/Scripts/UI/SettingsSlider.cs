@@ -20,7 +20,7 @@ public class SettingsSlider : SettingsUIElement
         _slider.onValueChanged.AddListener(ValueChangedEvent);
     }
 
-    protected override void LoadValue()
+    public override void LoadValue()
     {
         _slider.value = SettingsManager.GetIntValue(settingsKey);
     }

@@ -17,5 +17,5 @@ public class SettingsUIElement : MonoBehaviour
         SettingsManager.Values[settingsKey] = value;
     }
 
-    protected virtual void LoadValue() { }
+    public virtual void LoadValue() { }
 }
