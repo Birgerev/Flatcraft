@@ -21,6 +21,9 @@ public class ItemHeldAchievment : Achievement
 
         PlayerInventory inventory = playerEntity.GetInventory();
 
+        if (inventory == null)
+            return;
+
         foreach (Material matAlternative in materialCriteria)
         {
             if (inventory.Contains(matAlternative))
