@@ -7,14 +7,14 @@ public class SettingsUIElement : MonoBehaviour
 {
     public string settingsKey;
 
-    private void Start()
+    protected virtual void Start()
     {
         LoadValue();
     }
 
-    private void SetValue(string value)
+    protected void SetValue(string value)
     {
-        SettingsManager.Values[value] = value;
+        SettingsManager.Values[settingsKey] = value;
     }
 
     protected virtual void LoadValue() { }
