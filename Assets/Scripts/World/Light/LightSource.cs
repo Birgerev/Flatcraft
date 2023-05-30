@@ -8,7 +8,7 @@ public class LightSource : MonoBehaviour
 
     public void UpdateLightWithinReach()
     {
-        LightManager.UpdateLightInArea(
+        LightManager.UpdateLightInAreaAsync(
             GetLocation() + new Location(-LightManager.MaxLightLevel, -LightManager.MaxLightLevel), 
             GetLocation() + new Location(LightManager.MaxLightLevel, LightManager.MaxLightLevel));
     }

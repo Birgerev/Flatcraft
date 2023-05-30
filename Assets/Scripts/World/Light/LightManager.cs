@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Burst;
 using UnityEngine;
 
@@ -33,42 +34,45 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateChunkLight(ChunkPosition chunk)
     {
-        UpdateLightInArea(new Location(chunk.worldX, 0, chunk.dimension),
+        UpdateLightInAreaAsync(new Location(chunk.worldX, 0, chunk.dimension),
             new Location(chunk.worldX + Chunk.Width, Chunk.Height, chunk.dimension));
     }
 
-    public static void UpdateLightInArea(Location min, Location max)
+    public static async void UpdateLightInAreaAsync(Location min, Location max)
     {
-        List<LightObject> lightObjects = GetLightObjectsForArea(min, max);
-        List<LightSource> lightSources = GetLightSourcesForArea(min + new Location(-MaxLightLevel, -MaxLightLevel),
+        List<LightObject> lightObjects = await GetLightObjectsForAreaAsync(min, max);
+        List<LightSource> lightSources = await GetLightSourcesForAreaAsync(min + new Location(-MaxLightLevel, -MaxLightLevel),
             max + new Location(MaxLightLevel, MaxLightLevel));
-
+        //TODO
         foreach (LightObject lightObject in lightObjects)
-            UpdateLightObjectWithSpecificSources(lightObject, lightSources);
+            UpdateLightObjectWithSpecificSourcesAsync(lightObject, lightSources);
     }
 
-    private static List<LightObject> GetLightObjectsForArea(Location boundingBoxMin, Location boundingBoxMax)
+    private static async Task<List<LightObject>> GetLightObjectsForAreaAsync(Location boundingBoxMin, Location boundingBoxMax)
     {
-        Collider2D[] lightObjectColliders = Physics2D.OverlapAreaAll(boundingBoxMin.GetPosition(),
-            boundingBoxMax.GetPosition());
-        List<LightObject> lightObjects = new List<LightObject>();
+        Collider2D[] lightObjectColliders = await Task.Run(() =>
+            Physics2D.OverlapAreaAll(boundingBoxMin.GetPosition(), boundingBoxMax.GetPosition()));
+        
+        HashSet<LightObject> lightObjects = new HashSet<LightObject>(lightObjectColliders.Length);
 
         foreach (Collider2D lightObjectCollider in lightObjectColliders)
         {
-            LightObject lightObject = lightObjectCollider.GetComponent<LightObject>();
-
-            if (lightObject != null)
+            if (lightObjectCollider.TryGetComponent(out LightObject lightObject))
+            {
                 lightObjects.Add(lightObject);
+            }
         }
 
-        return lightObjects;
+        return new List<LightObject>(lightObjects);
     }
 
-    private static List<LightSource> GetLightSourcesForArea(Location boundingBoxMin, Location boundingBoxMax)
+    private static async Task<List<LightSource>> GetLightSourcesForAreaAsync(Location boundingBoxMin, Location boundingBoxMax)
     {
-        Collider2D[] lightSourceColliders = Physics2D.OverlapAreaAll(boundingBoxMin.GetPosition(),
-            boundingBoxMax.GetPosition(),
-            LayerMask.GetMask("LightSource"));
+        Collider2D[] lightSourceColliders = await Task.Run(() => Physics2D.OverlapAreaAll(
+                boundingBoxMin.GetPosition(), 
+                boundingBoxMax.GetPosition(),
+                LayerMask.GetMask("LightSource")));
+        
         List<LightSource> lightSources = new List<LightSource>();
 
         foreach (Collider2D lightSourceCollider in lightSourceColliders)
@@ -132,14 +136,14 @@ public class LightManager : MonoBehaviour
         Destroy(source.gameObject);
     }
 
-    public static LightValues GetLightValuesAt(Location loc, List<LightSource> knownLightSources = null)
+    public static async Task<LightValues> GetLightValuesAtAsync(Location loc, List<LightSource> knownLightSources = null)
     {
         if (!DoLight)
             return new LightValues(MaxLightLevel);
         
         //If no set of light sources was supplied, automatically find them
         if(knownLightSources == null)
-            knownLightSources = GetLightSourcesForArea(
+            knownLightSources = await GetLightSourcesForAreaAsync(
                 loc + new Location(-MaxLightLevel, -MaxLightLevel), 
                 loc + new Location(MaxLightLevel, MaxLightLevel));
         
@@ -185,21 +189,21 @@ public class LightManager : MonoBehaviour
 
     public static void UpdateBlockLight(Location loc)
     {
-        UpdateLightInArea(loc, loc);
+        UpdateLightInAreaAsync(loc, loc);
     }
 
-    public static void UpdateLightObject(LightObject lightObj)
+    public static async void UpdateLightObjectWithUnknownSourcesAsync(LightObject lightObj)
     {
         Location loc = lightObj.GetLocation();
-        List<LightSource> lightSources = GetLightSourcesForArea(loc + new Location(-MaxLightLevel, -MaxLightLevel),
+        List<LightSource> lightSources = await GetLightSourcesForAreaAsync(loc + new Location(-MaxLightLevel, -MaxLightLevel),
             loc + new Location(MaxLightLevel, MaxLightLevel));
-
-        UpdateLightObjectWithSpecificSources(lightObj, lightSources);
+        
+        UpdateLightObjectWithSpecificSourcesAsync(lightObj, lightSources);
     }
 
-    private static void UpdateLightObjectWithSpecificSources(LightObject lightObject, List<LightSource> possibleLightSources)
+    private static async void UpdateLightObjectWithSpecificSourcesAsync(LightObject lightObject, List<LightSource> possibleLightSources)
     {
-        LightValues lightValues = GetLightValuesAt(lightObject.GetLocation(), possibleLightSources);
+        LightValues lightValues = await GetLightValuesAtAsync(lightObject.GetLocation(), possibleLightSources);
 
         lightObject.UpdateLightLevel(lightValues);
     }

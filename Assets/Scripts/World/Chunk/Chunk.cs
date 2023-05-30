@@ -538,7 +538,7 @@ public class Chunk : NetworkBehaviour
             }
 
             //Viable spawn location if, enough space, low enough light level
-            if (consecutiveEmptyBlocks >= 2 && LightManager.GetLightValuesAt(loc).lightLevel <= monsterSpawningLightLevel)
+            if (consecutiveEmptyBlocks >= 2 && LightManager.GetLightValuesAtAsync(loc).Result.lightLevel <= monsterSpawningLightLevel)
                 possibleSpawnLocations.Add(loc);
             
             consecutiveEmptyBlocks = 0;

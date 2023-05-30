@@ -697,7 +697,7 @@ public class Entity : NetworkBehaviour
         LightObject lightObj = GetRenderer().GetComponent<LightObject>();
 
         if (lightObj != null)
-            LightManager.UpdateLightObject(lightObj);
+            LightManager.UpdateLightObjectWithUnknownSourcesAsync(lightObj);
     }
 
     [Client]

@@ -55,6 +55,6 @@ public class LightObject : MonoBehaviour
 
     public void RequestLightUpdate()
     {
-        LightManager.UpdateLightObject(this);
+        LightManager.UpdateLightObjectWithUnknownSourcesAsync(this);
     }
 }
