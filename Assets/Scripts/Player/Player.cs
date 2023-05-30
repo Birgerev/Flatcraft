@@ -93,13 +93,7 @@ public class Player : LivingEntity
     public override void Tick()
     {
         base.Tick();
-
-        if (inventoryId == 0) //Make sure player has an inventory
-        {
-            Inventory inv = PlayerInventory.CreatePreset();
-            inventoryId = inv.id;
-        }
-
+        
         CalculateFlip();
         GetInventory().holder = Location;
         CheckHunger();
@@ -380,7 +374,16 @@ public class Player : LivingEntity
 
     public PlayerInventory GetInventory()
     {
-        return (PlayerInventory) Inventory.Get(inventoryId);
+        Inventory inventory = Inventory.Get(inventoryId);
+        
+        //Create an inventory if it doesn't exist
+        if (inventory == null)
+        {
+            inventory = PlayerInventory.CreatePreset();
+            inventoryId = inventory.id;
+        }
+        
+        return (PlayerInventory)inventory;
     }
 
     [Client]
