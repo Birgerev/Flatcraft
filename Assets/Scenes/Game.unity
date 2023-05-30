@@ -6449,7 +6449,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   optionsMenuPrefab: {fileID: 8189563067701013113, guid: a9e91ef8bf341f345aaf2ad2d92b7ce6,
     type: 3}
-  multiplayerEnabledText: {fileID: 1816870313}
 --- !u!225 &1091150016
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9917,18 +9916,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1816870311}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1816870313 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
-    type: 3}
-  m_PrefabInstance: {fileID: 1816870311}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1816870314 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9203636280091448051, guid: b4cd6372c506dd240aa5b3b169938fdd,
@@ -9947,10 +9934,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b440d134f0fd346b03416bebd05e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingsKey: multiplayerEnabled
+  settingsKey: multiplayer
   stateValue:
-  - 1
-  - 0
+  - friends
+  - off
   stateString:
   - 'Friends Can Join: ON'
   - 'Friends Can Join: OFF'
