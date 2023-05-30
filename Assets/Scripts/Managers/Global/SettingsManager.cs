@@ -16,6 +16,7 @@ public class SettingsManager : MonoBehaviour
         {"soundCategory_entities", "100"},
         {"soundCategory_block", "100"},
         {"soundCategory_music", "100"},
+        {"multiplayer", "friends"},
     };
     
     // Start is called before the first frame update

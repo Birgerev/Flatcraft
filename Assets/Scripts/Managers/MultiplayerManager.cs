@@ -10,9 +10,13 @@ using Steamworks;
 
 public class MultiplayerManager : NetworkManager
 {
+    //dont need singleton variable here, use "singleton" from NetworkManager
+    
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     private bool _initialized;
+    
+    //TODO check settings is multiplayer enabled?
     
     public override void Awake()
     {
@@ -115,6 +119,7 @@ public class MultiplayerManager : NetworkManager
     
 #if !DISABLESTEAMWORKS
     public CSteamID lobbyId;
+    public ELobbyType currentLobbyVisibility;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
     protected Callback<LobbyEnter_t> lobbyEntered;
@@ -134,7 +139,30 @@ public class MultiplayerManager : NetworkManager
     private static void CreateSteamLobby()
     {
         Debug.Log("Creating steam lobby");
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, singleton.maxConnections);
+        SteamMatchmaking.CreateLobby(GetSettingLobbyVisibility(), singleton.maxConnections);
+        ((MultiplayerManager)singleton).currentLobbyVisibility = GetSettingLobbyVisibility();
+        
+        singleton.InvokeRepeating(nameof(UpdateLobbyVisibility), 1, 1);
+    }
+
+    private static ELobbyType GetSettingLobbyVisibility()
+    {
+        return SettingsManager.GetStringValue("multiplayer").Equals("friends")
+            ? ELobbyType.k_ELobbyTypeFriendsOnly
+            : ELobbyType.k_ELobbyTypePrivate;
+    }
+
+    public void UpdateLobbyVisibility()
+    {
+        //Called by Invoked Repeating
+        ELobbyType settingsLobbyVisibility = GetSettingLobbyVisibility();
+        
+        if (currentLobbyVisibility != settingsLobbyVisibility)
+        {
+            SteamMatchmaking.SetLobbyType(lobbyId, settingsLobbyVisibility);
+            currentLobbyVisibility = settingsLobbyVisibility;
+            Debug.Log("Lobby visibility set to " + currentLobbyVisibility);
+        }
     }
 
     public static async void JoinGameAsync(CSteamID lobbyId)
