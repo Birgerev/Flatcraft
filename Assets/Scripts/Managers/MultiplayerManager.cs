@@ -10,13 +10,18 @@ using Steamworks;
 
 public class MultiplayerManager : NetworkManager
 {
+    public static MultiplayerManager instance;
+    
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     private bool _initialized;
     
+    
     public override void Awake()
     {
         base.Awake();
+        
+        instance = this;
         
         //Register all network prefabs to manager
         foreach (string dir in prefabDirectories)
@@ -57,6 +62,13 @@ public class MultiplayerManager : NetworkManager
         //Host steam lobby
 #if !DISABLESTEAMWORKS
         CreateSteamLobby();
+#endif
+    }
+
+    private static void UpdateLobbyVisibility()
+    {
+#if !DISABLESTEAMWORKS
+        SteamMatchmaking.SetLobbyType(instance.lobbyId, GetSettingLobbyVisibility());
 #endif
     }
 
@@ -134,7 +146,14 @@ public class MultiplayerManager : NetworkManager
     private static void CreateSteamLobby()
     {
         Debug.Log("Creating steam lobby");
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, singleton.maxConnections);
+        SteamMatchmaking.CreateLobby(GetSettingLobbyVisibility(), singleton.maxConnections);
+    }
+
+    private static ELobbyType GetSettingLobbyVisibility()
+    {
+        return SettingsManager.GetStringValue("multiplayerEnabled").Equals("friends")
+            ? ELobbyType.k_ELobbyTypeFriendsOnly
+            : ELobbyType.k_ELobbyTypePrivate;
     }
 
     public static async void JoinGameAsync(CSteamID lobbyId)
