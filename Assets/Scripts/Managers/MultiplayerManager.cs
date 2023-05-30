@@ -10,18 +10,17 @@ using Steamworks;
 
 public class MultiplayerManager : NetworkManager
 {
-    public static MultiplayerManager instance;
+    //dont need singleton variable here, use "singleton" from NetworkManager
     
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     private bool _initialized;
     
+    //TODO check settings is multiplayer enabled?
     
     public override void Awake()
     {
         base.Awake();
-        
-        instance = this;
         
         //Register all network prefabs to manager
         foreach (string dir in prefabDirectories)
@@ -62,13 +61,6 @@ public class MultiplayerManager : NetworkManager
         //Host steam lobby
 #if !DISABLESTEAMWORKS
         CreateSteamLobby();
-#endif
-    }
-
-    private static void UpdateLobbyVisibility()
-    {
-#if !DISABLESTEAMWORKS
-        SteamMatchmaking.SetLobbyType(instance.lobbyId, GetSettingLobbyVisibility());
 #endif
     }
 
@@ -127,6 +119,7 @@ public class MultiplayerManager : NetworkManager
     
 #if !DISABLESTEAMWORKS
     public CSteamID lobbyId;
+    public ELobbyType currentLobbyVisibility;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
     protected Callback<LobbyEnter_t> lobbyEntered;
@@ -147,13 +140,29 @@ public class MultiplayerManager : NetworkManager
     {
         Debug.Log("Creating steam lobby");
         SteamMatchmaking.CreateLobby(GetSettingLobbyVisibility(), singleton.maxConnections);
+        ((MultiplayerManager)singleton).currentLobbyVisibility = GetSettingLobbyVisibility();
+        
+        singleton.InvokeRepeating(nameof(UpdateLobbyVisibility), 1, 1);
     }
 
     private static ELobbyType GetSettingLobbyVisibility()
     {
-        return SettingsManager.GetStringValue("multiplayerEnabled").Equals("friends")
+        return SettingsManager.GetStringValue("multiplayer").Equals("friends")
             ? ELobbyType.k_ELobbyTypeFriendsOnly
             : ELobbyType.k_ELobbyTypePrivate;
+    }
+
+    public void UpdateLobbyVisibility()
+    {
+        //Called by Invoked Repeating
+        ELobbyType settingsLobbyVisibility = GetSettingLobbyVisibility();
+        
+        if (currentLobbyVisibility != settingsLobbyVisibility)
+        {
+            SteamMatchmaking.SetLobbyType(lobbyId, settingsLobbyVisibility);
+            currentLobbyVisibility = settingsLobbyVisibility;
+            Debug.Log("Lobby visibility set to " + currentLobbyVisibility);
+        }
     }
 
     public static async void JoinGameAsync(CSteamID lobbyId)
