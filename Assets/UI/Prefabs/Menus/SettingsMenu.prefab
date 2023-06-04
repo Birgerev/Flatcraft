@@ -2324,7 +2324,7 @@ PrefabInstance:
     - target: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Text
-      value: 'Fullscreen: ON'
+      value: 'Fullscreen Mode: Fullscreen'
       objectReference: {fileID: 0}
     - target: {fileID: 9203636279896232828, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
@@ -2498,6 +2498,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4cd6372c506dd240aa5b3b169938fdd, type: 3}
+--- !u!1 &354856439565461726 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9203636280091448051, guid: b4cd6372c506dd240aa5b3b169938fdd,
+    type: 3}
+  m_PrefabInstance: {fileID: 8887104419501488685}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3453776142745044224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354856439565461726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8b440d134f0fd346b03416bebd05e0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settingsKey: fullscreen
+  stateValue:
+  - fullscreen
+  - windowed
+  stateString:
+  - 'Fullscreen Mode: Fullscreen'
+  - 'Fullscreen Mode: Windowed'
 --- !u!224 &354856439565461727 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9203636280091448050, guid: b4cd6372c506dd240aa5b3b169938fdd,
