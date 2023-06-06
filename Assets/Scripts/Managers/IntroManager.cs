@@ -21,9 +21,8 @@ public class IntroManager : MonoBehaviour
 
     async void IntroSequence()
     {
-        Scene introScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(introScene.buildIndex + 1, LoadSceneMode.Additive);
-
+        Scene introScene = SceneManager.GetSceneByName("Intro");
+        
         AudioSequence();
         
         await Task.Delay(6000);

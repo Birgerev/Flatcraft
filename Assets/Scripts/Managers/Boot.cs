@@ -24,6 +24,7 @@ public class Boot : MonoBehaviour
             return;
         }
         
-        SceneManager.LoadScene("Intro");
+        SceneManager.LoadScene("MainMenu");//Load main menu first, so it is active
+        SceneManager.LoadScene("Intro", LoadSceneMode.Additive);
     }
 }
