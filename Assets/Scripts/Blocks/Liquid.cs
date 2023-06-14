@@ -27,8 +27,7 @@ public class Liquid : Block
 
     public override void GeneratingTick()
     {
-        MakeIntoLiquidSourceBlock();
-        Tick();
+        MakeIntoLiquidSourceBlock();    //Max liquid level & source block
 
         base.GeneratingTick();
     }
@@ -37,7 +36,7 @@ public class Liquid : Block
     {
         if (!GetData().HasTag("liquid_level"))
         {
-            SetData(GetData().SetTag("liquid_level", maxLiquidLevel.ToString())).GetBlock().Tick();
+            MakeIntoLiquidSourceBlock();
             return;
         }
         
@@ -48,6 +47,10 @@ public class Liquid : Block
     
     public virtual void LiquidTick()
     {
+        //Dont tick if source block
+        if(GetData().GetTag("source_block") == "true")
+            return;
+        
         if (CheckSource())
             CheckFlow();
     }
@@ -229,10 +232,10 @@ public class Liquid : Block
 
     private void MakeIntoLiquidSourceBlock()
     {
-        BlockData newData = GetData();
-        newData.SetTag("source_block", "true");
-        newData.SetTag("liquid_level", maxLiquidLevel.ToString());
-        SetData(newData);
+        SetData(GetData()
+            .SetTag("source_block", "true")
+            .SetTag("liquid_level", maxLiquidLevel.ToString()));
+        
         location.Tick();
     }
 
