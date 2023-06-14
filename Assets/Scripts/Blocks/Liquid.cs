@@ -40,7 +40,7 @@ public class Liquid : Block
             return;
         }
         
-        StartCoroutine(scheduleLiquidTick());
+        InvokeRepeating(nameof(LiquidTick), 0, 1 / Chunk.TickRate * liquidTickFrequency);
 
         base.Tick();
     }
@@ -55,12 +55,6 @@ public class Liquid : Block
             CheckFlow();
     }
     
-    private IEnumerator scheduleLiquidTick()
-    {
-        yield return new WaitForSeconds(1 / Chunk.TickRate * liquidTickFrequency);
-        LiquidTick();
-    }
-
     public bool CheckSource()
     {
         if (IsLiquidSourceBlock())
