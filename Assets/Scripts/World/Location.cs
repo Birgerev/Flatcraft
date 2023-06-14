@@ -45,7 +45,7 @@ public struct Location
     public Material GetMaterial()
     {
         BlockState state = GetState();
-
+        
         return state.material;
     }
 
