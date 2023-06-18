@@ -34,11 +34,13 @@ public class Liquid : Block
 
     public override void Tick()
     {
-        if (!GetData().HasTag("liquid_level"))
+        //Disabled as it might lead to infinite loop
+        //Ensure liquid level tag exists
+        /*if (!GetData().HasTag("liquid_level"))
         {
             MakeIntoLiquidSourceBlock();
             return;
-        }
+        }*/
         
         InvokeRepeating(nameof(LiquidTick), 0, 1 / Chunk.TickRate * liquidTickFrequency);
 

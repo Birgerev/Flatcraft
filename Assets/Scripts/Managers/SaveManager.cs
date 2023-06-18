@@ -9,7 +9,7 @@ using UnityEngine;
 public class SaveManager : NetworkBehaviour
 {
     public static float AutosaveDuration = 2;
-    public static Dictionary<Location, string> blockChanges = new Dictionary<Location, string>();
+    public static List<BlockChange> unsavedBlockChanges = new List<BlockChange>();
 
     private void Start()
     {
@@ -24,10 +24,10 @@ public class SaveManager : NetworkBehaviour
             yield return new WaitForSecondsRealtime(AutosaveDuration);
 
             //Save Block Changes
-            if (blockChanges.Count > 0)
+            if (unsavedBlockChanges.Count > 0)
             {
-                Dictionary<Location, string> blockChangesCopy = new Dictionary<Location, string>(blockChanges);
-                blockChanges.Clear();
+                List<BlockChange> blockChangesCopy = new List<BlockChange>(unsavedBlockChanges);
+                unsavedBlockChanges.Clear();
                 Thread worldThread = new Thread(() => { SaveBlockChanges(blockChangesCopy); });
                 worldThread.Start();
 
@@ -40,7 +40,7 @@ public class SaveManager : NetworkBehaviour
 
             Thread entityThread = new Thread(() => { SaveEntities(entities); });
             entityThread.Start();
-            
+
             while (entityThread.IsAlive)
                 yield return new WaitForSeconds(0.1f);
 
@@ -65,53 +65,76 @@ public class SaveManager : NetworkBehaviour
             }
     }
 
-    public static void SaveBlockChanges(Dictionary<Location, string> changes)
+    public static void SaveBlockChanges(List<BlockChange> changes)
     {
         //Get all changed chunks
-        List<ChunkPosition> changedChunks = new List<ChunkPosition>();
-        foreach (KeyValuePair<Location, string> blockChange in changes)
+        Dictionary<ChunkPosition, List<BlockChange>> chunkBlockChanges = new Dictionary<ChunkPosition, List<BlockChange>>();
+        
+        foreach (BlockChange blockChange in changes)
         {
-            ChunkPosition cPos = new ChunkPosition(blockChange.Key);
-            if (!changedChunks.Contains(cPos))
-                changedChunks.Add(cPos);
+            ChunkPosition chunkPos = new ChunkPosition(blockChange.location);
+            
+            //Initialize lists for each chunk
+            if(!chunkBlockChanges.ContainsKey(chunkPos))
+                chunkBlockChanges.Add(chunkPos, new List<BlockChange>());
+            
+            chunkBlockChanges[chunkPos].Add(blockChange);
         }
 
-        //Rewrite all block changes for chunks
-        foreach (ChunkPosition currentEditingChunk in changedChunks)
+        //Iterate for each changed chunk
+        //Will load previous chunk state, overwrite values with new block changes, and save
+        foreach (ChunkPosition changedChunk in chunkBlockChanges.Keys)
         {
-            Dictionary<Location, string> changesForChunk = new Dictionary<Location, string>();
-            foreach (KeyValuePair<Location, string> blockChange in changes
-            ) //Add block change to list if it belongs to current chunk that we are editing
-                if (new ChunkPosition(blockChange.Key).Equals(currentEditingChunk))
-                    changesForChunk.Add(blockChange.Key, blockChange.Value);
+            //Dictionary representing the state of blocks in chunk
+            Dictionary<Location, BlockState> chunkBlockStates = new Dictionary<Location, BlockState>();
+            
+            //Get chunk file path
+            string changedChunkFilePath = 
+                WorldManager.world.GetPath() + "\\chunks\\" + changedChunk.dimension + "\\" + changedChunk.chunkX;
 
-            if (!currentEditingChunk.HasBeenSaved())
-                currentEditingChunk.CreateChunkPath();
-
-            string chunkPath = WorldManager.world.GetPath() + "\\chunks\\" + currentEditingChunk.dimension + "\\" +
-                               currentEditingChunk.chunkX;
-
-            foreach (string line in File.ReadAllLines(chunkPath + "\\blocks")
-            ) //Add all old block changes, removing duplicates of new block changes
+            //Load old block states from file, store in dictionary
+            foreach (string line in File.ReadAllLines(changedChunkFilePath + "\\blocks"))
             {
-                Location lineLoc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
+                Location lineLocation = new Location(
+                    int.Parse(line.Split('*')[0].Split(',')[0]),
                     int.Parse(line.Split('*')[0].Split(',')[1]));
-                string lineData = line.Split('*')[1] + "*" + line.Split('*')[2];
+                string lineBlockSaveString = line.Split('*')[1] + "*" + line.Split('*')[2];
+                BlockState blockState = new BlockState(lineBlockSaveString);
 
-                if (!changesForChunk.ContainsKey(lineLoc))
-                    changesForChunk.Add(lineLoc, lineData);
+                chunkBlockStates[lineLocation] = blockState;
+            }
+           
+            //Get all block changes for current chunk
+            List<BlockChange> newBlockChangesForChunk = chunkBlockChanges[changedChunk];
+            //Overwrite / Populate chunkBlockStates with new block changes
+            foreach (var blockChange in newBlockChangesForChunk)
+            {
+                chunkBlockStates[blockChange.location] = blockChange.newBlockState;
             }
 
             //Empty file before writing
-            File.WriteAllText(chunkPath + "\\blocks", "");
+            File.WriteAllText(changedChunkFilePath + "\\blocks", string.Empty);
 
-            //Write all block changes
-            TextWriter c = new StreamWriter(chunkPath + "\\blocks");
-            foreach (KeyValuePair<Location, string> line in changesForChunk)
-                c.WriteLine(line.Key.x + "," + line.Key.y + "*" + line.Value);
-
-            //Close file writer
-            c.Close();
+            //Create Text Writer for chunk
+            using (TextWriter c = new StreamWriter(changedChunkFilePath + "\\blocks"))
+            {
+                //Write all block states to file
+                foreach (Location location in chunkBlockStates.Keys)
+                    c.WriteLine(location.x + "," + location.y + "*" + chunkBlockStates[location].GetSaveString());
+            }
         }
+    }
+}
+
+public struct BlockChange
+{
+    public Location location;
+    public BlockState newBlockState;
+
+    public BlockChange(Location location, BlockState newBlockState)
+    {
+        //populate block change properties
+        this.location = location;
+        this.newBlockState = newBlockState;
     }
 }

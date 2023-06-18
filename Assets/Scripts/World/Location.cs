@@ -109,10 +109,11 @@ public struct Location
 
     public Location SaveState(BlockState state)
     {
-        if (SaveManager.blockChanges.ContainsKey(this))
-            SaveManager.blockChanges.Remove(this);
+        //TODO ensure latest change gets saved
+        //if (SaveManager.unsavedBlockChanges.ContainsKey(this))
+        //    SaveManager.unsavedBlockChanges.Remove(this);
 
-        SaveManager.blockChanges.Add(this, state.GetSaveString());
+        SaveManager.unsavedBlockChanges.Add(new BlockChange(this, state));
 
         return this;
     }
