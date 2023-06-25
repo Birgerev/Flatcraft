@@ -179,8 +179,8 @@ public class Particle : MonoBehaviour
         if (number == 4)
             shape = new List<Vector2>
             {
-                new Vector2(1, 0), new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, 0), new Vector2(1, 2)
-                , new Vector2(-1, 2), new Vector2(1, 3), new Vector2(-1, 3)
+                new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(1, 3), new Vector2(0, 2)
+                , new Vector2(-1, 2), new Vector2(-1, 3),
             };
         if (number == 5)
             shape = new List<Vector2>
