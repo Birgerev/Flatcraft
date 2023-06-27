@@ -83,6 +83,7 @@ public class MultiplayerManager : NetworkManager
 
 #if !DISABLESTEAMWORKS
         LeaveSteamLobby();
+        UnregisterSteamCallbacks();
 #endif
 
         SceneManager.LoadScene("MainMenu");
@@ -130,6 +131,12 @@ public class MultiplayerManager : NetworkManager
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnSteamLobbyJoined);
     }
 
+    private void UnregisterSteamCallbacks()
+    {
+        lobbyCreated.Unregister();
+        lobbyEntered.Unregister();
+    }
+    
     private void LeaveSteamLobby()
     {
         Debug.Log("Leaving steam lobby");
