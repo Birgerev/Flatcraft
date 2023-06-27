@@ -32,12 +32,10 @@ public class Chunk : NetworkBehaviour
     public List<Block> randomTickBlocks = new List<Block>();
 
     [SyncVar] public bool areBlocksReady;
-    public bool areBlocksGenerated;
     public bool donePlacingGeneratedBlocks;
     public bool donePlacingBackgroundBlocks;
     public bool isLoaded;
     public bool isLightGenerated;
-    public bool blocksInitialized;
     public bool startedInitializingAllBlocks;
 
     public Portal_Frame netherPortal;
@@ -72,12 +70,7 @@ public class Chunk : NetworkBehaviour
 
         gameObject.name = "Chunk [" + chunkPosition.chunkX + " " + chunkPosition.dimension + "]";
         transform.position = new Location(chunkPosition.worldX, 0, chunkPosition.dimension).GetPosition();
-
-        isLoaded = false;
-        donePlacingGeneratedBlocks = false;
-        donePlacingBackgroundBlocks = false;
-        isLightGenerated = false;
-        blocksInitialized = false;
+        
         bool hasPreviouslyBeenGenerated = chunkPosition.HasEverBeenGenerated();
 
         if (isServer)
@@ -394,7 +387,6 @@ public class Chunk : NetworkBehaviour
             if (i % 20 == 0)
                 yield return new WaitForSeconds(0);
         }
-        blocksInitialized = true;
     }
 
     [Server]
