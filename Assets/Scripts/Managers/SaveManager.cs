@@ -88,24 +88,27 @@ public class SaveManager : NetworkBehaviour
             //Dictionary representing the state of blocks in chunk
             Dictionary<Location, BlockState> chunkBlockStates = new Dictionary<Location, BlockState>();
             
+            //Make sure folders and files for chunk are populated
+            if (!changedChunk.HasBeenSaved())
+                changedChunk.CreateChunkPath();
+            
             //Get chunk file path
             string changedChunkFilePath = 
                 WorldManager.world.GetPath() + "\\chunks\\" + changedChunk.dimension + "\\" + changedChunk.chunkX;
 
             //Load old block states from file, store in dictionary
-            if(Directory.Exists(changedChunkFilePath))
-                foreach (string line in File.ReadAllLines(changedChunkFilePath + "\\blocks"))
-                {
-                    try {
-                        Location lineLocation = new Location(
-                            int.Parse(line.Split('*')[0].Split(',')[0]),
-                            int.Parse(line.Split('*')[0].Split(',')[1]));
-                        string lineBlockSaveString = line.Split('*')[1] + "*" + line.Split('*')[2];
-                        BlockState blockState = new BlockState(lineBlockSaveString);
+            foreach (string line in File.ReadAllLines(changedChunkFilePath + "\\blocks"))
+            {
+                try {
+                    Location lineLocation = new Location(
+                        int.Parse(line.Split('*')[0].Split(',')[0]),
+                        int.Parse(line.Split('*')[0].Split(',')[1]));
+                    string lineBlockSaveString = line.Split('*')[1] + "*" + line.Split('*')[2];
+                    BlockState blockState = new BlockState(lineBlockSaveString);
 
-                        chunkBlockStates[lineLocation] = blockState;
-                    } catch (Exception e) { Debug.LogError("Error in loading block state,save line: '" + line + "' error: " + e.Message + e.StackTrace); }
-                }
+                    chunkBlockStates[lineLocation] = blockState;
+                } catch (Exception e) { Debug.LogError("Error in loading block state,save line: '" + line + "' error: " + e.Message + e.StackTrace); }
+            }
            
             //Get all block changes for current chunk
             List<BlockChange> newBlockChangesForChunk = chunkBlockChanges[changedChunk];
@@ -117,7 +120,7 @@ public class SaveManager : NetworkBehaviour
 
             //Empty file before writing
             File.WriteAllText(changedChunkFilePath + "\\blocks", string.Empty);
-
+            
             //Create Text Writer for chunk
             using (TextWriter c = new StreamWriter(changedChunkFilePath + "\\blocks"))
             {
