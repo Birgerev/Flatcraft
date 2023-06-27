@@ -26,7 +26,6 @@ public class LivingEntity : Entity
 
     //Entity State
     protected float highestYlevelsinceground;
-    protected bool inLiquidLastFrame;
     private readonly float jumpVelocity = 8.5f;
     private float lastJumpTime;
     private float lastStepSoundTime;
@@ -46,14 +45,7 @@ public class LivingEntity : Entity
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         speed = walkSpeed;
     }
-
-    public override void Update()
-    {
-        base.Update();
-
-        inLiquidLastFrame = isInLiquid;
-    }
-
+    
     [Server]
     public override void Initialize()
     {

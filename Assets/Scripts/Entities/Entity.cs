@@ -42,7 +42,7 @@ public class Entity : NetworkBehaviour
     public Vector2 lastFramePosition;
     public GameObject burningRender;
     private Vector2 _cachedposition;
-    private bool inLiquidLastFrame;
+    protected bool inLiquidLastFrame;
 
     public static int EntityCount => entities.Count;
 
