@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -33,6 +34,8 @@ public class Structure_Block : Block
                     structures[new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, structures.Length)];
 
                 BlockState replaceState = new BlockState(Material.Air);
+                List<Location> locationsToTick = new List<Location>();
+                
 
                 foreach (string blockText in structure.text.Split(Environment.NewLine.ToCharArray()))
                 {
@@ -57,7 +60,8 @@ public class Structure_Block : Block
                         loc += location;
 
 
-                        loc.SetState(state).Tick();
+                        loc.SetState(state);
+                        locationsToTick.Add(loc);
                     }
                     catch (Exception e)
                     {
@@ -66,6 +70,16 @@ public class Structure_Block : Block
                 }
 
                 location.SetState(replaceState).Tick();
+                
+                //Tick all blocks in structure
+                foreach (var loc in locationsToTick)
+                {
+                    //Location.Tick() spreads, which only serves to worsen performance
+                    Block block = loc.GetBlock();
+                    
+                    if(block != null)
+                        block.Tick();
+                }
             }
         }
         
