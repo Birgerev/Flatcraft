@@ -93,16 +93,19 @@ public class SaveManager : NetworkBehaviour
                 WorldManager.world.GetPath() + "\\chunks\\" + changedChunk.dimension + "\\" + changedChunk.chunkX;
 
             //Load old block states from file, store in dictionary
-            foreach (string line in File.ReadAllLines(changedChunkFilePath + "\\blocks"))
-            {
-                Location lineLocation = new Location(
-                    int.Parse(line.Split('*')[0].Split(',')[0]),
-                    int.Parse(line.Split('*')[0].Split(',')[1]));
-                string lineBlockSaveString = line.Split('*')[1] + "*" + line.Split('*')[2];
-                BlockState blockState = new BlockState(lineBlockSaveString);
+            if(Directory.Exists(changedChunkFilePath))
+                foreach (string line in File.ReadAllLines(changedChunkFilePath + "\\blocks"))
+                {
+                    try {
+                        Location lineLocation = new Location(
+                            int.Parse(line.Split('*')[0].Split(',')[0]),
+                            int.Parse(line.Split('*')[0].Split(',')[1]));
+                        string lineBlockSaveString = line.Split('*')[1] + "*" + line.Split('*')[2];
+                        BlockState blockState = new BlockState(lineBlockSaveString);
 
-                chunkBlockStates[lineLocation] = blockState;
-            }
+                        chunkBlockStates[lineLocation] = blockState;
+                    } catch (Exception e) { Debug.LogError("Error in loading block state,save line: '" + line + "' error: " + e.Message + e.StackTrace); }
+                }
            
             //Get all block changes for current chunk
             List<BlockChange> newBlockChangesForChunk = chunkBlockChanges[changedChunk];
