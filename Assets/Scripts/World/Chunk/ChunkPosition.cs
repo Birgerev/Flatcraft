@@ -67,7 +67,6 @@ public struct ChunkPosition
         return GetChunk().isLoaded;
     }
 
-
     public Chunk CreateChunk()
     {
         if (IsChunkCreated())
