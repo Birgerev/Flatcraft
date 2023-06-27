@@ -117,10 +117,7 @@ public class Chunk : NetworkBehaviour
             yield return new WaitForSeconds(0.1f);
 
         if (!isServer)
-            StartCoroutine(BuildChunk());
-
-        while (!donePlacingGeneratedBlocks)
-            yield return new WaitForSeconds(0.1f);
+            yield return StartCoroutine(BuildChunk());
 
         if (isServer)
         {
@@ -131,12 +128,8 @@ public class Chunk : NetworkBehaviour
         }
 
         //Initialize all blocks after all blocks have been created
-        StartCoroutine(InitializeAllBlocks());
+        yield return StartCoroutine(InitializeAllBlocks());
 
-        while (!blocksInitialized)
-            yield return new WaitForSeconds(0.1f);
-
-        
         GenerateBackgroundBlocks();
         GenerateSunlightSources();
 
