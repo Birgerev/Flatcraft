@@ -211,7 +211,7 @@ public class OverworldGenerator : WorldGenerator
             return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold/Presets"));
         
         //Generate Liquid From Top & Bottoms in caves
-        if (loc.y < SeaLevel && r.NextDouble() <= 0.03d)
+        if (loc.y < SeaLevel - 15 && r.NextDouble() <= 0.03d)
             if ((matBeneath == Material.Air && mat == Material.Stone) || (matBeneath == Material.Stone && mat == Material.Air))
             {
                 //Determine water or lava
