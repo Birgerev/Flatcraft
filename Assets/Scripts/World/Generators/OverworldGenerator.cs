@@ -124,6 +124,7 @@ public class OverworldGenerator : WorldGenerator
     }
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
+    
     {
         Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
@@ -218,6 +219,11 @@ public class OverworldGenerator : WorldGenerator
 
                 return new BlockState(liquidMat);
             }
+        
+        //Random Lava//
+        if(mat == Material.Stone && r.NextDouble() < 0.0003d)
+            return new BlockState(Material.Lava);
+        
         
         //Lava lakes
         if (loc.y < LavaHeight && mat == Material.Air)
