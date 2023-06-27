@@ -4,6 +4,8 @@ Hey Bulldog!
 BLAHAJ!
 Duck!
 Indev?
+Alpha
+Beta
 Also try Minecraft!
 Soon in 4D!
 Kill a creeper with a skeleton!
@@ -19,7 +21,6 @@ C# edition!
 //TODO
 Ro- Nin- Pawn!
 Rudolf den andre!
-
 Now in 2D!
 Soon in 3D!
 1993 Edition!
