@@ -171,22 +171,26 @@ public class Chunk : NetworkBehaviour
                       chunkPosition.chunkX + "\\blocks";
 
         string[] lines = File.ReadAllLines(path);
+        int i = 0;
         foreach (string line in lines)
-            try
-            {
+        {
+            try {
                 Location loc = new Location(int.Parse(line.Split('*')[0].Split(',')[0]),
                     int.Parse(line.Split('*')[0].Split(',')[1]),
                     chunkPosition.dimension);
-                Material mat = (Material) Enum.Parse(typeof(Material), line.Split('*')[1]);
+                Material mat = (Material)Enum.Parse(typeof(Material), line.Split('*')[1]);
                 BlockData data = new BlockData(line.Split('*')[2]);
                 BlockState state = new BlockState(mat, data);
 
                 loc.SetStateNoBlockChange(state);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message + e.StackTrace);
-            }
+
+            } catch (Exception e) { Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message + e.StackTrace); }
+
+            //Every 100 blocks, wait 1 frame
+            if (i % 50 == 0)
+                yield return 0;
+            i++;
+        }
 
         StartCoroutine(BuildChunk());
 
