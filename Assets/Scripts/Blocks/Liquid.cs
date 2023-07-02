@@ -51,8 +51,9 @@ public class Liquid : Block
     public virtual void LiquidTick()
     {
         //Dont tick if source block
-        if(GetData().GetTag("source_block") == "true")
-            return;
+        //huh? why not?
+        //if(GetData().GetTag("source_block") == "true")
+        //    return;
         
         if (CheckSource())
             CheckFlow();
