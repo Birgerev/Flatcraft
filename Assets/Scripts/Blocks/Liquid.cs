@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Liquid : Block
@@ -11,6 +12,8 @@ public class Liquid : Block
     public virtual string[] liquidTextures { get; } = { };
     public override bool solid { get; set; } = false;
     public override bool trigger { get; set; } = true;
+
+    private bool _isLiquidTicking;
 
     public override ItemStack GetDrop()
     {
@@ -42,21 +45,27 @@ public class Liquid : Block
             MakeIntoLiquidSourceBlock();
             return;
         }*/
-        
-        InvokeRepeating(nameof(LiquidTick), 0, 1 / Chunk.TickRate * liquidTickFrequency);
+
+        if (!_isLiquidTicking)
+            LiquidTick();
 
         base.Tick();
     }
     
-    public virtual void LiquidTick()
+    public virtual async void LiquidTick()
     {
-        //Dont tick if source block
-        //huh? why not?
-        //if(GetData().GetTag("source_block") == "true")
-        //    return;
+        _isLiquidTicking = true;
+        
+        //Delay liquid tick according to defined interval + random offset for performance
+        float tickRate = (1f / Chunk.TickRate * liquidTickFrequency);
+        //float randomOffset = (float) new System.Random(SeedGenerator.SeedByWorldLocation(location)).NextDouble()*.5f - .25f;
+        //Convert to milliseconds
+        await Task.Delay((int)(tickRate * 1000));
         
         if (CheckSource())
             CheckFlow();
+        
+        _isLiquidTicking = false;
     }
     
     public bool CheckSource()
