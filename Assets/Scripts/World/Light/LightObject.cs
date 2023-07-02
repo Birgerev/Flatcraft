@@ -5,29 +5,25 @@ public class LightObject : MonoBehaviour
 {
     public int lightLevelDeduct;
     public bool staticObject;
-    private Vector3 position;
-
-    public Vector3 GetPosition()
-    {
-        if (staticObject)
-        {
-            if (position == Vector3.zero)
-                position = transform.position;
-
-            return position;
-        }
-
-        return position = transform.position;
-    }
+    
+    private Location _cachedLocation;
 
     public Location GetLocation()
     {
-        return Location.LocationByPosition(GetPosition());
+        //If object location can't be cached, just return it
+        if (!staticObject)
+            return Location.LocationByPosition(transform.position);
+        
+        //For static objects, cache location if it hasn't been done already
+        if (_cachedLocation.Equals(default(Location)))
+            _cachedLocation = Location.LocationByPosition(transform.position);
+
+        //Finally return cached loc
+        return _cachedLocation;
     }
     
     public void UpdateLightLevel(LightValues lightValues)
     {
-        
         //Deduct predefined light level
         lightValues.lightLevel -= lightLevelDeduct;
         
