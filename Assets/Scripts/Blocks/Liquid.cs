@@ -28,6 +28,7 @@ public class Liquid : Block
     public override void GeneratingTick()
     {
         MakeIntoLiquidSourceBlock();    //Max liquid level & source block
+        Tick();
 
         base.GeneratingTick();
     }
