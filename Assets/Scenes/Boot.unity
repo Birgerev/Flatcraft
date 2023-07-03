@@ -628,4 +628,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c37fe8932eec8d0449b1bf3754c8f9b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoloadTestWorld: 0
+  autoloadTestWorld: 1
