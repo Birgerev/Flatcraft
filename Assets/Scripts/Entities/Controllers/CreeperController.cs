@@ -10,28 +10,45 @@ public class CreeperController : MonsterController
     protected override float targetLooseRange { get; } = 18;
 
     protected override float pathfindingKeepDistanceToTarget { get; } = 2;
+    
+    protected virtual float igniteDistance { get; } = 3f;
+    protected virtual float defuseDistance { get; } = 6f;
 
     public override void Tick()
     {
         base.Tick();
 
-        CheckIgniteState();
+        bool isIgnited = ((Creeper)instance).ignited;
+
+        if (isIgnited)
+            AttemptToDefuse();
+        else 
+            AttemptToIgnite();
     }
 
-    protected virtual void CheckIgniteState()
+    protected virtual void AttemptToIgnite()
     {
-        bool setIgnited = false;
-
-        if (target != null)
+        if(target == null)
+            return;
+                
+        float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
+        if (distance > igniteDistance)
+            return;
+        
+        ((Creeper) instance).SetIgnited(true);
+    }
+    
+    protected virtual void AttemptToDefuse()
+    {
+        if(target != null)
         {
             float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
-
-            if (distance <= 2.5f)
-                setIgnited = true;
+            
+            if (distance < defuseDistance)
+                return;
         }
-
-        if (((Creeper) instance).ignited != setIgnited)
-            ((Creeper) instance).SetIgnited(setIgnited);
+                
+        ((Creeper) instance).SetIgnited(false);
     }
 
     protected override void Walking()
