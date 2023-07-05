@@ -126,10 +126,9 @@ public class LightManager : MonoBehaviour
 
     public static void DestroySource(LightSource source)
     {
-        //TODO how can order be this way?
-        source.UpdateLightWithinReach();
-        
         Destroy(source.gameObject);
+        
+        source.UpdateLightWithinReach();
     }
 
     public static LightValues GetLightValuesAt(Location loc, List<LightSource> knownLightSources = null)

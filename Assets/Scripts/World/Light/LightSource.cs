@@ -7,7 +7,7 @@ public class LightSource : MonoBehaviour
     
     private Location _cachedLocation;
 
-    private void Start()
+    private void Awake()
     {
         _cachedLocation = Location.LocationByPosition(transform.position);
     }

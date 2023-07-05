@@ -253,10 +253,7 @@ public class Block : MonoBehaviour
 
         //Play block break effect to all clients
         new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
-            
-        if (GetComponentInChildren<LightSource>() != null)
-            LightManager.DestroySource(GetComponentInChildren<LightSource>());
-
+        
         location.SetMaterial(Material.Air).Tick();
     }
 
