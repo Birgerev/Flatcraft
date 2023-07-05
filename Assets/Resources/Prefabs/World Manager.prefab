@@ -215,7 +215,7 @@ MonoBehaviour:
   - music/ambient/mice on venus/mice on venus
   - music/ambient/subwoofer lullaby/subwoofer lullaby
   - music/ambient/danny/danny
-  checkDuration: 400
+  checkDuration: 300
   checkChance: 0.33
 --- !u!114 &-5386586424793891005
 MonoBehaviour:
