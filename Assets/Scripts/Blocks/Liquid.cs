@@ -20,14 +20,6 @@ public class Liquid : Block
         return new ItemStack();
     }
 
-    public override void BuildTick()
-    {
-        //If block was built by player, it is a liquid source
-        MakeIntoLiquidSourceBlock();
-
-        base.BuildTick();
-    }
-
     public override void GeneratingTick()
     {
         MakeIntoLiquidSourceBlock();    //Max liquid level & source block
@@ -38,14 +30,6 @@ public class Liquid : Block
 
     public override void Tick()
     {
-        //Disabled as it might lead to infinite loop
-        //Ensure liquid level tag exists
-        /*if (!GetData().HasTag("liquid_level"))
-        {
-            MakeIntoLiquidSourceBlock();
-            return;
-        }*/
-
         if (!_isLiquidTicking)
             LiquidTick();
 
@@ -55,6 +39,13 @@ public class Liquid : Block
     public virtual async void LiquidTick()
     {
         _isLiquidTicking = true;
+        
+        //Make sure block is initialized properly
+        if (!GetData().HasTag("liquid_level"))
+        {
+            MakeIntoLiquidSourceBlock();
+            return;
+        }
         
         //Delay liquid tick according to defined interval + random offset for performance
         float tickRate = (1f / Chunk.TickRate * liquidTickFrequency);
