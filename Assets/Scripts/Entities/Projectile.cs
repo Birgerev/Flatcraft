@@ -55,8 +55,8 @@ public class Projectile : Entity
     
     public virtual void HitEntity(Entity entity)
     {
-        entity.Damage(entityDamage);
         entity.lastDamager = Entity.GetEntity(ownerUuid);
+        entity.Damage(entityDamage);
         this.Remove();
     }
     
