@@ -204,8 +204,10 @@ public class Particle : MonoBehaviour
             shape = new List<Vector2>
             {
                 new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 2), new Vector2(1, 3), new Vector2(-1, 3)
-                , new Vector2(0, 3), new Vector2(3, 1), new Vector2(4, 3), new Vector2(4, 4), new Vector2(4, 2)
-                , new Vector2(5, 3)
+                , new Vector2(0, 3), 
+                
+                new Vector2(3, 2), new Vector2(4, 2), new Vector2(5, 2), new Vector2(4, 3)
+                , new Vector2(4, 1)
             };
 
         Vector2 totalVelocity = new Vector2(((float) rand.NextDouble() - 0.5f) * 0.5f, (float) rand.NextDouble() * 1f);
