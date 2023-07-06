@@ -427,14 +427,6 @@ public class Entity : NetworkBehaviour
 
         Remove();
     }
-
-    [Server]
-    public virtual void Remove()
-    {
-        dead = true;
-        entities.Remove(this);
-        NetworkServer.Destroy(gameObject);
-    }
     
     [Server]
     public virtual void Damage(float damage)
@@ -505,6 +497,14 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
+    public virtual void Remove()
+    {
+        dead = true;
+        entities.Remove(this);
+        NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
     public virtual void Save()
     {
         if (dead)
@@ -519,12 +519,13 @@ public class Entity : NetworkBehaviour
 
         File.WriteAllLines(path, lines);
     }
+    
     [Server]
     public virtual void Unload()
     {
         Save();
 
-        NetworkServer.Destroy(gameObject);
+        Remove();
     }
 
     [Server]
