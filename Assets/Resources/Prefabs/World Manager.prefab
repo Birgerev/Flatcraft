@@ -216,7 +216,7 @@ MonoBehaviour:
   - music/ambient/subwoofer lullaby/subwoofer lullaby
   - music/ambient/danny/danny
   checkDuration: 300
-  checkChance: 0.33
+  checkChance: 0.5
 --- !u!114 &-5386586424793891005
 MonoBehaviour:
   m_ObjectHideFlags: 0
