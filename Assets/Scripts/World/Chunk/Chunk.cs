@@ -130,7 +130,8 @@ public class Chunk : NetworkBehaviour
         //Initialize all blocks after all blocks have been created
         yield return StartCoroutine(InitializeAllBlocks());
 
-        GenerateBackgroundBlocks();
+        yield return StartCoroutine(GenerateBackgroundBlocks());
+        
         GenerateSunlightSources();
 
         isLoaded = true;
@@ -604,18 +605,16 @@ public class Chunk : NetworkBehaviour
         return blockList;
     }
 
-    private void GenerateBackgroundBlocks()
+    private IEnumerator GenerateBackgroundBlocks()
     {
         for (int x = 0; x < Width; x++)
-            StartCoroutine(UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false));
+            yield return StartCoroutine(UpdateBackgroundBlockColumn(chunkPosition.worldX + x, false));
 
         donePlacingBackgroundBlocks = true;
     }
 
     private IEnumerator UpdateBackgroundBlockColumn(int x, bool updateLight)
     {
-        yield return new WaitForSeconds(0);
-
         //Look up which blocks in the column will create background blocks
         List<int> transparentHeight = new List<int>();
         Dictionary<Location, Material> solidMaterials = new Dictionary<Location, Material>();
@@ -669,6 +668,8 @@ public class Chunk : NetworkBehaviour
                     ScheduleBlockLightUpdate(new Location(x, y, chunkPosition.dimension));
             }
         }
+        
+        yield return new WaitForSeconds(0);
     }
 
     [Server]
