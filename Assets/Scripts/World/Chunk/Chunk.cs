@@ -234,21 +234,26 @@ public class Chunk : NetworkBehaviour
             terrainBlock.Key.SetStateNoBlockChange(state);
         }
 
-
         //Generate Structures
         Biome biome = GetBiome();
-        for (int y = 1; y < Height; y++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int x = 0; x < Width; x++)
+            for (int y = 1; y < Height; y++)
             {
-                Location loc = new Location(chunkPosition.worldX + x, y, chunkPosition.dimension);
-                BlockState state = worldGenerator.GenerateStructures(loc, biome);
+                try
+                {
+                    Location loc = new Location(chunkPosition.worldX + x, y, chunkPosition.dimension);
+                    BlockState state = worldGenerator.GenerateStructures(loc, biome);
 
-                if (state.material != Material.Air)
-                    loc.SetStateNoBlockChange(state);
+                    if (state.material != Material.Air)
+                        loc.SetStateNoBlockChange(state);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error in chunk structure generation: " + e.Message + e.StackTrace);
+                }
             }
-
-            yield return new WaitForSeconds(0f);
+            //Cant wait for seconds here, breaks generation
         }
 
 
