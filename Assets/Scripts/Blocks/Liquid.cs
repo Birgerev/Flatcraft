@@ -23,8 +23,7 @@ public class Liquid : Block
     public override void GeneratingTick()
     {
         MakeIntoLiquidSourceBlock();    //Max liquid level & source block
-        Tick();
-
+        
         base.GeneratingTick();
     }
 
@@ -232,9 +231,8 @@ public class Liquid : Block
     {
         SetData(GetData()
             .SetTag("source_block", "true")
-            .SetTag("liquid_level", maxLiquidLevel.ToString()));
-        
-        location.Tick();
+            .SetTag("liquid_level", maxLiquidLevel.ToString()))
+            .GetBlock().Tick();//Tick without spread
     }
 
     protected virtual void LiquidEncounterEffect(Location loc)
