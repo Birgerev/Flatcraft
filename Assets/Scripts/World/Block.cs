@@ -27,8 +27,6 @@ public class Block : MonoBehaviour
 
     public virtual LightValues lightSourceValues { get; } = new LightValues(0);
     
-    
-
     public float blockHealth;
     public Location location;
     private float timeOfLastHit;
