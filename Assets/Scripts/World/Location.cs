@@ -26,14 +26,14 @@ public struct Location
 
     public static Location LocationByPosition(Vector3 pos)
     {
-        Dimension dimension = Dimension.Overworld;
+        int dimensionIndex = (int)pos.y / Chunk.DimensionSeparationSpace;
+        dimensionIndex = Mathf.Max(dimensionIndex, 0); // Make sure index never <0
+        
+        Dimension dimension = (Dimension)dimensionIndex;
 
-        foreach (Dimension dim in Enum.GetValues(typeof(Dimension)))
-            if (pos.y >= (int) dim * Chunk.DimensionSeparationSpace)
-                dimension = dim;
-
-        return new Location(Mathf.RoundToInt(pos.x),
-            Mathf.RoundToInt(pos.y) - (int) dimension * Chunk.DimensionSeparationSpace,
+        return new Location(
+            Mathf.RoundToInt(pos.x),
+            Mathf.RoundToInt(pos.y) - (dimensionIndex * Chunk.DimensionSeparationSpace),
             dimension);
     }
 
