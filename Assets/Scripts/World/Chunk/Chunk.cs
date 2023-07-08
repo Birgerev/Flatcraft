@@ -189,8 +189,8 @@ public class Chunk : NetworkBehaviour
                 } catch (Exception e) { Debug.LogError("Error in chunk loading block, block save line: '" + line + "' error: " + e.Message + e.StackTrace); }
 
                 //Every 100 blocks, wait 1 frame
-                if (i % 50 == 0)
-                    yield return 0;
+                if (i % 25 == 0)
+                    yield return null;
                 i++;
             }
 
