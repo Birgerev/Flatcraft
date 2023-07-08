@@ -8,17 +8,19 @@ public class LightObject : MonoBehaviour
     
     private Location _cachedLocation;
 
+    private void Start()
+    {
+        if (staticObject)
+            _cachedLocation = Location.LocationByPosition(transform.position);
+    }
+    
     public Location GetLocation()
     {
         //If object location can't be cached, just return it
         if (!staticObject)
             return Location.LocationByPosition(transform.position);
         
-        //For static objects, cache location if it hasn't been done already
-        if (_cachedLocation.Equals(default(Location)))
-            _cachedLocation = Location.LocationByPosition(transform.position);
-
-        //Finally return cached loc
+        //return cached loc
         return _cachedLocation;
     }
     
