@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Unity.Burst;
 using UnityEngine;
 
@@ -37,14 +39,32 @@ public class LightManager : MonoBehaviour
             new Location(chunk.worldX + Chunk.Width, Chunk.Height, chunk.dimension));
     }
 
-    public static void UpdateLightInArea(Location min, Location max)
+    public static async void UpdateLightInArea(Location min, Location max)
     {
-        List<LightObject> lightObjects = GetLightObjectsForArea(min, max);
         List<LightSource> lightSources = GetLightSourcesForArea(min + new Location(-MaxLightLevel, -MaxLightLevel),
             max + new Location(MaxLightLevel, MaxLightLevel));
+        
+        List<LightObject> lightObjects = GetLightObjectsForArea(min, max);
+        
+        List<Location> lightObjectLocations = lightObjects.Select(lightObject => lightObject.GetLocation()).ToList();
+        List<LightValues> calculatedLightValues = await Task.Run (() => CalculateLightValuesForLocations(lightObjectLocations, lightSources));
 
-        foreach (LightObject lightObject in lightObjects)
-            UpdateLightObjectWithSpecificSources(lightObject, lightSources);
+        for (int index = 0; index < lightObjects.Count; index++)
+            lightObjects[index].UpdateLightLevel(calculatedLightValues[index]);
+    }
+
+    public static List<LightValues> CalculateLightValuesForLocations(List<Location> locationsToCalculate, List<LightSource> possibleLightSources)
+    {
+        List<LightValues> finalLightValues = new List<LightValues>();
+        
+        foreach (Location locationToCalculate in locationsToCalculate)
+        {
+            LightValues lightValueAtLocation = GetLightValuesAt(locationToCalculate, possibleLightSources);
+            
+            finalLightValues.Add(lightValueAtLocation);
+        }
+
+        return finalLightValues;
     }
 
     private static List<LightObject> GetLightObjectsForArea(Location boundingBoxMin, Location boundingBoxMax)
