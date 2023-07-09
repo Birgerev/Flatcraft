@@ -20,7 +20,9 @@ public class SkeletonController : MonsterController
     
     protected virtual void TryShoot()
     {
-        if (target == null || GetTargetDistance() > 12)
+        if (target == null || 
+            GetTargetDistance() > 12 || 
+            !HasSightline(target.Location))
             return;
 
         Skeleton skeleton = (Skeleton) instance;
