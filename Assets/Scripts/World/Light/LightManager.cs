@@ -50,7 +50,12 @@ public class LightManager : MonoBehaviour
         List<LightValues> calculatedLightValues = await Task.Run (() => CalculateLightValuesForLocations(lightObjectLocations, lightSources));
 
         for (int index = 0; index < lightObjects.Count; index++)
-            lightObjects[index].UpdateLightLevel(calculatedLightValues[index]);
+        {
+            LightObject lightObject = lightObjects[index];
+            
+            if(lightObject != null)
+                lightObject.UpdateLightLevel(calculatedLightValues[index]);
+        }
     }
 
     public static List<LightValues> CalculateLightValuesForLocations(List<Location> locationsToCalculate, List<LightSource> possibleLightSources)
