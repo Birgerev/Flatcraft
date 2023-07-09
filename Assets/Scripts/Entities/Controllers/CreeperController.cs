@@ -34,6 +34,9 @@ public class CreeperController : MonsterController
         float distance = Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
         if (distance > igniteDistance)
             return;
+
+        if (!HasSightline(target.Location))
+            return;
         
         ((Creeper) instance).SetIgnited(true);
     }
@@ -47,7 +50,7 @@ public class CreeperController : MonsterController
             if (distance < defuseDistance)
                 return;
         }
-                
+        
         ((Creeper) instance).SetIgnited(false);
     }
 
