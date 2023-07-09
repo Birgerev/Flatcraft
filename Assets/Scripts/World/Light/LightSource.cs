@@ -5,7 +5,7 @@ public class LightSource : MonoBehaviour
 {
     public LightValues lightValues;
     
-    private Location _cachedLocation;
+    protected Location _cachedLocation;
 
     private void Awake()
     {
