@@ -140,6 +140,9 @@ public class MobController : EntityController
                 Vector2.Distance(e.Location.GetPosition(), instance.Location.GetPosition()) > targetSearchRange)
                 continue;
             
+            if(!HasSightline(e.Location))
+                continue;
+            
             target = e;
             break;
         }
@@ -194,5 +197,20 @@ public class MobController : EntityController
     protected virtual float GetTargetDistance()
     {
         return Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
+    }
+
+    protected virtual bool HasSightline(Location target)
+    {
+        Vector2 currentPosition = (Vector2)instance.transform.position + new Vector2(0, 1);
+        target += new Location(0, 1);
+        Vector2 targetDirection = target.GetPosition() - currentPosition;
+        
+        //Check if blocks obstructs sight line
+        LayerMask mask = LayerMask.GetMask("Block");
+
+        //If raycasts hit, sight line is obstructed
+        return !Physics2D.Raycast(
+            currentPosition, targetDirection.normalized, 
+            targetDirection.magnitude, mask);
     }
 }
