@@ -27,8 +27,6 @@ public class NetherGenerator : WorldGenerator
         if (loc.y <= 16)
             mat = Material.Netherrack;
         
-        //TODO fortress
-        
 
         //-Caves-//
         if (WorldManager.instance.caveHollowBlocks.Contains(loc))
@@ -68,7 +66,7 @@ public class NetherGenerator : WorldGenerator
         Material matBeneath = (loc + new Location(0, -1)).GetMaterial();
         
         //Nether Fortress Generation
-        if (loc.y == LavaLevel && mat == Material.Lava && r.NextDouble() <= 0.005d)
+        if (loc.y == LavaLevel + 1 && mat == Material.Lava && r.NextDouble() <= 0.005d)
         {
             return new BlockState(Material.Structure_Block, new BlockData("structure=Nether_Fortress"));
         }
