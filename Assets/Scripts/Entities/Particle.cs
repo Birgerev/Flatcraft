@@ -32,7 +32,8 @@ public class Particle : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        //Manually force light update
+        //Manually force light update, make sure location is cached first
+        lightObject.CacheLocation();
         lightObject.RequestLightUpdate();
         
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;

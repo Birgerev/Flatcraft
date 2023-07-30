@@ -10,6 +10,11 @@ public class LightObject : MonoBehaviour
 
     private void Start()
     {
+        CacheLocation();
+    }
+
+    public void CacheLocation()
+    {
         if (staticObject)
             _cachedLocation = Location.LocationByPosition(transform.position);
     }
