@@ -209,7 +209,7 @@ public class LivingEntity : Entity
 
         //Get block in front of player acording to walk direction
         Block blockInFront = Location.LocationByPosition(
-            (Vector2) transform.position + new Vector2(direction * 0.5f, -0.5f)).GetBlock();
+            (Vector2) transform.position + new Vector2(direction * 0.5f, 0)).GetBlock();
 
         if (blockInFront == null)
             return;
