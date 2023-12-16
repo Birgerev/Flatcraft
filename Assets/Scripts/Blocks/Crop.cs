@@ -20,7 +20,7 @@ public class Crop : Block
             SetData(GetData().SetTag("crop_stage", "0"));
     }
 
-    protected override string GetTexturePath()
+    protected override string GetTextureName()
     {
         return crop_textures[GetStage()];
     }

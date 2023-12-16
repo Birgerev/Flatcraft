@@ -310,10 +310,10 @@ public class Liquid : Block
         //Disable breaking
     }
 
-    protected override string GetTexturePath()
+    protected override string GetTextureName()
     {
         if (!GetData().HasTag("liquid_level"))
-            return base.GetTexturePath();
+            return base.GetTextureName();
 
         return liquidTextures[int.Parse(GetData().GetTag("liquid_level")) - 1];
     }
