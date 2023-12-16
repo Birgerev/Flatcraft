@@ -258,8 +258,12 @@ public class Block : MonoBehaviour
     public virtual void Break(bool drop = true)
     {
         if (drop)
-            foreach(ItemStack item in GetDrops())
-                item.Drop(location);
+        {
+            ItemStack[] drops = GetDrops();
+            if (drops != null)
+                foreach(ItemStack item in GetDrops())
+                    item.Drop(location);
+        }
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
