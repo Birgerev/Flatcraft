@@ -32,13 +32,23 @@ public class Block : MonoBehaviour
     public Location location;
     private float _timeOfLastHit;
 
-    #region Bad code
+    #region Needed?
     public void OnDestroy()
     {
         Chunk chunk = new ChunkPosition(location).GetChunk();
 
         if (chunk != null && chunk.randomTickBlocks.Contains(this))
             chunk.randomTickBlocks.Remove(this);
+    }
+
+    public virtual void ServerInitialize()
+    {
+        if (AverageRandomTickDuration != 0)
+        {
+            Chunk chunk = new ChunkPosition(location).GetChunk();
+
+            chunk.randomTickBlocks.Add(this);
+        }
     }
 
     public virtual void OnTriggerExit2D(Collider2D col)
@@ -50,11 +60,45 @@ public class Block : MonoBehaviour
 
     public virtual void OnTriggerStay2D(Collider2D col)
     {
+        //TODO remove fire override too?
         if (Climbable)
             if (col.GetComponent<Entity>() != null)
                 col.GetComponent<Entity>().isOnClimbable = true;
     }
+    
+    protected virtual void Render()
+    {
+        GetComponent<SpriteRenderer>().sprite = GetSprite();
+    }
+    
+    private IEnumerator animatedTextureRenderLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(ChangeTextureTime);
+            Render();
+        }
+    }
 
+    private IEnumerator repairBlockDamageOnceViable()
+    {
+        while (Time.time - _timeOfLastHit < 1)
+            yield return new WaitForSeconds(0.2f);
+
+        blockDamage = 0;
+    }
+    
+    public Color[] GetColorsInTexture()
+    {
+        //TODO also remove ItemStack.Colors
+        Texture2D texture = GetSprite().texture;
+
+        return texture.GetPixels();
+    }
+    #endregion
+    
+    
+    #region Bad code
     public virtual void Initialize()
     {
         //Cache position for use in multithreading
@@ -76,17 +120,7 @@ public class Block : MonoBehaviour
 
         Render();
     }
-
-    public virtual void ServerInitialize()
-    {
-        if (AverageRandomTickDuration != 0)
-        {
-            Chunk chunk = new ChunkPosition(location).GetChunk();
-
-            chunk.randomTickBlocks.Add(this);
-        }
-    }
-
+    
     public virtual void RandomTick()
     {
     }
@@ -105,15 +139,6 @@ public class Block : MonoBehaviour
     {
     }
 
-    private IEnumerator animatedTextureRenderLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(ChangeTextureTime);
-            Render();
-        }
-    }
-
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
@@ -123,13 +148,6 @@ public class Block : MonoBehaviour
         GetComponent<BoxCollider2D>().size = Trigger
                 ? new Vector2(0.9f, 0.9f)
                 : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
-    }
-
-    public Color[] GetColorsInTexture()
-    {
-        Texture2D texture = GetSprite().texture;
-
-        return texture.GetPixels();
     }
 
     private void RotateTowardsPlayer()
@@ -164,19 +182,6 @@ public class Block : MonoBehaviour
 
         GetComponent<SpriteRenderer>().flipX = rotated_x;
         GetComponent<SpriteRenderer>().flipY = rotated_y;
-    }
-
-
-    private IEnumerator repairBlockDamageOnceViable()
-    {
-        while (Time.time - _timeOfLastHit < 1)
-            yield return new WaitForSeconds(0.2f);
-
-        blockDamage = 0;
-    }
-    protected virtual void Render()
-    {
-        GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
 
 
