@@ -23,7 +23,7 @@ public class Fire : Block
         base.OnTriggerStay2D(col);
     }
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return null;
     }

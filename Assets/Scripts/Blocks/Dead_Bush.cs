@@ -9,8 +9,8 @@
     public override bool isFlammable { get; } = true;
 
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
-    
-    public override ItemStack[] GetDrops()
+
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Stick)};
     }

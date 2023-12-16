@@ -2,7 +2,7 @@ using System;
 
 public class Oak_Leaves : Leaves
 {
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         Random r = new Random();
         

@@ -273,7 +273,7 @@ public class Block : MonoBehaviour
         location.SetMaterial(Material.Air).Tick();
     }
 
-    public virtual ItemStack[] GetDrops()
+    protected virtual ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(GetMaterial()) };
     }

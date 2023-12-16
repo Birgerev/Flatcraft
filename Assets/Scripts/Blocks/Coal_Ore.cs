@@ -8,7 +8,7 @@
     public override Tool_Level properToolLevel { get; } = Tool_Level.Wooden;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Coal)};
     }

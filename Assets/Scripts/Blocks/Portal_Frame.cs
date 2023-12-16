@@ -11,7 +11,7 @@ public class Portal_Frame : Block
     public override Tool_Type properToolType { get; } = Tool_Type.None;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Glass;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return null;
     }

@@ -69,7 +69,7 @@ public class Crop : Block
         return stage;
     }
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         if (GetStage() == GetAmountOfStages() - 1)
         {

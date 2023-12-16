@@ -7,8 +7,8 @@
     public override Tool_Type properToolType { get; } = Tool_Type.Pickaxe;
     public override Tool_Level properToolLevel { get; } = Tool_Level.Iron;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
-    
-    public override ItemStack[] GetDrops()
+
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Redstone_Dust)};//TODO random amount
     }

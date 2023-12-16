@@ -8,7 +8,7 @@ public class Grass_Block : Block
     public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Dirt)};
     }

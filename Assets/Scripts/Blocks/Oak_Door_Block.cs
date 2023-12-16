@@ -10,7 +10,7 @@
         ? Material.Oak_Door_Top
         : Material.Oak_Door_Bottom;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Oak_Door)};
     }

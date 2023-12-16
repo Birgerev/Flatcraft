@@ -6,8 +6,8 @@
     public override LightValues lightSourceValues { get; } = new LightValues(10);
 
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Glass;
-    
-    public override ItemStack[] GetDrops()
+
+    protected override ItemStack[] GetDrops()
     {
         return null;
     }

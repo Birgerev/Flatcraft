@@ -42,7 +42,7 @@
         base.Tick();
     }
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(Material.Bed)};
     }
