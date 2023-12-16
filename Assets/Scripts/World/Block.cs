@@ -116,16 +116,8 @@ public class Block : MonoBehaviour
 
     public virtual void Tick()
     {
-        CheckGround();
         UpdateColliders();
         RenderRotate();
-    }
-
-    private void CheckGround()
-    {
-        if (requiresGround)
-            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
-                Break();
     }
 
     private IEnumerator animatedTextureRenderLoop()
