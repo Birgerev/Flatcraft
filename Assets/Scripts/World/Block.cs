@@ -279,6 +279,16 @@ public class Block : MonoBehaviour
     {
         return new[] { new ItemStack(GetMaterial()) };
     }
+    
+    public virtual bool CanBePlaced(Location loc)
+    {
+        /*TODO
+        if (requiresGround)
+            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
+                Break();
+                */
+        return true;
+    }
 
     public Material GetMaterial()
     {
