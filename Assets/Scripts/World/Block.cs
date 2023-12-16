@@ -51,21 +51,6 @@ public class Block : MonoBehaviour
         }
     }
 
-    public virtual void OnTriggerExit2D(Collider2D col)
-    {
-        if (Climbable)
-            if (col.GetComponent<Entity>() != null)
-                col.GetComponent<Entity>().isOnClimbable = false;
-    }
-
-    public virtual void OnTriggerStay2D(Collider2D col)
-    {
-        //TODO remove fire override too?
-        if (Climbable)
-            if (col.GetComponent<Entity>() != null)
-                col.GetComponent<Entity>().isOnClimbable = true;
-    }
-    
     protected virtual void Render()
     {
         GetComponent<SpriteRenderer>().sprite = GetSprite();

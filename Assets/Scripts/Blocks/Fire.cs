@@ -15,12 +15,10 @@ public class Fire : Block
 
     public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Fire;
 
-    public override void OnTriggerStay2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
         if (col.GetComponent<Entity>() != null)
             col.GetComponent<Entity>().fireTime = 7;
-
-        base.OnTriggerStay2D(col);
     }
 
     protected override ItemStack[] GetDrops()
