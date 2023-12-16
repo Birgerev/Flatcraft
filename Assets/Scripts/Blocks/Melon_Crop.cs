@@ -47,7 +47,7 @@ public class Melon_Crop : Crop
         base.Grow();
     }
 
-    public override string GetTexture()
+    protected override string GetTexture()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
         {

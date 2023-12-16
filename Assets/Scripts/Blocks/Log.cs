@@ -8,7 +8,7 @@
     public override Tool_Type properToolType { get; } = Tool_Type.Axe;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
 
-    public override string GetTexture()
+    protected override string GetTexture()
     {
         bool leafTexture = GetData().GetTag("leaf_texture") == "true";
         if (leafTexture)

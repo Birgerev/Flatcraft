@@ -79,7 +79,7 @@ public class Chest : InventoryContainer
         }
     }
 
-    public override string GetTexture()
+    protected override string GetTexture()
     {
         return IsOpen() ? open_texture : closed_texture;
     }

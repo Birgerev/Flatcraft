@@ -310,7 +310,7 @@ public class Liquid : Block
         //Disable breaking
     }
 
-    public override string GetTexture()
+    protected override string GetTexture()
     {
         if (!GetData().HasTag("liquid_level"))
             return base.GetTexture();
