@@ -31,6 +31,7 @@ public class Block : MonoBehaviour
     public Location location;
     private float timeOfLastHit;
 
+    #region Bad code
     public void OnDestroy()
     {
         Chunk chunk = new ChunkPosition(location).GetChunk();
@@ -231,6 +232,10 @@ public class Block : MonoBehaviour
         return randomTextures[textureIndex];
     }
 
+    #endregion
+    
+    
+    
     public virtual void Tick()
     {
         UpdateColliders();
