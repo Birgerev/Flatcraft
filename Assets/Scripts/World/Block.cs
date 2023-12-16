@@ -14,7 +14,7 @@ public class Block : MonoBehaviour
     public virtual bool Solid { get; set; } = true;
     public virtual bool IsFlammable { get; } = false;
     public virtual bool Trigger { get; set; } = false;
-    public virtual bool Climbable { get; } = false;
+    public virtual bool IsClimbable { get; } = false;
     public virtual bool RequiresGround { get; } = false;
     public virtual float AverageRandomTickDuration { get; } = 0;
     public virtual float BreakTime { get; } = 0.75f;

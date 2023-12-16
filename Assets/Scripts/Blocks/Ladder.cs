@@ -2,7 +2,7 @@
 {
     public override bool Solid { get; set; } = false;
     public override bool Trigger { get; set; } = true;
-    public override bool Climbable { get; } = true;
+    public override bool IsClimbable { get; } = true;
 
     public override float BreakTime { get; } = 3f;
     public override bool IsFlammable { get; } = true;
