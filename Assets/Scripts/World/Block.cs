@@ -7,29 +7,29 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public virtual string[] randomTextures { get; } = { };
-    public virtual float changeTextureTime { get; } = 0;
+    public virtual string[] RandomTextures { get; } = { };
+    public virtual float ChangeTextureTime { get; } = 0;
 
-    public virtual bool solid { get; set; } = true;
-    public virtual bool isFlammable { get; } = false;
-    public virtual bool trigger { get; set; } = false;
-    public virtual bool climbable { get; } = false;
-    public virtual bool requiresGround { get; } = false;
-    public virtual float averageRandomTickDuration { get; } = 0;
-    public virtual float breakTime { get; } = 0.75f;
-    public virtual bool rotateX { get; } = false;
-    public virtual bool rotateY { get; } = false;
+    public virtual bool Solid { get; set; } = true;
+    public virtual bool IsFlammable { get; } = false;
+    public virtual bool Trigger { get; set; } = false;
+    public virtual bool Climbable { get; } = false;
+    public virtual bool RequiresGround { get; } = false;
+    public virtual float AverageRandomTickDuration { get; } = 0;
+    public virtual float BreakTime { get; } = 0.75f;
+    public virtual bool RotateX { get; } = false;
+    public virtual bool RotateY { get; } = false;
 
-    public virtual Tool_Type properToolType { get; } = Tool_Type.None;
-    public virtual Tool_Level properToolLevel { get; } = Tool_Level.None;
+    public virtual Tool_Type ProperToolType { get; } = Tool_Type.None;
+    public virtual Tool_Level ProperToolLevel { get; } = Tool_Level.None;
 
-    public virtual BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
+    public virtual BlockSoundType BlockSoundType { get; } = BlockSoundType.Stone;
 
-    public virtual LightValues lightSourceValues { get; } = new LightValues(0);
+    public virtual LightValues LightSourceValues { get; } = new LightValues(0);
     
     public float blockHealth;
     public Location location;
-    private float timeOfLastHit;
+    private float _timeOfLastHit;
 
     #region Bad code
     public void OnDestroy()
@@ -42,14 +42,14 @@ public class Block : MonoBehaviour
 
     public virtual void OnTriggerExit2D(Collider2D col)
     {
-        if (climbable)
+        if (Climbable)
             if (col.GetComponent<Entity>() != null)
                 col.GetComponent<Entity>().isOnClimbable = false;
     }
 
     public virtual void OnTriggerStay2D(Collider2D col)
     {
-        if (climbable)
+        if (Climbable)
             if (col.GetComponent<Entity>() != null)
                 col.GetComponent<Entity>().isOnClimbable = true;
     }
@@ -59,19 +59,19 @@ public class Block : MonoBehaviour
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position);
 
-        blockHealth = breakTime;
+        blockHealth = BreakTime;
 
         RenderRotate();
         UpdateColliders();
 
-        if (lightSourceValues.lightLevel > 0)
+        if (LightSourceValues.lightLevel > 0)
         {
             LightSource source = LightSource.Create(transform);
 
-            source.UpdateLightValues(lightSourceValues, true);
+            source.UpdateLightValues(LightSourceValues, true);
         }
 
-        if (changeTextureTime != 0)
+        if (ChangeTextureTime != 0)
             StartCoroutine(animatedTextureRenderLoop());
 
         Render();
@@ -79,7 +79,7 @@ public class Block : MonoBehaviour
 
     public virtual void ServerInitialize()
     {
-        if (averageRandomTickDuration != 0)
+        if (AverageRandomTickDuration != 0)
         {
             Chunk chunk = new ChunkPosition(location).GetChunk();
 
@@ -94,10 +94,10 @@ public class Block : MonoBehaviour
     public virtual void BuildTick()
     {
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
+            Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
                 , 1.5f);
 
-        if ((rotateX || rotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
+        if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
             RotateTowardsPlayer();
     }
 
@@ -109,7 +109,7 @@ public class Block : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(changeTextureTime);
+            yield return new WaitForSeconds(ChangeTextureTime);
             Render();
         }
     }
@@ -117,10 +117,10 @@ public class Block : MonoBehaviour
     public virtual void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollision");
+        gameObject.layer = LayerMask.NameToLayer(Solid || Trigger ? "Block" : "NoCollision");
 
-        GetComponent<Collider2D>().isTrigger = trigger;
-        GetComponent<BoxCollider2D>().size = trigger
+        GetComponent<Collider2D>().isTrigger = Trigger;
+        GetComponent<BoxCollider2D>().size = Trigger
                 ? new Vector2(0.9f, 0.9f)
                 : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
@@ -141,9 +141,9 @@ public class Block : MonoBehaviour
         if (closestPlayer == null)
             return;
         
-        if (rotateY)
+        if (RotateY)
             rotated_y = (Player.localEntity.transform.position.y + 1) < location.y;
-        if (rotateX)
+        if (RotateX)
             rotated_x = Player.localEntity.transform.position.x < location.x;
 
         BlockData newData = GetData();
@@ -169,10 +169,10 @@ public class Block : MonoBehaviour
 
     private IEnumerator repairBlockDamageOnceViable()
     {
-        while (Time.time - timeOfLastHit < 1)
+        while (Time.time - _timeOfLastHit < 1)
             yield return new WaitForSeconds(0.2f);
 
-        blockHealth = breakTime;
+        blockHealth = BreakTime;
     }
     protected virtual void Render()
     {
@@ -186,7 +186,7 @@ public class Block : MonoBehaviour
 
     protected virtual string GetTexture()
     {
-        if (randomTextures.Length > 0) 
+        if (RandomTextures.Length > 0) 
             return GetRandomTexture();
         
         return GetMaterial().ToString();
@@ -195,16 +195,16 @@ public class Block : MonoBehaviour
     private string GetRandomTexture()
     {
         //Default get a random alternative texture based on location
-        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, randomTextures.Length);
+        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, RandomTextures.Length);
 
         //Textures that change over time
-        if (changeTextureTime > 0)
+        if (ChangeTextureTime > 0)
         {
-            float totalTimePerTextureLoop = changeTextureTime * randomTextures.Length;
-            textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
+            float totalTimePerTextureLoop = ChangeTextureTime * RandomTextures.Length;
+            textureIndex = (int) (Time.time % totalTimePerTextureLoop / ChangeTextureTime);
         }
 
-        return randomTextures[textureIndex];
+        return RandomTextures[textureIndex];
     }
 
     #endregion
@@ -223,19 +223,19 @@ public class Block : MonoBehaviour
 
     public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
     {
-        timeOfLastHit = Time.time;
+        _timeOfLastHit = Time.time;
 
         bool properToolStats = false;
 
-        if (tool_level != Tool_Level.None && tool_type == properToolType && tool_level >= properToolLevel)
+        if (tool_level != Tool_Level.None && tool_type == ProperToolType && tool_level >= ProperToolLevel)
             time *= 2 + (float) tool_level * 2f;
-        if (properToolLevel == Tool_Level.None ||
-            tool_type == properToolType && tool_level >= properToolLevel)
+        if (ProperToolLevel == Tool_Level.None ||
+            tool_type == ProperToolType && tool_level >= ProperToolLevel)
             properToolStats = true;
 
         blockHealth -= time;
 
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
+        Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
 
         if (!BreakIndicator.breakIndicators.ContainsKey(location))
             BreakIndicator.Spawn(location);
@@ -265,7 +265,7 @@ public class Block : MonoBehaviour
                     item.Drop(location);
         }
 
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
+        Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
         //Play block break effect to all clients
         new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());

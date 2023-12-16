@@ -24,7 +24,7 @@ public class BreakIndicator : NetworkBehaviour
             if (block != null)
             {
                 blockHealth = block.blockHealth;
-                maxBlockHealth = block.breakTime;
+                maxBlockHealth = block.BreakTime;
             }
 
             CheckDespawn();

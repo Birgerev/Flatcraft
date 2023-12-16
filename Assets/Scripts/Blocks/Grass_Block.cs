@@ -2,11 +2,11 @@
 
 public class Grass_Block : Block
 {
-    public override float breakTime { get; } = 0.75f;
-    public override float averageRandomTickDuration { get; } = 20;
+    public override float BreakTime { get; } = 0.75f;
+    public override float AverageRandomTickDuration { get; } = 20;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Shovel;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
     protected override ItemStack[] GetDrops()
     {
@@ -37,7 +37,7 @@ public class Grass_Block : Block
             return;
         
         //Return if neither solid nor liquid
-        if (!(blockAbove.solid || blockAbove is Liquid))
+        if (!(blockAbove.Solid || blockAbove is Liquid))
             return;
         
         location.SetMaterial(Material.Dirt);
@@ -49,7 +49,7 @@ public class Grass_Block : Block
 
         Location targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1 + 1));
         Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
-        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.solid))
+        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.Solid))
             targetLoc.SetMaterial(Material.Grass_Block);
     }
 }

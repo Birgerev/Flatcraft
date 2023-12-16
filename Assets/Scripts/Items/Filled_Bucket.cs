@@ -15,7 +15,7 @@ public class Filled_Bucket : Item
 
         Material clickedMaterial = loc.GetMaterial();
 
-        if (clickedMaterial != Material.Air && loc.GetBlock().solid)
+        if (clickedMaterial != Material.Air && loc.GetBlock().Solid)
             return;
 
         //Get player inventory

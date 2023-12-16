@@ -119,7 +119,7 @@ public class MobController : EntityController
         Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
 
         //Jump when there is a block in front of entity
-        if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)
+        if (blockInFront != null && blockInFront.Solid && !instance.isInLiquid)
             instance.Jump();
     }
 

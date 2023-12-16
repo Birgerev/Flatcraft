@@ -224,7 +224,7 @@ public class Entity : NetworkBehaviour
         foreach (Collider2D col in blockBeneathColliders)
         {
             Block block = col.GetComponent<Block>();
-            if (block != null && block.solid && !block.trigger)
+            if (block != null && block.Solid && !block.Trigger)
             {
                 isOnGround = true;
                 return;
@@ -290,7 +290,7 @@ public class Entity : NetworkBehaviour
         {
             foreach (Block block in GetBlocksForEntity())
             {
-                if (block.solid && !block.trigger && !(block is Liquid))
+                if (block.Solid && !block.Trigger && !(block is Liquid))
                 {
                     TakeSuffocationDamage(1);
                     return;

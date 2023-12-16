@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Vegetation : Block
 {
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool isFlammable { get; } = true;
+    public override bool Solid { get; set; } = false;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool IsFlammable { get; } = true;
 
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
     public override void Tick()
     {

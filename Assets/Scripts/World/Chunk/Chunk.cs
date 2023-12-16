@@ -572,7 +572,7 @@ public class Chunk : NetworkBehaviour
             {
                 Random r = new Random(SeedGenerator.SeedByWorldLocation(block.location) + i);
 
-                if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
+                if (r.NextDouble() < updateSpeed / block.AverageRandomTickDuration)
                     try
                     {
                         block.RandomTick();
@@ -886,7 +886,7 @@ public class Chunk : NetworkBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.solid)
+                if (mustBeSolid && !block.Solid)
                     continue;
 
                 return block;

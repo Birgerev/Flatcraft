@@ -9,8 +9,8 @@ public class Lava : Liquid
     };
 
     public override int maxLiquidLevel { get; } = 4;
-    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1f, 0.46f, 0.4f), true);
-    public override float averageRandomTickDuration { get; } = 40;
+    public override LightValues LightSourceValues { get; } = new LightValues(15, new Color(1f, 0.46f, 0.4f), true);
+    public override float AverageRandomTickDuration { get; } = 40;
 
     public override void RandomTick()
     {
@@ -38,7 +38,7 @@ public class Lava : Liquid
             if (loc.GetMaterial() != Material.Air)
                 continue;
             //If below target loc is empty or isn't flammable
-            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.GetBlock().isFlammable)
+            if (blockBelow.GetMaterial() == Material.Air || !blockBelow.GetBlock().IsFlammable)
                 continue;
 
             //Otherwise, ignite

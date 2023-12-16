@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class Liquid : Block
 {
-    public override float breakTime { get; } = 100;
+    public override float BreakTime { get; } = 100;
     public virtual int maxLiquidLevel { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
     public virtual string[] liquidTextures { get; } = { };
-    public override bool solid { get; set; } = false;
-    public override bool trigger { get; set; } = true;
+    public override bool Solid { get; set; } = false;
+    public override bool Trigger { get; set; } = true;
 
     private bool _isLiquidTicking;
 

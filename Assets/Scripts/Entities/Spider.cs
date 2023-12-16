@@ -32,7 +32,7 @@ public class Spider : Monster
         Block leftBlock = Location.LocationByPosition(transform.position + new Vector3(-((GetWidth()/2) + 0.5f), 0)).GetBlock();
 
         //Climb when there is a block in front of entity
-        if ((rightBlock != null && rightBlock.solid) || (leftBlock != null && leftBlock.solid))
+        if ((rightBlock != null && rightBlock.Solid) || (leftBlock != null && leftBlock.Solid))
         {
             isOnClimbable = true;
             return;

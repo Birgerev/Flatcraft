@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class Oak_Sign : Block
 {
-    public override bool solid { get; set; } = false;
+    public override bool Solid { get; set; } = false;
     
-    public override bool requiresGround { get; } = true;
-    public override float breakTime { get; } = 6;
+    public override bool RequiresGround { get; } = true;
+    public override float BreakTime { get; } = 6;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
     
     public override void Interact(PlayerInstance player)
     {

@@ -5,7 +5,7 @@ using Random = System.Random;
 
 public class Structure_Block : Block
 {
-    public override float breakTime { get; } = 10000000;
+    public override float BreakTime { get; } = 10000000;
     private bool hasBeenTicked = false;
 
     public override void GeneratingTick()
