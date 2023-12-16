@@ -2,6 +2,7 @@
 using System.Collections;
 using Unity.Burst;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 [BurstCompile]
@@ -27,7 +28,7 @@ public class Block : MonoBehaviour
 
     public virtual LightValues LightSourceValues { get; } = new LightValues(0);
     
-    public float blockHealth;
+    public float blockDamage;
     public Location location;
     private float _timeOfLastHit;
 
@@ -58,8 +59,6 @@ public class Block : MonoBehaviour
     {
         //Cache position for use in multithreading
         location = Location.LocationByPosition(transform.position);
-
-        blockHealth = BreakTime;
 
         RenderRotate();
         UpdateColliders();
@@ -172,7 +171,7 @@ public class Block : MonoBehaviour
         while (Time.time - _timeOfLastHit < 1)
             yield return new WaitForSeconds(0.2f);
 
-        blockHealth = BreakTime;
+        blockDamage = 0;
     }
     protected virtual void Render()
     {
@@ -233,14 +232,14 @@ public class Block : MonoBehaviour
             tool_type == ProperToolType && tool_level >= ProperToolLevel)
             properToolStats = true;
 
-        blockHealth -= time;
+        blockDamage += time;
 
         Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
 
         if (!BreakIndicator.breakIndicators.ContainsKey(location))
             BreakIndicator.Spawn(location);
 
-        if (blockHealth <= 0)
+        if (blockDamage >= BreakTime)
         {
             if (properToolStats)
                 Break();
