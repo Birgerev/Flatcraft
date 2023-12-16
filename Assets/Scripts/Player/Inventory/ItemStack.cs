@@ -6,22 +6,23 @@ using Random = System.Random;
 [Serializable]
 public struct ItemStack
 {
-    public int amount;
+    private int _amount;
     public int Amount{
-        get
-        {
-            return amount;
-        }
+        get => _amount;
         set
         {
-            if(value == 0)
-                this = default(ItemStack);
-            if (value > Inventory.MaxStackSize)
-                amount = Inventory.MaxStackSize;
+            _amount = value;
             
-            amount = value;
+            //If amount = 0, make this item empty
+            if(value == 0)
+                this = default;
+            
+            //Don't allow more than max stack size
+            if (value > Inventory.MaxStackSize)
+                _amount = Inventory.MaxStackSize;
         }
     }
+    
     public string data;
     public int durability;
     public Material material;
