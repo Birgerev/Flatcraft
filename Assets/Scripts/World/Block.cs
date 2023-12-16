@@ -286,4 +286,11 @@ public class Block : MonoBehaviour
         return Resources.Load<Sprite>("Sprites/block/" + GetTexturePath());
     }
     
+    protected virtual string GetTexturePath()
+    {
+        if (RandomTextures.Length > 0) 
+            return GetRandomTexture();
+        
+        return GetMaterial().ToString();
+    }
 }

@@ -29,7 +29,7 @@
         SetOpenState(!GetOpenState());
     }
 
-    protected override string GetTexture()
+    protected override string GetTexturePath()
     {
         bool open = GetData().GetTag("open") == "true";
 
