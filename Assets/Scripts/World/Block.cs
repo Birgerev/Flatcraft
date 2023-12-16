@@ -190,44 +190,6 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().flipY = rotated_y;
     }
 
-    public void Hit(PlayerInstance player, float time)
-    {
-        Hit(player, time, Tool_Type.None, Tool_Level.None);
-    }
-
-    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
-    {
-        timeOfLastHit = Time.time;
-
-        bool properToolStats = false;
-
-        if (tool_level != Tool_Level.None && tool_type == properToolType && tool_level >= properToolLevel)
-            time *= 2 + (float) tool_level * 2f;
-        if (properToolLevel == Tool_Level.None ||
-            tool_type == properToolType && tool_level >= properToolLevel)
-            properToolStats = true;
-
-        blockHealth -= time;
-
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
-
-        if (!BreakIndicator.breakIndicators.ContainsKey(location))
-            BreakIndicator.Spawn(location);
-
-        if (blockHealth <= 0)
-        {
-            if (properToolStats)
-                Break();
-            else
-                Break(false);
-
-            player.playerEntity.GetComponent<Player>().DoToolDurability();
-
-            return;
-        }
-
-        StartCoroutine(repairBlockDamageOnceViable());
-    }
 
     private IEnumerator repairBlockDamageOnceViable()
     {
@@ -302,6 +264,41 @@ public class Block : MonoBehaviour
         return randomTextures[textureIndex];
     }
 
+    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
+    {
+        timeOfLastHit = Time.time;
+
+        bool properToolStats = false;
+
+        if (tool_level != Tool_Level.None && tool_type == properToolType && tool_level >= properToolLevel)
+            time *= 2 + (float) tool_level * 2f;
+        if (properToolLevel == Tool_Level.None ||
+            tool_type == properToolType && tool_level >= properToolLevel)
+            properToolStats = true;
+
+        blockHealth -= time;
+
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
+
+        if (!BreakIndicator.breakIndicators.ContainsKey(location))
+            BreakIndicator.Spawn(location);
+
+        if (blockHealth <= 0)
+        {
+            if (properToolStats)
+                Break();
+            else
+                Break(false);
+
+            player.playerEntity.GetComponent<Player>().DoToolDurability();
+
+            return;
+        }
+
+        StartCoroutine(repairBlockDamageOnceViable());
+    }
+    
+    
     public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
