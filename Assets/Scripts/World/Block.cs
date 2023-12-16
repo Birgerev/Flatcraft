@@ -100,16 +100,6 @@ public class Block : MonoBehaviour
             RotateTowardsPlayer();
     }
 
-    public BlockData GetData()
-    {
-        return location.GetData();
-    }
-
-    protected Location SetData(BlockData data)
-    {
-        return location.SetData(data);
-    }
-
     public virtual void GeneratingTick()
     {
     }
@@ -294,6 +284,14 @@ public class Block : MonoBehaviour
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
     }
-}
+    
+    public BlockData GetData()
+    {
+        return location.GetData();
+    }
 
+    protected Location SetData(BlockData data)
+    {
+        return location.SetData(data);
+    }
 }
