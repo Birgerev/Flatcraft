@@ -69,16 +69,15 @@ public class Crop : Block
         return stage;
     }
 
-    public override void Drop()
+    public override ItemStack[] GetDrops()
     {
         if (GetStage() == GetAmountOfStages() - 1)
         {
-            new ItemStack(seed, new Random().Next(1, 3 + 1)).Drop(location);
-            new ItemStack(result, 1).Drop(location);
+            return new[] { 
+                new ItemStack(seed, new Random().Next(1, 3 + 1)), 
+                new ItemStack(result)};
         }
-        else
-        {
-            new ItemStack(seed, 1).Drop(location);
-        }
+
+        return new[] { new ItemStack(seed)};
     }
 }

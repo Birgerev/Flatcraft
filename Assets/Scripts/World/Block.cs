@@ -183,7 +183,8 @@ public class Block : MonoBehaviour
     public virtual void Break(bool drop)
     {
         if (drop)
-            Drop();
+            foreach(ItemStack item in GetDrops())
+                item.Drop(location);
 
         Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
 
@@ -192,12 +193,6 @@ public class Block : MonoBehaviour
         
         location.SetMaterial(Material.Air).Tick();
     }
-
-    public virtual void Drop()
-    {
-        GetDrop().Drop(location);
-    }
-
 
     protected virtual void Render()
     {
@@ -279,10 +274,10 @@ public class Block : MonoBehaviour
 
         StartCoroutine(repairBlockDamageOnceViable());
     }
-    
-    public virtual ItemStack GetDrop()
+
+    public virtual ItemStack[] GetDrops()
     {
-        return new ItemStack(GetMaterial(), 1);
+        return new[] { new ItemStack(GetMaterial()) };
     }
 
     public Material GetMaterial()

@@ -23,9 +23,9 @@ public class Fire : Block
         base.OnTriggerStay2D(col);
     }
 
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack();
+        return null;
     }
 
     public override void RandomTick()
