@@ -29,8 +29,6 @@ public class Entity : NetworkBehaviour
     public bool isInLiquid;
     public bool isOnGround;
 
-    [SyncVar] public bool isOnClimbable;
-
     [SyncVar] public float portalTime;
 
     public bool portalCooldown;

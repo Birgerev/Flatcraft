@@ -14,6 +14,8 @@ public class LivingEntity : Entity
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar] public float health;
     [EntityDataTag(false)] [SyncVar] public string displayName;
+    
+    [SyncVar] public bool isOnClimbable;
 
     [Header("Movement Properties")] private readonly float acceleration = 4f;
 
