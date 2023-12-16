@@ -190,7 +190,7 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().flipY = rotated_y;
     }
 
-    public virtual void Hit(PlayerInstance player, float time)
+    public void Hit(PlayerInstance player, float time)
     {
         Hit(player, time, Tool_Type.None, Tool_Level.None);
     }
