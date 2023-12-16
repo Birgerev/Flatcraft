@@ -26,59 +26,32 @@ public struct ItemStack
     public int durability;
     public Material material;
 
-    public ItemStack(Material material)
+    public ItemStack(Material material, int amount = 1, string data = "", int durability = -1)
     {
         this.material = material;
-        this.amount = -1;
-        this.durability = -1;
-        this.data = "";
-
-        this.Amount = 1;
-        this.durability = GetMaxDurability();
-    }
-
-    public ItemStack(Material material, int amount)
-    {
-        this.material = material;
-        this.amount = -1;
-        this.durability = -1;
-        this.data = "";
-
-        this.Amount = amount;
-        this.durability = GetMaxDurability();
-    }
-
-    public ItemStack(Material material, int amount, string data)
-    {
-        this.material = material;
-        this.amount = -1;
-        this.data = data;
-        this.durability = -1;
-        
-        this.Amount = amount;
-        this.durability = GetMaxDurability();
-    }
-
-    public ItemStack(Material material, int amount, string data, int durability)
-    {
-        this.material = material;
-        this.amount = -1;
         this.data = data;
         this.durability = durability;
         
-        this.Amount = amount;
+        //_amount is properly assigned through the Amount wrapper, which implements max stack size etc
+        _amount = -1;
+        Amount = amount;
+        
+        //If durability is default value, use max durability
+        if (durability == -1)
+            this.durability = GetMaxDurability();
     }
 
     public ItemStack(string saveString)
     {
         string[] values = saveString.Split('*');
 
-        this.material = (Material) Enum.Parse(typeof(Material), values[0]);
-        this.amount = -1;
-        this.data = values[2];
-        this.durability = int.Parse(values[3]);
+        material = (Material) Enum.Parse(typeof(Material), values[0]);
+        data = values[2];
+        durability = int.Parse(values[3]);
         
-        this.Amount = int.Parse(values[1]);
+        //_amount is properly assigned through the Amount wrapper, which implements max stack size etc
+        _amount = -1;
+        Amount = int.Parse(values[1]);
     }
 
     public string GetTexturePath()
@@ -120,40 +93,27 @@ public struct ItemStack
 
     public int GetMaxDurability()
     {
-        if (material == Material.Air)
-            return -1;
+        if (material == Material.Air) return -1;
 
         Type type = Type.GetType(material.ToString());
+        if (type == null || !type.IsSubclassOf(typeof(Item))) return -1;
 
-        if (type == null || !type.IsSubclassOf(typeof(Item)))
-            return -1;
-
-        object item = Activator.CreateInstance(type);
-
-        return ((Item) item).maxDurability;
+        Item item = (Item)Activator.CreateInstance(type);
+        return item.maxDurability;
     }
 
     public float GetItemEntityDamage()
     {
-        if (material == Material.Air)
-            return 1;
+        if (material == Material.Air) return 1;
 
         Type type = Type.GetType(material.ToString());
+        if (type == null || !type.IsSubclassOf(typeof(Item))) return 1;
 
-        if (type == null || !type.IsSubclassOf(typeof(Item)))
-            return 1;
-
-        object item = Activator.CreateInstance(type);
-
-        return ((Item) item).entityDamage;
+        Item item = (Item)Activator.CreateInstance(type);
+        return item.entityDamage;
     }
-
-    public void Drop(Location location)
-    {
-        Drop(location, false);
-    }
-
-    public void Drop(Location location, bool randomVelocity)
+    
+    public void Drop(Location location, bool randomVelocity = false)
     {
         Vector2 velocity = Vector2.zero;
         if (randomVelocity)
