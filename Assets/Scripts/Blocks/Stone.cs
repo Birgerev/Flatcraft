@@ -6,8 +6,8 @@
     public override Tool_Level properToolLevel { get; } = Tool_Level.Wooden;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
 
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Cobblestone, 1);
+        return new[] { new ItemStack(Material.Cobblestone)};
     }
 }

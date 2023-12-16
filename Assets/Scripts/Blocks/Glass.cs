@@ -7,8 +7,8 @@
 
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Glass;
     
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Air, 0);
+        return null;
     }
 }

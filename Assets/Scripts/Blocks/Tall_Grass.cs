@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 public class Tall_Grass : Vegetation
 {
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
         if (new Random().NextDouble() <= 0.25f)
-            return new ItemStack(Material.Wheat_Seeds, 1);
+            return new[] { new ItemStack(Material.Wheat_Seeds)};
 
-        return new ItemStack();
+        return null;
     }
 
     public override void GeneratingTick()

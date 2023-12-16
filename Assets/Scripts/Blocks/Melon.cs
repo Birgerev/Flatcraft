@@ -9,8 +9,8 @@ public class Melon : Block
     public override Tool_Type properToolType { get; } = Tool_Type.Axe;
     public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
     
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Melon_Slice, new Random().Next(3, 7));
+        return new[] { new ItemStack(Material.Melon_Slice, new Random().Next(3, 7))};
     }
 }

@@ -15,9 +15,9 @@ public class Liquid : Block
 
     private bool _isLiquidTicking;
 
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack();
+        return null;
     }
 
     public override void GeneratingTick()

@@ -42,8 +42,8 @@
         base.Tick();
     }
 
-    public override ItemStack GetDrop()
+    public override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Bed, 1);
+        return new[] { new ItemStack(Material.Bed)};
     }
 }
