@@ -62,14 +62,15 @@ public class Block : MonoBehaviour
 
         RenderRotate();
         UpdateColliders();
-
+        
+        //If this is a light source, update light
         if (LightSourceValues.lightLevel > 0)
         {
             LightSource source = LightSource.Create(transform);
 
             source.UpdateLightValues(LightSourceValues, true);
         }
-
+        
         if (ChangeTextureTime != 0)
             StartCoroutine(animatedTextureRenderLoop());
 
@@ -178,18 +179,6 @@ public class Block : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
 
-    private Sprite GetSprite()
-    {
-        return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
-    }
-
-    protected virtual string GetTexture()
-    {
-        if (RandomTextures.Length > 0) 
-            return GetRandomTexture();
-        
-        return GetMaterial().ToString();
-    }
 
     private string GetRandomTexture()
     {
@@ -291,4 +280,10 @@ public class Block : MonoBehaviour
     {
         return location.SetData(data);
     }
+
+    private Sprite GetSprite()
+    {
+        return Resources.Load<Sprite>("Sprites/block/" + GetTexturePath());
+    }
+    
 }
