@@ -13,7 +13,7 @@ public class Obsidian : Block
         base.Tick();
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         int positiveY = 1;
         while ((location + new Location(0, positiveY)).GetMaterial() == Material.Portal_Frame)

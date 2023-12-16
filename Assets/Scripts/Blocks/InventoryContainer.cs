@@ -44,7 +44,7 @@ public class InventoryContainer : Block
         return Inventory.Create("Inventory", 0, "inventory name not set");
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         GetInventory().DropAll(location);
         GetInventory().Delete();

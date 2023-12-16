@@ -175,12 +175,7 @@ public class Block : MonoBehaviour
         blockHealth = breakTime;
     }
     
-    public virtual void Break()
-    {
-        Break(true);
-    }
-
-    public virtual void Break(bool drop)
+    public virtual void Break(bool drop = true)
     {
         if (drop)
             foreach(ItemStack item in GetDrops())

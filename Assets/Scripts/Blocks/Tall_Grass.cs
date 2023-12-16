@@ -19,7 +19,7 @@ public class Tall_Grass : Vegetation
         above.SetMaterial(Material.Tall_Grass);
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         base.Break(drop);
         
