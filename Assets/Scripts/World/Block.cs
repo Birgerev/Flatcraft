@@ -104,12 +104,6 @@ public class Block : MonoBehaviour
     {
     }
 
-    public virtual void Tick()
-    {
-        UpdateColliders();
-        RenderRotate();
-    }
-
     private IEnumerator animatedTextureRenderLoop()
     {
         while (true)
@@ -203,14 +197,6 @@ public class Block : MonoBehaviour
         GetDrop().Drop(location);
     }
 
-    public virtual ItemStack GetDrop()
-    {
-        return new ItemStack(GetMaterial(), 1);
-    }
-
-    public virtual void Interact(PlayerInstance player)
-    {
-    }
 
     public virtual void Render()
     {
@@ -243,6 +229,16 @@ public class Block : MonoBehaviour
         }
 
         return randomTextures[textureIndex];
+    }
+
+    public virtual void Tick()
+    {
+        UpdateColliders();
+        RenderRotate();
+    }
+
+    public virtual void Interact(PlayerInstance player)
+    {
     }
 
     public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
@@ -279,6 +275,11 @@ public class Block : MonoBehaviour
         StartCoroutine(repairBlockDamageOnceViable());
     }
     
+    public virtual ItemStack GetDrop()
+    {
+        return new ItemStack(GetMaterial(), 1);
+    }
+
     public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
