@@ -131,7 +131,7 @@ public class Block : MonoBehaviour
         return texture.GetPixels();
     }
 
-    public void RotateTowardsPlayer()
+    private void RotateTowardsPlayer()
     {
         bool rotated_x = false;
         bool rotated_y = false;
@@ -153,7 +153,7 @@ public class Block : MonoBehaviour
         RenderRotate();
     }
 
-    public void RenderRotate()
+    private void RenderRotate()
     {
         bool rotated_x = false;
         bool rotated_y = false;
@@ -198,17 +198,17 @@ public class Block : MonoBehaviour
     }
 
 
-    public virtual void Render()
+    protected virtual void Render()
     {
         GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
 
-    protected Sprite GetSprite()
+    private Sprite GetSprite()
     {
         return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
     }
 
-    public virtual string GetTexture()
+    protected virtual string GetTexture()
     {
         if (randomTextures.Length > 0) 
             return GetRandomTexture();
