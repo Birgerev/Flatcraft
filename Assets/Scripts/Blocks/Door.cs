@@ -24,11 +24,9 @@
 
     public override void Interact(PlayerInstance player)
     {
-        bool open = !GetOpenState();
-
-        SetOpenState(open);
-
         base.Interact(player);
+
+        SetOpenState(!GetOpenState());
     }
 
     public override string GetTexture()

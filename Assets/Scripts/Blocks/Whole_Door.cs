@@ -18,12 +18,11 @@
 
     public override void Interact(PlayerInstance player)
     {
-        Door otherDoor = (Door) otherBlockLocation.GetBlock();
-        bool open = !GetOpenState();
-
-        otherDoor.SetOpenState(open);
-
         base.Interact(player);
+        
+        Door otherDoor = (Door) otherBlockLocation.GetBlock();
+
+        otherDoor?.SetOpenState(GetOpenState());
     }
 
     public override void PlaySound(bool open)
