@@ -174,21 +174,6 @@ public class Block : MonoBehaviour
 
         blockHealth = breakTime;
     }
-    
-    public virtual void Break(bool drop = true)
-    {
-        if (drop)
-            foreach(ItemStack item in GetDrops())
-                item.Drop(location);
-
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
-
-        //Play block break effect to all clients
-        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
-        
-        location.SetMaterial(Material.Air).Tick();
-    }
-
     protected virtual void Render()
     {
         GetComponent<SpriteRenderer>().sprite = GetSprite();
@@ -268,6 +253,20 @@ public class Block : MonoBehaviour
         }
 
         StartCoroutine(repairBlockDamageOnceViable());
+    }
+    
+    public virtual void Break(bool drop = true)
+    {
+        if (drop)
+            foreach(ItemStack item in GetDrops())
+                item.Drop(location);
+
+        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
+
+        //Play block break effect to all clients
+        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
+        
+        location.SetMaterial(Material.Air).Tick();
     }
 
     public virtual ItemStack[] GetDrops()
