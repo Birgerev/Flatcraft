@@ -8,7 +8,7 @@ public class Cactus : Vegetation
     public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 18 * 60;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wool;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wool;
 
     public override void Tick()
     {

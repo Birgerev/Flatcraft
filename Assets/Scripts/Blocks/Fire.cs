@@ -13,7 +13,7 @@ public class Fire : Block
     public override float averageRandomTickDuration { get; } = 5;
     public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Fire;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Fire;
 
     public override void OnTriggerStay2D(Collider2D col)
     {

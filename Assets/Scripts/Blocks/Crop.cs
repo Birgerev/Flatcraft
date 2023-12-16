@@ -8,7 +8,7 @@ public class Crop : Block
     public override bool isFlammable { get; } = true;
     public override float averageRandomTickDuration { get; } = 100;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
 
     public virtual string[] crop_textures { get; } = { };
     public virtual Material seed { get; } = Material.Air;

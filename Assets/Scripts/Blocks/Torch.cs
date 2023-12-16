@@ -12,7 +12,7 @@ public class Torch : Block
 
     public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
     
     public override void Tick()
     {

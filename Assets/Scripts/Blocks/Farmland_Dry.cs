@@ -4,7 +4,7 @@
     public override float averageRandomTickDuration { get; } = 5;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Dirt;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Dirt;
 
     public override ItemStack GetDrop()
     {

@@ -23,7 +23,7 @@ public class Block : MonoBehaviour
     public virtual Tool_Type properToolType { get; } = Tool_Type.None;
     public virtual Tool_Level properToolLevel { get; } = Tool_Level.None;
 
-    public virtual Block_SoundType blockSoundType { get; } = Block_SoundType.Stone;
+    public virtual BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
 
     public virtual LightValues lightSourceValues { get; } = new LightValues(0);
     
@@ -290,23 +290,10 @@ public class Block : MonoBehaviour
         StartCoroutine(repairBlockDamageOnceViable());
     }
     
-    
     public Material GetMaterial()
     {
         return (Material) Enum.Parse(typeof(Material), GetType().Name);
     }
 }
 
-public enum Block_SoundType
-{
-    Stone
-    , Wood
-    , Sand
-    , Dirt
-    , Grass
-    , Wool
-    , Gravel
-    , Ladder
-    , Glass
-    , Fire
 }

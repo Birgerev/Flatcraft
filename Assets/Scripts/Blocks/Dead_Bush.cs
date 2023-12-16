@@ -8,7 +8,7 @@
     public override bool requiresGround { get; } = true;
     public override bool isFlammable { get; } = true;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
 
 
     public override ItemStack GetDrop()

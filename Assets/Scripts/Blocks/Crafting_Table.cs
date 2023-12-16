@@ -4,7 +4,7 @@
     public override float breakTime { get; } = 3;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
 
     public override Inventory NewInventory()
     {

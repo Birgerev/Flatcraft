@@ -11,7 +11,7 @@ public class Oak_Sign : Block
     public override float breakTime { get; } = 6;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
     
     public override void Interact(PlayerInstance player)
     {

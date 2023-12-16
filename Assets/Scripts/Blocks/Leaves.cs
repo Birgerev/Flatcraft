@@ -8,7 +8,7 @@ public class Leaves : Block
     public override float breakTime { get; } = 0.3f;
     public override bool isFlammable { get; } = true;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
 
     public override void RandomTick()
     {

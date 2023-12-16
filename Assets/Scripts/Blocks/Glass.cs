@@ -5,7 +5,7 @@
     public override float breakTime { get; } = 0.45f;
     public override LightValues lightSourceValues { get; } = new LightValues(10);
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Glass;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Glass;
     
     public override ItemStack GetDrop()
     {

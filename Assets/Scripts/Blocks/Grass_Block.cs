@@ -6,7 +6,7 @@ public class Grass_Block : Block
     public override float averageRandomTickDuration { get; } = 20;
 
     public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Grass;
 
     public override ItemStack GetDrop()
     {
