@@ -59,7 +59,7 @@ public class Block : MonoBehaviour
                 : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
     }
 
-    private void RotateTowardsPlayer()
+    private void UpdateRotation()
     {
         Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
         if (closestPlayer == null) return;
@@ -128,7 +128,7 @@ public class Block : MonoBehaviour
                 , 1.5f);
 
         if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
-            RotateTowardsPlayer();
+            UpdateRotation();
     }
     #endregion
 
