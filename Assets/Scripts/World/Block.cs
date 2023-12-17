@@ -64,8 +64,8 @@ public class Block : MonoBehaviour
         Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
         if (closestPlayer == null) return;
         
-        bool rotated_y = RotateY && Player.localEntity.transform.position.y + 1 < location.y;
-        bool rotated_x = RotateX && Player.localEntity.transform.position.x < location.x;
+        bool rotated_y = RotateY && closestPlayer.transform.position.y + 1 < location.y;
+        bool rotated_x = RotateX && closestPlayer.transform.position.x < location.x;
 
         BlockData newData = GetData();
         newData.SetTag("rotated_x", rotated_x ? "true" : "false");
