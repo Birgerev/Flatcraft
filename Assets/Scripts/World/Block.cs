@@ -63,11 +63,7 @@ public class Block : MonoBehaviour
     {
         //If this is a light source, update light
         if (LightSourceValues.lightLevel > 0)
-        {
-            LightSource source = LightSource.Create(transform);
-
-            source.UpdateLightValues(LightSourceValues, true);
-        }
+            LightSource.Create(transform).UpdateLightValues(LightSourceValues, true);
         
         if (ChangeTextureTime > 0)
             InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
