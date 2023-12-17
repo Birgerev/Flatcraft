@@ -34,32 +34,6 @@ public class Block : MonoBehaviour
     public float blockDamage;
     public Location location;
     private float _timeOfLastHit;
-
-    #region Needed?
-    public Color[] GetColorsInTexture()
-    {
-        //TODO move to particle
-        //TODO also remove ItemStack.Colors
-        Texture2D texture = GetSprite().texture;
-
-        return texture.GetPixels();
-    }
-    
-    private string GetRandomTexture()
-    {
-        //Default get a random alternative texture based on location
-        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, RandomTextures.Length);
-
-        //Textures that change over time
-        if (ChangeTextureTime > 0)
-        {
-            float totalTimePerTextureLoop = ChangeTextureTime * RandomTextures.Length;
-            textureIndex = (int) (Time.time % totalTimePerTextureLoop / ChangeTextureTime);
-        }
-
-        return RandomTextures[textureIndex];
-    }
-    #endregion
     
     #region Ticking
     public virtual void Initialize()
@@ -221,4 +195,30 @@ public class Block : MonoBehaviour
         
         return GetMaterial().ToString();
     }
+
+    #region Bad Code
+    public Color[] GetColorsInTexture()
+    {
+        //TODO move to particle
+        //TODO also remove ItemStack.Colors
+        Texture2D texture = GetSprite().texture;
+
+        return texture.GetPixels();
+    }
+    
+    private string GetRandomTexture()
+    {
+        //Default get a random alternative texture based on location
+        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, RandomTextures.Length);
+
+        //Textures that change over time
+        if (ChangeTextureTime > 0)
+        {
+            float totalTimePerTextureLoop = ChangeTextureTime * RandomTextures.Length;
+            textureIndex = (int) (Time.time % totalTimePerTextureLoop / ChangeTextureTime);
+        }
+
+        return RandomTextures[textureIndex];
+    }
+    #endregion
 }
