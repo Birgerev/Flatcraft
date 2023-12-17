@@ -103,8 +103,6 @@ public class Block : MonoBehaviour
     #region Ticking
     public virtual void Initialize()
     {
-        UpdateColliders();
-        
         //If this is a light source, update light
         if (LightSourceValues.lightLevel > 0)
         {
@@ -116,6 +114,7 @@ public class Block : MonoBehaviour
         if (ChangeTextureTime > 0)
             InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
 
+        UpdateColliders();
         UpdateRender();
     }
     
