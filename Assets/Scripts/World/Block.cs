@@ -9,24 +9,27 @@ using Random = System.Random;
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public virtual string[] RandomTextures { get; } = { };
-    public virtual float ChangeTextureTime { get; } = 0;
-
+    //Block Properties
     public virtual bool Solid { get; set; } = true;
     public virtual bool IsFlammable { get; } = false;
     public virtual bool IsClimbable { get; } = false;
     public virtual bool RequiresGround { get; } = false;
+    
     public virtual float AverageRandomTickDuration { get; } = 0;
-    public virtual float BreakTime { get; } = 0.75f;
     public virtual bool RotateX { get; } = false;
     public virtual bool RotateY { get; } = false;
+    public virtual LightValues LightSourceValues { get; } = new LightValues(0);
+    
+    //Block Rendering
+    public virtual string[] RandomTextures { get; } = { };
+    public virtual float ChangeTextureTime { get; } = 0;
 
+    //Block Breaking
     public virtual Tool_Type ProperToolType { get; } = Tool_Type.None;
     public virtual Tool_Level ProperToolLevel { get; } = Tool_Level.None;
-
     public virtual BlockSoundType BlockSoundType { get; } = BlockSoundType.Stone;
-
-    public virtual LightValues LightSourceValues { get; } = new LightValues(0);
+    public virtual float BreakTime { get; } = 0.75f;
+    
     
     public float blockDamage;
     public Location location;
