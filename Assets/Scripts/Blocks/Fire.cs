@@ -6,7 +6,7 @@ public class Fire : Block
     public override string[] RandomTextures { get; } = {"fire", "fire_1", "fire_2"};
     public override float ChangeTextureTime { get; } = 0.3f;
 
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float BreakTime { get; } = 0.01f;
     public override bool RequiresGround { get; } = true;
     public override float AverageRandomTickDuration { get; } = 5;

@@ -10,7 +10,7 @@ public class Liquid : Block
     public virtual int maxLiquidLevel { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
     public virtual string[] liquidTextures { get; } = { };
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
 
     private bool _isLiquidTicking;
 

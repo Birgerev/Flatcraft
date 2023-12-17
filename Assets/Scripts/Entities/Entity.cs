@@ -223,7 +223,7 @@ public class Entity : NetworkBehaviour
         foreach (Collider2D col in blockBeneathColliders)
         {
             Block block = col.GetComponent<Block>();
-            if (block != null && block.Solid)
+            if (block != null && block.IsSolid)
             {
                 isOnGround = true;
                 return;
@@ -289,7 +289,7 @@ public class Entity : NetworkBehaviour
         {
             foreach (Block block in GetBlocksForEntity())
             {
-                if (!block.Solid) continue;
+                if (!block.IsSolid) continue;
                 
                 TakeSuffocationDamage(1);
                 return;

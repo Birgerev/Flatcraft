@@ -1,6 +1,6 @@
 ﻿public class Door : Block
 {
-    public override bool Solid { get; set; } = true;
+    public override bool IsSolid { get; set; } = true;
 
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
@@ -15,7 +15,7 @@
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
-        Solid = !open;
+        IsSolid = !open;
         
         base.Initialize();
     }
