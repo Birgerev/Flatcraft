@@ -50,11 +50,6 @@ public class Block : MonoBehaviour
             chunk.randomTickBlocks.Add(this);
         }
     }
-
-    protected virtual void Render()
-    {
-        GetComponent<SpriteRenderer>().sprite = GetSprite();
-    }
     
     private IEnumerator animatedTextureRenderLoop()
     {
@@ -79,6 +74,11 @@ public class Block : MonoBehaviour
         Texture2D texture = GetSprite().texture;
 
         return texture.GetPixels();
+    }
+
+    protected virtual void Render()
+    {
+        GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
     #endregion
     
