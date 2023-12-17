@@ -79,14 +79,14 @@ public class Block : MonoBehaviour
     {
     }
 
-    public virtual async void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
+    public virtual async void Hit(PlayerInstance player, float time, Tool_Type toolType = Tool_Type.None, Tool_Level toolLevel = Tool_Level.None)
     {
         bool properToolStats = false;
 
-        if (tool_level != Tool_Level.None && tool_type == ProperToolType && tool_level >= ProperToolLevel)
-            time *= 2 + (float) tool_level * 2f;
+        if (toolLevel != Tool_Level.None && toolType == ProperToolType && toolLevel >= ProperToolLevel)
+            time *= 2 + (float) toolLevel * 2f;
         if (ProperToolLevel == Tool_Level.None ||
-            tool_type == ProperToolType && tool_level >= ProperToolLevel)
+            toolType == ProperToolType && toolLevel >= ProperToolLevel)
             properToolStats = true;
 
         blockDamage += time;

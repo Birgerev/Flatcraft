@@ -304,7 +304,7 @@ public class Liquid : Block
         return sourceResults; //return list
     }
 
-    public override void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
+    public override void Hit(PlayerInstance player, float time, Tool_Type toolType = Tool_Type.None, Tool_Level toolLevel = Tool_Level.None)
     {
         //Disable breaking
     }
