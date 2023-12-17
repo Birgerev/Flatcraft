@@ -40,22 +40,13 @@ public class Block : MonoBehaviour
         if (chunk != null && chunk.randomTickBlocks.Contains(this))
             chunk.randomTickBlocks.Remove(this);
     }
-
-    public virtual void ServerInitialize()
-    {
-        if (AverageRandomTickDuration != 0)
-        {
-            Chunk chunk = new ChunkPosition(location).GetChunk();
-
-            chunk.randomTickBlocks.Add(this);
-        }
-    }
     
     private IEnumerator animatedTextureRenderLoop()
     {
         while (true)
         {
             yield return new WaitForSeconds(ChangeTextureTime);
+            //TODO invoke repeating
             Render();
         }
     }
@@ -64,15 +55,17 @@ public class Block : MonoBehaviour
     {
         while (Time.time - _timeOfLastHit < 1)
             yield return new WaitForSeconds(0.2f);
-
+        //Invoke later / async
         blockDamage = 0;
     }
     
     public Color[] GetColorsInTexture()
     {
+        //TODO move to particle
         //TODO also remove ItemStack.Colors
         Texture2D texture = GetSprite().texture;
 
+        
         return texture.GetPixels();
     }
 
@@ -86,8 +79,6 @@ public class Block : MonoBehaviour
     #region Bad code
     public virtual void Initialize()
     {
-        //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position);
 
         RenderRotate();
         UpdateColliders();
