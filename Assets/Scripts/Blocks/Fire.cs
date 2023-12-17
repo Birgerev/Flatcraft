@@ -7,19 +7,12 @@ public class Fire : Block
     public override float ChangeTextureTime { get; } = 0.3f;
 
     public override bool Solid { get; set; } = false;
-    public override bool Trigger { get; set; } = true;
     public override float BreakTime { get; } = 0.01f;
     public override bool RequiresGround { get; } = true;
     public override float AverageRandomTickDuration { get; } = 5;
     public override LightValues LightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
     public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Fire;
-
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.GetComponent<Entity>() != null)
-            col.GetComponent<Entity>().fireTime = 7;
-    }
 
     protected override ItemStack[] GetDrops()
     {

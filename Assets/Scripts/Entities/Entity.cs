@@ -136,6 +136,7 @@ public class Entity : NetworkBehaviour
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
+        CheckFireBlock();
     }
 
     [Client]
@@ -346,6 +347,18 @@ public class Entity : NetworkBehaviour
                     TakeLavaDamage(4);
             }
         }
+    }
+    
+    [Server]
+    private void CheckFireBlock()
+    {
+        bool isInLava = false;
+        foreach (Block block in GetBlocksForEntity())
+            if (block is Fire)
+            {
+                fireTime = 7;
+                break;
+            }
     }
 
     public Liquid[] GetLiquidBlocksForEntity()
