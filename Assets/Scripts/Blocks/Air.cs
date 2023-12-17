@@ -1,4 +1,4 @@
 ﻿public class Air : Block
 {
-    public override float breakTime { get; } = 0f;
+    public override float BreakTime { get; } = 0f;
 }

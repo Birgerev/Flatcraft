@@ -4,11 +4,11 @@ public class Cactus : Vegetation
 {
     private const int MaxGrowHeight = 3;
     
-    public override float breakTime { get; } = 0.65f;
-    public override bool isFlammable { get; } = true;
-    public override float averageRandomTickDuration { get; } = 18 * 60;
+    public override float BreakTime { get; } = 0.65f;
+    public override bool IsFlammable { get; } = true;
+    public override float AverageRandomTickDuration { get; } = 18 * 60;
 
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wool;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wool;
 
     public override void Tick()
     {

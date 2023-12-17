@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Tall_Grass : Vegetation
 {
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         if (new Random().NextDouble() <= 0.25f)
             return new[] { new ItemStack(Material.Wheat_Seeds)};
@@ -19,7 +19,7 @@ public class Tall_Grass : Vegetation
         above.SetMaterial(Material.Tall_Grass);
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         base.Break(drop);
         

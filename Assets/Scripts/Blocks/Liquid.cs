@@ -6,16 +6,15 @@ using UnityEngine;
 
 public class Liquid : Block
 {
-    public override float breakTime { get; } = 100;
+    public override float BreakTime { get; } = 100;
     public virtual int maxLiquidLevel { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
     public virtual string[] liquidTextures { get; } = { };
-    public override bool solid { get; set; } = false;
-    public override bool trigger { get; set; } = true;
+    public override bool IsSolid { get; set; } = false;
 
     private bool _isLiquidTicking;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return null;
     }
@@ -305,15 +304,15 @@ public class Liquid : Block
         return sourceResults; //return list
     }
 
-    public override void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
+    public override void Hit(PlayerInstance player, float time, Tool_Type toolType = Tool_Type.None, Tool_Level toolLevel = Tool_Level.None)
     {
         //Disable breaking
     }
 
-    protected override string GetTexture()
+    protected override string GetTextureName()
     {
         if (!GetData().HasTag("liquid_level"))
-            return base.GetTexture();
+            return base.GetTextureName();
 
         return liquidTextures[int.Parse(GetData().GetTag("liquid_level")) - 1];
     }

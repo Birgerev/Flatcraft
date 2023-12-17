@@ -1,10 +1,10 @@
 public class Obsidian : Block
 {
-    public override float breakTime { get; } = 250;
+    public override float BreakTime { get; } = 250;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Pickaxe;
-    public override Tool_Level properToolLevel { get; } = Tool_Level.Diamond;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Pickaxe;
+    public override Tool_Level ProperToolLevel { get; } = Tool_Level.Diamond;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Stone;
 
     public override void Tick()
     {
@@ -13,7 +13,7 @@ public class Obsidian : Block
         base.Tick();
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         int positiveY = 1;
         while ((location + new Location(0, positiveY)).GetMaterial() == Material.Portal_Frame)

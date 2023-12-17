@@ -2,17 +2,17 @@
 
 public class Torch : Block
 {
-    public override string[] randomTextures { get; } =
+    public override string[] RandomTextures { get; } =
     {
         "torch", "torch_1", "torch_2", "torch_3"
     };
-    public override float changeTextureTime { get; } = 0.3f;
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.1f;
+    public override float ChangeTextureTime { get; } = 0.3f;
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 0.1f;
 
-    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
+    public override LightValues LightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
     
     public override void Tick()
     {

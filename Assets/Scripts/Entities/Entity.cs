@@ -29,8 +29,6 @@ public class Entity : NetworkBehaviour
     public bool isInLiquid;
     public bool isOnGround;
 
-    [SyncVar] public bool isOnClimbable;
-
     [SyncVar] public float portalTime;
 
     public bool portalCooldown;
@@ -138,6 +136,7 @@ public class Entity : NetworkBehaviour
         CheckVoidDamage();
         CheckSuffocation();
         CheckLavaDamage();
+        CheckFireBlock();
     }
 
     [Client]
@@ -224,7 +223,7 @@ public class Entity : NetworkBehaviour
         foreach (Collider2D col in blockBeneathColliders)
         {
             Block block = col.GetComponent<Block>();
-            if (block != null && block.solid && !block.trigger)
+            if (block != null && block.IsSolid)
             {
                 isOnGround = true;
                 return;
@@ -290,11 +289,10 @@ public class Entity : NetworkBehaviour
         {
             foreach (Block block in GetBlocksForEntity())
             {
-                if (block.solid && !block.trigger && !(block is Liquid))
-                {
-                    TakeSuffocationDamage(1);
-                    return;
-                }
+                if (!block.IsSolid) continue;
+                
+                TakeSuffocationDamage(1);
+                return;
             }
         }
     }
@@ -348,6 +346,18 @@ public class Entity : NetworkBehaviour
                     TakeLavaDamage(4);
             }
         }
+    }
+    
+    [Server]
+    private void CheckFireBlock()
+    {
+        bool isInLava = false;
+        foreach (Block block in GetBlocksForEntity())
+            if (block is Fire)
+            {
+                fireTime = 7;
+                break;
+            }
     }
 
     public Liquid[] GetLiquidBlocksForEntity()

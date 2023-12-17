@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BreakIndicator : NetworkBehaviour
 {
     public static Dictionary<Location, BreakIndicator> breakIndicators = new Dictionary<Location, BreakIndicator>();
     [SyncVar] public Location loc;
-    [SyncVar] public float blockHealth;
-    [SyncVar] public float maxBlockHealth;
-    private float lastFrameBlockHealth = int.MaxValue;
+    [SyncVar] public float blockDamage;
+    [SyncVar] public float maxBlockDamage;
 
     public void Start()
     {
@@ -23,8 +23,8 @@ public class BreakIndicator : NetworkBehaviour
             Block block = loc.GetBlock();
             if (block != null)
             {
-                blockHealth = block.blockHealth;
-                maxBlockHealth = block.breakTime;
+                blockDamage = block.blockDamage;
+                maxBlockDamage = block.BreakTime;
             }
 
             CheckDespawn();
@@ -32,8 +32,6 @@ public class BreakIndicator : NetworkBehaviour
 
         transform.position = loc.GetPosition();
         UpdateState();
-
-        lastFrameBlockHealth = blockHealth;
     }
 
     public void OnDestroy()
@@ -43,11 +41,11 @@ public class BreakIndicator : NetworkBehaviour
 
     public void UpdateState()
     {
-        if (maxBlockHealth == 0)
+        if (maxBlockDamage == 0)
             return;
 
         Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Block_Break");
-        float breakProgress = (maxBlockHealth - blockHealth) / maxBlockHealth;
+        float breakProgress = blockDamage / maxBlockDamage;
         int spriteIndex = (int)( breakProgress * sprites.Length);
         Sprite sprite = sprites[spriteIndex];
 
@@ -65,7 +63,7 @@ public class BreakIndicator : NetworkBehaviour
     {
         Block block = loc.GetBlock();
 
-        if (block == null || blockHealth == maxBlockHealth)
+        if (block == null || blockDamage == 0)
             Unspawn();
     }
 

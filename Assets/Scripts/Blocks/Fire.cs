@@ -3,27 +3,18 @@ using Random = System.Random;
 
 public class Fire : Block
 {
-    public override string[] randomTextures { get; } = {"fire", "fire_1", "fire_2"};
-    public override float changeTextureTime { get; } = 0.3f;
+    public override string[] RandomTextures { get; } = {"fire", "fire_1", "fire_2"};
+    public override float ChangeTextureTime { get; } = 0.3f;
 
-    public override bool solid { get; set; } = false;
-    public override bool trigger { get; set; } = true;
-    public override float breakTime { get; } = 0.01f;
-    public override bool requiresGround { get; } = true;
-    public override float averageRandomTickDuration { get; } = 5;
-    public override LightValues lightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool RequiresGround { get; } = true;
+    public override float AverageRandomTickDuration { get; } = 5;
+    public override LightValues LightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);
 
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Fire;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Fire;
 
-    public override void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.GetComponent<Entity>() != null)
-            col.GetComponent<Entity>().fireTime = 7;
-
-        base.OnTriggerStay2D(col);
-    }
-
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         return null;
     }
@@ -51,7 +42,7 @@ public class Fire : Block
                 location.SetMaterial(Material.Air).Tick();
                 
                 //If block below is flammable, it will burn up
-                if ((location + new Location(0, -1)).GetBlock().isFlammable)
+                if ((location + new Location(0, -1)).GetBlock().IsFlammable)
                     (location + new Location(0, -1)).SetMaterial(Material.Air).Tick();
             }
         }
@@ -78,7 +69,7 @@ public class Fire : Block
             if (targetLoc.GetMaterial() != Material.Air)
                 continue;
             //If below target loc is empty or isn't flammable
-            if (blockBelowTarget == null || !blockBelowTarget.isFlammable)
+            if (blockBelowTarget == null || !blockBelowTarget.IsFlammable)
                 continue;
 
             //Otherwise, ignite

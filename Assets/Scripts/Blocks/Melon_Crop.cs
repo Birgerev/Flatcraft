@@ -21,7 +21,7 @@ public class Melon_Crop : Crop
 
     public override void Tick()
     {
-        Render();
+        UpdateRender();
         
         base.Tick();
     }
@@ -47,7 +47,7 @@ public class Melon_Crop : Crop
         base.Grow();
     }
 
-    protected override string GetTexture()
+    protected override string GetTextureName()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
         {

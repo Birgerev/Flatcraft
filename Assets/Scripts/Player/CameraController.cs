@@ -97,7 +97,7 @@ public class CameraController : MonoBehaviour
         {
             Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
 
-            if (block != null && block.solid)
+            if (block != null && block.IsSolid)
             {
                 _targetFov = zoomedFov;
 

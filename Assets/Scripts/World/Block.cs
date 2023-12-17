@@ -1,266 +1,102 @@
 ﻿using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Unity.Burst;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 [BurstCompile]
 public class Block : MonoBehaviour
 {
-    public virtual string[] randomTextures { get; } = { };
-    public virtual float changeTextureTime { get; } = 0;
-
-    public virtual bool solid { get; set; } = true;
-    public virtual bool isFlammable { get; } = false;
-    public virtual bool trigger { get; set; } = false;
-    public virtual bool climbable { get; } = false;
-    public virtual bool requiresGround { get; } = false;
-    public virtual float averageRandomTickDuration { get; } = 0;
-    public virtual float breakTime { get; } = 0.75f;
-    public virtual bool rotateX { get; } = false;
-    public virtual bool rotateY { get; } = false;
-
-    public virtual Tool_Type properToolType { get; } = Tool_Type.None;
-    public virtual Tool_Level properToolLevel { get; } = Tool_Level.None;
-
-    public virtual BlockSoundType blockSoundType { get; } = BlockSoundType.Stone;
-
-    public virtual LightValues lightSourceValues { get; } = new LightValues(0);
+    //Block Properties
+    public virtual bool IsSolid { get; set; } = true;
+    public virtual bool IsFlammable { get; } = false;
+    public virtual bool IsClimbable { get; } = false;
+    public virtual bool RequiresGround { get; } = false;
     
-    public float blockHealth;
+    public virtual float AverageRandomTickDuration { get; } = 0;
+    public virtual bool RotateX { get; } = false;
+    public virtual bool RotateY { get; } = false;
+    public virtual LightValues LightSourceValues { get; } = new LightValues(0);
+    
+    //Block Rendering
+    public virtual string[] RandomTextures { get; } = { };
+    public virtual float ChangeTextureTime { get; } = 0;
+
+    //Block Breaking
+    public virtual Tool_Type ProperToolType { get; } = Tool_Type.None;
+    public virtual Tool_Level ProperToolLevel { get; } = Tool_Level.None;
+    public virtual BlockSoundType BlockSoundType { get; } = BlockSoundType.Stone;
+    public virtual float BreakTime { get; } = 0.75f;
+    
+    //Runtime Values
+    public float blockDamage;
     public Location location;
-    private float timeOfLastHit;
-
-    #region Bad code
-    public void OnDestroy()
-    {
-        Chunk chunk = new ChunkPosition(location).GetChunk();
-
-        if (chunk != null && chunk.randomTickBlocks.Contains(this))
-            chunk.randomTickBlocks.Remove(this);
-    }
-
-    public virtual void OnTriggerExit2D(Collider2D col)
-    {
-        if (climbable)
-            if (col.GetComponent<Entity>() != null)
-                col.GetComponent<Entity>().isOnClimbable = false;
-    }
-
-    public virtual void OnTriggerStay2D(Collider2D col)
-    {
-        if (climbable)
-            if (col.GetComponent<Entity>() != null)
-                col.GetComponent<Entity>().isOnClimbable = true;
-    }
-
+    private float _timeOfLastHit;
+    
+    #region Ticking
     public virtual void Initialize()
     {
-        //Cache position for use in multithreading
-        location = Location.LocationByPosition(transform.position);
+        //If this is a light source, update light
+        if (LightSourceValues.lightLevel > 0)
+            LightSource.Create(transform).UpdateLightValues(LightSourceValues, true);
+        
+        if (ChangeTextureTime > 0)
+            InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
 
-        blockHealth = breakTime;
-
-        RenderRotate();
-        UpdateColliders();
-
-        if (lightSourceValues.lightLevel > 0)
-        {
-            LightSource source = LightSource.Create(transform);
-
-            source.UpdateLightValues(lightSourceValues, true);
-        }
-
-        if (changeTextureTime != 0)
-            StartCoroutine(animatedTextureRenderLoop());
-
-        Render();
+        gameObject.layer = LayerMask.NameToLayer(IsSolid ? "Block" : "NoCollision");
+        
+        UpdateRender();
     }
-
-    public virtual void ServerInitialize()
+    
+    public virtual void Tick()
     {
-        if (averageRandomTickDuration != 0)
-        {
-            Chunk chunk = new ChunkPosition(location).GetChunk();
-
-            chunk.randomTickBlocks.Add(this);
-        }
+        gameObject.layer = LayerMask.NameToLayer(IsSolid ? "Block" : "NoCollision");
+        
+        UpdateRender();
     }
+    
+    public virtual void RandomTick() { }
 
-    public virtual void RandomTick()
-    {
-    }
+    public virtual void ServerInitialize() { }
+
+    public virtual void GeneratingTick() { }
 
     public virtual void BuildTick()
     {
         if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
+            Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
                 , 1.5f);
 
-        if ((rotateX || rotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
-            RotateTowardsPlayer();
+        if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
+            UpdateRotation();
     }
-
-    public virtual void GeneratingTick()
-    {
-    }
-
-    private IEnumerator animatedTextureRenderLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(changeTextureTime);
-            Render();
-        }
-    }
-
-    public virtual void UpdateColliders()
-    {
-        GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(solid || trigger ? "Block" : "NoCollision");
-
-        GetComponent<Collider2D>().isTrigger = trigger;
-        GetComponent<BoxCollider2D>().size = trigger
-                ? new Vector2(0.9f, 0.9f)
-                : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
-    }
-
-    public Color[] GetColorsInTexture()
-    {
-        Texture2D texture = GetSprite().texture;
-
-        return texture.GetPixels();
-    }
-
-    private void RotateTowardsPlayer()
-    {
-        bool rotated_x = false;
-        bool rotated_y = false;
-        Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
-        
-        if (closestPlayer == null)
-            return;
-        
-        if (rotateY)
-            rotated_y = (Player.localEntity.transform.position.y + 1) < location.y;
-        if (rotateX)
-            rotated_x = Player.localEntity.transform.position.x < location.x;
-
-        BlockData newData = GetData();
-        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
-        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
-        SetData(newData);
-
-        RenderRotate();
-    }
-
-    private void RenderRotate()
-    {
-        bool rotated_x = false;
-        bool rotated_y = false;
-
-        rotated_x = GetData().GetTag("rotated_x") == "true";
-        rotated_y = GetData().GetTag("rotated_y") == "true";
-
-        GetComponent<SpriteRenderer>().flipX = rotated_x;
-        GetComponent<SpriteRenderer>().flipY = rotated_y;
-    }
-
-
-    private IEnumerator repairBlockDamageOnceViable()
-    {
-        while (Time.time - timeOfLastHit < 1)
-            yield return new WaitForSeconds(0.2f);
-
-        blockHealth = breakTime;
-    }
-    
-    public virtual void Break()
-    {
-        Break(true);
-    }
-
-    public virtual void Break(bool drop)
-    {
-        if (drop)
-            foreach(ItemStack item in GetDrops())
-                item.Drop(location);
-
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
-
-        //Play block break effect to all clients
-        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
-        
-        location.SetMaterial(Material.Air).Tick();
-    }
-
-    protected virtual void Render()
-    {
-        GetComponent<SpriteRenderer>().sprite = GetSprite();
-    }
-
-    private Sprite GetSprite()
-    {
-        return Resources.Load<Sprite>("Sprites/block/" + GetTexture());
-    }
-
-    protected virtual string GetTexture()
-    {
-        if (randomTextures.Length > 0) 
-            return GetRandomTexture();
-        
-        return GetMaterial().ToString();
-    }
-
-    private string GetRandomTexture()
-    {
-        //Default get a random alternative texture based on location
-        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, randomTextures.Length);
-
-        //Textures that change over time
-        if (changeTextureTime > 0)
-        {
-            float totalTimePerTextureLoop = changeTextureTime * randomTextures.Length;
-            textureIndex = (int) (Time.time % totalTimePerTextureLoop / changeTextureTime);
-        }
-
-        return randomTextures[textureIndex];
-    }
-
     #endregion
-    
-    
-    
-    public virtual void Tick()
-    {
-        UpdateColliders();
-        RenderRotate();
-    }
 
+    #region Interaction
     public virtual void Interact(PlayerInstance player)
     {
     }
 
-    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
+    public virtual async void Hit(PlayerInstance player, float time, Tool_Type toolType = Tool_Type.None, Tool_Level toolLevel = Tool_Level.None)
     {
-        timeOfLastHit = Time.time;
-
         bool properToolStats = false;
 
-        if (tool_level != Tool_Level.None && tool_type == properToolType && tool_level >= properToolLevel)
-            time *= 2 + (float) tool_level * 2f;
-        if (properToolLevel == Tool_Level.None ||
-            tool_type == properToolType && tool_level >= properToolLevel)
+        if (toolLevel != Tool_Level.None && toolType == ProperToolType && toolLevel >= ProperToolLevel)
+            time *= 2 + (float) toolLevel * 2f;
+        if (ProperToolLevel == Tool_Level.None ||
+            toolType == ProperToolType && toolLevel >= ProperToolLevel)
             properToolStats = true;
 
-        blockHealth -= time;
+        blockDamage += time;
 
-        Sound.Play(location, "block/" + blockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
+        Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/hit", SoundType.Block, 0.8f, 1.2f);
 
         if (!BreakIndicator.breakIndicators.ContainsKey(location))
             BreakIndicator.Spawn(location);
 
-        if (blockHealth <= 0)
+        if (blockDamage >= BreakTime)
         {
             if (properToolStats)
                 Break();
@@ -272,10 +108,62 @@ public class Block : MonoBehaviour
             return;
         }
 
-        StartCoroutine(repairBlockDamageOnceViable());
-    }
+        _timeOfLastHit = Time.time;
+        
+        await Task.Delay(1 * 1000);
 
-    public virtual ItemStack[] GetDrops()
+        if(Time.time - _timeOfLastHit >= 1)
+            blockDamage = 0;
+    }
+    
+    public virtual void Break(bool drop = true)
+    {
+        if (drop)
+        {
+            ItemStack[] drops = GetDrops();
+            if (drops != null)//TODO null error
+                foreach(ItemStack item in GetDrops())
+                    item.Drop(location);
+        }
+
+        Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f, 1.5f);
+
+        //Play block break effect to all clients
+        new ChunkPosition(location).GetChunk().BlockBreakParticleEffect(location, GetColorsInTexture());
+        
+        location.SetMaterial(Material.Air).Tick();
+    }
+    #endregion
+    
+    protected void UpdateRender()
+    {
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        
+        //Update sprite
+        renderer.sprite = GetSprite();
+        
+        //Render rotation
+        BlockData data = GetData();
+        renderer.flipX = data.GetTag("rotated_x") == "true";
+        renderer.flipY = data.GetTag("rotated_y") == "true";
+    }
+    
+    
+    private void UpdateRotation()
+    {
+        Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
+        if (closestPlayer == null) return;
+        
+        bool rotated_y = RotateY && closestPlayer.transform.position.y + 1 < location.y;
+        bool rotated_x = RotateX && closestPlayer.transform.position.x < location.x;
+
+        BlockData newData = GetData();
+        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
+        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
+        SetData(newData);
+    }
+    
+    protected virtual ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(GetMaterial()) };
     }
@@ -304,4 +192,43 @@ public class Block : MonoBehaviour
     {
         return location.SetData(data);
     }
+
+    private Sprite GetSprite()
+    {
+        return Resources.Load<Sprite>("Sprites/block/" + GetTextureName());
+    }
+    
+    protected virtual string GetTextureName()
+    {
+        if (RandomTextures.Length > 0) 
+            return GetRandomTexture();
+        
+        return GetMaterial().ToString();
+    }
+
+    #region Bad Code
+    public Color[] GetColorsInTexture()
+    {
+        //TODO move to particle
+        //TODO also remove ItemStack.Colors
+        Texture2D texture = GetSprite().texture;
+
+        return texture.GetPixels();
+    }
+    
+    private string GetRandomTexture()
+    {
+        //Default get a random alternative texture based on location
+        int textureIndex = new Random(SeedGenerator.SeedByWorldLocation(location)).Next(0, RandomTextures.Length);
+
+        //Textures that change over time
+        if (ChangeTextureTime > 0)
+        {
+            float totalTimePerTextureLoop = ChangeTextureTime * RandomTextures.Length;
+            textureIndex = (int) (Time.time % totalTimePerTextureLoop / ChangeTextureTime);
+        }
+
+        return RandomTextures[textureIndex];
+    }
+    #endregion
 }

@@ -1,12 +1,11 @@
 ﻿public class Ladder : Block
 {
-    public override bool solid { get; set; } = false;
-    public override bool trigger { get; set; } = true;
-    public override bool climbable { get; } = true;
+    public override bool IsSolid { get; set; } = false;
+    public override bool IsClimbable { get; } = true;
 
-    public override float breakTime { get; } = 3f;
-    public override bool isFlammable { get; } = true;
+    public override float BreakTime { get; } = 3f;
+    public override bool IsFlammable { get; } = true;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Ladder;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Ladder;
 }

@@ -14,6 +14,9 @@ public class LivingEntity : Entity
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar] public float health;
     [EntityDataTag(false)] [SyncVar] public string displayName;
+    
+    //TODO even needs to be sync var?
+    [SyncVar] public bool isOnClimbable;
 
     [Header("Movement Properties")] private readonly float acceleration = 4f;
 
@@ -59,15 +62,19 @@ public class LivingEntity : Entity
     public override void Tick()
     {
         base.Tick();
-
-        AmbientSoundCheck();
-        WalkSoundCheck();
-
+        
+        //Controller tick
         if (controller != null)
             controller.Tick();
 
+        AmbientSoundCheck();
+        WalkSoundCheck();
         ProcessMovement();
         FallDamageCheck();
+        
+        //Climbable check
+        Block block = Location.GetBlock();
+        isOnClimbable = block != null && block.IsClimbable;
     }
 
     [Server]

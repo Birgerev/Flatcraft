@@ -572,7 +572,7 @@ public class Chunk : NetworkBehaviour
             {
                 Random r = new Random(SeedGenerator.SeedByWorldLocation(block.location) + i);
 
-                if (r.NextDouble() < updateSpeed / block.averageRandomTickDuration)
+                if (r.NextDouble() < updateSpeed / block.AverageRandomTickDuration)
                     try
                     {
                         block.RandomTick();
@@ -733,51 +733,53 @@ public class Chunk : NetworkBehaviour
 
         //Before any blocks are removed or added, check wether current block is a sunlight source
         bool doesBlockChangeImpactSunlight = LightManager.DoesBlockInfluenceSunlight(location);
-
+        
         //remove old block
-        if (GetLocalBlock(location) != null)
+        Block oldBlock = GetLocalBlock(location);
+        if (oldBlock != null)
         {
-            if (isLoaded && GetLocalBlock(location).GetComponentInChildren<LightSource>() != null)
-                LightManager.DestroySource(GetLocalBlock(location).GetComponentInChildren<LightSource>());
+            if (isLoaded && oldBlock.GetComponentInChildren<LightSource>() != null)
+                LightManager.DestroySource(oldBlock.GetComponentInChildren<LightSource>());
 
-            Destroy(GetLocalBlock(location).gameObject);
+            //Remove old block from list
             blocks.Remove(coordinates);
+            //Remove from potential random ticking list
+            if (oldBlock.AverageRandomTickDuration > 0 && randomTickBlocks.Contains(oldBlock))
+                randomTickBlocks.Remove(oldBlock);
+            
+            Destroy(oldBlock.gameObject);
         }
 
-        Block result = null;
-
+        Block block = null;
         if (mat != Material.Air)
         {
-            //Place new block
+            //Initialize block object & component
             GameObject blockObject = Instantiate(blockPrefab, transform, true);
-
-            //Attach it to the object
-            Block block = (Block) blockObject.AddComponent(type);
-
             blockObject.transform.position = location.GetPosition();
+            
+            block = (Block) blockObject.AddComponent(type);
+            block.location = location;
 
-            //Add the block to block list
+            //List all blocks
             if (blocks.ContainsKey(coordinates))
                 blocks[coordinates] = block;
             else
                 blocks.Add(coordinates, block);
-
-            //Assign location to block
-            block.location = location;
+            
+            //List all random ticking blocks
+            if (block.AverageRandomTickDuration > 0)
+                randomTickBlocks.Add(block);
             
             //Dont initialize blocks when chunk is loading
             if (startedInitializingAllBlocks)
             {
                 block.Initialize();
-                if (isServer)
-                    block.ServerInitialize();
+                if (isServer) block.ServerInitialize();
             }
-
-            result = blockObject.GetComponent<Block>();
         }
 
         if (mat == Material.Portal_Frame && netherPortal == null)
-            netherPortal = (Portal_Frame) result;
+            netherPortal = (Portal_Frame) block;
 
         if (isLoaded)
         {
@@ -886,7 +888,7 @@ public class Chunk : NetworkBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.solid)
+                if (mustBeSolid && !block.IsSolid)
                     continue;
 
                 return block;

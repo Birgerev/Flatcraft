@@ -37,11 +37,11 @@
         return GetMaterial() == Material.Oak_Door_Bottom;
     }
 
-    public override void Break()
+    public override void Break(bool drop = true)
     {
         if (otherBlockLocation.GetMaterial() == otherBlockMaterial)
             otherBlockLocation.SetMaterial(Material.Air);
 
-        base.Break();
+        base.Break(drop);
     }
 }

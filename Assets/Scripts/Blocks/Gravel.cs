@@ -3,12 +3,12 @@ using Random = System.Random;
 
 public class Gravel : Block
 {
-    public override float breakTime { get; } = 0.75f;
+    public override float BreakTime { get; } = 0.75f;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Gravel;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Shovel;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Gravel;
 
-    public override ItemStack[] GetDrops()
+    protected override ItemStack[] GetDrops()
     {
         if (new Random().NextDouble() < 0.1f)
             return new[] { new ItemStack(Material.Flint) };

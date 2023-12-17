@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Jukebox : Block
 {
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 6;
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 6;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override BlockSoundType blockSoundType { get; } = BlockSoundType.Wood;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
 
     public override void Interact(PlayerInstance player)
     {
