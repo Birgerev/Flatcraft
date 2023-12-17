@@ -41,25 +41,7 @@ public class Block : MonoBehaviour
 
         return texture.GetPixels();
     }
-
-    #endregion
     
-    
-    #region Bad code
-    private void UpdateRotation()
-    {
-        Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
-        if (closestPlayer == null) return;
-        
-        bool rotated_y = RotateY && closestPlayer.transform.position.y + 1 < location.y;
-        bool rotated_x = RotateX && closestPlayer.transform.position.x < location.x;
-
-        BlockData newData = GetData();
-        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
-        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
-        SetData(newData);
-    }
-
     private string GetRandomTexture()
     {
         //Default get a random alternative texture based on location
@@ -74,10 +56,8 @@ public class Block : MonoBehaviour
 
         return RandomTextures[textureIndex];
     }
-
     #endregion
-
-
+    
     #region Ticking
     public virtual void Initialize()
     {
@@ -121,6 +101,7 @@ public class Block : MonoBehaviour
     }
     #endregion
 
+    #region Interaction
     public virtual void Interact(PlayerInstance player)
     {
     }
@@ -167,7 +148,7 @@ public class Block : MonoBehaviour
         if (drop)
         {
             ItemStack[] drops = GetDrops();
-            if (drops != null)
+            if (drops != null)//TODO null error
                 foreach(ItemStack item in GetDrops())
                     item.Drop(location);
         }
@@ -179,6 +160,7 @@ public class Block : MonoBehaviour
         
         location.SetMaterial(Material.Air).Tick();
     }
+    #endregion
     
     protected void UpdateRender()
     {
@@ -191,6 +173,21 @@ public class Block : MonoBehaviour
         BlockData data = GetData();
         renderer.flipX = data.GetTag("rotated_x") == "true";
         renderer.flipY = data.GetTag("rotated_y") == "true";
+    }
+    
+    
+    private void UpdateRotation()
+    {
+        Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
+        if (closestPlayer == null) return;
+        
+        bool rotated_y = RotateY && closestPlayer.transform.position.y + 1 < location.y;
+        bool rotated_x = RotateX && closestPlayer.transform.position.x < location.x;
+
+        BlockData newData = GetData();
+        newData.SetTag("rotated_x", rotated_x ? "true" : "false");
+        newData.SetTag("rotated_y", rotated_y ? "true" : "false");
+        SetData(newData);
     }
     
     protected virtual ItemStack[] GetDrops()
