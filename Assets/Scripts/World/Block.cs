@@ -14,7 +14,6 @@ public class Block : MonoBehaviour
 
     public virtual bool Solid { get; set; } = true;
     public virtual bool IsFlammable { get; } = false;
-    public virtual bool Trigger { get; set; } = false;
     public virtual bool IsClimbable { get; } = false;
     public virtual bool RequiresGround { get; } = false;
     public virtual float AverageRandomTickDuration { get; } = 0;
@@ -50,13 +49,8 @@ public class Block : MonoBehaviour
 
     public void UpdateColliders()
     {
-        GetComponent<Collider2D>().enabled = true;
-        gameObject.layer = LayerMask.NameToLayer(Solid || Trigger ? "Block" : "NoCollision");
-
-        GetComponent<Collider2D>().isTrigger = Trigger;
-        GetComponent<BoxCollider2D>().size = Trigger
-                ? new Vector2(0.9f, 0.9f)
-                : new Vector2(1, 1); //Trigger has to be a little smaller than a block to avoid unintended triggering
+        GetComponent<Collider2D>().enabled = true;//TODO move to tick
+        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
     }
 
     private void UpdateRotation()
@@ -179,7 +173,7 @@ public class Block : MonoBehaviour
         {
             ItemStack[] drops = GetDrops();
             if (drops != null)
-                foreach(ItemStack item in GetDrops())
+                foreach(ItemStack item in GetDrops())//TODO null error
                     item.Drop(location);
         }
 
