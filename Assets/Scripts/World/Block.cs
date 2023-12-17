@@ -204,9 +204,12 @@ public class Block : MonoBehaviour
     protected void UpdateRender()
     {
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        BlockData data = GetData();
         
+        //Update sprite
         renderer.sprite = GetSprite();
+        
+        //Render rotation
+        BlockData data = GetData();
         renderer.flipX = data.GetTag("rotated_x") == "true";
         renderer.flipY = data.GetTag("rotated_y") == "true";
     }
