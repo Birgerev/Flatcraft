@@ -76,7 +76,7 @@ public class Block : MonoBehaviour
         return texture.GetPixels();
     }
 
-    protected virtual void Render()
+    protected void Render()
     {
         GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
