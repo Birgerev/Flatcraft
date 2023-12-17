@@ -33,13 +33,6 @@ public class Block : MonoBehaviour
     private float _timeOfLastHit;
 
     #region Needed?
-    public void OnDestroy()
-    {
-        Chunk chunk = new ChunkPosition(location).GetChunk();
-
-        if (chunk != null && chunk.randomTickBlocks.Contains(this))
-            chunk.randomTickBlocks.Remove(this);
-    }
     
     private IEnumerator animatedTextureRenderLoop()
     {
