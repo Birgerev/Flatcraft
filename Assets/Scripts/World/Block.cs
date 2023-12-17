@@ -40,7 +40,6 @@ public class Block : MonoBehaviour
         //TODO also remove ItemStack.Colors
         Texture2D texture = GetSprite().texture;
 
-        
         return texture.GetPixels();
     }
 
@@ -62,24 +61,16 @@ public class Block : MonoBehaviour
 
     private void RotateTowardsPlayer()
     {
-        bool rotated_x = false;
-        bool rotated_y = false;
         Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
+        if (closestPlayer == null) return;
         
-        if (closestPlayer == null)
-            return;
-        
-        if (RotateY)
-            rotated_y = (Player.localEntity.transform.position.y + 1) < location.y;
-        if (RotateX)
-            rotated_x = Player.localEntity.transform.position.x < location.x;
+        bool rotated_y = RotateY && Player.localEntity.transform.position.y + 1 < location.y;
+        bool rotated_x = RotateX && Player.localEntity.transform.position.x < location.x;
 
         BlockData newData = GetData();
         newData.SetTag("rotated_x", rotated_x ? "true" : "false");
         newData.SetTag("rotated_y", rotated_y ? "true" : "false");
         SetData(newData);
-
-        UpdateRender();
     }
 
     private string GetRandomTexture()
