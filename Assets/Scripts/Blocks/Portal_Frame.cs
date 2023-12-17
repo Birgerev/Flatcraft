@@ -2,7 +2,7 @@
 
 public class Portal_Frame : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
 
     public override float BreakTime { get; } = 9999999999f;
     public override LightValues LightSourceValues { get; } = new LightValues(11, new Color(1f, 0.47f, 0.92f), false);

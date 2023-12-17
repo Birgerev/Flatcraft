@@ -37,7 +37,7 @@ public class Grass_Block : Block
             return;
         
         //Return if neither solid nor liquid
-        if (!(blockAbove.Solid || blockAbove is Liquid))
+        if (!(blockAbove.IsSolid || blockAbove is Liquid))
             return;
         
         location.SetMaterial(Material.Dirt);
@@ -49,7 +49,7 @@ public class Grass_Block : Block
 
         Location targetLoc = location + new Location(r.NextDouble() > 0.5f ? 1 : -1, r.Next(-1, 1 + 1));
         Block blockAboveTarget = (targetLoc + new Location(0, 1)).GetBlock();
-        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.Solid))
+        if (targetLoc.GetMaterial() == Material.Dirt && (blockAboveTarget == null || !blockAboveTarget.IsSolid))
             targetLoc.SetMaterial(Material.Grass_Block);
     }
 }

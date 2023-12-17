@@ -7,7 +7,7 @@ public class Torch : Block
         "torch", "torch_1", "torch_2", "torch_3"
     };
     public override float ChangeTextureTime { get; } = 0.3f;
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float BreakTime { get; } = 0.1f;
 
     public override LightValues LightSourceValues { get; } = new LightValues(15, new Color(1, .6f, .4f), true);

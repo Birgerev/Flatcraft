@@ -1,6 +1,6 @@
 ﻿public class Ladder : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override bool IsClimbable { get; } = true;
 
     public override float BreakTime { get; } = 3f;

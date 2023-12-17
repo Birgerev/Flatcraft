@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Jukebox : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float BreakTime { get; } = 6;
 
     public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;

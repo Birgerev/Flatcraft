@@ -5,7 +5,7 @@ using UnityEngine;
 public class Oak_Sapling : Block
 {
     public override float AverageRandomTickDuration { get; } = 20 * 60;
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float BreakTime { get; } = 0.01f;
     public override bool IsFlammable { get; } = true;
 

@@ -2,7 +2,7 @@
 
 public class Leaves : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float AverageRandomTickDuration { get; } = 100;
 
     public override float BreakTime { get; } = 0.3f;

@@ -1,7 +1,7 @@
 ﻿public class Bed_Block : Block
 {
     public override bool RotateX { get; } = true;
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
 
     public override float BreakTime { get; } = 0.65f;
     public override bool IsFlammable { get; } = true;

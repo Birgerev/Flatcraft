@@ -10,7 +10,7 @@ using Random = System.Random;
 public class Block : MonoBehaviour
 {
     //Block Properties
-    public virtual bool Solid { get; set; } = true;
+    public virtual bool IsSolid { get; set; } = true;
     public virtual bool IsFlammable { get; } = false;
     public virtual bool IsClimbable { get; } = false;
     public virtual bool RequiresGround { get; } = false;
@@ -45,14 +45,14 @@ public class Block : MonoBehaviour
         if (ChangeTextureTime > 0)
             InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
 
-        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
+        gameObject.layer = LayerMask.NameToLayer(IsSolid ? "Block" : "NoCollision");
         
         UpdateRender();
     }
     
     public virtual void Tick()
     {
-        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
+        gameObject.layer = LayerMask.NameToLayer(IsSolid ? "Block" : "NoCollision");
         
         UpdateRender();
     }

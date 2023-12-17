@@ -888,7 +888,7 @@ public class Chunk : NetworkBehaviour
 
             if (block != null)
             {
-                if (mustBeSolid && !block.Solid)
+                if (mustBeSolid && !block.IsSolid)
                     continue;
 
                 return block;

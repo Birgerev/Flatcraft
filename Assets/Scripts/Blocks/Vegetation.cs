@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Vegetation : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     public override float BreakTime { get; } = 0.01f;
     public override bool IsFlammable { get; } = true;
 

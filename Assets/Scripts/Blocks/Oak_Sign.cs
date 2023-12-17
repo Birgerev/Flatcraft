@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Oak_Sign : Block
 {
-    public override bool Solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
     
     public override bool RequiresGround { get; } = true;
     public override float BreakTime { get; } = 6;
