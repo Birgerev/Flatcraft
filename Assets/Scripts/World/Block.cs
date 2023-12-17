@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Unity.Burst;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -51,50 +52,10 @@ public class Block : MonoBehaviour
         return texture.GetPixels();
     }
 
-    protected void UpdateRender()
-    {
-        GetComponent<SpriteRenderer>().sprite = GetSprite();
-    }
     #endregion
     
     
     #region Bad code
-    public virtual void Initialize()
-    {
-        RenderRotate();
-        UpdateColliders();
-        
-        //If this is a light source, update light
-        if (LightSourceValues.lightLevel > 0)
-        {
-            LightSource source = LightSource.Create(transform);
-
-            source.UpdateLightValues(LightSourceValues, true);
-        }
-        
-        if (ChangeTextureTime > 0)
-            InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
-
-        UpdateRender();
-    }
-    
-    public virtual void RandomTick() { }
-
-    public virtual void ServerInitialize() { }
-
-    public virtual void BuildTick()
-    {
-        if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
-            Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
-                , 1.5f);
-
-        if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
-            RotateTowardsPlayer();
-    }
-
-    public virtual void GeneratingTick()
-    {
-    }
 
     public virtual void UpdateColliders()
     {
@@ -126,21 +87,8 @@ public class Block : MonoBehaviour
         newData.SetTag("rotated_y", rotated_y ? "true" : "false");
         SetData(newData);
 
-        RenderRotate();
+        UpdateRender();
     }
-
-    private void RenderRotate()
-    {
-        bool rotated_x = false;
-        bool rotated_y = false;
-
-        rotated_x = GetData().GetTag("rotated_x") == "true";
-        rotated_y = GetData().GetTag("rotated_y") == "true";
-
-        GetComponent<SpriteRenderer>().flipX = rotated_x;
-        GetComponent<SpriteRenderer>().flipY = rotated_y;
-    }
-
 
     private string GetRandomTexture()
     {
@@ -161,20 +109,53 @@ public class Block : MonoBehaviour
     
     
     
+    public virtual void Initialize()
+    {
+        UpdateColliders();
+        
+        //If this is a light source, update light
+        if (LightSourceValues.lightLevel > 0)
+        {
+            LightSource source = LightSource.Create(transform);
+
+            source.UpdateLightValues(LightSourceValues, true);
+        }
+        
+        if (ChangeTextureTime > 0)
+            InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
+
+        UpdateRender();
+    }
+    
     public virtual void Tick()
     {
         UpdateColliders();
-        RenderRotate();
+        UpdateRender();
     }
+    
+    public virtual void RandomTick() { }
+
+    public virtual void ServerInitialize() { }
+
+    public virtual void GeneratingTick() { }
+
+    public virtual void BuildTick()
+    {
+        if (new ChunkPosition(location).GetChunk().isLoaded) //Block place sound
+            Sound.Play(location, "block/" + BlockSoundType.ToString().ToLower() + "/break", SoundType.Block, 0.5f
+                , 1.5f);
+
+        if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
+            RotateTowardsPlayer();
+    }
+    
 
     public virtual void Interact(PlayerInstance player)
     {
     }
 
-    public virtual void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
+    public virtual async void Hit(PlayerInstance player, float time, Tool_Type tool_type = Tool_Type.None, Tool_Level tool_level = Tool_Level.None)
     {
-        _timeOfLastHit = Time.time;
-
         bool properToolStats = false;
 
         if (tool_level != Tool_Level.None && tool_type == ProperToolType && tool_level >= ProperToolLevel)
@@ -222,7 +203,17 @@ public class Block : MonoBehaviour
         
         location.SetMaterial(Material.Air).Tick();
     }
-
+    
+    protected void UpdateRender()
+    {
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        BlockData data = GetData();
+        
+        renderer.sprite = GetSprite();
+        renderer.flipX = data.GetTag("rotated_x") == "true";
+        renderer.flipY = data.GetTag("rotated_y") == "true";
+    }
+    
     protected virtual ItemStack[] GetDrops()
     {
         return new[] { new ItemStack(GetMaterial()) };
