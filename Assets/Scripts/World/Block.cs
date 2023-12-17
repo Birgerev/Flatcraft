@@ -30,7 +30,7 @@ public class Block : MonoBehaviour
     public virtual BlockSoundType BlockSoundType { get; } = BlockSoundType.Stone;
     public virtual float BreakTime { get; } = 0.75f;
     
-    
+    //Runtime Values
     public float blockDamage;
     public Location location;
     private float _timeOfLastHit;
