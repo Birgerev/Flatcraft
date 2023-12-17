@@ -51,7 +51,7 @@ public class Block : MonoBehaviour
         return texture.GetPixels();
     }
 
-    protected void Render()
+    protected void UpdateRender()
     {
         GetComponent<SpriteRenderer>().sprite = GetSprite();
     }
@@ -73,9 +73,9 @@ public class Block : MonoBehaviour
         }
         
         if (ChangeTextureTime > 0)
-            InvokeRepeating(nameof(Render), 0, ChangeTextureTime);
+            InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
 
-        Render();
+        UpdateRender();
     }
     
     public virtual void RandomTick() { }

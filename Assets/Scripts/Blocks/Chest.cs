@@ -51,7 +51,7 @@ public class Chest : InventoryContainer
             if (lastCheckOpen != IsOpen())
             {
                 yield return new WaitForSeconds(0.1f);
-                Render();
+                UpdateRender();
 
                 lastCheckOpen = IsOpen();
             }

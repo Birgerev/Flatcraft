@@ -21,7 +21,7 @@ public class Melon_Crop : Crop
 
     public override void Tick()
     {
-        Render();
+        UpdateRender();
         
         base.Tick();
     }
