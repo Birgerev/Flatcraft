@@ -12,8 +12,8 @@
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
-
-        Trigger = open; //Custom solution, so that block becomes trigger (and as such climbable), when trapdoor is open
+        
+        Solid = open; //Block becomes solid when trapdoor is closed
         UpdateColliders();
 
         base.Initialize();
