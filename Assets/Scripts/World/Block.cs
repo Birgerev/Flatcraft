@@ -98,9 +98,9 @@ public class Block : MonoBehaviour
     }
 
     #endregion
-    
-    
-    
+
+
+    #region Ticking
     public virtual void Initialize()
     {
         UpdateColliders();
@@ -140,7 +140,7 @@ public class Block : MonoBehaviour
         if ((RotateX || RotateY) && !(GetData().HasTag("rotated_x") || GetData().HasTag("rotated_y")))
             RotateTowardsPlayer();
     }
-    
+    #endregion
 
     public virtual void Interact(PlayerInstance player)
     {
