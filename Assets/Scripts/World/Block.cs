@@ -173,7 +173,7 @@ public class Block : MonoBehaviour
         {
             ItemStack[] drops = GetDrops();
             if (drops != null)
-                foreach(ItemStack item in GetDrops())//TODO null error
+                foreach(ItemStack item in GetDrops())
                     item.Drop(location);
         }
 
