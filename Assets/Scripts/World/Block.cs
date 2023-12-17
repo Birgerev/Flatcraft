@@ -49,7 +49,7 @@ public class Block : MonoBehaviour
     
     #region Bad code
 
-    public virtual void UpdateColliders()
+    public void UpdateColliders()
     {
         GetComponent<Collider2D>().enabled = true;
         gameObject.layer = LayerMask.NameToLayer(Solid || Trigger ? "Block" : "NoCollision");
