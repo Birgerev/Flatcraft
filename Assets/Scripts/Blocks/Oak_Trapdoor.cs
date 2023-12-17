@@ -14,8 +14,7 @@
         bool open = GetData().GetTag("open") == "true";
         
         Solid = open; //Block becomes solid when trapdoor is closed
-        UpdateColliders();
-
+        
         base.Initialize();
     }
 }

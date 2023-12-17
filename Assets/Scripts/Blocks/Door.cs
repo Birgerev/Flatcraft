@@ -16,9 +16,7 @@
     {
         bool open = GetData().GetTag("open") == "true";
         Solid = !open;
-
-        UpdateColliders();
-
+        
         base.Initialize();
     }
 

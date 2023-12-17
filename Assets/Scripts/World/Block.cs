@@ -46,13 +46,6 @@ public class Block : MonoBehaviour
     
     
     #region Bad code
-
-    public void UpdateColliders()
-    {
-        GetComponent<Collider2D>().enabled = true;//TODO move to tick
-        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
-    }
-
     private void UpdateRotation()
     {
         Player closestPlayer = (Player) Entity.ClosestEntityOfType(location, typeof(Player));
@@ -99,13 +92,15 @@ public class Block : MonoBehaviour
         if (ChangeTextureTime > 0)
             InvokeRepeating(nameof(UpdateRender), 0, ChangeTextureTime);
 
-        UpdateColliders();
+        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
+        
         UpdateRender();
     }
     
     public virtual void Tick()
     {
-        UpdateColliders();
+        gameObject.layer = LayerMask.NameToLayer(Solid ? "Block" : "NoCollision");
+        
         UpdateRender();
     }
     
