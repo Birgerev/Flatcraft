@@ -90,9 +90,9 @@ public class Block : MonoBehaviour
         Render();
     }
     
-    public virtual void RandomTick()
-    {
-    }
+    public virtual void RandomTick() { }
+
+    public virtual void ServerInitialize() { }
 
     public virtual void BuildTick()
     {
