@@ -34,14 +34,6 @@ public class Block : MonoBehaviour
     private float _timeOfLastHit;
 
     #region Needed?
-    private IEnumerator repairBlockDamageOnceViable()
-    {
-        while (Time.time - _timeOfLastHit < 1)
-            yield return new WaitForSeconds(0.2f);
-        //Invoke later / async
-        blockDamage = 0;
-    }
-    
     public Color[] GetColorsInTexture()
     {
         //TODO move to particle
@@ -183,7 +175,12 @@ public class Block : MonoBehaviour
             return;
         }
 
-        StartCoroutine(repairBlockDamageOnceViable());
+        _timeOfLastHit = Time.time;
+        
+        await Task.Delay(1 * 1000);
+
+        if(Time.time - _timeOfLastHit >= 1)
+            blockDamage = 0;
     }
     
     public virtual void Break(bool drop = true)
