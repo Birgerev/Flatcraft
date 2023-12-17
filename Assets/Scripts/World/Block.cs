@@ -33,17 +33,6 @@ public class Block : MonoBehaviour
     private float _timeOfLastHit;
 
     #region Needed?
-    
-    private IEnumerator animatedTextureRenderLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(ChangeTextureTime);
-            //TODO invoke repeating
-            Render();
-        }
-    }
-
     private IEnumerator repairBlockDamageOnceViable()
     {
         while (Time.time - _timeOfLastHit < 1)
@@ -72,7 +61,6 @@ public class Block : MonoBehaviour
     #region Bad code
     public virtual void Initialize()
     {
-
         RenderRotate();
         UpdateColliders();
         
@@ -84,8 +72,8 @@ public class Block : MonoBehaviour
             source.UpdateLightValues(LightSourceValues, true);
         }
         
-        if (ChangeTextureTime != 0)
-            StartCoroutine(animatedTextureRenderLoop());
+        if (ChangeTextureTime > 0)
+            InvokeRepeating(nameof(Render), 0, ChangeTextureTime);
 
         Render();
     }
