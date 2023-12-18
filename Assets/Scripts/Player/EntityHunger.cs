@@ -12,8 +12,6 @@ public class EntityHunger : NetworkBehaviour
     private static readonly float MovementHungerCost = 0.03f;
     private static readonly float SprintHungerCost = 0.03f;
     
-    [SyncVar] public float eatingTime;
-    
     private Player _player;
 
     private void Update()
