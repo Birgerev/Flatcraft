@@ -1,21 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerInteraction : NetworkBehaviour
 {
     public const float InteractionsPerPerSecond = 4.5f;
     
-    public GameObject crosshair;
-    [SyncVar] public double lastBlockHitTime;
-    [SyncVar] public double lastHitTime;
+    [HideInInspector]public GameObject crosshair;
     
-    private float _lastBlockInteractionTime;
+    [HideInInspector] [SyncVar] public double lastBlockHitTime;
+    [HideInInspector] [SyncVar] public double lastHitTime;
+    public double lastBlockInteractionTime;
+    
     private Player _player;
-    
-    //TODO tons of GetInventory() calls
     
     private void Update()
     {
@@ -25,179 +26,151 @@ public class PlayerInteraction : NetworkBehaviour
         if (ChatMenu.instance.open) return;
         if (SignEditMenu.IsLocalMenuOpen()) return;
 
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        bool isInRange = Vector2.Distance(mousePosition, transform.position) <= _player.reach;
-
         UpdateCrosshair();
         EatItemInput();
-
-        if (!isInRange) return;
+        
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float mouseDistance = Vector2.Distance(mousePosition, transform.position);
+        
+        if (mouseDistance > _player.reach) return;
 
         InteractEntityInput();
-        BlockInteractionInput();
         BlockPlaceInput();
+        BlockInteractionInput();
     }
 
     [Client]
     private void InteractEntityInput()
     {
+        Entity entity = GetMouseEntity();
+
+        if (!entity) return;
+        if (entity == _player) return;
+
         //Hit Entities
         if (Input.GetMouseButtonDown(0))
-        {
-            Entity entity = GetMouseEntity();
-
-            if (entity != null && entity != this)
-                RequestHitEntity(entity.gameObject);
-        }
+            CMD_HitEntity(entity);
         
         //Interract Entities
         if (Input.GetMouseButtonDown(1))
-        {
-            Entity entity = GetMouseEntity();
-
-            if (entity != null && entity != this)
-                RequestInteractEntity(entity.gameObject);
-        }
+            CMD_InteractEntity(entity);
     }
     
     [Client]
     private void BlockPlaceInput()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Location loc = GetBlockedMouseLocation();
-            Material currentMaterial = loc.GetMaterial();
-            
-            if (GetMouseEntity() == null && (currentMaterial == Material.Air || currentMaterial == Material.Water ||
-                                             currentMaterial == Material.Lava))
-                RequestBlockPlace(loc);
-        }
+        if (!Input.GetMouseButtonDown(1)) return;
+        if (GetMouseEntity()) return;
+        
+        Location loc = GetBlockedMouseLocation();
+        Material currentMaterial = loc.GetMaterial();
+        
+        //TODO replace with CanOverride()
+        if (currentMaterial != Material.Air && currentMaterial != Material.Water && currentMaterial != Material.Lava) return;
+        
+        CMD_PlaceBlock(loc);
     }
 
     [Command]
-    public void RequestBlockPlace(Location loc)
+    public void CMD_PlaceBlock(Location loc)
     {
-        ItemStack item = _player.GetInventory().GetSelectedItem();
-        Material heldMat;
+        ItemStack selectedItem = _player.GetInventory().GetSelectedItem();
 
-        if (_player.GetInventory().GetSelectedItem().material == Material.Air || _player.GetInventory().GetSelectedItem().Amount <= 0)
-            return;
-
-        if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(Block)))
-            heldMat = item.material;
-        else if (Type.GetType(item.material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-            heldMat = ((PlaceableItem) Activator.CreateInstance(Type.GetType(item.material.ToString()))).blockMaterial;
-        else
-            return;
+        if (selectedItem.material == Material.Air) return;
+        if (selectedItem.Amount <= 0) return;
+        
+        Material heldMat = selectedItem.material;
+        
+        if (Type.GetType(selectedItem.material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
+            heldMat = ((PlaceableItem) Activator.CreateInstance(Type.GetType(selectedItem.material.ToString()))).blockMaterial;
+        
+        if (Type.GetType(selectedItem.material.ToString()).IsSubclassOf(typeof(Item))) return;
 
         loc.SetMaterial(heldMat);
         loc.GetBlock().BuildTick();
         loc.Tick();
 
-        _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, new ItemStack(item.material, item.Amount - 1));
-        lastHitTime = NetworkTime.time;
+        _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, new ItemStack(selectedItem.material, selectedItem.Amount - 1));
+        
+        //Trigger animation
+        lastBlockInteractionTime = NetworkTime.time;
     }
 
     [Client]
     private void BlockInteractionInput()
     {
-        if (Time.time - _lastBlockInteractionTime >= 1f / InteractionsPerPerSecond)
+        if (NetworkTime.time - lastBlockInteractionTime < 1f / InteractionsPerPerSecond) return;
+        
+        if (Input.GetMouseButtonDown(1))
+            CMD_Interact(GetBlockedMouseLocation(), 1, true);
+        else if (Input.GetMouseButton(1))
+            CMD_Interact(GetBlockedMouseLocation(), 1, false);
+        
+        if (Input.GetMouseButtonDown(0))
+            CMD_Interact(GetBlockedMouseLocation(), 0, true);
+        else if (Input.GetMouseButton(0))
         {
-            if (Input.GetMouseButtonDown(1))
-            {
-                RequestInteract(GetBlockedMouseLocation(), 1, true);
-                _lastBlockInteractionTime = Time.time;
-            }
-            else if (Input.GetMouseButton(1))
-            {
-                RequestInteract(GetBlockedMouseLocation(), 1, false);
-                _lastBlockInteractionTime = Time.time;
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                RequestInteract(GetBlockedMouseLocation(), 0, true);
-                _lastBlockInteractionTime = Time.time;
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                RequestInteract(GetBlockedMouseLocation(), 0, false);
-                _lastBlockInteractionTime = Time.time;
-                _player.ShakeClientCamera(10f * Time.deltaTime);
-            }
+            CMD_Interact(GetBlockedMouseLocation(), 0, false);
+            _player.ShakeClientCamera(10f * Time.deltaTime);
         }
+        
+        if(Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            lastBlockInteractionTime = NetworkTime.time;
     }
 
     [Command]
-    public void RequestInteract(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
+    public void CMD_Interact(Location loc, int mouseButton, bool firstFrameDown, NetworkConnectionToClient sender = null)
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses
-        Item itemType;
-        if (Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Item)))
-            itemType = (Item) Activator.CreateInstance(
-                Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()));
-        else
-            itemType = (Item) Activator.CreateInstance(typeof(Item));
-
+        Type itemType = Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString());
+        if (!itemType.IsSubclassOf(typeof(Item))) itemType = typeof(Item);
+            
+        Item item = (Item) Activator.CreateInstance(itemType);
         PlayerInstance player = sender.identity.GetComponent<PlayerInstance>();
 
-        itemType.Interact(player, loc, mouseButton, firstFrameDown);
-        if (loc.GetMaterial() != Material.Air)
-            lastBlockHitTime = NetworkTime.time;
+        item.Interact(player, loc, mouseButton, firstFrameDown);
+        lastBlockHitTime = NetworkTime.time;
     }
 
     [Server]
     public void DoToolDurability()
     {
         PlayerInventory inv = _player.GetInventory();
-        
-        if (inv.GetSelectedItem().GetMaxDurability() != -1)
-        {
-            ItemStack newItem = inv.GetSelectedItem();
-            newItem.durability--;
+        ItemStack item = inv.GetSelectedItem();
+        item.ApplyDurability();
 
-            inv.SetItem(inv.selectedSlot, (newItem.durability >= 0) ? newItem : new ItemStack());
-        }
+        inv.SetItem(inv.selectedSlot, item);
     }
 
     [Command]
-    public virtual void RequestHitEntity(GameObject entityObj)
+    public virtual void CMD_HitEntity(Entity entity)
     {
-        Entity entity = entityObj.GetComponent<Entity>();
-        PlayerInventory inv = _player.GetInventory();
-        
-        bool criticalHit = false;
         float damage = _player.GetInventory().GetSelectedItem().GetItemEntityDamage();
         
+        //Critical hits
         if (_player.GetVelocity().y < -0.5f)
-            criticalHit = true;
-
-        if (criticalHit)
         {
             damage *= 1.5f;
             entity.CriticalDamageEffect();
         }
 
+        Sound.Play(_player.Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
+        _player.ShakeOwnersCamera(.5f);
         DoToolDurability();
-
+        
         entity.transform.GetComponent<Entity>().Hit(damage, _player);
         lastHitTime = NetworkTime.time;
         
-        Sound.Play(_player.Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
-        _player.ShakeOwnersCamera(.5f);
     }
     
     [Command]
-    public virtual void RequestInteractEntity(GameObject entityObj)
+    public virtual void CMD_InteractEntity(Entity entity)
     {
-        Entity entity = entityObj.GetComponent<Entity>();
-
-        entity.transform.GetComponent<Entity>().Interact(_player);
+        entity.Interact(_player);
         lastHitTime = NetworkTime.time;
     }
 
-    
     [Client]
     private void UpdateCrosshair()
     {
@@ -206,98 +179,59 @@ public class PlayerInteraction : NetworkBehaviour
 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         bool isInRange = Vector2.Distance(mousePosition, transform.position) <= _player.reach;
-        Entity entity = GetMouseEntity();
+        Entity mouseEntity = GetMouseEntity();
 
         string spriteName = "empty";
         if (isInRange)
-        {
-            if (entity == null)
-                spriteName = "full";
-            else
-                spriteName = "entity";
-        }
+            spriteName = mouseEntity == null ? "full" : "entity";
 
         crosshair.transform.position = GetBlockedMouseLocation().GetPosition();
         crosshair.GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("Sprites/crosshair_" + spriteName);
     }
-    
-    [Client]
-    public Entity GetMouseEntity()
-    {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D[] rays = Physics2D.RaycastAll(mousePosition, Vector2.zero);
-
-        foreach (RaycastHit2D ray in rays)
-            if (ray.collider != null && ray.transform.GetComponent<Entity>() != null)
-                return ray.transform.GetComponent<Entity>();
-
-        return null;
-    }
 
     [Client]
     private void EatItemInput()
     {
-        if (Input.GetMouseButtonUp(1))
-        {
-            RequestResetEatTime();
-            return;
-        }
-
-        if (Input.GetMouseButton(1) && _player.hunger <= _player.maxHunger - .5f && Time.time % 0.2f - Time.deltaTime <= 0 &&
-            Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
-            RequestEat();
+        if (Input.GetMouseButton(1)) return;
+        if (_player.hunger > _player.maxHunger - .5f) return;
+        if (Time.time % 0.2f - Time.deltaTime <= 0) return;//TODO
+        if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
+        
+        CMD_Eat();
     }
     
-    
     [Command]
-    public void RequestEat()
+    public void CMD_Eat()
     {
-        if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food)))
-            return;
-
-        if (_player.eatingTime > 1.3f)
-        {
-            EatHeldItem();
-            _player.eatingTime = 0;
-            return;
-        }
+        if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
 
         Sound.Play(_player.Location, "entity/Player/eat", SoundType.Entities, 0.85f, 1.15f);
-
         _player.eatingTime += 0.2f;
-    }
 
-    [Command]
-    public void RequestResetEatTime()
-    {
+        if (_player.eatingTime < 1.3f) return;
+        
+        ConsumeHeldItem();
         _player.eatingTime = 0;
     }
 
     [Server]
-    private void EatHeldItem()
+    private void ConsumeHeldItem()
     {
         ItemStack selectedItemStack = _player.GetInventory().GetSelectedItem();
-
-        //Add hunger
-        Food foodItemType =
-            (Food) Activator.CreateInstance(Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()));
-        int foodPoints = foodItemType.food_points;
-        _player.hunger = Mathf.Clamp(_player.hunger + foodPoints, 0, _player.maxHunger);
-
-        //Particle Effect
-        PlayEatEffect(selectedItemStack.GetTextureColors());
-
-        //Burp sounds
+        Food foodItem = (Food) Activator.CreateInstance(Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()));
+        
+        _player.hunger = Mathf.Clamp(_player.hunger + foodItem.food_points, 0, _player.maxHunger);
+        RPC_PlayEatEffect(selectedItemStack.GetTextureColors());
         Sound.Play(_player.Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
 
         //Subtract food item from inventory
-        selectedItemStack.Amount -= 1;
+        selectedItemStack.Amount--;
         _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, selectedItemStack);
     }
 
     [ClientRpc]
-    private void PlayEatEffect(Color[] colors)
+    private void RPC_PlayEatEffect(Color[] colors)
     {
         System.Random r = new System.Random();
         for (int i = 0; i < r.Next(6, 10); i++) //SpawnParticles
@@ -321,6 +255,20 @@ public class PlayerInteraction : NetworkBehaviour
         Location blockedMouseLocation = Location.LocationByPosition(mousePosition);
 
         return blockedMouseLocation;
+    }
+    
+    [Client]
+    public static Entity GetMouseEntity()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        foreach (RaycastHit2D ray in Physics2D.RaycastAll(mousePosition, Vector2.zero))
+        {
+            Entity entity = ray.transform.GetComponent<Entity>();
+            if (entity) return entity;
+        }
+
+        return null;
     }
     
     private void Awake()

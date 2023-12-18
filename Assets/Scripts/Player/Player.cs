@@ -564,10 +564,11 @@ public class Player : LivingEntity
         base.UpdateAnimatorValues();
 
         Animator anim = GetComponent<Animator>();
-
+        
         anim.SetBool("eating", eatingTime > 0);
         anim.SetBool("punch", 
             NetworkTime.time - GetComponent<PlayerInteraction>().lastHitTime < 0.05f || 
+                NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockInteractionTime < 0.1f || 
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
