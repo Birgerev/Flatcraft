@@ -9,6 +9,7 @@ using UnityEngine.Serialization;
 public class PlayerInteraction : NetworkBehaviour
 {
     public const float InteractionsPerPerSecond = 4.5f;
+    public const float Reach = 5;
     
     [HideInInspector] public GameObject crosshair;
     
@@ -31,7 +32,7 @@ public class PlayerInteraction : NetworkBehaviour
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float mouseDistance = Vector2.Distance(mousePosition, transform.position);
         
-        if (mouseDistance > _player.reach) return;
+        if (mouseDistance > Reach) return;
 
         InteractEntityInput();
         BlockPlaceInput();
@@ -177,7 +178,7 @@ public class PlayerInteraction : NetworkBehaviour
             crosshair = Instantiate(Resources.Load<GameObject>("Prefabs/Crosshair"));
 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        bool isInRange = Vector2.Distance(mousePosition, transform.position) <= _player.reach;
+        bool isInRange = Vector2.Distance(mousePosition, transform.position) <= Reach;
         Entity mouseEntity = GetMouseEntity();
 
         string spriteName = "empty";

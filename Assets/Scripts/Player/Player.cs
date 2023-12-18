@@ -21,7 +21,6 @@ public class Player : LivingEntity
     [EntityDataTag(false)] [SyncVar] public int inventoryId = 0;
 
     public Location bedLocation = new Location(0, 0);
-    public float reach = 5;
 
     [SyncVar] public bool sprinting;
 
