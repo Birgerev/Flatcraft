@@ -11,11 +11,10 @@ public class PlayerHunger : NetworkBehaviour
     private static readonly float JumpHungerCost = 0.1f;
     private static readonly float MovementHungerCost = 0.03f;
     private static readonly float SprintHungerCost = 0.03f;
-
-    public float eatingTime;
     
     public float maxHunger = 20;
     
+    [HideInInspector] public float eatingTime;
     
     private Player _player;
     //TODO clean entire script
