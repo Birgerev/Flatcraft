@@ -13,7 +13,7 @@ public class Player : LivingEntity
     public static Player localEntity;
     public static List<Player> players = new ();
 
-    [SyncVar] public GameObject playerInstance;
+    [SyncVar] public PlayerInstance playerInstance;
 
     //Entity Data Tags
     [EntityDataTag(false)] [SyncVar] public float hunger;
@@ -100,7 +100,7 @@ public class Player : LivingEntity
             if (!isServer) //If we are server, Process movement will already have been called in LivingEntity.Tick()
                 ProcessMovement();
 
-            if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
+            if (Inventory.IsAnyOpen(playerInstance))
                 framesSinceInventoryOpen = 0;
             else
                 framesSinceInventoryOpen++;
@@ -194,7 +194,7 @@ public class Player : LivingEntity
         if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
             RequestOpenInventory();
 
-        if (Inventory.IsAnyOpen(playerInstance.GetComponent<PlayerInstance>()))
+        if (Inventory.IsAnyOpen(playerInstance))
             return;
 
         //Open chat
@@ -289,7 +289,7 @@ public class Player : LivingEntity
     [Command]
     private void RequestOpenInventory()
     {
-        GetInventory().Open(playerInstance.GetComponent<PlayerInstance>());
+        GetInventory().Open(playerInstance);
     }
 
     [Command]

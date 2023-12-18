@@ -64,7 +64,7 @@ public class PlayerInstance : NetworkBehaviour
         Debug.Log("Spawning local player");
         GameObject player = Entity.Spawn("Player", steamId.ToString(), new Vector2(0, 80)).gameObject;
         player.GetComponent<Player>().displayName = GetPlayerName();
-        player.GetComponent<Player>().playerInstance = gameObject;
+        player.GetComponent<Player>().playerInstance = this;
         playerEntity = player;
         player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
     }

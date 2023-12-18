@@ -22,7 +22,7 @@ public class PlayerInteraction : NetworkBehaviour
     {
         if (!isOwned) return;
         if (!_player.IsChunkLoaded()) return;
-        if (Inventory.IsAnyOpen(_player.playerInstance.GetComponent<PlayerInstance>())) return;
+        if (Inventory.IsAnyOpen(_player.playerInstance)) return;
         if (ChatMenu.instance.open) return;
         if (SignEditMenu.IsLocalMenuOpen()) return;
 
