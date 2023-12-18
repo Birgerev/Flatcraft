@@ -7,13 +7,13 @@
         if (loc.GetMaterial() == Material.Air)
         {
             loc.SetMaterial(Material.Fire).Tick();
-            player.playerEntity.GetComponent<Player>().DoToolDurability();
+            player.playerEntity.GetComponent<PlayerInteraction>().DoToolDurability();
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
         if (loc.GetMaterial() == Material.TNT)
         {
             ((TNT) loc.GetBlock()).Prime();
-            player.playerEntity.GetComponent<Player>().DoToolDurability();
+            player.playerEntity.GetComponent<PlayerInteraction>().DoToolDurability();
             Sound.Play(loc, "random/flint_and_steel/click", SoundType.Entities, 0.8f, 1.2f);
         }
 

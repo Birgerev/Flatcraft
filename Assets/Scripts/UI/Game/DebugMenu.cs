@@ -62,7 +62,7 @@ public class DebugMenu : MonoBehaviour
                               (int) (WorldManager.instance.worldTime / WorldManager.DayLength) + ")";
         text_weatherTime.text = "weather time: " + (int)WorldManager.world.weatherTime;
 
-        Location location = player.GetBlockedMouseLocation();
+        Location location = PlayerInteraction.GetBlockedMouseLocation();
         BlockState state = location.GetState();
 
         text_blockInfo.text = "{" + state.data.ToString() + "}   " + "Material." + state.material;

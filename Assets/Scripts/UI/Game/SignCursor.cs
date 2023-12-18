@@ -14,7 +14,7 @@ public class SignCursor : MonoBehaviour
         if (Player.localEntity != null)
         {
             //Fetch block data from hovered block
-            BlockState state = Player.localEntity.GetBlockedMouseLocation().GetState();
+            BlockState state = PlayerInteraction.GetBlockedMouseLocation().GetState();
 
             //Show if block is sign
             if (state.material == Material.Oak_Sign)
