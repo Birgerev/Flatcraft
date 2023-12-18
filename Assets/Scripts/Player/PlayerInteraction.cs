@@ -10,11 +10,11 @@ public class PlayerInteraction : NetworkBehaviour
 {
     public const float InteractionsPerPerSecond = 4.5f;
     
-    [HideInInspector]public GameObject crosshair;
+    [HideInInspector] public GameObject crosshair;
     
     [HideInInspector] [SyncVar] public double lastBlockHitTime;
     [HideInInspector] [SyncVar] public double lastHitTime;
-    public double lastBlockInteractionTime;
+    [HideInInspector] public double lastBlockInteractionTime;
     
     private Player _player;
     
