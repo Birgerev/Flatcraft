@@ -97,7 +97,7 @@ public class PlayerInteraction : NetworkBehaviour
     [Client]
     private void BlockInteractionInput()
     {
-        if (Time.time - _player.lastBlockInteractionTime >= 1f / Player.interactionsPerPerSecond)
+        if (Time.time - _player.lastBlockInteractionTime >= 1f / Player.InteractionsPerPerSecond)
         {
             if (Input.GetMouseButtonDown(1))
             {

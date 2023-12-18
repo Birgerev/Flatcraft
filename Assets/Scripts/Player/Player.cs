@@ -8,7 +8,7 @@ using Random = System.Random;
 
 public class Player : LivingEntity
 {
-    public static float interactionsPerPerSecond = 4.5f;
+    public const float InteractionsPerPerSecond = 4.5f;
 
     //Entity State
     public static Player localEntity;
