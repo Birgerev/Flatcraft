@@ -24,7 +24,7 @@ public class EntityHunger : NetworkBehaviour
         
         CheckRegenerateHealth();
         
-        if (Time.time % 1f - Time.deltaTime <= 0)
+        if (Time.time % 1f < Time.deltaTime)
         {
             if (_player.GetVelocity().x > 0.2f || _player.GetVelocity().x < -0.2f)
                 _player.hunger -= MovementHungerCost;
@@ -43,7 +43,7 @@ public class EntityHunger : NetworkBehaviour
 
         if ( _player.hunger > 19)
         {
-            if (Time.time % 0.5f - Time.deltaTime <= 0)
+            if (Time.time % 0.5f <= Time.deltaTime)
             {
                 _player.health += 1;
                 _player.hunger -= HealthRegenerationHungerCost;
@@ -51,7 +51,7 @@ public class EntityHunger : NetworkBehaviour
         }
         else if ( _player.hunger > 17)
         {
-            if (Time.time % 4f - Time.deltaTime <= 0)
+            if (Time.time % 4f <= Time.deltaTime)
             {
                 _player.health += 1;
                 _player.hunger -= HealthRegenerationHungerCost;
@@ -64,7 +64,7 @@ public class EntityHunger : NetworkBehaviour
     {
         if (Input.GetMouseButton(1)) return;
         if (_player.hunger > _player.maxHunger - .5f) return;
-        if (Time.time % 0.2f - Time.deltaTime <= 0) return;
+        if (Time.time % 0.2f > Time.deltaTime) return;
         if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
         
         CMD_Eat();
