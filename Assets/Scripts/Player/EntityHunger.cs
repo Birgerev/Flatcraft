@@ -20,7 +20,7 @@ public class EntityHunger : NetworkBehaviour
     {
         if (isOwned) EatItemInput();
         
-        if (isServer) return;
+        if (!isServer) return;
         
         CheckRegenerateHealth();
         
