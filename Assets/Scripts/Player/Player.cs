@@ -11,7 +11,7 @@ public class Player : LivingEntity
 
     //Entity State
     public static Player localEntity;
-    public static List<Player> players = new List<Player>();
+    public static List<Player> players = new ();
 
     [SyncVar] public GameObject playerInstance;
 
