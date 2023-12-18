@@ -502,7 +502,7 @@ public class Player : LivingEntity
     }
     
     [Server]
-    public override void UpdateAnimatorValues()//TODO server & network animator
+    public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();
 
