@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class EntityHunger : NetworkBehaviour
+public class PlayerHunger : NetworkBehaviour
 {
     private static readonly float HealthRegenerationHungerCost = 0.4f;
     private static readonly float JumpHungerCost = 0.1f;
@@ -15,7 +15,7 @@ public class EntityHunger : NetworkBehaviour
     public float eatingTime;
     
     private Player _player;
-
+    //TODO clean entire script
     private void Update()
     {
         if (isOwned) EatItemInput();
