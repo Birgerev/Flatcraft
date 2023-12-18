@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class PlayerInteraction : NetworkBehaviour
 {
@@ -11,8 +10,11 @@ public class PlayerInteraction : NetworkBehaviour
     
     public GameObject crosshair;
     
+    private float _lastBlockInteractionTime;
     private Player _player;
+    
     //TODO tons of GetInventory() calls
+    
     private void Update()
     {
         if (!isOwned) return;
@@ -97,28 +99,28 @@ public class PlayerInteraction : NetworkBehaviour
     [Client]
     private void BlockInteractionInput()
     {
-        if (Time.time - _player.lastBlockInteractionTime >= 1f / InteractionsPerPerSecond)
+        if (Time.time - _lastBlockInteractionTime >= 1f / InteractionsPerPerSecond)
         {
             if (Input.GetMouseButtonDown(1))
             {
                 RequestInteract(GetBlockedMouseLocation(), 1, true);
-                _player.lastBlockInteractionTime = Time.time;
+                _lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(1))
             {
                 RequestInteract(GetBlockedMouseLocation(), 1, false);
-                _player.lastBlockInteractionTime = Time.time;
+                _lastBlockInteractionTime = Time.time;
             }
 
             if (Input.GetMouseButtonDown(0))
             {
                 RequestInteract(GetBlockedMouseLocation(), 0, true);
-                _player.lastBlockInteractionTime = Time.time;
+                _lastBlockInteractionTime = Time.time;
             }
             else if (Input.GetMouseButton(0))
             {
                 RequestInteract(GetBlockedMouseLocation(), 0, false);
-                _player.lastBlockInteractionTime = Time.time;
+                _lastBlockInteractionTime = Time.time;
                 _player.ShakeClientCamera(10f * Time.deltaTime);
             }
         }

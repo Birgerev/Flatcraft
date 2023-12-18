@@ -38,7 +38,6 @@ public class Player : LivingEntity
 
     [SyncVar] private double lastBlockHitTime;
 
-    private float lastBlockInteractionTime;
     private float lastFrameScroll;
     private float lastDoubleTapSprintTap;
 
