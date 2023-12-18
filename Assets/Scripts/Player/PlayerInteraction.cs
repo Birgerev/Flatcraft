@@ -25,11 +25,9 @@ public class PlayerInteraction : NetworkBehaviour
         bool isInRange = Vector2.Distance(mousePosition, transform.position) <= _player.reach;
 
         UpdateCrosshair();
-
         EatItemInput();
 
-        if (!isInRange)
-            return;
+        if (!isInRange) return;
 
         InteractEntityInput();
         BlockInteractionInput();
