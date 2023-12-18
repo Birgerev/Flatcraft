@@ -23,7 +23,7 @@ public class Item
         Block block = loc.GetBlock();
 
         if (block != null)
-            block.Hit(player, 1 / Player.InteractionsPerPerSecond);
+            block.Hit(player, 1 / PlayerInteraction.InteractionsPerPerSecond);
     }
 
     protected virtual void InteractRight(PlayerInstance player, Location loc, bool firstFrameDown)

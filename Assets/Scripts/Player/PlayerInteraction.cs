@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class PlayerInteraction : NetworkBehaviour
 {
+    public const float InteractionsPerPerSecond = 4.5f;
+    
     public GameObject crosshair;
     
     private Player _player;
@@ -97,7 +99,7 @@ public class PlayerInteraction : NetworkBehaviour
     [Client]
     private void BlockInteractionInput()
     {
-        if (Time.time - _player.lastBlockInteractionTime >= 1f / Player.InteractionsPerPerSecond)
+        if (Time.time - _player.lastBlockInteractionTime >= 1f / InteractionsPerPerSecond)
         {
             if (Input.GetMouseButtonDown(1))
             {
