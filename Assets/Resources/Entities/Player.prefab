@@ -292,7 +292,6 @@ MonoBehaviour:
   playerInstance: {fileID: 0}
   hunger: 0
   inventoryId: 0
-  eatingTime: 0
   bedLocation:
     x: 0
     y: 0
