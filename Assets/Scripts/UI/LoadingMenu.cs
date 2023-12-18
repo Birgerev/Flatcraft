@@ -55,13 +55,13 @@ public class LoadingMenu : MonoBehaviour
 
         int steps = 7;
 
-        if (Player.localEntity == null)
+        if (Player.LocalEntity == null)
         {
             SetState("Creating Player", 1f / steps);
             return;
         }
 
-        Chunk playerChunk = new ChunkPosition(Player.localEntity.GetComponent<Player>().Location).GetChunk();
+        Chunk playerChunk = new ChunkPosition(Player.LocalEntity.GetComponent<Player>().Location).GetChunk();
         if (playerChunk == null)
         {
             SetState("Creating Chunks", 2f / steps);
@@ -108,13 +108,13 @@ public class LoadingMenu : MonoBehaviour
             return;
         }
 
-        if (Player.localEntity == null)
+        if (Player.LocalEntity == null)
         {
             SetState("Creating Player", 2f / steps);
             return;
         }
 
-        Chunk playerChunk = new ChunkPosition(Player.localEntity.GetComponent<Player>().Location).GetChunk();
+        Chunk playerChunk = new ChunkPosition(Player.LocalEntity.GetComponent<Player>().Location).GetChunk();
         if (playerChunk == null)
         {
             SetState("Creating Chunks", 3f / steps);
@@ -149,8 +149,8 @@ public class LoadingMenu : MonoBehaviour
 
         int steps = 3;
 
-        Chunk playerChunk = new ChunkPosition(Player.localEntity.GetComponent<Player>().Location).GetChunk();
-        if (Player.localEntity.teleportingDimension)
+        Chunk playerChunk = new ChunkPosition(Player.LocalEntity.GetComponent<Player>().Location).GetChunk();
+        if (Player.LocalEntity.teleportingDimension)
         {
             SetState("Loading Chunks", 1f / steps);
             return;

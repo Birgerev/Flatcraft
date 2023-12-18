@@ -18,18 +18,18 @@ public class UIHeart : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Player.localEntity == null)
+        if (Player.LocalEntity == null)
             return;
 
         CalculateBlink();
         CalculateSprite();
         
-        _lastFrameHealth = Player.localEntity.health;
+        _lastFrameHealth = Player.LocalEntity.health;
     }
 
     private void CalculateSprite()
     {
-        float playerHearts = Player.localEntity.health / 2;
+        float playerHearts = Player.LocalEntity.health / 2;
         int heartIndex = transform.GetSiblingIndex();
         float heartPortion = playerHearts - heartIndex;
 
@@ -58,7 +58,7 @@ public class UIHeart : MonoBehaviour
     
     private void CalculateBlink()
     {
-        if (Player.localEntity.health < _lastFrameHealth)
+        if (Player.LocalEntity.health < _lastFrameHealth)
             _lastBlinkTime = Time.time;
     }
 }

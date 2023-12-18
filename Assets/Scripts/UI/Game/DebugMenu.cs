@@ -47,7 +47,7 @@ public class DebugMenu : MonoBehaviour
 
         text_entityCount.text = "entity count: " + Entity.EntityCount + ",  living: " + Entity.LivingEntityCount;
 
-        Player player = Player.localEntity;
+        Player player = Player.LocalEntity;
         text_x.text = "x: " + player.Location.x;
         text_y.text = "y: " + player.Location.y;
         text_dimension.text = "dimension: " + player.Location.dimension;

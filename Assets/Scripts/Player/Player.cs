@@ -8,10 +8,9 @@ using Random = System.Random;
 
 public class Player : LivingEntity
 {
-
     //Entity State
-    public static Player localEntity;
-    public static List<Player> players = new ();
+    public static Player LocalEntity;
+    public static List<Player> Players = new ();
 
     [SyncVar] public PlayerInstance playerInstance;
 
@@ -43,21 +42,21 @@ public class Player : LivingEntity
     public override void Start()
     {
         Debug.Log("Spawning player '" + uuid + "'");
-        players.Add(this);
+        Players.Add(this);
 
         base.Start();
     }
 
     public void OnDestroy()
     {
-        players.Remove(this);
+        Players.Remove(this);
     }
 
     [Client]
     public override void OnStartAuthority()
     {
         base.OnStartAuthority();
-        localEntity = this;
+        LocalEntity = this;
         CameraController.instance.target = transform;
     }
 

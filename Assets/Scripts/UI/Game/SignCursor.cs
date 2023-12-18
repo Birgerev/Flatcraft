@@ -11,7 +11,7 @@ public class SignCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player.localEntity != null)
+        if (Player.LocalEntity != null)
         {
             //Fetch block data from hovered block
             BlockState state = PlayerInteraction.GetBlockedMouseLocation().GetState();
