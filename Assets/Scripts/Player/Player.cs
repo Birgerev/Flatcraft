@@ -32,8 +32,6 @@ public class Player : LivingEntity
 
     private Material actionBarLastSelectedMaterial;
     private int framesSinceInventoryOpen;
-    private readonly float healthRegenerationHungerCost = 0.4f;
-    private readonly float jumpHungerCost = 0.1f;
     private bool ladderSneaking;
 
 
@@ -41,9 +39,7 @@ public class Player : LivingEntity
     private float lastDoubleTapSprintTap;
 
 
-    private readonly float movementHungerCost = 0.03f;
     private readonly float sneakSpeed = 1.3f;
-    private readonly float sprintHungerCost = 0.03f;
     private readonly float sprintSpeed = 5.6f;
 
     //Entity Properties
@@ -91,8 +87,6 @@ public class Player : LivingEntity
         
         CalculateFlip();
         GetInventory().holder = Location;
-        CheckHunger();
-        CheckRegenerateHealth();
         CheckStarvationDamage();
         ClimbableSound();
 
@@ -168,44 +162,6 @@ public class Player : LivingEntity
         }
 
         base.UpdateNameplate();
-    }
-
-    [Server]
-    private void CheckRegenerateHealth()
-    {
-        if (health >= 20)
-            return;
-
-        if (hunger > 19)
-        {
-            if (Time.time % 0.5f - Time.deltaTime <= 0)
-            {
-                health += 1;
-                hunger -= healthRegenerationHungerCost;
-            }
-        }
-        else if (hunger > 17)
-        {
-            if (Time.time % 4f - Time.deltaTime <= 0)
-            {
-                health += 1;
-                hunger -= healthRegenerationHungerCost;
-            }
-        }
-    }
-
-    [Server]
-    private void CheckHunger()
-    {
-        if (Time.time % 1f - Time.deltaTime <= 0)
-        {
-            if (GetVelocity().x > 0.2f || GetVelocity().x < -0.2f)
-                hunger -= movementHungerCost;
-            if (sprinting)
-                hunger -= sprintHungerCost;
-            if (GetVelocity().y > 0)
-                hunger -= jumpHungerCost;
-        }
     }
 
     [Client]

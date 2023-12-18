@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 1149122272397806830}
   - component: {fileID: 1149122272397806829}
   - component: {fileID: 5501411307295249957}
+  - component: {fileID: 560820911139893197}
   - component: {fileID: 7118248979253364308}
   - component: {fileID: 1149122272397806803}
   - component: {fileID: 1149122272397806802}
@@ -289,7 +290,6 @@ MonoBehaviour:
   displayName: null
   isOnClimbable: 0
   playerInstance: {fileID: 0}
-  crosshair: {fileID: 0}
   hunger: 0
   inventoryId: 0
   eatingTime: 0
@@ -313,6 +313,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63efe7c964b90b7478f09bc4fcef4ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  crosshair: {fileID: 0}
+  lastBlockHitTime: 0
+  lastHitTime: 0
+  lastBlockInteractionTime: 0
+--- !u!114 &560820911139893197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149122272397806801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f40544f5ccf66934a93c87b15e945073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!95 &7118248979253364308
 Animator:
   serializedVersion: 5
