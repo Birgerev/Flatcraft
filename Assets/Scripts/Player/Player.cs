@@ -36,12 +36,10 @@ public class Player : LivingEntity
     private readonly float jumpHungerCost = 0.1f;
     private bool ladderSneaking;
 
-    [SyncVar] private double lastBlockHitTime;
 
     private float lastFrameScroll;
     private float lastDoubleTapSprintTap;
 
-    [SyncVar] private double lastHitTime;
 
     private readonly float movementHungerCost = 0.03f;
     private readonly float sneakSpeed = 1.3f;
@@ -568,8 +566,9 @@ public class Player : LivingEntity
         Animator anim = GetComponent<Animator>();
 
         anim.SetBool("eating", eatingTime > 0);
-        anim.SetBool("punch",
-            NetworkTime.time - lastHitTime < 0.05f || NetworkTime.time - lastBlockHitTime < 0.3f);
+        anim.SetBool("punch", 
+            NetworkTime.time - GetComponent<PlayerInteraction>().lastHitTime < 0.05f || 
+                NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", sneaking);
     }

@@ -9,6 +9,8 @@ public class PlayerInteraction : NetworkBehaviour
     public const float InteractionsPerPerSecond = 4.5f;
     
     public GameObject crosshair;
+    [SyncVar] public double lastBlockHitTime;
+    [SyncVar] public double lastHitTime;
     
     private float _lastBlockInteractionTime;
     private Player _player;
@@ -93,7 +95,7 @@ public class PlayerInteraction : NetworkBehaviour
         loc.Tick();
 
         _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, new ItemStack(item.material, item.Amount - 1));
-        _player.lastHitTime = NetworkTime.time;
+        lastHitTime = NetworkTime.time;
     }
 
     [Client]
@@ -142,7 +144,7 @@ public class PlayerInteraction : NetworkBehaviour
 
         itemType.Interact(player, loc, mouseButton, firstFrameDown);
         if (loc.GetMaterial() != Material.Air)
-            _player.lastBlockHitTime = NetworkTime.time;
+            lastBlockHitTime = NetworkTime.time;
     }
 
     [Server]
@@ -180,7 +182,7 @@ public class PlayerInteraction : NetworkBehaviour
         DoToolDurability();
 
         entity.transform.GetComponent<Entity>().Hit(damage, _player);
-        _player.lastHitTime = NetworkTime.time;
+        lastHitTime = NetworkTime.time;
         
         Sound.Play(_player.Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
         _player.ShakeOwnersCamera(.5f);
@@ -192,7 +194,7 @@ public class PlayerInteraction : NetworkBehaviour
         Entity entity = entityObj.GetComponent<Entity>();
 
         entity.transform.GetComponent<Entity>().Interact(_player);
-        _player.lastHitTime = NetworkTime.time;
+        lastHitTime = NetworkTime.time;
     }
 
     
