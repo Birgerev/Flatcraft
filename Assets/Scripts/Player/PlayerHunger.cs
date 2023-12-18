@@ -14,6 +14,9 @@ public class PlayerHunger : NetworkBehaviour
 
     public float eatingTime;
     
+    public float maxHunger = 20;
+    
+    
     private Player _player;
     //TODO clean entire script
     private void Update()
@@ -65,7 +68,7 @@ public class PlayerHunger : NetworkBehaviour
         if (Input.GetMouseButtonUp(1)) CMD_StopEat();
         
         if (!Input.GetMouseButton(1)) return;
-        if (_player.hunger > _player.maxHunger - .5f) return;
+        if (_player.hunger > maxHunger - .5f) return;
         if (Time.time % 0.2f > Time.deltaTime) return;
         if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
         
@@ -98,7 +101,7 @@ public class PlayerHunger : NetworkBehaviour
         ItemStack selectedItemStack = _player.GetInventory().GetSelectedItem();
         Food foodItem = (Food) Activator.CreateInstance(Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()));
         
-        _player.hunger = Mathf.Clamp(_player.hunger + foodItem.food_points, 0, _player.maxHunger);
+        _player.hunger = Mathf.Clamp(_player.hunger + foodItem.food_points, 0, maxHunger);
         RPC_PlayEatEffect(selectedItemStack.GetTextureColors());
         Sound.Play(_player.Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
 
