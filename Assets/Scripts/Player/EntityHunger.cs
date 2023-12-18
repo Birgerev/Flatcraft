@@ -62,16 +62,18 @@ public class EntityHunger : NetworkBehaviour
     [Client]
     private void EatItemInput()
     {
-        if (Input.GetMouseButton(1)) return;
+        if (Input.GetMouseButtonUp(1)) CMD_StopEat();
+        
+        if (!Input.GetMouseButton(1)) return;
         if (_player.hunger > _player.maxHunger - .5f) return;
         if (Time.time % 0.2f > Time.deltaTime) return;
         if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
         
         CMD_Eat();
     }
-    
+
     [Command]
-    public void CMD_Eat()
+    private void CMD_Eat()
     {
         if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
 
@@ -81,6 +83,12 @@ public class EntityHunger : NetworkBehaviour
         if (eatingTime < 1.3f) return;
         
         ConsumeHeldItem();
+        eatingTime = 0;
+    }
+
+    [Command]
+    private void CMD_StopEat()
+    {
         eatingTime = 0;
     }
 
