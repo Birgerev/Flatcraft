@@ -28,7 +28,7 @@ public class Dog : PassiveEntity
         return Entity.GetEntity(ownerUuid);
     }
     
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();

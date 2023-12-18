@@ -12,8 +12,8 @@ public class PlayerInteraction : NetworkBehaviour
     
     [HideInInspector] public GameObject crosshair;
     
-    [HideInInspector] [SyncVar] public double lastBlockHitTime;
-    [HideInInspector] [SyncVar] public double lastHitTime;
+    [HideInInspector] public double lastBlockHitTime;
+    [HideInInspector] public double lastHitTime;
     [HideInInspector] public double lastBlockInteractionTime;
     
     private Player _player;

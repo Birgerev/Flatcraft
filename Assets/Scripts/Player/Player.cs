@@ -512,8 +512,8 @@ public class Player : LivingEntity
             facingLeft = GetVelocity().x < 0;
     }
     
-    [Client]
-    public override void UpdateAnimatorValues()
+    [Server]
+    public override void UpdateAnimatorValues()//TODO server & network animator
     {
         base.UpdateAnimatorValues();
 

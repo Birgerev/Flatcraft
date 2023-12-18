@@ -47,7 +47,7 @@ public class Wolf : PassiveEntity
         }
     }
 
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();
