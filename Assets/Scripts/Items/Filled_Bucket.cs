@@ -19,7 +19,7 @@ public class Filled_Bucket : Item
             return;
 
         //Get player inventory
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
+        Player playerEntity = player.playerEntity;
         PlayerInventory inv = playerEntity.GetInventory();
         
         //Remove one filled bucket

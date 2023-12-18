@@ -9,7 +9,7 @@ public class Wipe : Item
         base.InteractRight(player, loc, firstFrameDown);
         
         //Get player inventory
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
+        Player playerEntity = player.playerEntity;
         PlayerInventory inv = playerEntity.GetInventory();
         
         //Remove one empty bucket

@@ -10,7 +10,7 @@ public class PlayerInstance : NetworkBehaviour
     public static PlayerInstance localPlayerInstance;
 
     [SyncVar] public ulong steamId = 0;
-    [SyncVar] public GameObject playerEntity;
+    [SyncVar] public Player playerEntity;
 
     public void Update()
     {
@@ -65,7 +65,7 @@ public class PlayerInstance : NetworkBehaviour
         GameObject player = Entity.Spawn("Player", steamId.ToString(), new Vector2(0, 80)).gameObject;
         player.GetComponent<Player>().displayName = GetPlayerName();
         player.GetComponent<Player>().playerInstance = this;
-        playerEntity = player;
+        playerEntity = player.GetComponent<Player>();
         player.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
     }
 

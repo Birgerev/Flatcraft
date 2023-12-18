@@ -20,7 +20,7 @@ public class StructureCommand : Command
                 return;
             }
 
-            Player playerEntity = player.playerEntity.GetComponent<Player>();
+            Player playerEntity = player.playerEntity;
             Location playerLoc = playerEntity.Location;
             string structureName = param[0];
 

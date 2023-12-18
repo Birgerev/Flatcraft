@@ -27,7 +27,7 @@ public class SaveStructureCommand : Command
             int width = int.Parse(param[1]);
             int height = int.Parse(param[2]);
             
-            Location playerLocation = player.playerEntity.GetComponent<Player>().Location;
+            Location playerLocation = player.playerEntity.Location;
             string savePath = Application.persistentDataPath + "\\savedStructure.txt";
             List<string> lines = new List<string>();
 

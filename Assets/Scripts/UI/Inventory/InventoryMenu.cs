@@ -48,7 +48,7 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void OpenPlayerInventory()
     {
         inventoryIds.Add(1,
-            ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
+            ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.inventoryId);
     }
 
     [Command(requiresAuthority = false)]
@@ -181,7 +181,7 @@ public class InventoryMenu : NetworkBehaviour
         if (pointerItem.material == Material.Air)
             return;
         
-        Player player = ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>();
+        Player player = ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity;
         player.DropItem(pointerItem);
         
         SetPointerItem(new ItemStack(Material.Air));
