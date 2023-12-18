@@ -12,6 +12,8 @@ public class EntityHunger : NetworkBehaviour
     private static readonly float MovementHungerCost = 0.03f;
     private static readonly float SprintHungerCost = 0.03f;
     
+    [SyncVar] public float eatingTime;
+    
     private Player _player;
 
     private void Update()
@@ -74,12 +76,12 @@ public class EntityHunger : NetworkBehaviour
         if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
 
         Sound.Play(_player.Location, "entity/Player/eat", SoundType.Entities, 0.85f, 1.15f);
-        _player.eatingTime += 0.2f;
+        eatingTime += 0.2f;
 
-        if (_player.eatingTime < 1.3f) return;
+        if (eatingTime < 1.3f) return;
         
         ConsumeHeldItem();
-        _player.eatingTime = 0;
+        eatingTime = 0;
     }
 
     [Server]

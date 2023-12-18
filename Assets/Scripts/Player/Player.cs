@@ -20,8 +20,6 @@ public class Player : LivingEntity
 
     [EntityDataTag(false)] [SyncVar] public int inventoryId = 0;
 
-    [SyncVar] public float eatingTime;
-
     public Location bedLocation = new Location(0, 0);
     public float maxHunger = 20;
     public float reach = 5;
@@ -521,7 +519,7 @@ public class Player : LivingEntity
 
         Animator anim = GetComponent<Animator>();
         
-        anim.SetBool("eating", eatingTime > 0);
+        anim.SetBool("eating", GetComponent<EntityHunger>().eatingTime > 0);
         anim.SetBool("punch", 
             NetworkTime.time - GetComponent<PlayerInteraction>().lastHitTime < 0.05f || 
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockInteractionTime < 0.1f || 
