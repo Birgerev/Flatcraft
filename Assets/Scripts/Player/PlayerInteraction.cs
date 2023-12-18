@@ -110,7 +110,7 @@ public class PlayerInteraction : NetworkBehaviour
         else if (Input.GetMouseButton(0))
         {
             CMD_Interact(GetBlockedMouseLocation(), 0, false);
-            _player.ShakeClientCamera(10f * Time.deltaTime);
+            CameraController.ShakeClientCamera(10f * Time.deltaTime);
         }
         
         if(Input.GetMouseButton(0) || Input.GetMouseButton(1))
@@ -155,7 +155,7 @@ public class PlayerInteraction : NetworkBehaviour
         }
 
         Sound.Play(_player.Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
-        _player.ShakeOwnersCamera(.5f);
+        _player.ShakeOwnerCamera(.5f);
         DoToolDurability();
         
         entity.transform.GetComponent<Entity>().Hit(damage, _player);

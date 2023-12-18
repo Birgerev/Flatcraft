@@ -489,20 +489,14 @@ public class Player : LivingEntity
     {
         base.Damage(damage);
 
-        ShakeOwnersCamera(5);
+        ShakeOwnerCamera(5);
     }
 
     [ClientRpc]
-    public void ShakeOwnersCamera(float shakeValue)
+    public void ShakeOwnerCamera(float shakeValue)
     {
         if (isOwned)
-            ShakeClientCamera(shakeValue);
-    }
-    
-    [Client]
-    public void ShakeClientCamera(float shakeValue)
-    {
-        CameraController.instance.currentShake = shakeValue;
+            CameraController.ShakeClientCamera(shakeValue);
     }
 
     [Server]
