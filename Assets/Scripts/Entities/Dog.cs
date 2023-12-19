@@ -12,7 +12,6 @@ public class Dog : PassiveEntity
     protected virtual float foodHealthRegeneration { get; } = 20f / 3f;
 
     public override float maxHealth { get; } = 20;
-    protected override float walkSpeed { get; } = 6f;
     [EntityDataTag(false)] public string ownerUuid;
     [EntityDataTag(false)] [SyncVar] public bool sitting;
     public SpriteRenderer collar;

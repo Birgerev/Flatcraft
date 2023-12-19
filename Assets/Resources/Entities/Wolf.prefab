@@ -43,6 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6253944040654088182}
   - component: {fileID: 9028558153358623458}
+  - component: {fileID: -8297024303333480270}
   - component: {fileID: 7371507656522640533}
   - component: {fileID: 3666270609229095731}
   - component: {fileID: 9138389983366739584}
@@ -108,6 +109,23 @@ MonoBehaviour:
   displayName: 
   isOnClimbable: 0
   visuallyAngry: 0
+--- !u!114 &-8297024303333480270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3635457265951077194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fde9a28e39d99c48b0693aca394d583, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  walkSpeed: 6
+  speed: 0
 --- !u!95 &7371507656522640533
 Animator:
   serializedVersion: 5

@@ -30,7 +30,7 @@ public class PlayerHunger : NetworkBehaviour
         {
             if (_player.GetVelocity().x > 0.2f || _player.GetVelocity().x < -0.2f)
                 _player.hunger -= MovementHungerCost;
-            if (_player.sprinting)
+            if (_player.GetComponent<PlayerMovement>().sprinting)
                 _player.hunger -= SprintHungerCost;
             if (_player.GetVelocity().y > 0)
                 _player.hunger -= JumpHungerCost;

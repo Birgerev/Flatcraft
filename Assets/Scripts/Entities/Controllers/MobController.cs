@@ -111,7 +111,7 @@ public class MobController : EntityController
 
     protected virtual void Walking()
     {
-        instance.Walk(instance.facingLeft ? -1 : 1);
+        movement.Walk(instance.facingLeft ? -1 : 1);
 
         Vector3 locInFront = instance.transform.position + new Vector3(
             (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
@@ -120,13 +120,13 @@ public class MobController : EntityController
 
         //Jump when there is a block in front of entity
         if (blockInFront != null && blockInFront.IsSolid && !instance.isInLiquid)
-            instance.Jump();
+            movement.Jump();
     }
 
     protected virtual void Swim()
     {
         if (instance.isInLiquid && !swimDown)
-            instance.Jump();
+            movement.Jump();
     }
 
     protected virtual void SearchTarget()
@@ -173,7 +173,7 @@ public class MobController : EntityController
         float distance = GetTargetDistance();
 
         if (jumpWhenHitting && distance < 2f)
-            instance.Jump();
+            movement.Jump();
 
         if (distance < 1.5f)
         {

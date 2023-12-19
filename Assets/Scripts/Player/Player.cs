@@ -21,19 +21,10 @@ public class Player : LivingEntity
 
     public Location bedLocation = new Location(0, 0);
 
-    [SyncVar] public bool sprinting;
-
-    [SyncVar] public bool sneaking;
 
     private Material actionBarLastSelectedMaterial;
     private int framesSinceInventoryOpen;
-    private bool ladderSneaking;
 
-    private float lastFrameScroll;
-    private float lastDoubleTapSprintTap;
-    
-    private readonly float sneakSpeed = 1.3f;
-    private readonly float sprintSpeed = 5.6f;
 
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
@@ -82,7 +73,6 @@ public class Player : LivingEntity
         GetInventory().holder = Location;
         CheckStarvationDamage();
         ClimbableSound();
-
     }
 
     [Client]
@@ -91,12 +81,8 @@ public class Player : LivingEntity
         //Crosshair
         if (isOwned)
         {
-            PerformInput();
             CheckActionBarUpdate();
             CheckDimensionChangeLoadingScreen();
-
-            if (!isServer) //If we are server, Process movement will already have been called in LivingEntity.Tick()
-                ProcessMovement();
 
             if (Inventory.IsAnyOpen(playerInstance))
                 framesSinceInventoryOpen = 0;
@@ -119,30 +105,6 @@ public class Player : LivingEntity
     {
         if (isOwned)
             Location = loc;
-    }
-
-    public override void ProcessMovement()
-    {
-        if (!isOwned)
-            return;
-
-        base.ProcessMovement();
-        CrouchOnLadderCheck();
-    }
-
-    public void CrouchOnLadderCheck()
-    {
-        bool isLadderSneakingThisFrame = isOnClimbable && sneaking;
-        if (isLadderSneakingThisFrame && !ladderSneaking)
-        {
-            GetComponent<Rigidbody2D>().gravityScale = 0;
-            ladderSneaking = true;
-        }
-        else if (!isLadderSneakingThisFrame && ladderSneaking)
-        {
-            GetComponent<Rigidbody2D>().gravityScale = 1;
-            ladderSneaking = false;
-        }
     }
 
     [Client]
@@ -180,152 +142,6 @@ public class Player : LivingEntity
     public virtual void TakeStarvationDamage(float damage)
     {
         Damage(damage);
-    }
-
-    [Client]
-    private void PerformInput()
-    {
-        if (ChatMenu.instance.open || SignEditMenu.IsLocalMenuOpen())
-            return;
-
-        //Open inventory
-        if (Input.GetKeyDown(KeyCode.E) && framesSinceInventoryOpen > 10)
-            RequestOpenInventory();
-
-        if (Inventory.IsAnyOpen(playerInstance))
-            return;
-
-        //Open chat
-        if (Input.GetKeyDown(KeyCode.T))
-            ChatMenu.instance.open = true;
-
-        //Walking
-        if (Input.GetKey(KeyCode.A))
-            Walk(-1);
-        if (Input.GetKey(KeyCode.D))
-            Walk(1);
-
-        //Jumping
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
-            Jump();
-
-        //Sneaking
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S))
-        {
-            SetServerSneaking(true);
-            speed = sneakSpeed;
-        }
-
-        if (sneaking && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
-        {
-            SetServerSneaking(false);
-            speed = walkSpeed;
-        }
-
-        //Sprinting
-        if (sprinting && 
-            (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(GetVelocity().x) < 0.5f || sneaking || hunger <= 6))
-        {
-            SetServerSprinting(false);
-            speed = walkSpeed;
-        }
-        
-        if (Input.GetKeyDown(KeyCode.LeftControl) && hunger > 6)
-        {
-            SetServerSprinting(true);
-            speed = sprintSpeed;
-        }
-
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
-        {
-            if (Time.time - lastDoubleTapSprintTap < 0.3f)
-            {
-                SetServerSprinting(true);
-                speed = sprintSpeed;
-            }
-            
-            lastDoubleTapSprintTap = Time.time;
-        }
-
-        //Toggle Debug disabled lighting
-        if (Input.GetKeyDown(KeyCode.F4) && Debug.isDebugBuild)
-        {
-            LightManager.DoLight = !LightManager.DoLight;
-            LightManager.UpdateAllLight();
-        }
-
-        //Inventory Managment
-        if (Input.GetKeyDown(KeyCode.Q))
-            RequestDropItem();
-
-        KeyCode[] numpadCodes =
-        {
-            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6
-            , KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
-        };
-        foreach (KeyCode keyCode in numpadCodes)
-            if (Input.GetKeyDown(keyCode))
-                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
-
-
-        float scroll = Input.mouseScrollDelta.y;
-        //Check once every 5 frames
-        if (scroll != 0 && (Time.frameCount % 5 == 0 || lastFrameScroll == 0))
-        {
-            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
-            if (newSelectedSlot > 8)
-                newSelectedSlot = 0;
-            if (newSelectedSlot < 0)
-                newSelectedSlot = 8;
-
-            SetSelectedInventorySlot(newSelectedSlot);
-        }
-
-        lastFrameScroll = scroll;
-    }
-
-    [Command]
-    private void RequestOpenInventory()
-    {
-        GetInventory().Open(playerInstance);
-    }
-
-    [Command]
-    private void RequestDropItem()
-    {
-        DropSelected();
-    }
-
-    [Command]
-    private void SetServerSprinting(bool sprint)
-    {
-        sprinting = sprint;
-    }
-
-    [Command]
-    private void SetSelectedInventorySlot(int slot)
-    {
-        GetInventory().selectedSlot = slot;
-    }
-
-    [Command]
-    private void SetServerSneaking(bool sneak)
-    {
-        sneaking = sneak;
-    }
-
-    public PlayerInventory GetInventory()
-    {
-        Inventory inventory = Inventory.Get(inventoryId);
-        
-        //Create an inventory if it doesn't exist
-        if (inventory == null)
-        {
-            inventory = PlayerInventory.CreatePreset();
-            inventoryId = inventory.id;
-        }
-        
-        return (PlayerInventory)inventory;
     }
 
     [Server]
@@ -514,6 +330,43 @@ public class Player : LivingEntity
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockInteractionTime < 0.1f || 
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockHitTime < 0.3f);
         anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
-        anim.SetBool("sneaking", sneaking);
+        anim.SetBool("sneaking", GetComponent<PlayerMovement>().sneaking);
     }
+    
+    
+    //TODO move
+    private float lastFrameScroll;//TODO _ name
+    
+    [Command]
+    private void RequestOpenInventory()
+    {
+        GetInventory().Open(playerInstance);
+    }
+
+    [Command]
+    private void RequestDropItem()
+    {
+        DropSelected();
+    }
+
+    public PlayerInventory GetInventory()
+    {
+        Inventory inventory = Inventory.Get(inventoryId);
+        
+        //Create an inventory if it doesn't exist
+        if (inventory == null)
+        {
+            inventory = PlayerInventory.CreatePreset();
+            inventoryId = inventory.id;
+        }
+        
+        return (PlayerInventory)inventory;
+    }
+
+    [Command]
+    private void SetSelectedInventorySlot(int slot)
+    {
+        GetInventory().selectedSlot = slot;
+    }
+
 }

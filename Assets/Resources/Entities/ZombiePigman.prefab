@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 7344307264835148632}
   - component: {fileID: 1114594133783793232}
   - component: {fileID: 6883397605878311133}
+  - component: {fileID: 7897325078161199709}
   m_Layer: 14
   m_Name: ZombiePigman
   m_TagString: Untagged
@@ -285,6 +286,23 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 8220896558774280924}
+--- !u!114 &7897325078161199709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8281340068179227370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fde9a28e39d99c48b0693aca394d583, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  walkSpeed: 4.3
+  speed: 0
 --- !u!1 &9101458304595564119
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,7 +8,6 @@ public class Wolf : PassiveEntity
 {
     //Entity Properties
     public override float maxHealth { get; } = 8;
-    protected override float walkSpeed { get; } = 6f;
     protected virtual float tameChance { get; } = 0.3f;
 
     [SyncVar] public bool visuallyAngry;
