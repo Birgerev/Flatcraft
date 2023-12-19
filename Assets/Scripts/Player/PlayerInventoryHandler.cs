@@ -29,6 +29,43 @@ public class PlayerInventoryHandler : NetworkBehaviour
         PerformInput();
     }
 
+    [Client]
+    private void PerformInput()
+    {
+        //Open inventory
+        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10)
+            RequestOpenInventory();
+
+        //Inventory Managment
+        if (Input.GetKeyDown(KeyCode.Q))
+            RequestDropItem();
+
+        KeyCode[] numpadCodes =
+        {
+            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
+            KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
+        };
+        foreach (KeyCode keyCode in numpadCodes)
+            if (Input.GetKeyDown(keyCode))
+                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
+
+
+        float scroll = Input.mouseScrollDelta.y;
+        //Check once every 5 frames
+        if (scroll != 0 && (Time.frameCount % 5 == 0 || _lastFrameScroll == 0))
+        {
+            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
+            if (newSelectedSlot > 8)
+                newSelectedSlot = 0;
+            if (newSelectedSlot < 0)
+                newSelectedSlot = 8;
+
+            SetSelectedInventorySlot(newSelectedSlot);
+        }
+
+        _lastFrameScroll = scroll;
+    }
+    
     [Server]
     public void DropSelected()
     {
@@ -49,8 +86,8 @@ public class PlayerInventoryHandler : NetworkBehaviour
     {
         ItemStack droppedItem = item;
         
-        droppedItem.Drop(_player.Location + new Location(1 * (_player.facingLeft ? -1 : 1), 1)
-            , new Vector2(3 * (_player.facingLeft ? -1 : 1), 0f));
+        droppedItem.Drop(_player.Location + new Location(1 * (_player.facingLeft ? -1 : 1), 1), 
+            new Vector2(3 * (_player.facingLeft ? -1 : 1), 0f));
     }
     
     [Command]
@@ -96,42 +133,6 @@ public class PlayerInventoryHandler : NetworkBehaviour
         _actionBarLastSelectedMaterial = selectedMaterial;
     }
 
-    private void PerformInput()
-    {
-        //Open inventory
-        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10)
-            RequestOpenInventory();
-
-        //Inventory Managment
-        if (Input.GetKeyDown(KeyCode.Q))
-            RequestDropItem();
-
-        KeyCode[] numpadCodes =
-        {
-            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
-            KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
-        };
-        foreach (KeyCode keyCode in numpadCodes)
-            if (Input.GetKeyDown(keyCode))
-                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
-
-
-        float scroll = Input.mouseScrollDelta.y;
-        //Check once every 5 frames
-        if (scroll != 0 && (Time.frameCount % 5 == 0 || _lastFrameScroll == 0))
-        {
-            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
-            if (newSelectedSlot > 8)
-                newSelectedSlot = 0;
-            if (newSelectedSlot < 0)
-                newSelectedSlot = 8;
-
-            SetSelectedInventorySlot(newSelectedSlot);
-        }
-
-        _lastFrameScroll = scroll;
-    }
-    
     private void Awake()
     {
         _player = GetComponent<Player>();
