@@ -22,7 +22,7 @@ public class Wolf : PassiveEntity
     {
         base.Interact(source);
         
-        PlayerInventory inv = source.GetInventory();
+        PlayerInventory inv = source.GetInventoryHandler().GetInventory();
         ItemStack heldItem = inv.GetSelectedItem();
 
         if (heldItem.material == Material.Bone)

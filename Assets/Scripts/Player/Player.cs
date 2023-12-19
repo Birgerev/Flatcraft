@@ -21,17 +21,14 @@ public class Player : LivingEntity
 
     public Location bedLocation = new Location(0, 0);
 
-
-    private Material actionBarLastSelectedMaterial;
-    private int framesSinceInventoryOpen;
-
-
     //Entity Properties
     public override bool ChunkLoadingEntity { get; } = true;
     public override float maxHealth { get; } = 20;
 
     public override void Start()
     {
+        
+        
         Debug.Log("Spawning player '" + uuid + "'");
         Players.Add(this);
 
@@ -70,7 +67,6 @@ public class Player : LivingEntity
         base.Tick();
         
         CalculateFlip();
-        GetInventory().holder = Location;
         CheckStarvationDamage();
         ClimbableSound();
     }
@@ -78,19 +74,11 @@ public class Player : LivingEntity
     [Client]
     public override void ClientUpdate()
     {
-        //Crosshair
-        if (isOwned)
-        {
-            CheckActionBarUpdate();
-            CheckDimensionChangeLoadingScreen();
-
-            if (Inventory.IsAnyOpen(playerInstance))
-                framesSinceInventoryOpen = 0;
-            else
-                framesSinceInventoryOpen++;
-        }
-        
         base.ClientUpdate();
+
+        if (!isOwned) return;
+        
+        CheckDimensionChangeLoadingScreen();
     }
 
     [Server]
@@ -119,16 +107,6 @@ public class Player : LivingEntity
         base.UpdateNameplate();
     }
 
-    [Client]
-    private void CheckActionBarUpdate()
-    {
-        Material selectedMaterial = GetInventory().GetSelectedItem().material;
-
-        if (selectedMaterial != actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
-            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
-
-        actionBarLastSelectedMaterial = selectedMaterial;
-    }
 
     [Server]
     private void CheckStarvationDamage()
@@ -149,41 +127,17 @@ public class Player : LivingEntity
     {
         List<ItemStack> result = new List<ItemStack>();
 
-        result.AddRange(GetInventory().items);
+        result.AddRange(GetComponent<PlayerInventoryHandler>().GetInventory().items);
 
         return result;
     }
-
-    [Server]
-    public void DropSelected()
-    {
-        ItemStack selectedItem = GetInventory().GetSelectedItem();
-        ItemStack droppedItem = selectedItem;
-        
-        if (droppedItem.Amount <= 0)
-            return;
-
-        droppedItem.Amount = 1;
-        selectedItem.Amount--;
-        DropItem(droppedItem);
-        GetInventory().SetItem(GetInventory().selectedSlot, selectedItem);
-    }
     
-    [Server]
-    public void DropItem(ItemStack item)
-    {
-        ItemStack droppedItem = item;
-        
-        droppedItem.Drop(Location + new Location(1 * (facingLeft ? -1 : 1), 1)
-            , new Vector2(3 * (facingLeft ? -1 : 1), 0f));
-    }
-
     [Server]
     public override void DropAllDrops()
     {
         base.DropAllDrops();
 
-        GetInventory().Clear();
+        GetComponent<PlayerInventoryHandler>().GetInventory().Clear();
     }
 
     [Server]
@@ -257,7 +211,7 @@ public class Player : LivingEntity
         
         ChatManager.instance.AddMessage(displayName + " died");
         File.Delete(SavePath());
-        GetInventory().Delete();
+        GetComponent<PlayerInventoryHandler>().GetInventory().Delete();
         DeathMenuEffect();
     }
 
@@ -316,6 +270,11 @@ public class Player : LivingEntity
         if (Mathf.Abs(GetVelocity().x) > 0.1f)
             facingLeft = GetVelocity().x < 0;
     }
+
+    public PlayerInventoryHandler GetInventoryHandler()
+    {
+        return GetComponent<PlayerInventoryHandler>();
+    }
     
     [Server]
     public override void UpdateAnimatorValues()
@@ -329,44 +288,8 @@ public class Player : LivingEntity
             NetworkTime.time - GetComponent<PlayerInteraction>().lastHitTime < 0.05f || 
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockInteractionTime < 0.1f || 
                 NetworkTime.time - GetComponent<PlayerInteraction>().lastBlockHitTime < 0.3f);
-        anim.SetBool("holding-item", GetInventory().GetSelectedItem().material != Material.Air);
+        anim.SetBool("holding-item", GetInventoryHandler().GetInventory().GetSelectedItem().material != Material.Air);
         anim.SetBool("sneaking", GetComponent<PlayerMovement>().sneaking);
     }
     
-    
-    //TODO move
-    private float lastFrameScroll;//TODO _ name
-    
-    [Command]
-    private void RequestOpenInventory()
-    {
-        GetInventory().Open(playerInstance);
-    }
-
-    [Command]
-    private void RequestDropItem()
-    {
-        DropSelected();
-    }
-
-    public PlayerInventory GetInventory()
-    {
-        Inventory inventory = Inventory.Get(inventoryId);
-        
-        //Create an inventory if it doesn't exist
-        if (inventory == null)
-        {
-            inventory = PlayerInventory.CreatePreset();
-            inventoryId = inventory.id;
-        }
-        
-        return (PlayerInventory)inventory;
-    }
-
-    [Command]
-    private void SetSelectedInventorySlot(int slot)
-    {
-        GetInventory().selectedSlot = slot;
-    }
-
 }

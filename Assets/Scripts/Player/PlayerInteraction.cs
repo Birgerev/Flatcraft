@@ -74,7 +74,7 @@ public class PlayerInteraction : NetworkBehaviour
     [Command]
     public void CMD_PlaceBlock(Location loc)
     {
-        ItemStack selectedItem = _player.GetInventory().GetSelectedItem();
+        ItemStack selectedItem = _player.GetInventoryHandler().GetInventory().GetSelectedItem();
 
         if (selectedItem.material == Material.Air) return;
         if (selectedItem.Amount <= 0) return;
@@ -90,7 +90,7 @@ public class PlayerInteraction : NetworkBehaviour
         loc.GetBlock().BuildTick();
         loc.Tick();
 
-        _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, new ItemStack(selectedItem.material, selectedItem.Amount - 1));
+        _player.GetInventoryHandler().GetInventory().SetItem(_player.GetInventoryHandler().GetInventory().selectedSlot, new ItemStack(selectedItem.material, selectedItem.Amount - 1));
         
         //Trigger animation
         lastBlockInteractionTime = NetworkTime.time;
@@ -123,7 +123,7 @@ public class PlayerInteraction : NetworkBehaviour
     {
         //if the selected item derives from "Item", create in instance of item, else create empty
         //"Item", without any subclasses
-        Type itemType = Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString());
+        Type itemType = Type.GetType(_player.GetInventoryHandler().GetInventory().GetSelectedItem().material.ToString());
         if (!itemType.IsSubclassOf(typeof(Item))) itemType = typeof(Item);
             
         Item item = (Item) Activator.CreateInstance(itemType);
@@ -136,7 +136,7 @@ public class PlayerInteraction : NetworkBehaviour
     [Server]
     public void DoToolDurability()
     {
-        PlayerInventory inv = _player.GetInventory();
+        PlayerInventory inv = _player.GetInventoryHandler().GetInventory();
         ItemStack item = inv.GetSelectedItem();
         item.ApplyDurability();
 
@@ -146,7 +146,7 @@ public class PlayerInteraction : NetworkBehaviour
     [Command]
     public virtual void CMD_HitEntity(Entity entity)
     {
-        float damage = _player.GetInventory().GetSelectedItem().GetItemEntityDamage();
+        float damage = _player.GetInventoryHandler().GetInventory().GetSelectedItem().GetItemEntityDamage();
         
         //Critical hits
         if (_player.GetVelocity().y < -0.5f)

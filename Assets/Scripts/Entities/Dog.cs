@@ -57,7 +57,7 @@ public class Dog : PassiveEntity
     private bool TryFeed()
     {
         Player owner = (Player) GetOwner();
-        PlayerInventory inv = owner.GetInventory();
+        PlayerInventory inv = owner.GetInventoryHandler().GetInventory();
         if (inv == null)
             return false;
         ItemStack heldItem = inv.GetSelectedItem();

@@ -20,9 +20,9 @@ public class HotbarItemSlot : ItemSlot
 
         base.UpdateSlotContents();
 
-        item = Player.LocalEntity.GetInventory().GetHotbarItems()[transform.GetSiblingIndex()];
+        item = Player.LocalEntity.GetInventoryHandler().GetInventory().GetHotbarItems()[transform.GetSiblingIndex()];
 
-        GetComponent<Image>().sprite = Player.LocalEntity.GetInventory().selectedSlot == transform.GetSiblingIndex()
+        GetComponent<Image>().sprite = Player.LocalEntity.GetInventoryHandler().GetInventory().selectedSlot == transform.GetSiblingIndex()
             ? selected
             : normal;
     }

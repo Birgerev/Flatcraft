@@ -69,7 +69,7 @@ public class PlayerHunger : NetworkBehaviour
         if (!Input.GetMouseButton(1)) return;
         if (_player.hunger > maxHunger - .5f) return;
         if (Time.time % 0.2f > Time.deltaTime) return;
-        if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
+        if (!Type.GetType(_player.GetInventoryHandler().GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
         
         CMD_Eat();
     }
@@ -77,7 +77,7 @@ public class PlayerHunger : NetworkBehaviour
     [Command]
     private void CMD_Eat()
     {
-        if (!Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
+        if (!Type.GetType(_player.GetInventoryHandler().GetInventory().GetSelectedItem().material.ToString()).IsSubclassOf(typeof(Food))) return;
 
         Sound.Play(_player.Location, "entity/Player/eat", SoundType.Entities, 0.85f, 1.15f);
         eatingTime += 0.2f;
@@ -97,8 +97,9 @@ public class PlayerHunger : NetworkBehaviour
     [Server]
     private void ConsumeHeldItem()
     {
-        ItemStack selectedItemStack = _player.GetInventory().GetSelectedItem();
-        Food foodItem = (Food) Activator.CreateInstance(Type.GetType(_player.GetInventory().GetSelectedItem().material.ToString()));
+        PlayerInventory inv = _player.GetInventoryHandler().GetInventory();
+        ItemStack selectedItemStack = inv.GetSelectedItem();
+        Food foodItem = (Food) Activator.CreateInstance(Type.GetType(inv.GetSelectedItem().material.ToString()));
         
         _player.hunger = Mathf.Clamp(_player.hunger + foodItem.food_points, 0, maxHunger);
         RPC_PlayEatEffect(selectedItemStack.GetTextureColors());
@@ -106,7 +107,7 @@ public class PlayerHunger : NetworkBehaviour
 
         //Subtract food item from inventory
         selectedItemStack.Amount--;
-        _player.GetInventory().SetItem(_player.GetInventory().selectedSlot, selectedItemStack);
+        inv.SetItem(inv.selectedSlot, selectedItemStack);
     }
 
     [ClientRpc]
