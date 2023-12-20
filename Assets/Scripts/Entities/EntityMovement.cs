@@ -33,12 +33,6 @@ public class EntityMovement : NetworkBehaviour
     private LivingEntity _entity;
     private Rigidbody2D _rb;
 
-    private void Awake()
-    {
-        _entity = GetComponent<LivingEntity>();
-        _rb = GetComponent<Rigidbody2D>();
-        speed = walkSpeed;
-    }
 
     // Update is called once per frame
     void Update()
@@ -127,7 +121,6 @@ public class EntityMovement : NetworkBehaviour
     private void WalkSound()
     {
         if (!_entity.isOnGround) return;
-
         if (Vector2.Distance(_lastStepPosition, transform.position) < StepSoundDistance) return;
         
         Sound.Play(_entity.Location, "entity/step", SoundType.Entities, 0.8f, 1.2f);
@@ -162,5 +155,12 @@ public class EntityMovement : NetworkBehaviour
     public virtual void LateUpdate()
     {
         _inLiquidLastFrame = _entity.isInLiquid;
+    }
+    
+    private void Awake()
+    {
+        _entity = GetComponent<LivingEntity>();
+        _rb = GetComponent<Rigidbody2D>();
+        speed = walkSpeed;
     }
 }
