@@ -88,7 +88,7 @@ public class EntityMovement : NetworkBehaviour
         if (!_entity.isOnGround) return;
         if (Time.time - _lastJumpTime < .3f) return;
         
-        _rb.velocity += new Vector2(0, JumpVelocity);
+        _rb.velocity = new Vector2(_rb.velocity.x, JumpVelocity);
         _lastJumpTime = Time.time;
     }
     
