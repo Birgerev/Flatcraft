@@ -42,6 +42,4 @@ public class Blaze : Monster
 
     [Server]
     public override void TakeFallDamage(float damage) { }//Disable fall damage
-    
-    public override void TakeFireDamage(float damage){ } //Disable fire damage
 }

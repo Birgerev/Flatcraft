@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3735909940835760781}
   - component: {fileID: 3560984398797606035}
   - component: {fileID: 4007092520886860634}
+  - component: {fileID: 5661908636076226848}
   - component: {fileID: 6312389284420042247}
   - component: {fileID: 6337641122114321992}
   - component: {fileID: 1999866454145100795}
@@ -70,7 +71,6 @@ MonoBehaviour:
   teleportingDimension: 0
   lastDamager: {fileID: 0}
   lastFramePosition: {x: 0, y: 0}
-  burningRender: {fileID: 7808781648024109077}
   nameplate: {fileID: 1256861940064996194}
   health: 0
   displayName: 
@@ -92,6 +92,22 @@ MonoBehaviour:
   syncInterval: 0.1
   walkSpeed: 4.3
   speed: 0
+--- !u!114 &5661908636076226848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6296414545131236913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 854557e75d3529d4794b88cffb644af5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  burningRender: {fileID: 7808781648024109077}
 --- !u!95 &6312389284420042247
 Animator:
   serializedVersion: 5

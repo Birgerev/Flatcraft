@@ -38,7 +38,6 @@ public class Entity : NetworkBehaviour
     public Entity lastDamager;
 
     public Vector2 lastFramePosition;
-    public GameObject burningRender;
     private Vector2 _cachedposition;
     protected bool inLiquidLastFrame;
 
@@ -124,19 +123,10 @@ public class Entity : NetworkBehaviour
 
         age += Time.deltaTime;
 
-        if (IsBurning())
-        {
-            ReduceFireTime();
-            WaterRemoveFireTimeCheck();
-        }
-
         CheckNetherPortal();
         CheckWaterSplash();
-        CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
-        CheckLavaDamage();
-        CheckFireBlock();
     }
 
     [Client]
@@ -157,7 +147,6 @@ public class Entity : NetworkBehaviour
             isOnGround = false;
 
         CheckLightUpdate();
-        DoFireRender();
     }
 
     [Server]
@@ -198,11 +187,6 @@ public class Entity : NetworkBehaviour
     public void UpdateCachedPosition()
     {
         _cachedposition = transform.position;
-    }
-
-    public virtual bool IsBurning()
-    {
-        return fireTime > 0;
     }
 
     public virtual bool IsChunkLoaded()
@@ -256,30 +240,6 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    private void WaterRemoveFireTimeCheck()
-    {
-        if (isInLiquid)
-        {
-            bool isInWater = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Water)
-                {
-                    isInWater = true;
-                    break;
-                }
-
-            if (isInWater)
-                fireTime = 0;
-        }
-    }
-
-    [Server]
-    private void ReduceFireTime()
-    {
-        fireTime -= Time.deltaTime;
-    }
-
-    [Server]
     private void CheckSuffocation()
     {
         if (!IsChunkLoaded())
@@ -298,20 +258,6 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
-    private void CheckFireDamage()
-    {
-        if (IsBurning())
-            if (Time.time % 1f - Time.deltaTime <= 0)
-                TakeFireDamage(1);
-    }
-
-    [Server]
-    public virtual void TakeFireDamage(float damage)
-    {
-        Damage(damage);
-    }
-
-    [Server]
     private void CheckVoidDamage()
     {
         if (Time.time % 0.5f - Time.deltaTime <= 0)
@@ -323,41 +269,6 @@ public class Entity : NetworkBehaviour
     public virtual void TakeVoidDamage(float damage)
     {
         Damage(damage);
-    }
-
-    [Server]
-    private void CheckLavaDamage()
-    {
-        if (isInLiquid)
-        {
-            bool isInLava = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Lava)
-                {
-                    isInLava = true;
-                    break;
-                }
-
-            if (isInLava)
-            {
-                fireTime = 14;
-
-                if (Time.time % 0.5f - Time.deltaTime <= 0)
-                    TakeLavaDamage(4);
-            }
-        }
-    }
-    
-    [Server]
-    private void CheckFireBlock()
-    {
-        bool isInLava = false;
-        foreach (Block block in GetBlocksForEntity())
-            if (block is Fire)
-            {
-                fireTime = 7;
-                break;
-            }
     }
 
     public Liquid[] GetLiquidBlocksForEntity()
@@ -380,12 +291,6 @@ public class Entity : NetworkBehaviour
                 blocks.Add(col.GetComponent<Block>());
 
         return blocks.ToArray();
-    }
-
-    [Server]
-    public virtual void TakeLavaDamage(float damage)
-    {
-        Damage(damage);
     }
 
     [Server]
@@ -766,13 +671,6 @@ public class Entity : NetworkBehaviour
         }
 
         return closestEntity;
-    }
-    
-    [Client]
-    private void DoFireRender()
-    {
-        if (burningRender != null)
-            burningRender.SetActive(IsBurning());
     }
     
     public float GetWidth()
