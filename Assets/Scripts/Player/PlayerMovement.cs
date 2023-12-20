@@ -13,11 +13,12 @@ public class PlayerMovement : NetworkBehaviour
     [SyncVar] public bool sneaking;
     
     private float _lastDoubleTapSprintTap;
-    private bool _ladderSneaking;
+    private bool _ladderSneakingLastFrame;
     
     private Player _player;
     private EntityMovement _movement;
 
+    //TODO clean
     private void Update()
     {
         if (!isOwned) return;
@@ -53,37 +54,38 @@ public class PlayerMovement : NetworkBehaviour
             _movement.Jump();
 
         //Sneaking
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.S))
         {
-            SetServerSneaking(true);
+            sneaking = true;
             _movement.speed = SneakSpeed;
         }
 
         if (sneaking && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
         {
-            SetServerSneaking(false);
+            sneaking = false;
             _movement.speed = _movement.walkSpeed;
         }
 
-        //Sprinting
-        if (sprinting && 
-            (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(_player.GetVelocity().x) < 0.5f || sneaking || _player.hunger <= 6))
+        //Stop Sprinting
+        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(_player.GetVelocity().x) < 0.1f || sneaking || _player.hunger <= 6))
         {
-            SetServerSprinting(false);
+            sprinting = false;
             _movement.speed = _movement.walkSpeed;
         }
         
-        if (Input.GetKeyDown(KeyCode.LeftControl) && _player.hunger > 6)
+        //CTRL start sprint
+        if (Input.GetKeyDown(KeyCode.LeftControl) && _player.hunger > 6 && !sneaking)
         {
-            SetServerSprinting(true);
+            sprinting = true;
             _movement.speed = SprintSpeed;
         }
-
+        
+        //Double press walk start sprint
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
         {
-            if (Time.time - _lastDoubleTapSprintTap < 0.3f)
+            if (Time.time - _lastDoubleTapSprintTap < 0.3f &&  !sneaking)
             {
-                SetServerSprinting(true);
+                sprinting = true;
                 _movement.speed = SprintSpeed;
             }
             
@@ -91,29 +93,22 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    [Command]
-    private void SetServerSprinting(bool sprint)
-    {
-        sprinting = sprint;
-    }
-    [Command]
-    private void SetServerSneaking(bool sneak)
-    {
-        sneaking = sneak;
-    }
-
     public void CrouchOnLadderCheck()
     {
-        bool isLadderSneakingThisFrame = _player.isOnClimbable && sneaking;
-        if (isLadderSneakingThisFrame && !_ladderSneaking)
+        bool isLadderSneaking = _player.isOnClimbable && sneaking;
+        
+        //Started ladder sneaking
+        if (isLadderSneaking && !_ladderSneakingLastFrame)
         {
             GetComponent<Rigidbody2D>().gravityScale = 0;
-            _ladderSneaking = true;
+            _ladderSneakingLastFrame = true;
         }
-        else if (!isLadderSneakingThisFrame && _ladderSneaking)
+        
+        //Stopped ladder sneaking
+        if (!isLadderSneaking && _ladderSneakingLastFrame)
         {
             GetComponent<Rigidbody2D>().gravityScale = 1;
-            _ladderSneaking = false;
+            _ladderSneakingLastFrame = false;
         }
     }
 
