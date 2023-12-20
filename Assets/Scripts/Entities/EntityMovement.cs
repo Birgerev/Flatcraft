@@ -26,7 +26,6 @@ public class EntityMovement : NetworkBehaviour
     
     [HideInInspector] public float speed;
     
-    private float _lastJumpTime;
     private Vector2 _lastStepPosition;
     private bool _inLiquidLastFrame;
     
@@ -86,10 +85,8 @@ public class EntityMovement : NetworkBehaviour
             _rb.velocity += new Vector2(0, ClimbAcceleration * Time.deltaTime);
 
         if (!_entity.isOnGround) return;
-        if (Time.time - _lastJumpTime < .3f) return;
         
         _rb.velocity = new Vector2(_rb.velocity.x, JumpVelocity);
-        _lastJumpTime = Time.time;
     }
     
     private void StairCheck(int direction)
