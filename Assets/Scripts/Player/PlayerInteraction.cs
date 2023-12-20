@@ -22,10 +22,7 @@ public class PlayerInteraction : NetworkBehaviour
     private void Update()
     {
         if (!isOwned) return;
-        if (!_player.IsChunkLoaded()) return;
-        if (Inventory.IsAnyOpen(_player.playerInstance)) return;
-        if (ChatMenu.instance.open) return;
-        if (SignEditMenu.IsLocalMenuOpen()) return;
+        if (!CanInteractWithWorld()) return;
 
         UpdateCrosshair();
         
@@ -221,5 +218,15 @@ public class PlayerInteraction : NetworkBehaviour
     private void OnDestroy()
     {
         Destroy(crosshair);
+    }
+
+    public static bool CanInteractWithWorld()
+    {
+        if (!Player.LocalEntity.IsChunkLoaded()) return false;
+        if (Inventory.IsAnyOpen(PlayerInstance.localPlayerInstance)) return false;
+        if (ChatMenu.instance.open) return false;
+        if (SignEditMenu.IsLocalMenuOpen()) return false;
+
+        return true;
     }
 }

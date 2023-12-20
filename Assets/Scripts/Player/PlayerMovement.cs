@@ -29,8 +29,7 @@ public class PlayerMovement : NetworkBehaviour
     [Client]
     private void PerformInput()
     {
-        if (ChatMenu.instance.open || SignEditMenu.IsLocalMenuOpen()) return;
-        if (Inventory.IsAnyOpen(_player.playerInstance)) return;
+        if (!PlayerInteraction.CanInteractWithWorld()) return;
         
         //Toggle Debug disabled lighting
         if (Input.GetKeyDown(KeyCode.F4) && Debug.isDebugBuild)
@@ -42,7 +41,6 @@ public class PlayerMovement : NetworkBehaviour
         //Open chat
         if (Input.GetKeyDown(KeyCode.T))
             ChatMenu.instance.open = true;
-        
         
         //Walking
         if (Input.GetKey(KeyCode.A))
