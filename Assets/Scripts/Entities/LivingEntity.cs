@@ -161,6 +161,7 @@ public class LivingEntity : Entity
             part.maxBounces = 10;
         }
     }
+    
     [Server]
     public override void Hit(float damage, Entity source)
     {
