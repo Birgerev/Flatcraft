@@ -32,6 +32,8 @@ public class PlayerInventoryHandler : NetworkBehaviour
     [Client]
     private void PerformInput()
     {
+        if (!PlayerInteraction.CanInteractWithWorld()) return;
+        
         //Open inventory
         if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10)
             RequestOpenInventory();
