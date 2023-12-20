@@ -31,8 +31,11 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void LoadWorlds()
     {
-        //Fetch new worlds
-        worlds = GetWorlds();
+        //Fetch worlds
+        worlds = GetWorlds();   
+        
+        //Sort by last modified
+        worlds.Sort((a, b) => b.lastModifiedUTC.CompareTo(a.lastModifiedUTC));
 
         //Create new world buttons
         foreach (World world in worlds)
