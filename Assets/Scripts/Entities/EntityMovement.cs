@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class EntityMovement : NetworkBehaviour
 {
     private const float JumpVelocity = 8.5f;
-    private const float StepSoundDistance = .3f;
+    private const float StepSoundDistance = .9f;
     
     [Header("Movement Properties")] 
     private const float AirDrag = 4.3f;
