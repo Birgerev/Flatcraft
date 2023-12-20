@@ -12,7 +12,6 @@ public class PlayerInteraction : NetworkBehaviour
     public const float Reach = 5;
     
     [HideInInspector] public GameObject crosshair;
-    
     [HideInInspector] public double lastBlockHitTime;
     [HideInInspector] public double lastHitTime;
     [HideInInspector] public double lastBlockInteractionTime;
