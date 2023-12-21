@@ -15,9 +15,9 @@ public class Player : LivingEntity
     [SyncVar] public PlayerInstance playerInstance;
 
     //Entity Data Tags
-    [EntityDataTag(false)] [SyncVar] public float hunger;
+    [EntitySaveField(false)] [SyncVar] public float hunger;
 
-    [EntityDataTag(false)] [SyncVar] public int inventoryId = 0;
+    [EntitySaveField(false)] [SyncVar] public int inventoryId = 0;
 
     public Location bedLocation = new Location(0, 0);
 
