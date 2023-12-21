@@ -14,7 +14,7 @@ public class PaintingEntity : Entity
         , {"painting_albanian", new Vector2(1, 1)}, {"painting_aztec", new Vector2(1, 1)}
     };
 
-    [EntityDataTag(false)] [SyncVar] public string paintingId = "";
+    [EntitySaveField(false)] [SyncVar] public string paintingId = "";
 
     [Server]
     public override void Spawn()

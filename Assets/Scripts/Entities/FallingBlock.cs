@@ -6,7 +6,7 @@ public class FallingBlock : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(true)] [SyncVar] public Material material = Material.Sand;
+    [EntitySaveField(true)] [SyncVar] public Material material = Material.Sand;
 
     //Entity State
 

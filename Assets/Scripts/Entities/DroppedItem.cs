@@ -13,7 +13,7 @@ public class DroppedItem : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(true)] [SyncVar] public ItemStack item = new ItemStack();
+    [EntitySaveField(true)] [SyncVar] public ItemStack item = new ItemStack();
     public Vector2 triggerOffset;
     public Vector2 triggerSize;
 

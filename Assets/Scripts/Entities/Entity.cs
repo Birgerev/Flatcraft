@@ -14,13 +14,13 @@ public class Entity : NetworkBehaviour
     public static List<Entity> entities = new List<Entity>();
     
     //Entity data tags
-    [EntityDataTag(false)] public float age;
+    [EntitySaveField(false)] public float age;
 
-    [SyncVar] [EntityDataTag(false)] public float fireTime;
+    [SyncVar] [EntitySaveField(false)] public float fireTime;
 
     public bool dead;
 
-    [SyncVar] [EntityDataTag(false)] public bool facingLeft;
+    [SyncVar] [EntitySaveField(false)] public bool facingLeft;
 
 
     //Entity State
@@ -387,13 +387,13 @@ public class Entity : NetworkBehaviour
         List<string> result = new List<string>();
         result.Add("location=" + JsonUtility.ToJson(Location));
         IEnumerable<FieldInfo> fields =
-            GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+            GetType().GetFields().Where(field => field.IsDefined(typeof(EntitySaveField), true));
 
         foreach (FieldInfo field in fields)
         foreach (Attribute attribute in Attribute.GetCustomAttributes(field))
-            if (attribute is EntityDataTag)
+            if (attribute is EntitySaveField)
             {
-                bool json = ((EntityDataTag) attribute).json;
+                bool json = ((EntitySaveField) attribute).ConvertToJson;
 
                 if (json)
                     result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
@@ -460,7 +460,7 @@ public class Entity : NetworkBehaviour
 
         Teleport(JsonUtility.FromJson<Location>(lines["location"]));
         IEnumerable<FieldInfo> fields =
-            GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+            GetType().GetFields().Where(field => field.IsDefined(typeof(EntitySaveField), true));
 
         foreach (FieldInfo field in fields)
         {
@@ -468,9 +468,9 @@ public class Entity : NetworkBehaviour
             {
                 try
                 {
-                    if (attribute is EntityDataTag)
+                    if (attribute is EntitySaveField)
                     {
-                        bool json = ((EntityDataTag) attribute).json;
+                        bool json = ((EntitySaveField) attribute).ConvertToJson;
                         Type type = field.FieldType;
 
                         if (json)

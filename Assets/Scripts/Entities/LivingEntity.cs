@@ -12,8 +12,8 @@ public class LivingEntity : Entity
     public Nameplate nameplate;
 
     //Entity Data Tags
-    [EntityDataTag(false)] [SyncVar] public float health;
-    [EntityDataTag(false)] [SyncVar] public string displayName;
+    [EntitySaveField(false)] [SyncVar] public float health;
+    [EntitySaveField(false)] [SyncVar] public string displayName;
     
     //TODO even needs to be sync var?
     [SyncVar] public bool isOnClimbable;
