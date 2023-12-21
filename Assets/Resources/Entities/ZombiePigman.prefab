@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1609191398403466838}
   - component: {fileID: 213535023953785591}
+  - component: {fileID: 7897325078161199709}
+  - component: {fileID: -2624219548809335215}
   - component: {fileID: 8220896558774280924}
   - component: {fileID: 8250509049920381587}
   - component: {fileID: 4489124215754569504}
@@ -17,7 +19,6 @@ GameObject:
   - component: {fileID: 7344307264835148632}
   - component: {fileID: 1114594133783793232}
   - component: {fileID: 6883397605878311133}
-  - component: {fileID: 7897325078161199709}
   m_Layer: 14
   m_Name: ZombiePigman
   m_TagString: Untagged
@@ -73,6 +74,39 @@ MonoBehaviour:
   health: 0
   displayName: 
   isOnClimbable: 0
+--- !u!114 &7897325078161199709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8281340068179227370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fde9a28e39d99c48b0693aca394d583, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  walkSpeed: 4.3
+  speed: 0
+--- !u!114 &-2624219548809335215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8281340068179227370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36e2869ae9797554ea64f88fd8be8763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  lastGroundedHeight: 0
 --- !u!95 &8220896558774280924
 Animator:
   serializedVersion: 5
@@ -251,23 +285,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 8220896558774280924}
---- !u!114 &7897325078161199709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8281340068179227370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fde9a28e39d99c48b0693aca394d583, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
-  walkSpeed: 4.3
-  speed: 0
 --- !u!1 &9101458304595564119
 GameObject:
   m_ObjectHideFlags: 0

@@ -39,7 +39,4 @@ public class Blaze : Monster
     {
         return new BlazeController(this);
     }
-
-    [Server]
-    public override void TakeFallDamage(float damage) { }//Disable fall damage
 }

@@ -19,16 +19,13 @@ public class LivingEntity : Entity
     [SyncVar] public bool isOnClimbable;
 
     private EntityController controller;
-    
-    //Entity State
-    protected float highestYlevelsinceground;
 
     public virtual float maxHealth { get; } = 20;
 
     public override void Start()
     {
         base.Start();
-
+        
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     
@@ -52,7 +49,6 @@ public class LivingEntity : Entity
 
         UpdateAnimatorValues();
         AmbientSoundCheck();
-        FallDamageCheck();
         
         //Climbable check
         Block block = Location.GetBlock();
@@ -62,7 +58,9 @@ public class LivingEntity : Entity
     [Server]
     public override void Teleport(Location loc)
     {
-        highestYlevelsinceground = 0;
+        FallDamage fallDamage = GetComponent<FallDamage>();
+        if(fallDamage) fallDamage.lastGroundedHeight = float.MinValue;
+        
         base.Teleport(loc);
     }
 
@@ -114,53 +112,7 @@ public class LivingEntity : Entity
     {
         return new EntityController(this);
     }
-    
-    [Server]
-    private void FallDamageCheck()
-    {
-        if (isOnGround && !isInLiquid && age > 5)
-        {
-            float damage = highestYlevelsinceground - transform.position.y - 3;
-            if (damage >= 1)
-            {
-                Sound.Play(Location, "entity/land", SoundType.Entities, 0.5f, 1.5f); //Play entity land sound
-                
-                TakeFallDamage(damage);
-                
-                Block blockBelow = Location.LocationByPosition(transform.position - new Vector3(0, 0.2f))
-                    .GetBlock();
-                if(blockBelow != null)
-                    FallDamageParticlesEffect(blockBelow.location);
-                
-            }
-        }
 
-        if (isOnGround || isInLiquid || isOnClimbable)
-            highestYlevelsinceground = transform.position.y;
-        else if (transform.position.y > highestYlevelsinceground)
-            highestYlevelsinceground = transform.position.y;
-    }
-    
-    [ClientRpc]
-    private void FallDamageParticlesEffect(Location groundLocation)
-    {
-        Block blockBelow = groundLocation.GetBlock();
-        Color[] textureColors = blockBelow.GetColorsInTexture();
-        Random r = new Random();
-
-        //Spawn landing particles
-        for (int i = 0; i < 10; i++) 
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = blockBelow.location.GetPosition() + new Vector2(0, 0.6f);
-            part.color = textureColors[r.Next(textureColors.Length)];
-            part.doGravity = true;
-            part.velocity = new Vector2(((float) r.NextDouble() - 0.5f) * 2, 1.5f);
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-    }
     
     [Server]
     public override void Hit(float damage, Entity source)
@@ -169,13 +121,7 @@ public class LivingEntity : Entity
         
         Knockback(transform.position - source.transform.position);
     }
-
-    [Server]
-    public virtual void TakeFallDamage(float damage)
-    {
-        Damage(damage);
-    }
-
+    
     [Server]
     public override void Damage(float damage)
     {
