@@ -60,7 +60,7 @@ namespace Mirror.SimpleWeb
                 bool success = sslHelper.TryCreateStream(conn, serverAddress);
                 if (!success)
                 {
-                    Log.Warn("[SimpleWebTransport] Failed to create Stream");
+                    Log.Warn($"[SWT-WebSocketClientStandAlone]: Failed to create Stream with {serverAddress}");
                     conn.Dispose();
                     return;
                 }
@@ -68,12 +68,12 @@ namespace Mirror.SimpleWeb
                 success = handshake.TryHandshake(conn, serverAddress);
                 if (!success)
                 {
-                    Log.Warn("[SimpleWebTransport] Failed Handshake");
+                    Log.Warn($"[SWT-WebSocketClientStandAlone]: Failed Handshake with {serverAddress}");
                     conn.Dispose();
                     return;
                 }
 
-                Log.Info("[SimpleWebTransport] HandShake Successful");
+                Log.Info($"[SWT-WebSocketClientStandAlone]: HandShake Successful with {serverAddress}");
 
                 state = ClientState.Connected;
 
@@ -120,15 +120,12 @@ namespace Mirror.SimpleWeb
         public override void Disconnect()
         {
             state = ClientState.Disconnecting;
-            Log.Info("[SimpleWebTransport] Disconnect Called");
+            Log.Verbose("[SWT-WebSocketClientStandAlone]: Disconnect Called");
+
             if (conn == null)
-            {
                 state = ClientState.NotConnected;
-            }
             else
-            {
                 conn?.Dispose();
-            }
         }
 
         public override void Send(ArraySegment<byte> segment)

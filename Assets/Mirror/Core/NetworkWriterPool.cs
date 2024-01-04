@@ -1,5 +1,4 @@
 // API consistent with Microsoft's ObjectPool<T>.
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Mirror
@@ -20,7 +19,6 @@ namespace Mirror
         );
 
         /// <summary>Get a writer from the pool. Creates new one if pool is empty.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NetworkWriterPooled Get()
         {
             // grab from pool & reset position
