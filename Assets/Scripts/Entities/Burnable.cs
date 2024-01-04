@@ -30,7 +30,6 @@ public class Burnable : NetworkBehaviour
     [Server]
     private void CheckFireBlock()
     {
-        bool isInLava = false;
         foreach (Block block in _entity.GetBlocksForEntity())
             if (block is Fire)
             {
