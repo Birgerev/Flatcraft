@@ -13,7 +13,7 @@ public class PlaceableEntityItem : Item
             entity.Teleport(loc);
 
             //Remove player item
-            PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
+            PlayerInventory inv = player.playerEntity.GetInventory();
             ItemStack selectedItem = inv.GetSelectedItem();
             selectedItem.Amount--;
             inv.SetItem(inv.selectedSlot, selectedItem);

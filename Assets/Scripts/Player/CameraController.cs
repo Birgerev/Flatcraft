@@ -133,4 +133,9 @@ public class CameraController : MonoBehaviour
         //Assign current roll
         transform.rotation = Quaternion.Euler(0, 0, _currentRoll);
     }
+    
+    public static void ShakeClientCamera(float shakeValue)
+    {
+        instance.currentShake = shakeValue;
+    }
 }

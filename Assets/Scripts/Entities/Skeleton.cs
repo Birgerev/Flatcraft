@@ -24,7 +24,7 @@ public class Skeleton : Monster
         return result;
     }
 
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();

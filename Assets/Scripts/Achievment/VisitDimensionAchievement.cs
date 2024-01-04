@@ -13,7 +13,7 @@ public class VisitDimensionAchievement : Achievement
         if (!localPlayerInstance)
             return;
 
-        Player playerEntity = localPlayerInstance.playerEntity?.GetComponent<Player>();
+        Player playerEntity = localPlayerInstance.playerEntity;
 
         if (!playerEntity)
             return;

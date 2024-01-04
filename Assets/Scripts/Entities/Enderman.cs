@@ -32,7 +32,7 @@ public class Enderman : Monster
                 new float2(0.6f, 1f), new int2(0, 3), new Color(.8f, .25f, .8f));
     }
     
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();

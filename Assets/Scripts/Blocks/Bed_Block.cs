@@ -24,7 +24,7 @@
 
     public override void Interact(PlayerInstance player)
     {
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
+        Player playerEntity = player.playerEntity;
         playerEntity.Sleep();
         playerEntity.bedLocation = location;
 

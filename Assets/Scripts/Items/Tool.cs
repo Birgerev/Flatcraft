@@ -8,7 +8,7 @@
         Block block = loc.GetBlock();
 
         if (block != null)
-            block.Hit(player, 1 / Player.interactionsPerPerSecond, tool_type, tool_level);
+            block.Hit(player, 1 / PlayerInteraction.InteractionsPerPerSecond, tool_type, tool_level);
     }
 }
 

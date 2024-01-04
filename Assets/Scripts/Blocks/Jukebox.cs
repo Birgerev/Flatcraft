@@ -37,7 +37,7 @@ public class Jukebox : Block
     
     private void TryInsertDisc(PlayerInstance player)
     {
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
+        Player playerEntity = player.playerEntity;
         PlayerInventory inv = playerEntity.GetInventory();
         
         ItemStack heldDisc = inv.GetSelectedItem();

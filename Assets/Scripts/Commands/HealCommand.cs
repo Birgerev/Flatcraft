@@ -15,7 +15,7 @@ public class HealCommand : Command
         
         try
         {
-            Player playerEntity = player.playerEntity.GetComponent<Player>();
+            Player playerEntity = player.playerEntity;
             float amount = playerEntity.maxHealth - playerEntity.health;
             if (param.Length >= 1)
                 amount = int.Parse(param[0]);

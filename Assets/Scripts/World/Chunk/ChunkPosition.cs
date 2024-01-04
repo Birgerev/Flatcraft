@@ -105,7 +105,7 @@ public struct ChunkPosition
 
     public bool IsWithinDistanceOfPlayer(int range)
     {
-        foreach (Player player in Player.players)
+        foreach (Player player in Player.Players)
         {
             Location loc = player.Location;
 

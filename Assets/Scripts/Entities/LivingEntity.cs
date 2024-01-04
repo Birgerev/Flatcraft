@@ -67,6 +67,7 @@ public class LivingEntity : Entity
         if (controller != null)
             controller.Tick();
 
+        UpdateAnimatorValues();
         AmbientSoundCheck();
         WalkSoundCheck();
         ProcessMovement();
@@ -89,7 +90,6 @@ public class LivingEntity : Entity
     {
         base.ClientUpdate();
 
-        UpdateAnimatorValues();
         UpdateNameplate();
         ClientMovementParticleEffect();
     }
@@ -122,7 +122,7 @@ public class LivingEntity : Entity
         }
     }
 
-    [Client]
+    [Server]
     public virtual void UpdateAnimatorValues()
     {
         Animator anim = GetComponent<Animator>();
@@ -130,8 +130,7 @@ public class LivingEntity : Entity
         if (anim == null)
             return;
 
-        if (anim.isInitialized)
-            anim.SetFloat("velocity-x", Mathf.Abs(GetVelocity().x));
+        anim.SetFloat("velocity-x", Mathf.Abs(GetVelocity().x));
     }
 
     [Client]

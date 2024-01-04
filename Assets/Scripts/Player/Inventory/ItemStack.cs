@@ -92,6 +92,21 @@ public struct ItemStack
         return textureColors.ToArray();
     }
 
+    public void ApplyDurability(int durabilityToApply = 1)
+    {
+        //Don't apply durability to items that don't have durability
+        if (GetMaxDurability() == -1) return;
+        
+        durability -= durabilityToApply;
+
+        //Subtract one item and reset durability when it reaches 0
+        if (durability <= 0)
+        {
+            Amount--;
+            durability = GetMaxDurability();
+        }
+    }
+
     public int GetMaxDurability()
     {
         if (material == Material.Air) return -1;
