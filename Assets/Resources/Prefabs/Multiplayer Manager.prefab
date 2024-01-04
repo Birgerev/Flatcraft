@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4139658264260717359}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.06, y: 13.59, z: -4.266006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4139658264260717357
 MonoBehaviour:
@@ -47,14 +47,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
+  headlessStartMode: 0
+  editorAutoStart: 0
+  sendRate: 60
   autoStartServerBuild: 0
   autoConnectClientBuild: 0
-  sendRate: 60
   offlineScene: 
   onlineScene: 
   transport: {fileID: 6192640876098220377}
   networkAddress: localhost
   maxConnections: 100
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 3906616305481470607, guid: 4649a34a0b9934e4b90d1382d92047f1,
     type: 3}
@@ -64,12 +68,29 @@ MonoBehaviour:
   - {fileID: 1362780980524559919, guid: c8c8a9bd691535d419f640e0463cee19, type: 3}
   - {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5, type: 3}
   - {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900, type: 3}
+  exceptionsDisconnect: 1
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    bufferLimit: 32
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
   timeInterpolationGui: 0
   prefabDirectories:
   - Entities
   - Prefabs/Inventories
   WorldManagerPrefab: {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900,
     type: 3}
+  lobbyId:
+    m_SteamID: 0
+  currentLobbyVisibility: 0
 --- !u!114 &6192640876098220377
 MonoBehaviour:
   m_ObjectHideFlags: 0
