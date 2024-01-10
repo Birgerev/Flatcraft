@@ -23,12 +23,13 @@ public class MultiplayerManager : NetworkManager
         base.Awake();
         
         //Register all network prefabs to manager
+        /*TODO do this manually
         foreach (string dir in prefabDirectories)
         {
             GameObject[] prefabs = Resources.LoadAll<GameObject>(dir + "/");
             foreach (GameObject prefab in prefabs)
                 NetworkClient.RegisterPrefab(prefab);
-        }
+        }*/
 
 #if !DISABLESTEAMWORKS
         RegisterSteamCallbacks();
