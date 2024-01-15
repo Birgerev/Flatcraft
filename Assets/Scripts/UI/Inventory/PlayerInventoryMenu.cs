@@ -53,11 +53,6 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
-    {
-    }
-    
-    [Command(requiresAuthority = false)]
     public virtual void OnClickCraftingResultSlot(ClickType clickType)
     {
         if (clickType == ClickType.ShiftClick)
@@ -147,5 +142,37 @@ public class PlayerInventoryMenu : InventoryMenu
             newCraftingSlotItem.Amount--;
             inv.SetItem(slot, newCraftingSlotItem);
         }
+    }
+    
+    
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
+    {
+        PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
+        ItemStack resultItem = inv.GetItem(slotIndex);
+        ItemStack newPointerItem = pointerItem;
+
+        //Cancel if pointer and result slot materials dont match
+        if (resultItem.material != pointerItem.material && pointerItem.material != Material.Air) return;
+        //Cancel if pointer slot is full
+        if (newPointerItem.Amount >= Inventory.MaxStackSize) return;
+        
+        //Set pointer material to result material
+        newPointerItem.material = resultItem.material;
+        newPointerItem.durability = resultItem.durability;
+        
+        //Keep moving items until result slot is empty or if pointer amount exceeds 64
+        while (resultItem.Amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
+        {
+            newPointerItem.Amount ++;
+            resultItem.Amount --;
+        }
+                
+        //Apply item stack changes
+        SetPointerItem(newPointerItem);
+        inv.SetItem(slotIndex, resultItem);
+        
+        //Update Inventory
+        UpdateInventory();
     }
 }
