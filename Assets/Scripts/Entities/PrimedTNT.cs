@@ -6,7 +6,7 @@ public class PrimedTNT : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(true)] public float fuse;
+    [EntitySaveField(true)] public float fuse;
 
     //Entity State
     public SpriteRenderer fuseBlinker;

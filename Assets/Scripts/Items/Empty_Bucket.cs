@@ -19,7 +19,7 @@
 
         //Get player inventory
         Player playerEntity = player.playerEntity;
-        PlayerInventory inv = playerEntity.GetInventory();
+        PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
         
         //Remove one empty bucket
         ItemStack currentBucket = inv.GetSelectedItem();

@@ -22,7 +22,4 @@ public class ZombiePigman : Monster
     {
         return new ZombiePigmanController(this);
     }
-    
-    public override void TakeFireDamage(float damage){ } //Disable fire damage
-    public override void TakeLavaDamage(float damage){ } //Disable lava damage
 }

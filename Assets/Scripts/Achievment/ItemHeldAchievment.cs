@@ -19,7 +19,7 @@ public class ItemHeldAchievment : Achievement
         if (!playerEntity)
             return;
 
-        PlayerInventory inventory = playerEntity.GetInventory();
+        PlayerInventory inventory = playerEntity.GetInventoryHandler().GetInventory();
 
         if (inventory == null)
             return;

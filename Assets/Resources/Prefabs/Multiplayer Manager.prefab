@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4139658264260717359}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.06, y: 13.59, z: -4.266006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4139658264260717357
 MonoBehaviour:
@@ -47,29 +47,80 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
+  headlessStartMode: 0
+  editorAutoStart: 0
+  sendRate: 60
   autoStartServerBuild: 0
   autoConnectClientBuild: 0
-  sendRate: 60
   offlineScene: 
   onlineScene: 
   transport: {fileID: 6192640876098220377}
   networkAddress: localhost
   maxConnections: 100
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 3906616305481470607, guid: 4649a34a0b9934e4b90d1382d92047f1,
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
+  - {fileID: 7038596115132740927, guid: 735ff96f61fd7c94ba212b831f94a50a, type: 3}
+  - {fileID: 8281340068179227370, guid: 4fe3a7c8e91c4f7479b61e4aeb0963e4, type: 3}
   - {fileID: 1362780980524559919, guid: c8c8a9bd691535d419f640e0463cee19, type: 3}
+  - {fileID: 8949061861619549476, guid: df054df0208276844ade83aaf69c6f0e, type: 3}
   - {fileID: 506488438003010004, guid: 107ce29012e34de449f435ddace4f7e5, type: 3}
+  - {fileID: 5222194568914996902, guid: 29628c98e7e704a4c8fc5e9318602fe9, type: 3}
+  - {fileID: 7256917325228416585, guid: 3c6ab5bad2abdde47b216b2350748c57, type: 3}
+  - {fileID: 265001421040879756, guid: 4d16786613c28d943be3ddfaa5a6b194, type: 3}
+  - {fileID: 461676400581249865, guid: 2bb774c1645619e4dafcb01ad8a3448d, type: 3}
+  - {fileID: 2862357461441252632, guid: 33c6d62c9ed3fd44fb76628bf0dbd289, type: 3}
+  - {fileID: 2033277872879967048, guid: 3e1b3ef6191259649abd2bdc49f59a72, type: 3}
+  - {fileID: 8828333479264981030, guid: 4dd4cc26be2cb7f438b8464dcc54e813, type: 3}
+  - {fileID: 7038596115132740927, guid: 78c6bbc071d71b8408f68d07e163c559, type: 3}
+  - {fileID: 8281340068179227370, guid: a60f88daa5a743e4eb81004dea711b40, type: 3}
+  - {fileID: 238254436577181984, guid: 31d28c9cc856a02499a7cec5ebced4c9, type: 3}
+  - {fileID: 2381435000660267837, guid: e5ff1c92916319340bf1e83c8c6b1a32, type: 3}
+  - {fileID: 956173273818362507, guid: 3f573ee865660b84c893fe059e8fc9dc, type: 3}
+  - {fileID: 8014833814793219950, guid: c27486f9f3d406e4ead66cb1a90ebe70, type: 3}
+  - {fileID: 1149122272397806801, guid: 6883ecc7456d0c649835c218e670c830, type: 3}
+  - {fileID: 9097888217539523289, guid: 781993b8ad1a4b9469b3a652c25f58f1, type: 3}
+  - {fileID: 2469175179285931769, guid: 8e64e45ed00215e40bf22c36e6f01d1e, type: 3}
+  - {fileID: 1149122272397806801, guid: 2287a8fa4fa743b4fb4343253f533d61, type: 3}
+  - {fileID: 5294322576214688641, guid: 9b6701189a4eced49b982b34ba1e9b85, type: 3}
+  - {fileID: 1297378360502857322, guid: a51b228ff25622d42be53e4f77e2a767, type: 3}
+  - {fileID: 7068400614840624879, guid: d1e481dc0a349b04d972e62a7776ead5, type: 3}
+  - {fileID: 1965227594952251917, guid: 5a6a6e2a78b42f0428cb9b63e49b5a2a, type: 3}
+  - {fileID: 2288630228638136732, guid: d5e2e13aa86c155408abfb96cd4ffff8, type: 3}
+  - {fileID: 278536124159499795, guid: 7a58a258cbced26468d8f8f6d660a7cd, type: 3}
+  - {fileID: 6296414545131236913, guid: befe78fc14d844e4d859042c8e503cd2, type: 3}
+  - {fileID: 3635457265951077194, guid: 2ceb14d0cc73f07429d32635e2012c14, type: 3}
   - {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900, type: 3}
+  - {fileID: 8281340068179227370, guid: 2007cb0ca6d17634e8bf395c5ecd7b35, type: 3}
+  - {fileID: 8281340068179227370, guid: 5f79ab7a7f395e74288179bf351d805c, type: 3}
+  exceptionsDisconnect: 1
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    bufferLimit: 32
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
   timeInterpolationGui: 0
   prefabDirectories:
   - Entities
   - Prefabs/Inventories
   WorldManagerPrefab: {fileID: 3047292750534003045, guid: e41b3e8278be1bb4b89298ef28183900,
     type: 3}
+  lobbyId:
+    m_SteamID: 0
+  currentLobbyVisibility: 0
 --- !u!114 &6192640876098220377
 MonoBehaviour:
   m_ObjectHideFlags: 0

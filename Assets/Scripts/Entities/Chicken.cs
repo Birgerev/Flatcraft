@@ -28,12 +28,6 @@ public class Chicken : PassiveEntity
     }
 
     [Server]
-    public override void TakeFallDamage(float damage)
-    {
-        //Disable fall damage
-    }
-
-    [Server]
     public override EntityController GetController()
     {
         return new AnimalController(this);

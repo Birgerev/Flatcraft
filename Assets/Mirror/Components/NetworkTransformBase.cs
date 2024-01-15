@@ -22,43 +22,84 @@ using UnityEngine;
 
 namespace Mirror
 {
+    public enum CoordinateSpace { Local, World }
+
     public abstract class NetworkTransformBase : NetworkBehaviour
     {
         // target transform to sync. can be on a child.
+        // TODO this field is kind of unnecessary since we now support child NetworkBehaviours
         [Header("Target")]
         [Tooltip("The Transform component to sync. May be on on this GameObject, or on a child.")]
         public Transform target;
 
-        // TODO SyncDirection { ClientToServer, ServerToClient } is easier?
-        // Deprecated 2022-10-25
-        [Obsolete("NetworkTransform clientAuthority was replaced with syncDirection. To enable client authority, set SyncDirection to ClientToServer in the Inspector.")]
-        [Header("[Obsolete]")] // Unity doesn't show obsolete warning for fields. do it manually.
-        [Tooltip("Obsolete: NetworkTransform clientAuthority was replaced with syncDirection. To enable client authority, set SyncDirection to ClientToServer in the Inspector.")]
-        public bool clientAuthority;
         // Is this a client with authority over this transform?
         // This component could be on the player object or any object that has been assigned authority to this client.
         protected bool IsClientWithAuthority => isClient && authority;
-        public readonly SortedList<double, TransformSnapshot> clientSnapshots = new SortedList<double, TransformSnapshot>();
-        public readonly SortedList<double, TransformSnapshot> serverSnapshots = new SortedList<double, TransformSnapshot>();
+
+        // snapshots with initial capacity to avoid early resizing & allocations: see NetworkRigidbodyBenchmark example.
+        public readonly SortedList<double, TransformSnapshot> clientSnapshots = new SortedList<double, TransformSnapshot>(16);
+        public readonly SortedList<double, TransformSnapshot> serverSnapshots = new SortedList<double, TransformSnapshot>(16);
 
         // selective sync //////////////////////////////////////////////////////
-        [Header("Selective Sync & Interpolation\nDon't change these at Runtime")]
+        [Header("Selective Sync\nDon't change these at Runtime")]
         public bool syncPosition = true;  // do not change at runtime!
         public bool syncRotation = true;  // do not change at runtime!
-        public bool syncScale    = false; // do not change at runtime! rare. off by default.
+        public bool syncScale = false; // do not change at runtime! rare. off by default.
+
+        // interpolation is on by default, but can be disabled to jump to
+        // the destination immediately. some projects need this.
+        [Header("Interpolation")]
+        [Tooltip("Set to false to have a snap-like effect on position movement.")]
+        public bool interpolatePosition = true;
+        [Tooltip("Set to false to have a snap-like effect on rotations.")]
+        public bool interpolateRotation = true;
+        [Tooltip("Set to false to remove scale smoothing. Example use-case: Instant flipping of sprites that use -X and +X for direction.")]
+        public bool interpolateScale = true;
+
+        // CoordinateSpace ///////////////////////////////////////////////////////////
+        [Header("Coordinate Space")]
+        [Tooltip("Local by default. World may be better when changing hierarchy, or non-NetworkTransforms root position/rotation/scale values.")]
+        public CoordinateSpace coordinateSpace = CoordinateSpace.Local;
+
+        [Header("Send Interval Multiplier")]
+        [Tooltip("Check/Sync every multiple of Network Manager send interval (= 1 / NM Send Rate), instead of every send interval.\n(30 NM send rate, and 3 interval, is a send every 0.1 seconds)\nA larger interval means less network sends, which has a variety of upsides. The drawbacks are delays and lower accuracy, you should find a nice balance between not sending too much, but the results looking good for your particular scenario.")]
+        [Range(1, 120)]
+        public uint sendIntervalMultiplier = 1;
+
+        [Header("Timeline Offset")]
+        [Tooltip("Add a small timeline offset to account for decoupled arrival of NetworkTime and NetworkTransform snapshots.\nfixes: https://github.com/MirrorNetworking/Mirror/issues/3427")]
+        public bool timelineOffset = false;
+
+        // Ninja's Notes on offset & mulitplier:
+        //
+        // In a no multiplier scenario:
+        // 1. Snapshots are sent every frame (frame being 1 NM send interval).
+        // 2. Time Interpolation is set to be 'behind' by 2 frames times.
+        // In theory where everything works, we probably have around 2 snapshots before we need to interpolate snapshots. From NT perspective, we should always have around 2 snapshots ready, so no stutter.
+        //
+        // In a multiplier scenario:
+        // 1. Snapshots are sent every 10 frames.
+        // 2. Time Interpolation remains 'behind by 2 frames'.
+        // When everything works, we are receiving NT snapshots every 10 frames, but start interpolating after 2.
+        // Even if I assume we had 2 snapshots to begin with to start interpolating (which we don't), by the time we reach 13th frame, we are out of snapshots, and have to wait 7 frames for next snapshot to come. This is the reason why we absolutely need the timestamp adjustment. We are starting way too early to interpolate.
+        //
+        protected double timeStampAdjustment => NetworkServer.sendInterval * (sendIntervalMultiplier - 1);
+        protected double offset => timelineOffset ? NetworkServer.sendInterval * sendIntervalMultiplier : 0;
 
         // debugging ///////////////////////////////////////////////////////////
         [Header("Debug")]
         public bool showGizmos;
-        public bool  showOverlay;
+        public bool showOverlay;
         public Color overlayColor = new Color(0, 0, 0, 0.5f);
 
         // initialization //////////////////////////////////////////////////////
         // make sure to call this when inheriting too!
-        protected virtual void Awake() {}
+        protected virtual void Awake() { }
 
-        protected virtual void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
+
             // set target to self if none yet
             if (target == null) target = transform;
 
@@ -69,19 +110,53 @@ namespace Mirror
             // actually use NetworkServer.sendInterval.
             syncInterval = 0;
 
-            // obsolete clientAuthority compatibility:
-            // if it was used, then set the new SyncDirection automatically.
-            // if it wasn't used, then don't touch syncDirection.
- #pragma warning disable CS0618
-            if (clientAuthority)
-            {
-                syncDirection = SyncDirection.ClientToServer;
-                Debug.LogWarning($"{name}'s NetworkTransform component has obsolete .clientAuthority enabled. Please disable it and set SyncDirection to ClientToServer instead.");
-            }
- #pragma warning restore CS0618
+            // Unity doesn't support setting world scale.
+            // OnValidate force disables syncScale in world mode.
+            if (coordinateSpace == CoordinateSpace.World) syncScale = false;
         }
 
         // snapshot functions //////////////////////////////////////////////////
+        // get local/world position
+        protected virtual Vector3 GetPosition() =>
+            coordinateSpace == CoordinateSpace.Local ? target.localPosition : target.position;
+
+        // get local/world rotation
+        protected virtual Quaternion GetRotation() =>
+            coordinateSpace == CoordinateSpace.Local ? target.localRotation : target.rotation;
+
+        // get local/world scale
+        protected virtual Vector3 GetScale() =>
+            coordinateSpace == CoordinateSpace.Local ? target.localScale : target.lossyScale;
+
+        // set local/world position
+        protected virtual void SetPosition(Vector3 position)
+        {
+            if (coordinateSpace == CoordinateSpace.Local)
+                target.localPosition = position;
+            else
+                target.position = position;
+        }
+
+        // set local/world rotation
+        protected virtual void SetRotation(Quaternion rotation)
+        {
+            if (coordinateSpace == CoordinateSpace.Local)
+                target.localRotation = rotation;
+            else
+                target.rotation = rotation;
+        }
+
+        // set local/world position
+        protected virtual void SetScale(Vector3 scale)
+        {
+            if (coordinateSpace == CoordinateSpace.Local)
+                target.localScale = scale;
+            // Unity doesn't support setting world scale.
+            // OnValidate disables syncScale in world mode.
+            // else
+            // target.lossyScale = scale; // TODO
+        }
+
         // construct a snapshot of the current state
         // => internal for testing
         protected virtual TransformSnapshot Construct()
@@ -89,16 +164,11 @@ namespace Mirror
             // NetworkTime.localTime for double precision until Unity has it too
             return new TransformSnapshot(
                 // our local time is what the other end uses as remote time
-#if !UNITY_2020_3_OR_NEWER
                 NetworkTime.localTime, // Unity 2019 doesn't have timeAsDouble yet
-#else
-                Time.timeAsDouble,
-#endif
-                // the other end fills out local time itself
-                0,
-                target.localPosition,
-                target.localRotation,
-                target.localScale
+                0,                     // the other end fills out local time itself
+                GetPosition(),
+                GetRotation(),
+                GetScale()
             );
         }
 
@@ -113,22 +183,23 @@ namespace Mirror
             //   client sends snapshot at t=10
             // then the server would assume that it's one super slow move and
             // replay it for 10 seconds.
-            if (!position.HasValue) position = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].position : target.localPosition;
-            if (!rotation.HasValue) rotation = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].rotation : target.localRotation;
-            if (!scale.HasValue)    scale    = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].scale    : target.localScale;
+
+            if (!position.HasValue) position = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].position : GetPosition();
+            if (!rotation.HasValue) rotation = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].rotation : GetRotation();
+            if (!scale.HasValue) scale = snapshots.Count > 0 ? snapshots.Values[snapshots.Count - 1].scale : GetScale();
 
             // insert transform snapshot
-            SnapshotInterpolation.InsertIfNotExists(snapshots, new TransformSnapshot(
-                timeStamp, // arrival remote timestamp. NOT remote time.
-#if !UNITY_2020_3_OR_NEWER
-                NetworkTime.localTime, // Unity 2019 doesn't have timeAsDouble yet
-#else
-                Time.timeAsDouble,
-#endif
-                position.Value,
-                rotation.Value,
-                scale.Value
-            ));
+            SnapshotInterpolation.InsertIfNotExists(
+                snapshots,
+                NetworkClient.snapshotSettings.bufferLimit,
+                new TransformSnapshot(
+                    timeStamp, // arrival remote timestamp. NOT remote time.
+                    NetworkTime.localTime, // Unity 2019 doesn't have timeAsDouble yet
+                    position.Value,
+                    rotation.Value,
+                    scale.Value
+                )
+            );
         }
 
         // apply a snapshot to the Transform.
@@ -141,7 +212,7 @@ namespace Mirror
         //
         // NOTE: stuck detection is unnecessary here.
         //       we always set transform.position anyway, we can't get stuck.
-        protected virtual void Apply(TransformSnapshot interpolated)
+        protected virtual void Apply(TransformSnapshot interpolated, TransformSnapshot endGoal)
         {
             // local position/rotation for VR support
             //
@@ -150,9 +221,11 @@ namespace Mirror
             // -> we still interpolated
             // -> but simply don't apply it. if the user doesn't want to sync
             //    scale, then we should not touch scale etc.
-            if (syncPosition) target.localPosition = interpolated.position;
-            if (syncRotation) target.localRotation = interpolated.rotation;
-            if (syncScale)    target.localScale = interpolated.scale;
+
+            // interpolate parts
+            if (syncPosition) SetPosition(interpolatePosition ? interpolated.position : endGoal.position);
+            if (syncRotation) SetRotation(interpolateRotation ? interpolated.rotation : endGoal.rotation);
+            if (syncScale) SetScale(interpolateScale ? interpolated.scale : endGoal.scale);
         }
 
         // client->server teleport to force position without interpolation.
@@ -240,12 +313,21 @@ namespace Mirror
         // common Teleport code for client->server and server->client
         protected virtual void OnTeleport(Vector3 destination)
         {
-            // reset any in-progress interpolation & buffers
-            Reset();
-
             // set the new position.
             // interpolation will automatically continue.
             target.position = destination;
+
+            // reset interpolation to immediately jump to the new position.
+            // do not call Reset() here, this would cause delta compression to
+            // get out of sync for NetworkTransformReliable because NTReliable's
+            // 'override Reset()' resets lastDe/SerializedPosition:
+            // https://github.com/MirrorNetworking/Mirror/issues/3588
+            // because client's next OnSerialize() will delta compress,
+            // but server's last delta will have been reset, causing offsets.
+            //
+            // instead, simply clear snapshots.
+            serverSnapshots.Clear();
+            clientSnapshots.Clear();
 
             // TODO
             // what if we still receive a snapshot from before the interpolation?
@@ -256,13 +338,22 @@ namespace Mirror
         // common Teleport code for client->server and server->client
         protected virtual void OnTeleport(Vector3 destination, Quaternion rotation)
         {
-            // reset any in-progress interpolation & buffers
-            Reset();
-
             // set the new position.
             // interpolation will automatically continue.
             target.position = destination;
             target.rotation = rotation;
+
+            // reset interpolation to immediately jump to the new position.
+            // do not call Reset() here, this would cause delta compression to
+            // get out of sync for NetworkTransformReliable because NTReliable's
+            // 'override Reset()' resets lastDe/SerializedPosition:
+            // https://github.com/MirrorNetworking/Mirror/issues/3588
+            // because client's next OnSerialize() will delta compress,
+            // but server's last delta will have been reset, causing offsets.
+            //
+            // instead, simply clear snapshots.
+            serverSnapshots.Clear();
+            clientSnapshots.Clear();
 
             // TODO
             // what if we still receive a snapshot from before the interpolation?
@@ -361,7 +452,7 @@ namespace Mirror
                 TransformSnapshot entry = buffer.Values[i];
                 bool oldEnough = entry.localTime <= threshold;
                 Gizmos.color = oldEnough ? oldEnoughColor : notOldEnoughColor;
-                Gizmos.DrawCube(entry.position, Vector3.one);
+                Gizmos.DrawWireCube(entry.position, Vector3.one);
             }
 
             // extra: lines between start<->position<->goal

@@ -181,7 +181,7 @@ public class InventoryMenu : NetworkBehaviour
             return;
         
         Player player = ownerPlayerInstance.playerEntity;
-        player.DropItem(pointerItem);
+        player.GetInventoryHandler().DropItem(pointerItem);
         
         SetPointerItem(new ItemStack(Material.Air));
         UpdateInventory();

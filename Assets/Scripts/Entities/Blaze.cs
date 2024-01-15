@@ -6,7 +6,6 @@ using UnityEngine;
 public class Blaze : Monster
 {
     private readonly float flyUpSpeed = 2.0f;
-    protected override float walkSpeed { get; } = 1f;
     public override float maxHealth { get; } = 20;
 
     public override List<ItemStack> GetDrops()
@@ -40,9 +39,4 @@ public class Blaze : Monster
     {
         return new BlazeController(this);
     }
-
-    [Server]
-    public override void TakeFallDamage(float damage) { }//Disable fall damage
-    
-    public override void TakeFireDamage(float damage){ } //Disable fire damage
 }

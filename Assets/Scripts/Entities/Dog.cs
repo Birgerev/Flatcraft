@@ -12,9 +12,8 @@ public class Dog : PassiveEntity
     protected virtual float foodHealthRegeneration { get; } = 20f / 3f;
 
     public override float maxHealth { get; } = 20;
-    protected override float walkSpeed { get; } = 6f;
-    [EntityDataTag(false)] public string ownerUuid;
-    [EntityDataTag(false)] [SyncVar] public bool sitting;
+    [EntitySaveField(false)] public string ownerUuid;
+    [EntitySaveField(false)] [SyncVar] public bool sitting;
     public SpriteRenderer collar;
     
     public override EntityController GetController()
@@ -58,7 +57,7 @@ public class Dog : PassiveEntity
     private bool TryFeed()
     {
         Player owner = (Player) GetOwner();
-        PlayerInventory inv = owner.GetInventory();
+        PlayerInventory inv = owner.GetInventoryHandler().GetInventory();
         if (inv == null)
             return false;
         ItemStack heldItem = inv.GetSelectedItem();
