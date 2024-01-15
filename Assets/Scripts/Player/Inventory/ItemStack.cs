@@ -14,7 +14,7 @@ public struct ItemStack
             _amount = value;
             
             //If amount = 0, make this item empty
-            if(value == 0)
+            if(value < 1)
                 this = default;
             
             //Don't allow more than max stack size
