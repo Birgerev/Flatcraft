@@ -14,7 +14,7 @@ namespace Mirror
 
         /// <summary>Server Update frequency, per second. Use around 60Hz for fast paced games like Counter-Strike to minimize latency. Use around 30Hz for games like WoW to minimize computations. Use around 1-10Hz for slow paced games like EVE.</summary>
         // overwritten by NetworkManager (if any)
-        public static int tickRate = 30;
+        public static int tickRate = 60;
 
         // tick rate is in Hz.
         // convert to interval in seconds for convenience where needed.
@@ -52,10 +52,6 @@ namespace Mirror
         // see also: https://github.com/vis2k/Mirror/pull/2595
         public static bool dontListen;
 
-        // Deprecated 2022-12-12
-        [Obsolete("NetworkServer.localClientActive was renamed to .activeHost to be more obvious")]
-        public static bool localClientActive => activeHost;
-
         /// <summary>active checks if the server has been started either has standalone or as host server.</summary>
         public static bool active { get; internal set; }
 
@@ -68,7 +64,22 @@ namespace Mirror
 
         // interest management component (optional)
         // by default, everyone observes everyone
-        public static InterestManagement aoi;
+        public static InterestManagementBase aoi;
+
+        // For security, it is recommended to disconnect a player if a networked
+        // action triggers an exception\nThis could prevent components being
+        // accessed in an undefined state, which may be an attack vector for
+        // exploits.
+        //
+        // However, some games may want to allow exceptions in order to not
+        // interrupt the player's experience.
+        public static bool exceptionsDisconnect = true; // security by default
+
+        // Mirror global disconnect inactive option, independent of Transport.
+        // not all Transports do this properly, and it's easiest to configure this just once.
+        // this is very useful for some projects, keep it.
+        public static bool disconnectInactiveConnections;
+        public static float disconnectInactiveTimeout = 60;
 
         // OnConnected / OnDisconnected used to be NetworkMessages that were
         // invoked. this introduced a bug where external clients could send
@@ -106,7 +117,22 @@ namespace Mirror
             if (!dontListen)
             {
                 Transport.active.ServerStart();
-                //Debug.Log("Server started listening");
+
+                if (Transport.active is PortTransport portTransport)
+                {
+                    if (Utils.IsHeadless())
+                    {
+#if !UNITY_EDITOR
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Server listening on port {portTransport.Port}");
+                        Console.ResetColor();
+#else
+                        Debug.Log($"Server listening on port {portTransport.Port}");
+#endif
+                    }
+                }
+                else
+                    Debug.Log("Server started listening");
             }
 
             active = true;
@@ -118,6 +144,15 @@ namespace Mirror
         {
             if (initialized)
                 return;
+
+            // safety: ensure Weaving succeded.
+            // if it silently failed, we would get lots of 'writer not found'
+            // and other random errors at runtime instead. this is cleaner.
+            if (!WeaverFuse.Weaved())
+            {
+                // if it failed, throw an exception to early exit all Listen calls.
+                throw new Exception("NetworkServer won't start because Weaving failed or didn't run.");
+            }
 
             // Debug.Log($"NetworkServer Created version {Version.Current}");
 
@@ -189,7 +224,6 @@ namespace Mirror
             connections.Clear();
             connectionsCopy.Clear();
             handlers.Clear();
-            newObservers.Clear();
 
             // destroy all spawned objects, _then_ set inactive.
             // make sure .active is still true before calling this.
@@ -258,6 +292,7 @@ namespace Mirror
             RegisterHandler<ReadyMessage>(OnClientReadyMessage);
             RegisterHandler<CommandMessage>(OnCommandMessage);
             RegisterHandler<NetworkPingMessage>(NetworkTime.OnServerPing, false);
+            RegisterHandler<NetworkPongMessage>(NetworkTime.OnServerPong, false);
             RegisterHandler<EntityStateMessage>(OnEntityStateMessage, true);
             RegisterHandler<TimeSnapshotMessage>(OnTimeSnapshotMessage, true);
         }
@@ -335,12 +370,12 @@ namespace Mirror
                         }
                     }
                 }
-                // an attacker may attempt to modify another connection's entity
+                // An attacker may attempt to modify another connection's entity
+                // This could also be a race condition of message in flight when
+                // RemoveClientAuthority is called, so not malicious.
+                // Don't disconnect, just log the warning.
                 else
-                {
-                    Debug.LogWarning($"Connection {connection.connectionId} attempted to modify {identity} which is not owned by the connection. Disconnecting the connection.");
-                    connection.Disconnect();
-                }
+                    Debug.LogWarning($"EntityStateMessage from {connection} for {identity} without authority.");
             }
             // no warning. don't spam server logs.
             // else Debug.LogWarning($"Did not find target for sync message for {message.netId} . Note: this can be completely normal because UDP messages may arrive out of order, so this message might have arrived after a Destroy message.");
@@ -360,12 +395,12 @@ namespace Mirror
             // maybe we shouldn't allow timeline to deviate more than a certain %.
             // for now, this is only used for client authority movement.
 
-#if !UNITY_2020_3_OR_NEWER
             // Unity 2019 doesn't have Time.timeAsDouble yet
+            //
+            // NetworkTime uses unscaled time and ignores Time.timeScale.
+            // fixes Time.timeScale getting server & client time out of sync:
+            // https://github.com/MirrorNetworking/Mirror/issues/3409
             connection.OnTimeSnapshot(new TimeSnapshot(connection.remoteTimeStamp, NetworkTime.localTime));
-#else
-            connection.OnTimeSnapshot(new TimeSnapshot(connection.remoteTimeStamp, Time.timeAsDouble));
-#endif
         }
 
         // connections /////////////////////////////////////////////////////////
@@ -651,37 +686,40 @@ namespace Mirror
                 //       the next time.
                 //       => consider moving processing to NetworkEarlyUpdate.
                 while (!isLoadingScene &&
-                       connection.unbatcher.GetNextMessage(out NetworkReader reader, out double remoteTimestamp))
+                       connection.unbatcher.GetNextMessage(out ArraySegment<byte> message, out double remoteTimestamp))
                 {
-                    // enough to read at least header size?
-                    if (reader.Remaining >= NetworkMessages.IdSize)
+                    using (NetworkReaderPooled reader = NetworkReaderPool.Get(message))
                     {
-                        // make remoteTimeStamp available to the user
-                        connection.remoteTimeStamp = remoteTimestamp;
-
-                        // handle message
-                        if (!UnpackAndInvoke(connection, reader, channelId))
+                        // enough to read at least header size?
+                        if (reader.Remaining >= NetworkMessages.IdSize)
                         {
-                            // warn, disconnect and return if failed
-                            // -> warning because attackers might send random data
-                            // -> messages in a batch aren't length prefixed.
-                            //    failing to read one would cause undefined
-                            //    behaviour for every message afterwards.
-                            //    so we need to disconnect.
-                            // -> return to avoid the below unbatches.count error.
-                            //    we already disconnected and handled it.
-                            Debug.LogWarning($"NetworkServer: failed to unpack and invoke message. Disconnecting {connectionId}.");
+                            // make remoteTimeStamp available to the user
+                            connection.remoteTimeStamp = remoteTimestamp;
+
+                            // handle message
+                            if (!UnpackAndInvoke(connection, reader, channelId))
+                            {
+                                // warn, disconnect and return if failed
+                                // -> warning because attackers might send random data
+                                // -> messages in a batch aren't length prefixed.
+                                //    failing to read one would cause undefined
+                                //    behaviour for every message afterwards.
+                                //    so we need to disconnect.
+                                // -> return to avoid the below unbatches.count error.
+                                //    we already disconnected and handled it.
+                                Debug.LogWarning($"NetworkServer: failed to unpack and invoke message. Disconnecting {connectionId}.");
+                                connection.Disconnect();
+                                return;
+                            }
+                        }
+                        // otherwise disconnect
+                        else
+                        {
+                            // WARNING, not error. can happen if attacker sends random data.
+                            Debug.LogWarning($"NetworkServer: received Message was too short (messages should start with message id). Disconnecting {connectionId}");
                             connection.Disconnect();
                             return;
                         }
-                    }
-                    // otherwise disconnect
-                    else
-                    {
-                        // WARNING, not error. can happen if attacker sends random data.
-                        Debug.LogWarning($"NetworkServer: received Message was too short (messages should start with message id). Disconnecting {connectionId}");
-                        connection.Disconnect();
-                        return;
                     }
                 }
 
@@ -772,12 +810,16 @@ namespace Mirror
         public static void RegisterHandler<T>(Action<NetworkConnectionToClient, T> handler, bool requireAuthentication = true)
             where T : struct, NetworkMessage
         {
-            ushort msgType = NetworkMessages.GetId<T>();
+            ushort msgType = NetworkMessageId<T>.Id;
             if (handlers.ContainsKey(msgType))
             {
                 Debug.LogWarning($"NetworkServer.RegisterHandler replacing handler for {typeof(T).FullName}, id={msgType}. If replacement is intentional, use ReplaceHandler instead to avoid this warning.");
             }
-            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication);
+
+            // register Id <> Type in lookup for debugging.
+            NetworkMessages.Lookup[msgType] = typeof(T);
+
+            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication, exceptionsDisconnect);
         }
 
         /// <summary>Register a handler for message type T. Most should require authentication.</summary>
@@ -785,12 +827,16 @@ namespace Mirror
         public static void RegisterHandler<T>(Action<NetworkConnectionToClient, T, int> handler, bool requireAuthentication = true)
             where T : struct, NetworkMessage
         {
-            ushort msgType = NetworkMessages.GetId<T>();
+            ushort msgType = NetworkMessageId<T>.Id;
             if (handlers.ContainsKey(msgType))
             {
                 Debug.LogWarning($"NetworkServer.RegisterHandler replacing handler for {typeof(T).FullName}, id={msgType}. If replacement is intentional, use ReplaceHandler instead to avoid this warning.");
             }
-            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication);
+
+            // register Id <> Type in lookup for debugging.
+            NetworkMessages.Lookup[msgType] = typeof(T);
+
+            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication, exceptionsDisconnect);
         }
 
         /// <summary>Replace a handler for message type T. Most should require authentication.</summary>
@@ -804,15 +850,15 @@ namespace Mirror
         public static void ReplaceHandler<T>(Action<NetworkConnectionToClient, T> handler, bool requireAuthentication = true)
             where T : struct, NetworkMessage
         {
-            ushort msgType = NetworkMessages.GetId<T>();
-            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication);
+            ushort msgType = NetworkMessageId<T>.Id;
+            handlers[msgType] = NetworkMessages.WrapHandler(handler, requireAuthentication, exceptionsDisconnect);
         }
 
         /// <summary>Unregister a handler for a message type T.</summary>
         public static void UnregisterHandler<T>()
             where T : struct, NetworkMessage
         {
-            ushort msgType = NetworkMessages.GetId<T>();
+            ushort msgType = NetworkMessageId<T>.Id;
             handlers.Remove(msgType);
         }
 
@@ -1457,6 +1503,14 @@ namespace Mirror
         {
             // Debug.Log($"DestroyObject instance:{identity.netId}");
 
+            // NetworkServer.Destroy should only be called on server or host.
+            // on client, show a warning to explain what it does.
+            if (!active)
+            {
+                Debug.LogWarning("NetworkServer.Destroy() called without an active server. Servers can only destroy while active, clients can only ask the server to destroy (for example, with a [Command]), after which the server may decide to destroy the object and broadcast the change to all clients.");
+                return;
+            }
+
             // only call OnRebuildObservers while active,
             // not while shutting down
             // (https://github.com/vis2k/Mirror/issues/2977)
@@ -1531,14 +1585,10 @@ namespace Mirror
         }
 
         // interest management /////////////////////////////////////////////////
+
         // Helper function to add all server connections as observers.
         // This is used if none of the components provides their own
         // OnRebuildObservers function.
-        // allocate newObservers helper HashSet only once
-        // internal for tests
-        internal static readonly HashSet<NetworkConnectionToClient> newObservers =
-            new HashSet<NetworkConnectionToClient>();
-
         // rebuild observers default method (no AOI) - adds all connections
         static void RebuildObserversDefault(NetworkIdentity identity, bool initialize)
         {
@@ -1597,106 +1647,10 @@ namespace Mirror
             // otherwise let interest management system rebuild
             else
             {
-                RebuildObserversCustom(identity, initialize);
+                aoi.Rebuild(identity, initialize);
             }
         }
 
-        // rebuild observers via interest management system
-        static void RebuildObserversCustom(NetworkIdentity identity, bool initialize)
-        {
-            // clear newObservers hashset before using it
-            newObservers.Clear();
-
-            // not force hidden?
-            if (identity.visible != Visibility.ForceHidden)
-            {
-                aoi.OnRebuildObservers(identity, newObservers);
-            }
-
-            // IMPORTANT: AFTER rebuilding add own player connection in any case
-            // to ensure player always sees himself no matter what.
-            // -> OnRebuildObservers might clear observers, so we need to add
-            //    the player's own connection AFTER. 100% fail safe.
-            // -> fixes https://github.com/vis2k/Mirror/issues/692 where a
-            //    player might teleport out of the ProximityChecker's cast,
-            //    losing the own connection as observer.
-            if (identity.connectionToClient != null)
-            {
-                newObservers.Add(identity.connectionToClient);
-            }
-
-            bool changed = false;
-
-            // add all newObservers that aren't in .observers yet
-            foreach (NetworkConnectionToClient conn in newObservers)
-            {
-                // only add ready connections.
-                // otherwise the player might not be in the world yet or anymore
-                if (conn != null && conn.isReady)
-                {
-                    if (initialize || !identity.observers.ContainsKey(conn.connectionId))
-                    {
-                        // new observer
-                        conn.AddToObserving(identity);
-                        // Debug.Log($"New Observer for {gameObject} {conn}");
-                        changed = true;
-                    }
-                }
-            }
-
-            // remove all old .observers that aren't in newObservers anymore
-            foreach (NetworkConnectionToClient conn in identity.observers.Values)
-            {
-                if (!newObservers.Contains(conn))
-                {
-                    // removed observer
-                    conn.RemoveFromObserving(identity, false);
-                    // Debug.Log($"Removed Observer for {gameObject} {conn}");
-                    changed = true;
-                }
-            }
-
-            // copy new observers to observers
-            if (changed)
-            {
-                identity.observers.Clear();
-                foreach (NetworkConnectionToClient conn in newObservers)
-                {
-                    if (conn != null && conn.isReady)
-                        identity.observers.Add(conn.connectionId, conn);
-                }
-            }
-
-            // special case for host mode: we use SetHostVisibility to hide
-            // NetworkIdentities that aren't in observer range from host.
-            // this is what games like Dota/Counter-Strike do too, where a host
-            // does NOT see all players by default. they are in memory, but
-            // hidden to the host player.
-            //
-            // this code is from UNET, it's a bit strange but it works:
-            // * it hides newly connected identities in host mode
-            //   => that part was the intended behaviour
-            // * it hides ALL NetworkIdentities in host mode when the host
-            //   connects but hasn't selected a character yet
-            //   => this only works because we have no .localConnection != null
-            //      check. at this stage, localConnection is null because
-            //      StartHost starts the server first, then calls this code,
-            //      then starts the client and sets .localConnection. so we can
-            //      NOT add a null check without breaking host visibility here.
-            // * it hides ALL NetworkIdentities in server-only mode because
-            //   observers never contain the 'null' .localConnection
-            //   => that was not intended, but let's keep it as it is so we
-            //      don't break anything in host mode. it's way easier than
-            //      iterating all identities in a special function in StartHost.
-            if (initialize)
-            {
-                if (!newObservers.Contains(localConnection))
-                {
-                    if (aoi != null)
-                        aoi.SetHostVisibility(identity, false);
-                }
-            }
-        }
 
         // broadcasting ////////////////////////////////////////////////////////
         // helper function to get the right serialization for a connection
@@ -1762,6 +1716,21 @@ namespace Mirror
             }
         }
 
+        // helper function to check a connection for inactivity and disconnect if necessary
+        // returns true if disconnected
+        static bool DisconnectIfInactive(NetworkConnectionToClient connection)
+        {
+            // check for inactivity
+            if (disconnectInactiveConnections &&
+                !connection.IsAlive(disconnectInactiveTimeout))
+            {
+                Debug.LogWarning($"Disconnecting {connection} for inactivity!");
+                connection.Disconnect();
+                return true;
+            }
+            return false;
+        }
+
         // NetworkLateUpdate called after any Update/FixedUpdate/LateUpdate
         // (we add this to the UnityEngine in NetworkLoop)
         // internal for tests
@@ -1784,6 +1753,10 @@ namespace Mirror
             // go through all connections
             foreach (NetworkConnectionToClient connection in connectionsCopy)
             {
+                // check for inactivity. disconnects if necessary.
+                if (DisconnectIfInactive(connection))
+                    continue;
+
                 // has this connection joined the world yet?
                 // for each READY connection:
                 //   pull in UpdateVarsMessage for each entity it observes
@@ -1877,16 +1850,9 @@ namespace Mirror
                 // also important for syncInterval=0 components like
                 // NetworkTransform, so they can sync on same interval as time
                 // snapshots _but_ not every single tick.
-                if (!Application.isPlaying ||
-#if !UNITY_2020_3_OR_NEWER
-                    // Unity 2019 doesn't have Time.timeAsDouble yet
-                    AccurateInterval.Elapsed(NetworkTime.localTime, sendInterval, ref lastSendTime))
-#else
-                    AccurateInterval.Elapsed(Time.timeAsDouble, sendInterval, ref lastSendTime))
-#endif
-                {
+                // Unity 2019 doesn't have Time.timeAsDouble yet
+                if (!Application.isPlaying || AccurateInterval.Elapsed(NetworkTime.localTime, sendInterval, ref lastSendTime))
                     Broadcast();
-                }
             }
 
             // process all outgoing messages after updating the world
@@ -1916,11 +1882,5 @@ namespace Mirror
                 fullUpdateDuration.End();
             }
         }
-
-        // calls OnStartClient for all SERVER objects in host mode once.
-        // client doesn't get spawn messages for those, so need to call manually.
-        // Deprecated 2022-12-12
-        [Obsolete("NetworkServer.ActivateHostScene was moved to HostMode.ActivateHostScene")]
-        public static void ActivateHostScene() => HostMode.ActivateHostScene();
     }
 }

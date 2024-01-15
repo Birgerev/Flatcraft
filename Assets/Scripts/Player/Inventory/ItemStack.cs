@@ -6,7 +6,7 @@ using Random = System.Random;
 [Serializable]
 public struct ItemStack
 {
-    private int _amount;
+    public int _amount;//NOTE, should never be accessed, but can't make private since it breaks network serializing
     public int Amount{
         get => _amount;
         set
@@ -14,7 +14,7 @@ public struct ItemStack
             _amount = value;
             
             //If amount = 0, make this item empty
-            if(value == 0)
+            if(value < 1)
                 this = default;
             
             //Don't allow more than max stack size
@@ -34,7 +34,7 @@ public struct ItemStack
         this.durability = durability;
         
         //_amount is properly assigned through the Amount wrapper, which implements max stack size etc
-        _amount = -1;
+        _amount = amount;
         Amount = amount;
         
         //If durability is default value, use max durability
@@ -51,8 +51,9 @@ public struct ItemStack
         durability = int.Parse(values[3]);
         
         //_amount is properly assigned through the Amount wrapper, which implements max stack size etc
-        _amount = -1;
-        Amount = int.Parse(values[1]);
+        int amount = int.Parse(values[1]);
+        _amount = 1;
+        Amount = amount;
     }
 
     public string GetTexturePath()
