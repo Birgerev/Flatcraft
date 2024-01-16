@@ -174,7 +174,7 @@ public class Block : MonoBehaviour
     public virtual bool CanExistAt(Location loc)
     {
         if (RequiresGround)
-            if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
+            if ((loc - new Location(0, 1)).GetMaterial() == Material.Air)
                 return false;
         
         return true;

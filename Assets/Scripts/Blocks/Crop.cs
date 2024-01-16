@@ -35,14 +35,13 @@ public class Crop : Block
     
     public override bool CanExistAt(Location loc)
     {
-        Material belowMat = (location + new Location(0, -1)).GetMaterial();
+        Material belowMat = (loc + new Location(0, -1)).GetMaterial();
 
         if (belowMat != Material.Farmland_Wet && belowMat != Material.Farmland_Dry) return false;
 
         return base.CanExistAt(loc);
     }
-
-
+    
     public virtual void Grow()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
