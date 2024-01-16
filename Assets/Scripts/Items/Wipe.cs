@@ -8,13 +8,8 @@ public class Wipe : Item
     {
         base.InteractRight(player, loc, firstFrameDown);
         
-        //Get player inventory
-        Player playerEntity = player.playerEntity;
-        PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
-        
         //Remove one empty bucket
-        inv.SetItem(inv.selectedSlot, new ItemStack());
-        
         ChatManager.instance.AddMessagePlayer("Go on...   wipe", player);
+        player.playerEntity.GetInventoryHandler().GetInventory().ConsumeSelectedItem();
     }
 }

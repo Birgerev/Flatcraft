@@ -23,9 +23,7 @@ public class Filled_Bucket : Item
         PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
         
         //Remove one filled bucket
-        ItemStack currentBucket = inv.GetSelectedItem();
-        currentBucket.Amount--;
-        inv.SetItem(inv.selectedSlot, currentBucket);
+        inv.ConsumeSelectedItem();
         
         //Give one empty bucket
         ItemStack newBucket = new ItemStack(Material.Empty_Bucket, 1);

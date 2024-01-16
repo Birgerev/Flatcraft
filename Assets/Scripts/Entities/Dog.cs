@@ -46,8 +46,7 @@ public class Dog : PassiveEntity
         if (source.uuid == ownerUuid)
         {
             //Try feeding dog with owners held item
-            if (TryFeed())
-                return;
+            if (TryFeed()) return;
             
             //If feeding was not applicable, toggle sit state
             sitting = !sitting;
@@ -58,15 +57,12 @@ public class Dog : PassiveEntity
     {
         Player owner = (Player) GetOwner();
         PlayerInventory inv = owner.GetInventoryHandler().GetInventory();
-        if (inv == null)
-            return false;
+        if (inv == null) return false;
         ItemStack heldItem = inv.GetSelectedItem();
 
-        if (!acceptableFoods.Contains(heldItem.material))
-            return false;
-        
-        heldItem.Amount--;
-        inv.SetItem(inv.selectedSlot, heldItem);
+        if (!acceptableFoods.Contains(heldItem.material)) return false;
+
+        inv.ConsumeSelectedItem();
         PlaySmokeEffect(Color.red);
         health = Mathf.Clamp(health + foodHealthRegeneration, 0, maxHealth); 
 

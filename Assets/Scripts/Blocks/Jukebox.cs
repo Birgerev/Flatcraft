@@ -42,15 +42,13 @@ public class Jukebox : Block
         
         ItemStack heldDisc = inv.GetSelectedItem();
 
-        if (heldDisc.material != Material.Music_Disc_Stal)
-            return;
+        if (heldDisc.material != Material.Music_Disc_Stal) return;
         
         //Save disc as stored
         location.SetData(GetData().SetTag("stored_disc", heldDisc.material.ToString()));
             
         //Remove one disc from player inventory
-        heldDisc.Amount--;
-        inv.SetItem(inv.selectedSlot, heldDisc);
+        inv.ConsumeSelectedItem();
         ChatManager.instance.AddMessagePlayer("Now playing: C418 - Stal", player);
 
         Sound.Play(location, "music/disc/stal/stal", SoundType.Music, 1, 1, 32);

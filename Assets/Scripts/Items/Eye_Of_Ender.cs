@@ -15,9 +15,6 @@ public class Eye_Of_Ender : Item
         //TODO set owner
 
         //Remove player item
-        PlayerInventory inv = player.playerEntity.GetInventoryHandler().GetInventory();
-        ItemStack selectedItem = inv.GetSelectedItem();
-        selectedItem.Amount--;
-        inv.SetItem(inv.selectedSlot, selectedItem);
+        player.playerEntity.GetInventoryHandler().GetInventory().ConsumeSelectedItem();
     }
 }

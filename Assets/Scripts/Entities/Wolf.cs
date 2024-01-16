@@ -23,27 +23,24 @@ public class Wolf : PassiveEntity
         base.Interact(source);
         
         PlayerInventory inv = source.GetInventoryHandler().GetInventory();
-        ItemStack heldItem = inv.GetSelectedItem();
 
-        if (heldItem.material == Material.Bone)
+        if (inv.GetSelectedItem().material != Material.Bone) return;
+
+        inv.ConsumeSelectedItem();
+        
+        if (new Random().NextDouble() > tameChance)
         {
-            heldItem.Amount--;
-            inv.SetItem(inv.selectedSlot, heldItem);
-            if (new Random().NextDouble() < tameChance)
-            {
-                PlaySmokeEffect(Color.red);
-
-                Dog dog = (Dog) Entity.Spawn("Dog");
-                dog.Teleport(Location);
-                dog.ownerUuid = source.uuid;
-
-                Remove();
-            }
-            else
-            {
-                PlaySmokeEffect(Color.black);
-            }
+            PlaySmokeEffect(Color.black);
+            return;
         }
+
+        PlaySmokeEffect(Color.red);
+
+        Dog dog = (Dog) Entity.Spawn("Dog");
+        dog.Teleport(Location);
+        dog.ownerUuid = source.uuid;
+
+        Remove();
     }
 
     [Server]
