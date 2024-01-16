@@ -11,19 +11,13 @@ public class Vegetation : Block
 
     public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
-    public override void Tick()
-    {
-        base.Tick();
-        
-        if(!GroundCheck())
-            Break();
-    }
-
-    private bool GroundCheck()
+    public override bool CanExistAt(Location loc)
     {
         Material belowMat = (location + new Location(0, -1)).GetMaterial();
 
-        return ValidGround().Contains(belowMat);
+        if (!ValidGround().Contains(belowMat)) return false;
+
+        return base.CanExistAt(loc);
     }
     
     protected virtual List<Material> ValidGround()

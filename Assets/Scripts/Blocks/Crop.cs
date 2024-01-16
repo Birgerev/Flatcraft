@@ -24,29 +24,24 @@ public class Crop : Block
     {
         return crop_textures[GetStage()];
     }
-    
-    public override void Tick()
-    {
-        CheckFarmland();
-
-        base.Tick();
-    }
 
     public override void RandomTick()
     {
         Grow();
-        CheckFarmland();
+        Tick();
 
         base.RandomTick();
     }
-
-    public void CheckFarmland()
+    
+    public override bool CanExistAt(Location loc)
     {
-        Material materialBeneath = (location - new Location(0, 1)).GetMaterial();
+        Material belowMat = (location + new Location(0, -1)).GetMaterial();
 
-        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry)
-            Break();
+        if (belowMat != Material.Farmland_Wet && belowMat != Material.Farmland_Dry) return false;
+
+        return base.CanExistAt(loc);
     }
+
 
     public virtual void Grow()
     {
@@ -63,9 +58,8 @@ public class Crop : Block
 
     public int GetStage()
     {
-        int stage = -1;
         string stageTag = GetData().GetTag("crop_stage");
-        int.TryParse(stageTag, out stage);
+        int.TryParse(stageTag, out var stage);
         return stage;
     }
 
