@@ -26,6 +26,7 @@ public class Wolf : PassiveEntity
         ItemStack heldItem = inv.GetSelectedItem();
 
         if (heldItem.material == Material.Bone)
+        inv.ConsumeSelectedItem();
         {
             heldItem.Amount--;
             inv.SetItem(inv.selectedSlot, heldItem);

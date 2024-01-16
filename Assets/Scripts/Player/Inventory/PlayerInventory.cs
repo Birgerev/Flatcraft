@@ -17,6 +17,13 @@ public class PlayerInventory : Inventory
         return GetItem(selectedSlot);
     }
 
+    public void ConsumeSelectedItem()
+    {
+        ItemStack heldItem = GetSelectedItem();
+        heldItem.Amount--;
+        SetItem(selectedSlot, heldItem);
+    }
+
     public ItemStack[] GetHotbarItems()
     {
         ItemStack[] hotbar = new ItemStack[9];

@@ -106,8 +106,7 @@ public class PlayerHunger : NetworkBehaviour
         Sound.Play(_player.Location, "entity/Player/burp", SoundType.Entities, 0.85f, 1.15f);
 
         //Subtract food item from inventory
-        selectedItemStack.Amount--;
-        inv.SetItem(inv.selectedSlot, selectedItemStack);
+        inv.ConsumeSelectedItem();
     }
 
     [ClientRpc]

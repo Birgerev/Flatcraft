@@ -60,7 +60,6 @@ public class PlayerInteraction : NetworkBehaviour
         
         Location loc = GetBlockedMouseLocation();
         Material currentMaterial = loc.GetMaterial();
-        
         //TODO replace with CanOverride()
         if (currentMaterial != Material.Air && currentMaterial != Material.Water && currentMaterial != Material.Lava) return;
         
@@ -86,7 +85,7 @@ public class PlayerInteraction : NetworkBehaviour
         loc.GetBlock().BuildTick();
         loc.Tick();
 
-        _player.GetInventoryHandler().GetInventory().SetItem(_player.GetInventoryHandler().GetInventory().selectedSlot, new ItemStack(selectedItem.material, selectedItem.Amount - 1));
+        _player.GetInventoryHandler().GetInventory().ConsumeSelectedItem();
         
         //Trigger animation
         lastBlockInteractionTime = NetworkTime.time;
@@ -134,8 +133,8 @@ public class PlayerInteraction : NetworkBehaviour
     {
         PlayerInventory inv = _player.GetInventoryHandler().GetInventory();
         ItemStack item = inv.GetSelectedItem();
+        
         item.ApplyDurability();
-
         inv.SetItem(inv.selectedSlot, item);
     }
 

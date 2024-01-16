@@ -49,8 +49,7 @@ public class Jukebox : Block
         location.SetData(GetData().SetTag("stored_disc", heldDisc.material.ToString()));
             
         //Remove one disc from player inventory
-        heldDisc.Amount--;
-        inv.SetItem(inv.selectedSlot, heldDisc);
+        inv.ConsumeSelectedItem();
         ChatManager.instance.AddMessagePlayer("Now playing: C418 - Stal", player);
 
         Sound.Play(location, "music/disc/stal/stal", SoundType.Music, 1, 1, 32);
