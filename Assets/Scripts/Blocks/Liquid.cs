@@ -193,11 +193,14 @@ public class Liquid : Block
                 int locLevel = int.Parse(loc.GetData().GetTag("liquid_level"));
 
                 //locLevel must be two less than current level
-                if (currentLevel - locLevel >= 2)
-                    return true;
-            }//If we do not care about liquid level, we can flow to water
-            else return true;
+                return currentLevel - locLevel >= 2;
+            }
+            //If we do not care about liquid level, we can always flow to same liquid
+            return true;
         }
+        
+        //Can flow to blocks that can be overriden
+        if (loc.GetBlock() != null && loc.GetBlock().CanBeOverriden) return true;
         
         //Otherwise, we cant flow to block
         return false;
