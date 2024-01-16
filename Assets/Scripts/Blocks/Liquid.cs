@@ -85,11 +85,8 @@ public class Liquid : Block
         Location down = location + new Location(0, -1);
         Material downMat = down.GetMaterial();
 
-        if (TryFlow(down, maxLiquidLevel))
-            return;
-
-        if (downMat == GetMaterial())
-            return;
+        if (TryFlow(down, maxLiquidLevel)) return;
+        if (downMat == GetMaterial()) return;
 
         int liquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
@@ -184,11 +181,9 @@ public class Liquid : Block
         BlockState state = loc.GetState();
 
         //Can always flow to air
-        if (state.material == Material.Air)
-        {
-            return true;
-        }
-            
+        if (state.material == Material.Air) return true;
+        
+        //If flow loc is also same liquid
         if (state.material == GetMaterial())
         {
             //Allow filling liquids with less level
