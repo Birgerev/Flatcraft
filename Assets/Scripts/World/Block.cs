@@ -168,7 +168,7 @@ public class Block : MonoBehaviour
         return new[] { new ItemStack(GetMaterial()) };
     }
     
-    public virtual bool CanBePlaced(Location loc)
+    public virtual bool CanExistAt(Location loc)
     {
         /*TODO
         if (requiresGround)

@@ -82,7 +82,7 @@ public class PlayerInteraction : NetworkBehaviour
         
         //Check if block can be placed
         Block blockClass = (Block) Activator.CreateInstance(Type.GetType(materialToPlace.ToString()));
-        if (!blockClass.CanBePlaced(loc)) return;
+        if (!blockClass.CanExistAt(loc)) return;
             
         //TODO replace with CanOverride()
         Material currentMaterial = loc.GetMaterial();
