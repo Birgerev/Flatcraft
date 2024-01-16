@@ -59,29 +59,32 @@ public class PlayerInteraction : NetworkBehaviour
         if (GetMouseEntity()) return;
         
         Location loc = GetBlockedMouseLocation();
-        Material currentMaterial = loc.GetMaterial();
-        //TODO replace with CanOverride()
-        if (currentMaterial != Material.Air && currentMaterial != Material.Water && currentMaterial != Material.Lava) return;
         
-        CMD_PlaceBlock(loc);
+        CMD_TryPlaceBlock(loc);
     }
 
     [Command]
-    public void CMD_PlaceBlock(Location loc)
+    public void CMD_TryPlaceBlock(Location loc)
     {
         ItemStack selectedItem = _player.GetInventoryHandler().GetInventory().GetSelectedItem();
 
         if (selectedItem.material == Material.Air) return;
-        if (selectedItem.Amount <= 0) return;
+        if (selectedItem.Amount < 1) return;
         
-        Material heldMat = selectedItem.material;
+        Material materialToPlace = selectedItem.material;
+        Type materialType = Type.GetType(selectedItem.material.ToString());
         
-        if (Type.GetType(selectedItem.material.ToString()).IsSubclassOf(typeof(PlaceableItem)))
-            heldMat = ((PlaceableItem) Activator.CreateInstance(Type.GetType(selectedItem.material.ToString()))).blockMaterial;
+        if (materialType.IsSubclassOf(typeof(Item)))
+            if (materialType.IsSubclassOf(typeof(PlaceableItem)))
+                materialToPlace = ((PlaceableItem) Activator.CreateInstance(materialType)).blockMaterial;
+            else
+                return;
         
-        if (Type.GetType(selectedItem.material.ToString()).IsSubclassOf(typeof(Item))) return;
-
-        loc.SetMaterial(heldMat);
+        //TODO replace with CanOverride()
+        Material currentMaterial = loc.GetMaterial();
+        if (currentMaterial != Material.Air && currentMaterial != Material.Water && currentMaterial != Material.Lava) return;
+        
+        loc.SetMaterial(materialToPlace);
         loc.GetBlock().BuildTick();
         loc.Tick();
 
