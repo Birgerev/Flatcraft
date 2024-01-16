@@ -10,13 +10,11 @@ public class Filled_Bucket : Item
     {
         base.InteractRight(player, loc, firstFrameDown);
 
-        if (!firstFrameDown)
-            return;
+        if (!firstFrameDown) return;
 
         Material clickedMaterial = loc.GetMaterial();
 
-        if (clickedMaterial != Material.Air && loc.GetBlock().IsSolid)
-            return;
+        if (clickedMaterial != Material.Air && !loc.GetBlock().CanBeOverriden) return;
 
         //Get player inventory
         Player playerEntity = player.playerEntity;
