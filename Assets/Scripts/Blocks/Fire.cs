@@ -7,6 +7,7 @@ public class Fire : Block
     public override float ChangeTextureTime { get; } = 0.3f;
 
     public override bool IsSolid { get; set; } = false;
+    public override bool CanBeOverriden { get; set; } = true;
     public override float BreakTime { get; } = 0.01f;
     public override bool RequiresGround { get; } = true;
     public override float AverageRandomTickDuration { get; } = 5;

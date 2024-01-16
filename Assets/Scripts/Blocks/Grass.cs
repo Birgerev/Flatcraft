@@ -2,6 +2,8 @@
 
 public class Grass : Vegetation
 {
+    public override bool CanBeOverriden { get; set; } = true;
+    
     public override string[] RandomTextures { get; } =
         {"grass", "grass_1", "grass_2", "grass_3", "grass_4"};
 

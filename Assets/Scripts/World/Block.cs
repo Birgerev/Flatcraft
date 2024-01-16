@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
 {
     //Block Properties
     public virtual bool IsSolid { get; set; } = true;
+    public virtual bool CanBeOverriden { get; set; } = false;
     public virtual bool IsFlammable { get; } = false;
     public virtual bool IsClimbable { get; } = false;
     public virtual bool RequiresGround { get; } = false;

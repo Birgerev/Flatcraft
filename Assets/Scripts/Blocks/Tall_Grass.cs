@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class Tall_Grass : Vegetation
 {
+    public override bool CanBeOverriden { get; set; } = true;
+    
     protected override ItemStack[] GetDrops()
     {
         if (new Random().NextDouble() <= 0.25f)

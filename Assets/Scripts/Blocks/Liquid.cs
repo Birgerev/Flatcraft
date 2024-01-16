@@ -11,6 +11,7 @@ public class Liquid : Block
     public virtual float liquidTickFrequency { get; } = 1;
     public virtual string[] liquidTextures { get; } = { };
     public override bool IsSolid { get; set; } = false;
+    public override bool CanBeOverriden { get; set; } = true;
 
     private bool _isLiquidTicking;
 
