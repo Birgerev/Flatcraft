@@ -52,6 +52,8 @@ public class Block : MonoBehaviour
     
     public virtual void Tick()
     {
+        if(!CanExistAt(location)) Break();
+        
         gameObject.layer = LayerMask.NameToLayer(IsSolid ? "Block" : "NoCollision");
         
         UpdateRender();
@@ -170,11 +172,10 @@ public class Block : MonoBehaviour
     
     public virtual bool CanExistAt(Location loc)
     {
-        /*TODO
-        if (requiresGround)
+        if (RequiresGround)
             if ((location - new Location(0, 1)).GetMaterial() == Material.Air)
-                Break();
-                */
+                return false;
+        
         return true;
     }
 
