@@ -124,8 +124,8 @@ public class Block : MonoBehaviour
         if (drop)
         {
             ItemStack[] drops = GetDrops();
-            if (drops != null)//TODO null error
-                foreach(ItemStack item in GetDrops())
+            if (drops != null)
+                foreach(ItemStack item in drops)
                     item.Drop(location);
         }
 
