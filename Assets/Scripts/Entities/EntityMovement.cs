@@ -36,8 +36,6 @@ public class EntityMovement : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovementParticleEffect();
-        
         if (!isOwned && !isServer) return;
         
         WalkSound();
@@ -124,31 +122,6 @@ public class EntityMovement : NetworkBehaviour
         _lastStepPosition = transform.position;
     }
 
-    [Client]
-    private void MovementParticleEffect()
-    {
-        if (!_entity.isOnGround) return;
-
-        float walkParticleChance = 1.5f * Time.deltaTime * Mathf.Abs(_rb.velocity.x);
-        System.Random r = new System.Random();
-
-        if (r.NextDouble() > walkParticleChance) return;
-        
-        Block blockBeneath = (_entity.Location - new Location(0, 1)).GetBlock();
-        if (blockBeneath == null) return;
-
-        Particle part = Particle.ClientSpawn();
-        Color[] textureColors = blockBeneath.GetColorsInTexture();
-
-        part.transform.position = transform.position + new Vector3(0, 0.2f);
-        part.color = textureColors[r.Next(textureColors.Length)];
-        part.doGravity = true;
-        part.velocity = new Vector2(
-            _rb.velocity.x * -0.3f,
-            Mathf.Abs(_rb.velocity.x) * 1.3f * (float)r.NextDouble());
-        part.maxAge = .4f + (float)r.NextDouble() * .6f;
-    }
-    
     public virtual void LateUpdate()
     {
         _inLiquidLastFrame = _entity.isInLiquid;

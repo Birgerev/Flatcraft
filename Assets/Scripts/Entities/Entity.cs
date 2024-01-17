@@ -39,7 +39,6 @@ public class Entity : NetworkBehaviour
 
     public Vector2 lastFramePosition;
     private Vector2 _cachedposition;
-    protected bool inLiquidLastFrame;
 
     public static int EntityCount => entities.Count;
 
@@ -102,7 +101,6 @@ public class Entity : NetworkBehaviour
     public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
-        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -124,7 +122,6 @@ public class Entity : NetworkBehaviour
         age += Time.deltaTime;
 
         CheckNetherPortal();
-        CheckWaterSplash();
         CheckVoidDamage();
         CheckSuffocation();
     }
@@ -218,27 +215,6 @@ public class Entity : NetworkBehaviour
         isOnGround = false;
     }
     
-    [Server]
-    private void CheckWaterSplash()
-    {
-        if (isInLiquid && !inLiquidLastFrame && GetVelocity().y < - 2)
-        {
-            bool isInWater = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Water)
-                {
-                    isInWater = true;
-                    break;
-                }
-
-            if (isInWater)
-            {
-                Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-                LiquidSplashEffect();
-            }
-        }
-    }
-
     [Server]
     private void CheckSuffocation()
     {
@@ -585,28 +561,6 @@ public class Entity : NetworkBehaviour
             UpdateClientLight();
     }
 
-    [ClientRpc]
-    public virtual void LiquidSplashEffect()
-    {
-        if (GetLiquidBlocksForEntity().Length == 0)
-            return;
-
-        Color textureColor = GetLiquidBlocksForEntity()[0].GetColorsInTexture()[0];
-        Random r = new Random();
-        for (int i = 0; i < 8; i++) //Spawn landing partickes
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
-            part.color = textureColor;
-            part.doGravity = true;
-            part.velocity = new Vector2((1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 3f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-    }
-
     [Client]
     private void UpdateClientLight()
     {
@@ -620,24 +574,6 @@ public class Entity : NetworkBehaviour
     public virtual SpriteRenderer GetRenderer()
     {
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
-    }
-
-    [ClientRpc]
-    public void CriticalDamageEffect()
-    {
-        Random r = new Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //SpawnParticles
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
-            part.color = new Color(0.854f, 0.788f, 0.694f);
-            part.doGravity = true;
-            part.velocity = new Vector2((2f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 4f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
     }
 
     public static Entity GetEntity(string uuid)
