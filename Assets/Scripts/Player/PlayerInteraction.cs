@@ -231,6 +231,7 @@ public class PlayerInteraction : NetworkBehaviour
         if (Inventory.IsAnyOpen(PlayerInstance.localPlayerInstance)) return false;
         if (ChatMenu.instance.open) return false;
         if (SignEditMenu.IsLocalMenuOpen()) return false;
+        if (PauseMenu.active) return false;
 
         return true;
     }
