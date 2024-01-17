@@ -27,8 +27,6 @@ public class Player : LivingEntity
 
     public override void Start()
     {
-        
-        
         Debug.Log("Spawning player '" + uuid + "'");
         Players.Add(this);
 

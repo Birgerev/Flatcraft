@@ -6,6 +6,6 @@ public class PassiveEntity : LivingEntity
     {
         base.Hit(damage, source);
 
-        DamageNumberEffect((int)damage, Color.green);
+        GetComponent<EntityParticleEffects>()?.RPC_DamageNumberEffect((int)damage, Color.green);
     }
 }

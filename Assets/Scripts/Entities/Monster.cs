@@ -56,6 +56,6 @@ public class Monster : LivingEntity
     {
         base.Hit(damage, source);
         
-        DamageNumberEffect((int)damage, Color.red);
+        GetComponent<EntityParticleEffects>()?.RPC_DamageNumberEffect((int)damage, Color.red);
     }
 }

@@ -143,7 +143,7 @@ public class LivingEntity : Entity
             return;
 
         DeathSound();
-        DeathSmokeEffect();
+        GetComponent<EntityParticleEffects>()?.RPC_DeathSmokeEffect();
 
         base.Die();
     }
@@ -194,18 +194,6 @@ public class LivingEntity : Entity
         StartCoroutine(TurnRedByDamage());
     }
 
-    [ClientRpc]
-    public virtual void DeathSmokeEffect()
-    {
-        Particle.ClientSpawnSmallSmoke(transform.position, Color.white);
-    }
-
-    [ClientRpc]
-    public virtual void DamageNumberEffect(int damage, Color color)
-    {
-        Particle.ClientSpawnNumber(transform.position + new Vector3(1, 2), damage, color);
-    }
-    
     private IEnumerator TurnRedByDamage()
     {
         GetRenderer().color = damageColor;

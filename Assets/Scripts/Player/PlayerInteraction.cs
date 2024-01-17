@@ -154,7 +154,7 @@ public class PlayerInteraction : NetworkBehaviour
         if (_player.GetVelocity().y < -0.5f)
         {
             damage *= 1.5f;
-            entity.CriticalDamageEffect();
+            entity.GetComponent<EntityParticleEffects>()?.RPC_CriticalDamageEffect();
         }
 
         Sound.Play(_player.Location, "entity/player/swing", SoundType.Entities, 0.8f, 1.2f);
