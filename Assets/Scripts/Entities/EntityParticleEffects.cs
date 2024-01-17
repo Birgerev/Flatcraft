@@ -40,9 +40,7 @@ public class EntityParticleEffects : NetworkBehaviour
     {
         if (!_entity.isOnGround) return;
 
-        System.Random r = new System.Random();
-
-        if (r.NextDouble() > 1.5f * Time.deltaTime * Mathf.Abs(_entity.GetVelocity().x)) return;
+        if (Random.value > 1.5f * Time.deltaTime * Mathf.Abs(_entity.GetVelocity().x)) return;
         
         Block blockBeneath = (_entity.Location - new Location(0, 1)).GetBlock();
         if (blockBeneath == null) return;
@@ -50,12 +48,12 @@ public class EntityParticleEffects : NetworkBehaviour
 
         Particle part = Particle.ClientSpawn();
         part.transform.position = transform.position + new Vector3(0, 0.2f);
-        part.color = textureColors[r.Next(textureColors.Length)];
+        part.color = textureColors[Random.Range(0, textureColors.Length)];
         part.doGravity = true;
         part.velocity = new Vector2(
             _entity.GetVelocity().x * -0.3f,
-            Mathf.Abs(_entity.GetVelocity().x) * 1.3f * (float)r.NextDouble());
-        part.maxAge = .4f + (float)r.NextDouble() * .6f;
+            Mathf.Abs(_entity.GetVelocity().x) * 1.3f * Random.value);
+        part.maxAge = .4f + Random.value * .6f;
     }
 
 
@@ -74,17 +72,17 @@ public class EntityParticleEffects : NetworkBehaviour
     [ClientRpc]
     public void RPC_CriticalDamageEffect()
     {
-        System.Random r = new System.Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //SpawnParticles
+        for (int i = 0; i < Random.Range(2, 8); i++) //SpawnParticles
         {
             Particle part = Particle.ClientSpawn();
 
             part.transform.position = transform.position + new Vector3(0, 1f);
             part.color = new Color(0.854f, 0.788f, 0.694f);
             part.doGravity = true;
-            part.velocity = new Vector2((2f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 4f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
+            part.velocity = new Vector2(
+                (2f + Random.value) * (Random.Range(0, 2) == 0 ? -1 : 1), 
+                4f + Random.value);
+            part.maxAge = 1f + Random.value;
             part.maxBounces = 10;
         }
     }
@@ -95,7 +93,6 @@ public class EntityParticleEffects : NetworkBehaviour
         if (_entity.GetLiquidBlocksForEntity().Length == 0) return;
 
         Color textureColor = _entity.GetLiquidBlocksForEntity()[0].GetColorsInTexture()[0];
-        System.Random r = new System.Random();
         for (int i = 0; i < 8; i++) //Spawn landing partickes
         {
             Particle part = Particle.ClientSpawn();
@@ -103,9 +100,10 @@ public class EntityParticleEffects : NetworkBehaviour
             part.transform.position = _entity.Location.GetPosition() + new Vector2(0, 0.5f);
             part.color = textureColor;
             part.doGravity = true;
-            part.velocity = new Vector2((1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 3f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
+            part.velocity = new Vector2(
+                (1f + Random.value) * (Random.Range(0, 2) == 0 ? -1 : 1), 
+                3f + Random.value);
+            part.maxAge = 1f + Random.value;
             part.maxBounces = 10;
         }
     }
