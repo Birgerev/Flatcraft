@@ -227,7 +227,6 @@ public class PlayerInteraction : NetworkBehaviour
 
     public static bool CanInteractWithWorld()
     {
-        if (!Player.LocalEntity.IsChunkLoaded()) return false;
         if (Inventory.IsAnyOpen(PlayerInstance.localPlayerInstance)) return false;
         if (ChatMenu.instance.open) return false;
         if (SignEditMenu.IsLocalMenuOpen()) return false;
