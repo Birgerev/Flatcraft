@@ -183,7 +183,7 @@ public class Inventory : NetworkBehaviour
     }
 
     [Server]
-    public bool AddItem(ItemStack item)
+    public virtual bool AddItem(ItemStack item)
     {
         for (int slot = 0; slot < size; slot++)
         {
