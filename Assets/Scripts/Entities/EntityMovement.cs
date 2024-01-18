@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class EntityMovement : NetworkBehaviour
 {
-    private const float JumpVelocity = 8.5f;
+    private const float JumpVelocity = 9f;
     private const float StepSoundDistance = .9f;
     
     [Header("Movement Properties")] 
@@ -18,9 +18,9 @@ public class EntityMovement : NetworkBehaviour
     private const float LiquidDrag = 10f;
     
     private const float Acceleration = 4f;
-    private const float ClimbAcceleration = 55.0f;
-    private const float ExitLiquidJumpVelocity = 2f;
-    private const float SwimUpAcceleration = 45.0f;
+    private const float ClimbAcceleration = 67.0f;
+    private const float ExitLiquidJumpVelocity = 2.5f;
+    private const float SwimUpAcceleration = 55.0f;
     
     public float walkSpeed = 4.3f;
     
