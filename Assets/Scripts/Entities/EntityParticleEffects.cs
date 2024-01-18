@@ -40,7 +40,7 @@ public class EntityParticleEffects : NetworkBehaviour
     {
         if (!_entity.isOnGround) return;
 
-        if (Random.value > 1.5f * Time.deltaTime * Mathf.Abs(_entity.GetVelocity().x)) return;
+        if (Random.value > 1.8f * Time.deltaTime * Mathf.Abs(_entity.GetVelocity().x)) return;
         
         Block blockBeneath = (_entity.Location - new Location(0, 1)).GetBlock();
         if (blockBeneath == null) return;
@@ -52,7 +52,7 @@ public class EntityParticleEffects : NetworkBehaviour
         part.doGravity = true;
         part.velocity = new Vector2(
             _entity.GetVelocity().x * -0.3f,
-            Mathf.Abs(_entity.GetVelocity().x) * 1.3f * Random.value);
+            (Mathf.Abs(_entity.GetVelocity().x) * 1.75f) + (Random.value*4) - 4.5f);
         part.maxAge = .4f + Random.value * .6f;
     }
 
