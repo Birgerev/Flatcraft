@@ -14,10 +14,10 @@ public class EntityMovement : NetworkBehaviour
     [Header("Movement Properties")] 
     private const float AirDrag = 4.3f;
     private const float ClimbableFriction = 10f;
-    private const float GroundFriction = 5f;
+    private const float GroundFriction = 7f;
     private const float LiquidDrag = 10f;
     
-    private const float Acceleration = 4f;
+    private const float Acceleration = 7f;
     private const float ClimbAcceleration = 67.0f;
     private const float ExitLiquidJumpVelocity = 2.5f;
     private const float SwimUpAcceleration = 55.0f;

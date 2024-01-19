@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    private const float SneakSpeed = 1.3f;
+    private const float SneakSpeed = 1.5f;
     private const float SprintSpeed = 5.6f;
     
     [SyncVar] public bool sprinting;
