@@ -67,7 +67,11 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         //Stop Sprinting
-        if (sprinting && (Input.GetKeyUp(KeyCode.LeftControl) || Mathf.Abs(_player.GetVelocity().x) < 0.1f || sneaking || _player.hunger <= 6))
+        if (sprinting &&
+            (Mathf.Abs(_player.GetVelocity().x) < 0.1f || 
+             sneaking || 
+             _player.hunger <= 6 || 
+             (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))))
         {
             sprinting = false;
             _movement.speed = _movement.walkSpeed;
