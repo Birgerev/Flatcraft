@@ -38,21 +38,34 @@ public class PlayerMovement : NetworkBehaviour
             LightManager.DoLight = !LightManager.DoLight;
             LightManager.UpdateAllLight();
         }
-
+        
         //Open chat
         if (Input.GetKeyDown(KeyCode.T))
             ChatMenu.instance.open = true;
         
-        //Walking
-        if (Input.GetKey(KeyCode.A))
-            _movement.Walk(-1);
-        if (Input.GetKey(KeyCode.D))
-            _movement.Walk(1);
-
         //Jumping
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
             _movement.Jump();
 
+        WalkInput();
+        SprintInput();
+        SneakInput();
+    }
+
+    private void WalkInput()
+    {
+        int direction = 0;
+        if (Input.GetKey(KeyCode.A)) direction = -1;
+        if (Input.GetKey(KeyCode.D)) direction = 1;
+        if (direction == 0) return;
+
+        //Stop from falling off edge when sneaking
+        
+        _movement.Walk(direction);
+    }
+
+    private void SprintInput()
+    {
         //Stop Sprinting
         if (sprinting &&
             (Mathf.Abs(_player.GetVelocity().x) < 0.1f || 
@@ -82,7 +95,10 @@ public class PlayerMovement : NetworkBehaviour
             
             _lastDoubleTapSprintTap = Time.time;
         }
-        
+    }
+
+    private void SneakInput()
+    {
         //Sneaking
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S))
         {
@@ -98,7 +114,6 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    public void CrouchOnLadderCheck()
     {
         bool isLadderSneaking = _player.isOnClimbable && sneaking;
         
