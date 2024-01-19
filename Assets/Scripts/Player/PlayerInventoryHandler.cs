@@ -12,7 +12,6 @@ public class PlayerInventoryHandler : NetworkBehaviour
     
     private Player _player;
     
-    //TODO clean
     private void Update()
     {
         if(isServer) GetInventory().holder = _player.Location;
