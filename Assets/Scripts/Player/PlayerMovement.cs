@@ -53,19 +53,6 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
             _movement.Jump();
 
-        //Sneaking
-        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.S))
-        {
-            sneaking = true;
-            _movement.speed = SneakSpeed;
-        }
-
-        if (sneaking && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.S)))
-        {
-            sneaking = false;
-            _movement.speed = _movement.walkSpeed;
-        }
-
         //Stop Sprinting
         if (sprinting &&
             (Mathf.Abs(_player.GetVelocity().x) < 0.1f || 
@@ -78,7 +65,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         
         //CTRL start sprint
-        if (Input.GetKeyDown(KeyCode.LeftControl) && _player.hunger > 6 && !sneaking)
+        if (!sprinting && Input.GetKey(KeyCode.LeftControl) && _player.hunger > 6 && !sneaking)
         {
             sprinting = true;
             _movement.speed = SprintSpeed;
@@ -94,6 +81,20 @@ public class PlayerMovement : NetworkBehaviour
             }
             
             _lastDoubleTapSprintTap = Time.time;
+        }
+        
+        //Sneaking
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.S))
+        {
+            sneaking = true;
+            _movement.speed = SneakSpeed;
+        }
+        
+        //Stop sneaking
+        if (sneaking && (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S)))
+        {
+            sneaking = false;
+            _movement.speed = _movement.walkSpeed;
         }
     }
 
