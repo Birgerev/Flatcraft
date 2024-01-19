@@ -23,11 +23,11 @@ public class CameraController : MonoBehaviour
 
     [Header("Zoom Values")] 
     public float zoomDampTime = 2f;
-    public int roofCheckMaxDistance = 5;
     public float normalFov;
-    public float zoomedFov;
     public float sprintZoomAmount;
     public float sneakZoomAmount;
+    public float roofFov;
+    public int roofCheckMaxDistance = 5;
 
     [Header("Mouse Panning")] 
     public Vector2 mousePanningMagnitude;
@@ -88,10 +88,6 @@ public class CameraController : MonoBehaviour
 
     private void CalculateWhichZoomToTarget()
     {
-        //Only check block overhead every x seconds
-        if ((Time.time % 0.25f) - Time.deltaTime > 0)
-            return;
-        
         _targetFov = normalFov;
 
         //Look for blocks over player head
@@ -99,12 +95,11 @@ public class CameraController : MonoBehaviour
         {
             Block block = Location.LocationByPosition(target.transform.position + new Vector3(0, y)).GetBlock();
 
-            if (block != null && block.IsSolid)
-            {
-                _targetFov = zoomedFov;
-
-                break;
-            }
+            if (block == null) continue;
+            if (!block.IsSolid) continue;
+            
+            _targetFov = roofFov;
+            break;
         }
 
         if (Player.LocalEntity.GetComponent<PlayerMovement>().sprinting) _targetFov += sprintZoomAmount;
