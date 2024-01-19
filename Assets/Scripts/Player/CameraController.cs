@@ -26,6 +26,8 @@ public class CameraController : MonoBehaviour
     public int roofCheckMaxDistance = 5;
     public float normalFov;
     public float zoomedFov;
+    public float sprintZoomAmount;
+    public float sneakZoomAmount;
 
     [Header("Mouse Panning")] 
     public Vector2 mousePanningMagnitude;
@@ -104,6 +106,9 @@ public class CameraController : MonoBehaviour
                 break;
             }
         }
+
+        if (Player.LocalEntity.GetComponent<PlayerMovement>().sprinting) _targetFov += sprintZoomAmount;
+        if(Player.LocalEntity.GetComponent<PlayerMovement>().sneaking) _targetFov += sneakZoomAmount;
     }
 
     private void SmoothToTargetZoom()

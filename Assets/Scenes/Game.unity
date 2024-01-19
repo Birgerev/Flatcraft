@@ -11065,10 +11065,12 @@ MonoBehaviour:
   shakeSpeed: 10
   maxOffset: 1
   maxRoll: 5
-  zoomDampTime: 1
-  roofCheckMaxDistance: 5
+  zoomDampTime: 0.4
   normalFov: 12
-  zoomedFov: 8
+  sprintZoomAmount: 2
+  sneakZoomAmount: -1
+  roofFov: 10
+  roofCheckMaxDistance: 5
   mousePanningMagnitude: {x: 1.5, y: 1.5}
   currentShake: 0
 --- !u!1001 &1982835370
