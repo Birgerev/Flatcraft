@@ -8,18 +8,18 @@ public class PlayerInventoryHandler : NetworkBehaviour
 {
     private Material _actionBarLastSelectedMaterial;
     private int _framesSinceInventoryOpen;
-    private float _lastFrameScroll;
+    private float _lastScrollFrame;
     
     private Player _player;
     
+    //TODO clean
     private void Update()
     {
-        if(isServer)
-            GetInventory().holder = _player.Location;
+        if(isServer) GetInventory().holder = _player.Location;
         
         if (!isOwned) return;
 
-        CheckActionBarUpdate();
+        ActionBarMessageUpdate();
 
         if (Inventory.IsAnyOpen(_player.playerInstance))
             _framesSinceInventoryOpen = 0;
@@ -35,18 +35,11 @@ public class PlayerInventoryHandler : NetworkBehaviour
         if (!PlayerInteraction.CanInteractWithWorld()) return;
         
         //Open inventory
-        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10)
-            RequestOpenInventory();
+        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10) CMD_OpenInventory();
 
-        //Inventory Managment
-        if (Input.GetKeyDown(KeyCode.Q))
-            RequestDropItem();
+        if (Input.GetKeyDown(KeyCode.Q)) CMD_DropSelected();
 
-        KeyCode[] numpadCodes =
-        {
-            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
-            KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
-        };
+        KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9 };
         foreach (KeyCode keyCode in numpadCodes)
             if (Input.GetKeyDown(keyCode))
                 SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
@@ -65,11 +58,19 @@ public class PlayerInventoryHandler : NetworkBehaviour
             SetSelectedInventorySlot(newSelectedSlot);
         }
 
-        _lastFrameScroll = scroll;
+    [Client]
+    private void ActionBarMessageUpdate()
+    {
+        Material selectedMaterial = GetInventory().GetSelectedItem().material;
+
+        if (selectedMaterial != _actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
+            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
+
+        _actionBarLastSelectedMaterial = selectedMaterial;
     }
     
-    [Server]
-    public void DropSelected()
+    [Command]
+    public void CMD_DropSelected()
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem;
@@ -93,15 +94,15 @@ public class PlayerInventoryHandler : NetworkBehaviour
     }
     
     [Command]
-    private void RequestOpenInventory()
+    private void CMD_OpenInventory()
     {
         GetInventory().Open(_player.playerInstance);
     }
 
     [Command]
-    private void RequestDropItem()
+    private void CMD_UpdateSelectedSlot(int slot)
     {
-        DropSelected();
+        GetInventory().selectedSlot = slot;
     }
 
     public PlayerInventory GetInventory()
@@ -117,24 +118,7 @@ public class PlayerInventoryHandler : NetworkBehaviour
         
         return (PlayerInventory)inventory;
     }
-
-    [Command]
-    private void SetSelectedInventorySlot(int slot)
-    {
-        GetInventory().selectedSlot = slot;
-    }
-
-    [Client]
-    private void CheckActionBarUpdate()
-    {
-        Material selectedMaterial = GetInventory().GetSelectedItem().material;
-
-        if (selectedMaterial != _actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
-            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
-
-        _actionBarLastSelectedMaterial = selectedMaterial;
-    }
-
+    
     private void Awake()
     {
         _player = GetComponent<Player>();

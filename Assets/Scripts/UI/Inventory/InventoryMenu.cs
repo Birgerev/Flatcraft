@@ -175,7 +175,7 @@ public class InventoryMenu : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickBackground()
+    public virtual void CMD_OnClickBackground()
     {
         if (pointerItem.material == Material.Air)
             return;
