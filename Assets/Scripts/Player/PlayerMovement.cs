@@ -60,6 +60,8 @@ public class PlayerMovement : NetworkBehaviour
         if (direction == 0) return;
 
         //Stop from falling off edge when sneaking
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (sneaking && WillFallInDirection(direction)) { rb.velocity = new Vector2(0, rb.velocity.y); return;}
         
         _movement.Walk(direction);
     }
@@ -114,6 +116,19 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    private bool WillFallInDirection(int direction)
+    {
+        if (!_player.isOnGround) return false;
+        
+        Block nextGroundBlock = Location.LocationByPosition(transform.position + new Vector3(direction * .1f, -.6f)).GetBlock();
+        
+        if(!nextGroundBlock) return true;
+        if(!nextGroundBlock.IsSolid) return true;
+
+        return false;
+    }
+
+    private void CrouchOnLadderCheck()
     {
         bool isLadderSneaking = _player.isOnClimbable && sneaking;
         
