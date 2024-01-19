@@ -8,7 +8,6 @@ public class PlayerInventoryHandler : NetworkBehaviour
 {
     private Material _actionBarLastSelectedMaterial;
     private int _framesSinceInventoryOpen;
-    private float _lastScrollFrame;
     
     private Player _player;
     
@@ -38,24 +37,27 @@ public class PlayerInventoryHandler : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q)) CMD_DropSelected();
 
+        HotbarSlotInput();
+    }
+
+    private void HotbarSlotInput()
+    {
+        //Number Keybinds
         KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9 };
         foreach (KeyCode keyCode in numpadCodes)
             if (Input.GetKeyDown(keyCode))
-                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
-
-
-        float scroll = Input.mouseScrollDelta.y;
-        //Check once every 5 frames
-        if (scroll != 0 && (Time.frameCount % 5 == 0 || _lastFrameScroll == 0))
+                CMD_UpdateSelectedSlot(Array.IndexOf(numpadCodes, keyCode));
+        
+        //Hotbar scroll
+        float scrollAmount = Input.mouseScrollDelta.y;
+        if (scrollAmount != 0)
         {
-            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
-            if (newSelectedSlot > 8)
-                newSelectedSlot = 0;
-            if (newSelectedSlot < 0)
-                newSelectedSlot = 8;
+            int newSelectedSlot = GetInventory().selectedSlot + (int)scrollAmount;
+            newSelectedSlot = (newSelectedSlot + 9) % 9; //Make sure it isnt negative
 
-            SetSelectedInventorySlot(newSelectedSlot);
+            CMD_UpdateSelectedSlot(newSelectedSlot);
         }
+    }
 
     [Client]
     private void ActionBarMessageUpdate()
