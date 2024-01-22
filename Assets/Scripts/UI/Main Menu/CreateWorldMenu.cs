@@ -25,7 +25,12 @@ public class CreateWorldMenu : MonoBehaviour
     {
         if (_disableInput)
             return;
-
+        
+        //Demo Skyblock Template
+        #if DEMO_BUILD
+        world.template = WorldTemplate.Skyblock;
+        #endif
+        
         worldTemplateButtonText.text = "Template: " + world.template.ToString();
         FetchNameField();
         FetchSeedField();
