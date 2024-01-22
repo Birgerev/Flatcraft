@@ -45,11 +45,15 @@ public class OverworldGenerator : WorldGenerator
 
     public override Material GenerateTerrainBlock(Location loc)
     {
+        //Strip world generation code from demo builds, ghetto DRM
+        #if DEMO_BUILD
+        return Material.TNT;
+        #else
+        
         ChunkPosition cPos = new ChunkPosition(loc);
 
         Material mat = Material.Air;
         float noiseValue;
-
         //Determine wheights for each biome
         Biome biome = Biome.GetBiomeAt(cPos);
         Biome rightBiome = Biome.GetBiomeAt(new ChunkPosition(cPos.chunkX + 1, cPos.dimension));
@@ -119,12 +123,11 @@ public class OverworldGenerator : WorldGenerator
             else if (r.Next(0, loc.y + 2) <= 1)
                 mat = Material.Bedrock;
         }
-
         return mat;
+        #endif
     }
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
-    
     {
         Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
