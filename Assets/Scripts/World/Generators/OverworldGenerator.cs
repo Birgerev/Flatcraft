@@ -71,7 +71,6 @@ public class OverworldGenerator : WorldGenerator
             noiseValue = biome.GetLandscapeNoiseAt(loc);
         }
 
-
         //-Terrain-//
         if (noiseValue > 0.1f)
         {
