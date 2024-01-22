@@ -8,18 +8,16 @@ public class PlayerInventoryHandler : NetworkBehaviour
 {
     private Material _actionBarLastSelectedMaterial;
     private int _framesSinceInventoryOpen;
-    private float _lastFrameScroll;
     
     private Player _player;
     
     private void Update()
     {
-        if(isServer)
-            GetInventory().holder = _player.Location;
+        if(isServer) GetInventory().holder = _player.Location;
         
         if (!isOwned) return;
 
-        CheckActionBarUpdate();
+        ActionBarMessageUpdate();
 
         if (Inventory.IsAnyOpen(_player.playerInstance))
             _framesSinceInventoryOpen = 0;
@@ -35,41 +33,45 @@ public class PlayerInventoryHandler : NetworkBehaviour
         if (!PlayerInteraction.CanInteractWithWorld()) return;
         
         //Open inventory
-        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10)
-            RequestOpenInventory();
+        if (Input.GetKeyDown(KeyCode.E) && _framesSinceInventoryOpen > 10) CMD_OpenInventory();
 
-        //Inventory Managment
-        if (Input.GetKeyDown(KeyCode.Q))
-            RequestDropItem();
+        if (Input.GetKeyDown(KeyCode.Q)) CMD_DropSelected();
 
-        KeyCode[] numpadCodes =
-        {
-            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
-            KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9
-        };
+        HotbarSlotInput();
+    }
+
+    private void HotbarSlotInput()
+    {
+        //Number Keybinds
+        KeyCode[] numpadCodes = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9 };
         foreach (KeyCode keyCode in numpadCodes)
             if (Input.GetKeyDown(keyCode))
-                SetSelectedInventorySlot(Array.IndexOf(numpadCodes, keyCode));
-
-
-        float scroll = Input.mouseScrollDelta.y;
-        //Check once every 5 frames
-        if (scroll != 0 && (Time.frameCount % 5 == 0 || _lastFrameScroll == 0))
+                CMD_UpdateSelectedSlot(Array.IndexOf(numpadCodes, keyCode));
+        
+        //Hotbar scroll
+        float scrollAmount = Input.mouseScrollDelta.y;
+        if (scrollAmount != 0)
         {
-            int newSelectedSlot = GetInventory().selectedSlot + (scroll > 0 ? -1 : 1);
-            if (newSelectedSlot > 8)
-                newSelectedSlot = 0;
-            if (newSelectedSlot < 0)
-                newSelectedSlot = 8;
+            int newSelectedSlot = GetInventory().selectedSlot + (int)scrollAmount;
+            newSelectedSlot = (newSelectedSlot + 9) % 9; //Make sure it isnt negative
 
-            SetSelectedInventorySlot(newSelectedSlot);
+            CMD_UpdateSelectedSlot(newSelectedSlot);
         }
+    }
 
-        _lastFrameScroll = scroll;
+    [Client]
+    private void ActionBarMessageUpdate()
+    {
+        Material selectedMaterial = GetInventory().GetSelectedItem().material;
+
+        if (selectedMaterial != _actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
+            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
+
+        _actionBarLastSelectedMaterial = selectedMaterial;
     }
     
-    [Server]
-    public void DropSelected()
+    [Command]
+    public void CMD_DropSelected()
     {
         ItemStack selectedItem = GetInventory().GetSelectedItem();
         ItemStack droppedItem = selectedItem;
@@ -93,15 +95,15 @@ public class PlayerInventoryHandler : NetworkBehaviour
     }
     
     [Command]
-    private void RequestOpenInventory()
+    private void CMD_OpenInventory()
     {
         GetInventory().Open(_player.playerInstance);
     }
 
     [Command]
-    private void RequestDropItem()
+    private void CMD_UpdateSelectedSlot(int slot)
     {
-        DropSelected();
+        GetInventory().selectedSlot = slot;
     }
 
     public PlayerInventory GetInventory()
@@ -117,24 +119,7 @@ public class PlayerInventoryHandler : NetworkBehaviour
         
         return (PlayerInventory)inventory;
     }
-
-    [Command]
-    private void SetSelectedInventorySlot(int slot)
-    {
-        GetInventory().selectedSlot = slot;
-    }
-
-    [Client]
-    private void CheckActionBarUpdate()
-    {
-        Material selectedMaterial = GetInventory().GetSelectedItem().material;
-
-        if (selectedMaterial != _actionBarLastSelectedMaterial && selectedMaterial != Material.Air)
-            ActionBar.message = selectedMaterial.ToString().Replace('_', ' ');
-
-        _actionBarLastSelectedMaterial = selectedMaterial;
-    }
-
+    
     private void Awake()
     {
         _player = GetComponent<Player>();
