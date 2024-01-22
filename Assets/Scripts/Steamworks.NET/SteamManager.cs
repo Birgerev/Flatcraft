@@ -22,7 +22,11 @@ using Steamworks;
 [DisallowMultipleComponent]
 public class SteamManager : MonoBehaviour
 {
+	#if DEMO_BUILD
+	public const int AppId = 2800540;
+	#else
 	public const int AppId = 2070630;
+	#endif
 	
 #if !DISABLESTEAMWORKS
 	protected static bool s_EverInitialized = false;
