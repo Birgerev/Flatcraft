@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class LightSource : MonoBehaviour
@@ -5,6 +6,11 @@ public class LightSource : MonoBehaviour
     public LightValues lightValues;
     
     private Location _cachedLocation;
+
+    private void Awake()
+    {
+        _cachedLocation = Location.LocationByPosition(transform.position);
+    }
 
     public void UpdateLightWithinReach()
     {
@@ -34,9 +40,6 @@ public class LightSource : MonoBehaviour
 
     public virtual Location GetLocation()
     {
-        if(_cachedLocation.Equals(default(Location)))
-            _cachedLocation = Location.LocationByPosition(transform.position);
-
         return _cachedLocation;
     }
 }

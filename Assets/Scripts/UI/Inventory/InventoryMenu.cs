@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class InventoryMenu : NetworkBehaviour
 {
-    [SyncVar] public GameObject ownerPlayerInstance;
+    [SyncVar] public PlayerInstance ownerPlayerInstance;
 
     public List<Transform> inventorySlotLists = new List<Transform>();
     public PointerSlot pointerSlot;
@@ -20,7 +20,7 @@ public class InventoryMenu : NetworkBehaviour
     public virtual void Update()
     {
         bool ownsInventoryMenu = (PlayerInstance.localPlayerInstance != null &&
-                                 PlayerInstance.localPlayerInstance.gameObject == ownerPlayerInstance);
+                                 PlayerInstance.localPlayerInstance == ownerPlayerInstance);
 
         canvasGroup.alpha = ownsInventoryMenu ? 1 : 0;
         canvasGroup.interactable = ownsInventoryMenu;
@@ -47,8 +47,7 @@ public class InventoryMenu : NetworkBehaviour
 
     public virtual void OpenPlayerInventory()
     {
-        inventoryIds.Add(1,
-            ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>().inventoryId);
+        inventoryIds.Add(1, ownerPlayerInstance.playerEntity.inventoryId);
     }
 
     [Command(requiresAuthority = false)]
@@ -176,13 +175,13 @@ public class InventoryMenu : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickBackground()
+    public virtual void CMD_OnClickBackground()
     {
         if (pointerItem.material == Material.Air)
             return;
         
-        Player player = ownerPlayerInstance.GetComponent<PlayerInstance>().playerEntity.GetComponent<Player>();
-        player.DropItem(pointerItem);
+        Player player = ownerPlayerInstance.playerEntity;
+        player.GetInventoryHandler().DropItem(pointerItem);
         
         SetPointerItem(new ItemStack(Material.Air));
         UpdateInventory();

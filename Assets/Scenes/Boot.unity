@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -164,13 +164,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 643624432}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &643624436
 MonoBehaviour:
@@ -233,6 +233,215 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e5c079776d5f8949b47ead23935db03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &673694103
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 673694111}
+  - component: {fileID: 673694105}
+  - component: {fileID: 673694112}
+  - component: {fileID: 673694113}
+  - component: {fileID: 673694115}
+  - component: {fileID: 673694114}
+  - component: {fileID: 673694116}
+  - component: {fileID: 673694122}
+  - component: {fileID: 673694121}
+  - component: {fileID: 673694120}
+  - component: {fileID: 673694119}
+  - component: {fileID: 673694118}
+  - component: {fileID: 673694117}
+  m_Layer: 0
+  m_Name: Achievement Manager (Persistent)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &673694105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bccc4ea325788b145bafc248e4e6c974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &673694111
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &673694112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Diamond
+  materialCriteria: 37000000
+--- !u!114 &673694113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Log
+  materialCriteria: 0600000048000000
+--- !u!114 &673694114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Furnace
+  materialCriteria: 32000000
+--- !u!114 &673694115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Crafting_Table
+  materialCriteria: 31000000
+--- !u!114 &673694116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Iron_Ingot
+  materialCriteria: 34000000
+--- !u!114 &673694117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d0761a007d84bc4b9798c3c3d213c4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: VisitDimension_Nether
+  trackedDimension: 1
+--- !u!114 &673694118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Music_Disc_Stal
+  materialCriteria: 64000000
+--- !u!114 &673694119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Sign
+  materialCriteria: 6c000000
+--- !u!114 &673694120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Blaze_Rod
+  materialCriteria: 73000000
+--- !u!114 &673694121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Stone_Pickaxe
+  materialCriteria: 1d000000
+--- !u!114 &673694122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673694103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fbac60add1e2924bbd2037e5e18fdc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  achievementId: ItemHeld_Bread
+  materialCriteria: 5b000000
 --- !u!1 &1488499057
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,13 +576,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1488499057}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1812474476
 GameObject:
@@ -399,13 +608,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812474476}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1812474480
 MonoBehaviour:
@@ -420,3 +629,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoloadTestWorld: 0
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1812474479}
+  - {fileID: 643624434}
+  - {fileID: 673694111}
+  - {fileID: 1488499060}

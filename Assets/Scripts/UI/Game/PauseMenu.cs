@@ -1,5 +1,6 @@
 ﻿using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 #if !DISABLESTEAMWORKS
 using Steamworks;
@@ -9,7 +10,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool active;
     public GameObject optionsMenuPrefab;
-
+    
     // Start is called before the first frame update
     private void Start()
     {
@@ -19,8 +20,10 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            SetMenuActive(!active);
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        if (!active && !PlayerInteraction.CanInteractWithWorld()) return;
+        
+        SetMenuActive(!active);
     }
     
     public void Invite()

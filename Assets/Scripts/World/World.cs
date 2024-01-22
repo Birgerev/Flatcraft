@@ -15,6 +15,7 @@ public class World
     public WorldTemplate template;
     public float weatherTime;
     public Weather weather;
+    public DateTime lastModifiedUTC;
 
     public World(string name, int seed)
     {
@@ -25,6 +26,7 @@ public class World
         this.template = WorldTemplate.Default;
         weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
         weather = Weather.Clear;
+        lastModifiedUTC = DateTime.UtcNow;
     }
 
     public World()
@@ -36,6 +38,7 @@ public class World
         this.template = WorldTemplate.Default;
         weatherTime = WeatherManager.NewWeatherTime(Weather.Clear);
         weather = Weather.Clear;
+        lastModifiedUTC = DateTime.UtcNow;
     }
 
     public static string appPath
@@ -66,6 +69,7 @@ public class World
             world.template = (WorldTemplate) Enum.Parse(typeof(WorldTemplate), worldData["template"]);
             world.weatherTime = float.Parse(worldData["weatherTime"]);
             world.weather = (Weather) Enum.Parse(typeof(Weather), worldData["weather"]);
+            world.lastModifiedUTC = File.GetLastWriteTimeUtc(world.GetPath() + "\\level.dat");
         }
         catch (Exception e)
         {

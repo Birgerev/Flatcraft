@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Birch_Sapling : Block
 {
-    public override float averageRandomTickDuration { get; } = 20 * 60;
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool requiresGround { get; } = true;
-    public override bool isFlammable { get; } = true;
+    public override float AverageRandomTickDuration { get; } = 20 * 60;
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool IsFlammable { get; } = true;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
     
     public override void RandomTick()
     {

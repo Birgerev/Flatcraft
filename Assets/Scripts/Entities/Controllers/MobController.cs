@@ -49,7 +49,9 @@ public class MobController : EntityController
             MoveToTarget();
         Pathfind();
 
-        Walking();
+        if(isWalking)
+            Walking();
+
         Swim();
         if (hitTargetDamage > 0)
             TryHit();
@@ -109,25 +111,22 @@ public class MobController : EntityController
 
     protected virtual void Walking()
     {
-        if (isWalking)
-        {
-            instance.Walk(instance.facingLeft ? -1 : 1);
+        movement.Walk(instance.facingLeft ? -1 : 1);
 
-            Vector3 locInFront = instance.transform.position + new Vector3(
-                (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
-                0);
-            Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
+        Vector3 locInFront = instance.transform.position + new Vector3(
+            (instance.facingLeft ? -1 : 1) * ((instance.GetWidth() / 2) + 0.5f),
+            0);
+        Block blockInFront = Location.LocationByPosition(locInFront).GetBlock();
 
-            //Jump when there is a block in front of entity
-            if (blockInFront != null && blockInFront.solid && !instance.isInLiquid)
-                instance.Jump();
-        }
+        //Jump when there is a block in front of entity
+        if (blockInFront != null && blockInFront.IsSolid && !instance.isInLiquid)
+            movement.Jump();
     }
 
     protected virtual void Swim()
     {
         if (instance.isInLiquid && !swimDown)
-            instance.Jump();
+            movement.Jump();
     }
 
     protected virtual void SearchTarget()
@@ -139,6 +138,9 @@ public class MobController : EntityController
         {
             if (!targetSearchEntityTypes.Contains(e.GetType()) || 
                 Vector2.Distance(e.Location.GetPosition(), instance.Location.GetPosition()) > targetSearchRange)
+                continue;
+            
+            if(!HasSightline(e.Location))
                 continue;
             
             target = e;
@@ -171,7 +173,7 @@ public class MobController : EntityController
         float distance = GetTargetDistance();
 
         if (jumpWhenHitting && distance < 2f)
-            instance.Jump();
+            movement.Jump();
 
         if (distance < 1.5f)
         {
@@ -195,5 +197,20 @@ public class MobController : EntityController
     protected virtual float GetTargetDistance()
     {
         return Vector2.Distance(target.Location.GetPosition(), instance.Location.GetPosition());
+    }
+
+    protected virtual bool HasSightline(Location target)
+    {
+        Vector2 currentPosition = (Vector2)instance.transform.position + new Vector2(0, 1);
+        target += new Location(0, 1);
+        Vector2 targetDirection = target.GetPosition() - currentPosition;
+        
+        //Check if blocks obstructs sight line
+        LayerMask mask = LayerMask.GetMask("Block");
+
+        //If raycasts hit, sight line is obstructed
+        return !Physics2D.Raycast(
+            currentPosition, targetDirection.normalized, 
+            targetDirection.magnitude, mask);
     }
 }

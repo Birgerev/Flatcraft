@@ -7,7 +7,7 @@ using Random = System.Random;
 public class Enderman : Monster
 {
     public override float maxHealth { get; } = 40;
-    [SyncVar] public bool angry;
+    [SyncVar] public bool visuallyAngry;
 
     public override List<ItemStack> GetDrops()
     {
@@ -32,14 +32,14 @@ public class Enderman : Monster
                 new float2(0.6f, 1f), new int2(0, 3), new Color(.8f, .25f, .8f));
     }
     
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();
 
         Animator anim = GetComponent<Animator>();
 
-        anim.SetBool("angry", angry);
+        anim.SetBool("angry", visuallyAngry);
     }
 
     public override EntityController GetController()

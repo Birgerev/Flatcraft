@@ -12,8 +12,8 @@ Sandstone*0,-3*
 Sandstone*0,-2*
 Sandstone*0,-1*
 Sandstone*0,0*
-Air*0,1*
-Air*0,2*
+Sandstone*0,1*
+Sandstone*0,2*
 Sandstone*0,3*
 Sandstone*0,4*
 Sandstone*0,5*

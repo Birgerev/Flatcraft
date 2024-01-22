@@ -1,18 +1,18 @@
 ﻿public class Dead_Bush : Block
 {
-    public override string[] randomTextures { get; } =
+    public override string[] RandomTextures { get; } =
         {"dead_bush", "dead_bush_1", "dead_bush_2"};
 
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool requiresGround { get; } = true;
-    public override bool isFlammable { get; } = true;
+    public override bool IsSolid { get; set; } = false;
+    public override bool CanBeOverriden { get; set; } = true;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool RequiresGround { get; } = true;
+    public override bool IsFlammable { get; } = true;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
-
-    public override ItemStack GetDrop()
+    protected override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Stick, 1);
+        return new[] { new ItemStack(Material.Stick)};
     }
 }

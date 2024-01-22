@@ -11,7 +11,8 @@ public class ChatManager : NetworkBehaviour
     public static ChatManager instance;
 
     public readonly Command[] commands = {new GiveCommand(), new HealCommand(), new HelpCommand(),
-        new SaveStructureCommand(), new SummonCommand(), new TimeCommand(), new WeatherCommand()};
+        new SaveStructureCommand(), new SummonCommand(), new TimeCommand(), new WeatherCommand(), 
+        new StructureCommand()};
 
     public void Start()
     {

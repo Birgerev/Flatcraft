@@ -8,8 +8,9 @@ public class Wolf : PassiveEntity
 {
     //Entity Properties
     public override float maxHealth { get; } = 8;
-    protected override float walkSpeed { get; } = 6f;
     protected virtual float tameChance { get; } = 0.3f;
+
+    [SyncVar] public bool visuallyAngry;
 
     public override EntityController GetController()
     {
@@ -21,30 +22,37 @@ public class Wolf : PassiveEntity
     {
         base.Interact(source);
         
-        PlayerInventory inv = source.GetInventory();
-        ItemStack heldItem = inv.GetSelectedItem();
+        PlayerInventory inv = source.GetInventoryHandler().GetInventory();
 
-        if (heldItem.material == Material.Bone)
+        if (inv.GetSelectedItem().material != Material.Bone) return;
+
+        inv.ConsumeSelectedItem();
+        
+        if (new Random().NextDouble() > tameChance)
         {
-            heldItem.Amount--;
-            inv.SetItem(inv.selectedSlot, heldItem);
-            if (new Random().NextDouble() < tameChance)
-            {
-                PlaySmokeEffect(Color.red);
-
-                Dog dog = (Dog) Entity.Spawn("Dog");
-                dog.Teleport(Location);
-                dog.ownerUuid = source.uuid;
-
-                Remove();
-            }
-            else
-            {
-                PlaySmokeEffect(Color.black);
-            }
+            PlaySmokeEffect(Color.black);
+            return;
         }
+
+        PlaySmokeEffect(Color.red);
+
+        Dog dog = (Dog) Entity.Spawn("Dog");
+        dog.Teleport(Location);
+        dog.ownerUuid = source.uuid;
+
+        Remove();
     }
-    
+
+    [Server]
+    public override void UpdateAnimatorValues()
+    {
+        base.UpdateAnimatorValues();
+
+        Animator anim = GetComponent<Animator>();
+
+        anim.SetBool("angry", visuallyAngry);
+    }
+
     [ClientRpc]
     private void PlaySmokeEffect(Color color)
     {

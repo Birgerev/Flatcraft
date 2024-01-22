@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SkeletonController : MonsterController
 {
-    protected override bool targetDamagerIfAttacked { get; } = true;
     protected override float targetSearchRange { get; } = 12;
     protected override float targetLooseRange { get; } = 18;
     protected override float pathfindingKeepDistanceToTarget { get; } = 10;
@@ -21,7 +20,9 @@ public class SkeletonController : MonsterController
     
     protected virtual void TryShoot()
     {
-        if (target == null || GetTargetDistance() > 12)
+        if (target == null || 
+            GetTargetDistance() > 12 || 
+            !HasSightline(target.Location))
             return;
 
         Skeleton skeleton = (Skeleton) instance;

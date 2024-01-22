@@ -10,21 +10,26 @@ using Steamworks;
 
 public class MultiplayerManager : NetworkManager
 {
+    //dont need singleton variable here, use "singleton" from NetworkManager
+    
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     private bool _initialized;
+    
+    //TODO check settings is multiplayer enabled?
     
     public override void Awake()
     {
         base.Awake();
         
         //Register all network prefabs to manager
+        /*TODO do this manually
         foreach (string dir in prefabDirectories)
         {
             GameObject[] prefabs = Resources.LoadAll<GameObject>(dir + "/");
             foreach (GameObject prefab in prefabs)
                 NetworkClient.RegisterPrefab(prefab);
-        }
+        }*/
 
 #if !DISABLESTEAMWORKS
         RegisterSteamCallbacks();
@@ -79,6 +84,7 @@ public class MultiplayerManager : NetworkManager
 
 #if !DISABLESTEAMWORKS
         LeaveSteamLobby();
+        UnregisterSteamCallbacks();
 #endif
 
         SceneManager.LoadScene("MainMenu");
@@ -115,6 +121,7 @@ public class MultiplayerManager : NetworkManager
     
 #if !DISABLESTEAMWORKS
     public CSteamID lobbyId;
+    public ELobbyType currentLobbyVisibility;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
     protected Callback<LobbyEnter_t> lobbyEntered;
@@ -125,6 +132,12 @@ public class MultiplayerManager : NetworkManager
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnSteamLobbyJoined);
     }
 
+    private void UnregisterSteamCallbacks()
+    {
+        lobbyCreated.Unregister();
+        lobbyEntered.Unregister();
+    }
+    
     private void LeaveSteamLobby()
     {
         Debug.Log("Leaving steam lobby");
@@ -134,7 +147,30 @@ public class MultiplayerManager : NetworkManager
     private static void CreateSteamLobby()
     {
         Debug.Log("Creating steam lobby");
-        SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, singleton.maxConnections);
+        SteamMatchmaking.CreateLobby(GetSettingLobbyVisibility(), singleton.maxConnections);
+        ((MultiplayerManager)singleton).currentLobbyVisibility = GetSettingLobbyVisibility();
+        
+        singleton.InvokeRepeating(nameof(UpdateLobbyVisibility), 1, 1);
+    }
+
+    private static ELobbyType GetSettingLobbyVisibility()
+    {
+        return SettingsManager.GetStringValue("multiplayer").Equals("friends")
+            ? ELobbyType.k_ELobbyTypeFriendsOnly
+            : ELobbyType.k_ELobbyTypePrivate;
+    }
+
+    public void UpdateLobbyVisibility()
+    {
+        //Called by Invoked Repeating
+        ELobbyType settingsLobbyVisibility = GetSettingLobbyVisibility();
+        
+        if (currentLobbyVisibility != settingsLobbyVisibility)
+        {
+            SteamMatchmaking.SetLobbyType(lobbyId, settingsLobbyVisibility);
+            currentLobbyVisibility = settingsLobbyVisibility;
+            Debug.Log("Lobby visibility set to " + currentLobbyVisibility);
+        }
     }
 
     public static async void JoinGameAsync(CSteamID lobbyId)

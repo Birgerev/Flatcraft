@@ -1,63 +1,63 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Liquid : Block
 {
-    public override float breakTime { get; } = 100;
+    public override float BreakTime { get; } = 100;
     public virtual int maxLiquidLevel { get; } = 8;
     public virtual float liquidTickFrequency { get; } = 1;
     public virtual string[] liquidTextures { get; } = { };
-    public override bool solid { get; set; } = false;
-    public override bool trigger { get; set; } = true;
+    public override bool IsSolid { get; set; } = false;
+    public override bool CanBeOverriden { get; set; } = true;
 
-    public override ItemStack GetDrop()
+    private bool _isLiquidTicking;
+
+    protected override ItemStack[] GetDrops()
     {
-        return new ItemStack();
-    }
-
-    public override void BuildTick()
-    {
-        //If block was built by player, it is a liquid source
-        MakeIntoLiquidSourceBlock();
-
-        base.BuildTick();
+        return null;
     }
 
     public override void GeneratingTick()
     {
-        MakeIntoLiquidSourceBlock();
-        Tick();
-
+        MakeIntoLiquidSourceBlock();    //Max liquid level & source block
+        
         base.GeneratingTick();
     }
 
     public override void Tick()
     {
-        if (!GetData().HasTag("liquid_level"))
-        {
-            SetData(GetData().SetTag("liquid_level", maxLiquidLevel.ToString())).GetBlock().Tick();
-            return;
-        }
-        
-        StartCoroutine(scheduleLiquidTick());
+        if (!_isLiquidTicking)
+            LiquidTick();
 
         base.Tick();
     }
     
-    public virtual void LiquidTick()
+    public virtual async void LiquidTick()
     {
+        _isLiquidTicking = true;
+        
+        //Make sure block is initialized properly
+        if (!GetData().HasTag("liquid_level"))
+        {
+            MakeIntoLiquidSourceBlock();
+            return;
+        }
+        
+        //Delay liquid tick according to defined interval + random offset for performance
+        float tickRate = (1f / Chunk.TickRate * liquidTickFrequency);
+        //float randomOffset = (float) new System.Random(SeedGenerator.SeedByWorldLocation(location)).NextDouble()*.5f - .25f;
+        //Convert to milliseconds
+        await Task.Delay((int)(tickRate * 1000));
+        
         if (CheckSource())
             CheckFlow();
+        
+        _isLiquidTicking = false;
     }
     
-    private IEnumerator scheduleLiquidTick()
-    {
-        yield return new WaitForSeconds(1 / Chunk.TickRate * liquidTickFrequency);
-        LiquidTick();
-    }
-
     public bool CheckSource()
     {
         if (IsLiquidSourceBlock())
@@ -85,11 +85,8 @@ public class Liquid : Block
         Location down = location + new Location(0, -1);
         Material downMat = down.GetMaterial();
 
-        if (TryFlow(down, maxLiquidLevel))
-            return;
-
-        if (downMat == GetMaterial())
-            return;
+        if (TryFlow(down, maxLiquidLevel)) return;
+        if (downMat == GetMaterial()) return;
 
         int liquidLevel = int.Parse(GetData().GetTag("liquid_level"));
 
@@ -184,11 +181,9 @@ public class Liquid : Block
         BlockState state = loc.GetState();
 
         //Can always flow to air
-        if (state.material == Material.Air)
-        {
-            return true;
-        }
-            
+        if (state.material == Material.Air) return true;
+        
+        //If flow loc is also same liquid
         if (state.material == GetMaterial())
         {
             //Allow filling liquids with less level
@@ -198,11 +193,14 @@ public class Liquid : Block
                 int locLevel = int.Parse(loc.GetData().GetTag("liquid_level"));
 
                 //locLevel must be two less than current level
-                if (currentLevel - locLevel >= 2)
-                    return true;
-            }//If we do not care about liquid level, we can flow to water
-            else return true;
+                return currentLevel - locLevel >= 2;
+            }
+            //If we do not care about liquid level, we can always flow to same liquid
+            return true;
         }
+        
+        //Can flow to blocks that can be overriden
+        if (loc.GetBlock() != null && loc.GetBlock().CanBeOverriden) return true;
         
         //Otherwise, we cant flow to block
         return false;
@@ -229,11 +227,10 @@ public class Liquid : Block
 
     private void MakeIntoLiquidSourceBlock()
     {
-        BlockData newData = GetData();
-        newData.SetTag("source_block", "true");
-        newData.SetTag("liquid_level", maxLiquidLevel.ToString());
-        SetData(newData);
-        location.Tick();
+        SetData(GetData()
+            .SetTag("source_block", "true")
+            .SetTag("liquid_level", maxLiquidLevel.ToString()))
+            .GetBlock().Tick();//Tick without spread
     }
 
     protected virtual void LiquidEncounterEffect(Location loc)
@@ -306,15 +303,15 @@ public class Liquid : Block
         return sourceResults; //return list
     }
 
-    public override void Hit(PlayerInstance player, float time, Tool_Type tool_type, Tool_Level tool_level)
+    public override void Hit(PlayerInstance player, float time, Tool_Type toolType = Tool_Type.None, Tool_Level toolLevel = Tool_Level.None)
     {
         //Disable breaking
     }
 
-    public override string GetTexture()
+    protected override string GetTextureName()
     {
         if (!GetData().HasTag("liquid_level"))
-            return base.GetTexture();
+            return base.GetTextureName();
 
         return liquidTextures[int.Parse(GetData().GetTag("liquid_level")) - 1];
     }

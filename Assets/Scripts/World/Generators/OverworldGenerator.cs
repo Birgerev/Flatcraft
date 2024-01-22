@@ -124,6 +124,7 @@ public class OverworldGenerator : WorldGenerator
     }
 
     public override BlockState GenerateStructures(Location loc, Biome biome)
+    
     {
         Random r = new Random(SeedGenerator.SeedByWorldLocation(loc));
         Material mat = loc.GetMaterial();
@@ -209,14 +210,20 @@ public class OverworldGenerator : WorldGenerator
         if(loc.y == 10 && loc.x == GetStrongholdLocation())
             return new BlockState(Material.Structure_Block, new BlockData("structure=Stronghold/Presets"));
         
-        //Generate Liquid Pockets
-        if (loc.y < 40 && matBeneath == Material.Air && r.Next(0, 100) <= 2)
-            if (mat == Material.Stone)
+        //Generate Liquid From Top & Bottoms in caves
+        if (loc.y < SeaLevel - 15 && r.NextDouble() <= 0.03d)
+            if ((matBeneath == Material.Air && mat == Material.Stone) || (matBeneath == Material.Stone && mat == Material.Air))
             {
-                Material liquidMat = r.Next(0, 100) < 75 ? Material.Water : Material.Lava;
+                //Determine water or lava
+                Material liquidMat = r.NextDouble() < .5d ? Material.Water : Material.Lava;
 
                 return new BlockState(liquidMat);
             }
+        
+        //Random Lava//
+        if(mat == Material.Stone && r.NextDouble() < 0.0003d)
+            return new BlockState(Material.Lava);
+        
         
         //Lava lakes
         if (loc.y < LavaHeight && mat == Material.Air)

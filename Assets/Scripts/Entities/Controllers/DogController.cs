@@ -103,6 +103,7 @@ public class DogController : AnimalController
     
     protected override void Walking()
     {
+        //Don't walk when sitting
         if (((Dog) instance).sitting)
             return;
         

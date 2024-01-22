@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 public class Tall_Grass : Vegetation
 {
-    public override ItemStack GetDrop()
+    public override bool CanBeOverriden { get; set; } = true;
+    
+    protected override ItemStack[] GetDrops()
     {
         if (new Random().NextDouble() <= 0.25f)
-            return new ItemStack(Material.Wheat_Seeds, 1);
+            return new[] { new ItemStack(Material.Wheat_Seeds)};
 
-        return new ItemStack();
+        return null;
     }
 
     public override void GeneratingTick()
@@ -19,7 +21,7 @@ public class Tall_Grass : Vegetation
         above.SetMaterial(Material.Tall_Grass);
     }
 
-    public override void Break(bool drop)
+    public override void Break(bool drop = true)
     {
         base.Break(drop);
         

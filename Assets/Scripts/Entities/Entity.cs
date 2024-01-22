@@ -14,13 +14,13 @@ public class Entity : NetworkBehaviour
     public static List<Entity> entities = new List<Entity>();
     
     //Entity data tags
-    [EntityDataTag(false)] public float age;
+    [EntitySaveField(false)] public float age;
 
-    [SyncVar] [EntityDataTag(false)] public float fireTime;
+    [SyncVar] [EntitySaveField(false)] public float fireTime;
 
     public bool dead;
 
-    [SyncVar] [EntityDataTag(false)] public bool facingLeft;
+    [SyncVar] [EntitySaveField(false)] public bool facingLeft;
 
 
     //Entity State
@@ -28,8 +28,6 @@ public class Entity : NetworkBehaviour
 
     public bool isInLiquid;
     public bool isOnGround;
-
-    [SyncVar] public bool isOnClimbable;
 
     [SyncVar] public float portalTime;
 
@@ -40,9 +38,7 @@ public class Entity : NetworkBehaviour
     public Entity lastDamager;
 
     public Vector2 lastFramePosition;
-    public GameObject burningRender;
     private Vector2 _cachedposition;
-    private bool inLiquidLastFrame;
 
     public static int EntityCount => entities.Count;
 
@@ -105,7 +101,6 @@ public class Entity : NetworkBehaviour
     public virtual void LateUpdate()
     {
         lastFramePosition = transform.position;
-        inLiquidLastFrame = isInLiquid;
     }
 
     [Server]
@@ -126,18 +121,9 @@ public class Entity : NetworkBehaviour
 
         age += Time.deltaTime;
 
-        if (IsBurning())
-        {
-            ReduceFireTime();
-            WaterRemoveFireTimeCheck();
-        }
-
         CheckNetherPortal();
-        CheckWaterSplash();
-        CheckFireDamage();
         CheckVoidDamage();
         CheckSuffocation();
-        CheckLavaDamage();
     }
 
     [Client]
@@ -158,7 +144,6 @@ public class Entity : NetworkBehaviour
             isOnGround = false;
 
         CheckLightUpdate();
-        DoFireRender();
     }
 
     [Server]
@@ -201,11 +186,6 @@ public class Entity : NetworkBehaviour
         _cachedposition = transform.position;
     }
 
-    public virtual bool IsBurning()
-    {
-        return fireTime > 0;
-    }
-
     public virtual bool IsChunkLoaded()
     {
         return new ChunkPosition(Location).IsChunkLoaded();
@@ -224,7 +204,7 @@ public class Entity : NetworkBehaviour
         foreach (Collider2D col in blockBeneathColliders)
         {
             Block block = col.GetComponent<Block>();
-            if (block != null && block.solid && !block.trigger)
+            if (block != null && block.IsSolid)
             {
                 isOnGround = true;
                 return;
@@ -236,51 +216,6 @@ public class Entity : NetworkBehaviour
     }
     
     [Server]
-    private void CheckWaterSplash()
-    {
-        if (isInLiquid && !inLiquidLastFrame && GetVelocity().y < - 2)
-        {
-            bool isInWater = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Water)
-                {
-                    isInWater = true;
-                    break;
-                }
-
-            if (isInWater)
-            {
-                Sound.Play(Location, "entity/water_splash", SoundType.Entities, 0.75f, 1.25f); //Play splash sound
-                LiquidSplashEffect();
-            }
-        }
-    }
-
-    [Server]
-    private void WaterRemoveFireTimeCheck()
-    {
-        if (isInLiquid)
-        {
-            bool isInWater = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Water)
-                {
-                    isInWater = true;
-                    break;
-                }
-
-            if (isInWater)
-                fireTime = 0;
-        }
-    }
-
-    [Server]
-    private void ReduceFireTime()
-    {
-        fireTime -= Time.deltaTime;
-    }
-
-    [Server]
     private void CheckSuffocation()
     {
         if (!IsChunkLoaded())
@@ -290,27 +225,12 @@ public class Entity : NetworkBehaviour
         {
             foreach (Block block in GetBlocksForEntity())
             {
-                if (block.solid && !block.trigger && !(block is Liquid))
-                {
-                    TakeSuffocationDamage(1);
-                    return;
-                }
+                if (!block.IsSolid) continue;
+                
+                TakeSuffocationDamage(1);
+                return;
             }
         }
-    }
-
-    [Server]
-    private void CheckFireDamage()
-    {
-        if (IsBurning())
-            if (Time.time % 1f - Time.deltaTime <= 0)
-                TakeFireDamage(1);
-    }
-
-    [Server]
-    public virtual void TakeFireDamage(float damage)
-    {
-        Damage(damage);
     }
 
     [Server]
@@ -325,29 +245,6 @@ public class Entity : NetworkBehaviour
     public virtual void TakeVoidDamage(float damage)
     {
         Damage(damage);
-    }
-
-    [Server]
-    private void CheckLavaDamage()
-    {
-        if (isInLiquid)
-        {
-            bool isInLava = false;
-            foreach (Liquid liquid in GetLiquidBlocksForEntity())
-                if (liquid is Lava)
-                {
-                    isInLava = true;
-                    break;
-                }
-
-            if (isInLava)
-            {
-                fireTime = 14;
-
-                if (Time.time % 0.5f - Time.deltaTime <= 0)
-                    TakeLavaDamage(4);
-            }
-        }
     }
 
     public Liquid[] GetLiquidBlocksForEntity()
@@ -370,12 +267,6 @@ public class Entity : NetworkBehaviour
                 blocks.Add(col.GetComponent<Block>());
 
         return blocks.ToArray();
-    }
-
-    [Server]
-    public virtual void TakeLavaDamage(float damage)
-    {
-        Damage(damage);
     }
 
     [Server]
@@ -427,14 +318,6 @@ public class Entity : NetworkBehaviour
 
         Remove();
     }
-
-    [Server]
-    public virtual void Remove()
-    {
-        dead = true;
-        entities.Remove(this);
-        NetworkServer.Destroy(gameObject);
-    }
     
     [Server]
     public virtual void Damage(float damage)
@@ -480,13 +363,13 @@ public class Entity : NetworkBehaviour
         List<string> result = new List<string>();
         result.Add("location=" + JsonUtility.ToJson(Location));
         IEnumerable<FieldInfo> fields =
-            GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+            GetType().GetFields().Where(field => field.IsDefined(typeof(EntitySaveField), true));
 
         foreach (FieldInfo field in fields)
         foreach (Attribute attribute in Attribute.GetCustomAttributes(field))
-            if (attribute is EntityDataTag)
+            if (attribute is EntitySaveField)
             {
-                bool json = ((EntityDataTag) attribute).json;
+                bool json = ((EntitySaveField) attribute).ConvertToJson;
 
                 if (json)
                     result.Add(field.Name + "=" + JsonUtility.ToJson(field.GetValue(this)));
@@ -505,6 +388,14 @@ public class Entity : NetworkBehaviour
     }
 
     [Server]
+    public virtual void Remove()
+    {
+        dead = true;
+        entities.Remove(this);
+        NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
     public virtual void Save()
     {
         if (dead)
@@ -519,12 +410,13 @@ public class Entity : NetworkBehaviour
 
         File.WriteAllLines(path, lines);
     }
+    
     [Server]
     public virtual void Unload()
     {
         Save();
 
-        NetworkServer.Destroy(gameObject);
+        Remove();
     }
 
     [Server]
@@ -544,7 +436,7 @@ public class Entity : NetworkBehaviour
 
         Teleport(JsonUtility.FromJson<Location>(lines["location"]));
         IEnumerable<FieldInfo> fields =
-            GetType().GetFields().Where(field => field.IsDefined(typeof(EntityDataTag), true));
+            GetType().GetFields().Where(field => field.IsDefined(typeof(EntitySaveField), true));
 
         foreach (FieldInfo field in fields)
         {
@@ -552,9 +444,9 @@ public class Entity : NetworkBehaviour
             {
                 try
                 {
-                    if (attribute is EntityDataTag)
+                    if (attribute is EntitySaveField)
                     {
-                        bool json = ((EntityDataTag) attribute).json;
+                        bool json = ((EntitySaveField) attribute).ConvertToJson;
                         Type type = field.FieldType;
 
                         if (json)
@@ -669,28 +561,6 @@ public class Entity : NetworkBehaviour
             UpdateClientLight();
     }
 
-    [ClientRpc]
-    public virtual void LiquidSplashEffect()
-    {
-        if (GetLiquidBlocksForEntity().Length == 0)
-            return;
-
-        Color textureColor = GetLiquidBlocksForEntity()[0].GetColorsInTexture()[0];
-        Random r = new Random();
-        for (int i = 0; i < 8; i++) //Spawn landing partickes
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 0.5f);
-            part.color = textureColor;
-            part.doGravity = true;
-            part.velocity = new Vector2((1f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 3f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
-    }
-
     [Client]
     private void UpdateClientLight()
     {
@@ -704,24 +574,6 @@ public class Entity : NetworkBehaviour
     public virtual SpriteRenderer GetRenderer()
     {
         return transform.Find("_renderer").GetComponent<SpriteRenderer>();
-    }
-
-    [ClientRpc]
-    public void CriticalDamageEffect()
-    {
-        Random r = new Random();
-        for (int i = 0; i < r.Next(2, 8); i++) //SpawnParticles
-        {
-            Particle part = Particle.ClientSpawn();
-
-            part.transform.position = Location.GetPosition() + new Vector2(0, 1f);
-            part.color = new Color(0.854f, 0.788f, 0.694f);
-            part.doGravity = true;
-            part.velocity = new Vector2((2f + (float) r.NextDouble()) * (r.Next(0, 2) == 0 ? -1 : 1)
-                , 4f + (float) r.NextDouble());
-            part.maxAge = 1f + (float) r.NextDouble();
-            part.maxBounces = 10;
-        }
     }
 
     public static Entity GetEntity(string uuid)
@@ -755,13 +607,6 @@ public class Entity : NetworkBehaviour
         }
 
         return closestEntity;
-    }
-    
-    [Client]
-    private void DoFireRender()
-    {
-        if (burningRender != null)
-            burningRender.SetActive(IsBurning());
     }
     
     public float GetWidth()

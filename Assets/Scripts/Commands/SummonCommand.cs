@@ -24,7 +24,7 @@ public class SummonCommand : Command
             for (int i = 0; i < amount; i++)
             {
                 Entity entity = Entity.Spawn(entityType);
-                entity.Teleport(player.playerEntity.GetComponent<Player>().Location);
+                entity.Teleport(player.playerEntity.Location);
                 ChatManager.instance.AddMessage("Summoned " + entityType);
             }
         }

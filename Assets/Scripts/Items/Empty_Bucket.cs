@@ -18,13 +18,11 @@
             return;
 
         //Get player inventory
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
-        PlayerInventory inv = playerEntity.GetInventory();
+        Player playerEntity = player.playerEntity;
+        PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
         
         //Remove one empty bucket
-        ItemStack currentBucket = inv.GetSelectedItem();
-        currentBucket.Amount--;
-        inv.SetItem(inv.selectedSlot, currentBucket);
+        inv.ConsumeSelectedItem();
         
         //Give one filled bucket
         ItemStack newBucket = new ItemStack(newBucketMaterial, 1);

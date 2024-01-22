@@ -12,9 +12,8 @@ public class Dog : PassiveEntity
     protected virtual float foodHealthRegeneration { get; } = 20f / 3f;
 
     public override float maxHealth { get; } = 20;
-    protected override float walkSpeed { get; } = 6f;
-    [EntityDataTag(false)] public string ownerUuid;
-    [EntityDataTag(false)] [SyncVar] public bool sitting;
+    [EntitySaveField(false)] public string ownerUuid;
+    [EntitySaveField(false)] [SyncVar] public bool sitting;
     public SpriteRenderer collar;
     
     public override EntityController GetController()
@@ -28,7 +27,7 @@ public class Dog : PassiveEntity
         return Entity.GetEntity(ownerUuid);
     }
     
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();
@@ -47,8 +46,7 @@ public class Dog : PassiveEntity
         if (source.uuid == ownerUuid)
         {
             //Try feeding dog with owners held item
-            if (TryFeed())
-                return;
+            if (TryFeed()) return;
             
             //If feeding was not applicable, toggle sit state
             sitting = !sitting;
@@ -58,16 +56,13 @@ public class Dog : PassiveEntity
     private bool TryFeed()
     {
         Player owner = (Player) GetOwner();
-        PlayerInventory inv = owner.GetInventory();
-        if (inv == null)
-            return false;
+        PlayerInventory inv = owner.GetInventoryHandler().GetInventory();
+        if (inv == null) return false;
         ItemStack heldItem = inv.GetSelectedItem();
 
-        if (!acceptableFoods.Contains(heldItem.material))
-            return false;
-        
-        heldItem.Amount--;
-        inv.SetItem(inv.selectedSlot, heldItem);
+        if (!acceptableFoods.Contains(heldItem.material)) return false;
+
+        inv.ConsumeSelectedItem();
         PlaySmokeEffect(Color.red);
         health = Mathf.Clamp(health + foodHealthRegeneration, 0, maxHealth); 
 

@@ -2,10 +2,10 @@
 
 public class Sand : Block
 {
-    public override float breakTime { get; } = 0.75f;
+    public override float BreakTime { get; } = 0.75f;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Sand;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Shovel;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Sand;
 
     public override void Tick()
     {

@@ -3,19 +3,18 @@ using Random = System.Random;
 
 public class Gravel : Block
 {
-    public override float breakTime { get; } = 0.75f;
+    public override float BreakTime { get; } = 0.75f;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Gravel;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Shovel;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Gravel;
 
-    public override void Drop()
+    protected override ItemStack[] GetDrops()
     {
-        if (new Random(SeedGenerator.SeedByWorldLocation(location)).NextDouble() <= 0.1f)
-            new ItemStack(Material.Flint, 1).Drop(location);
-        else
-            new ItemStack(Material.Gravel, 1).Drop(location);
-    }
+        if (new Random().NextDouble() < 0.1f)
+            return new[] { new ItemStack(Material.Flint) };
 
+        return base.GetDrops();
+    }
     public override void Tick()
     {
         if ((location + new Location(0, -1)).GetMaterial() == Material.Air)

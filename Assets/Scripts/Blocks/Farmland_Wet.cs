@@ -1,15 +1,15 @@
 ﻿public class Farmland_Wet : Block
 {
-    public override float breakTime { get; } = 0.75f;
-    public override float averageRandomTickDuration { get; } = 5;
+    public override float BreakTime { get; } = 0.75f;
+    public override float AverageRandomTickDuration { get; } = 5;
 
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Shovel;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Dirt;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Shovel;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Dirt;
 
-    public override ItemStack GetDrop()
+    protected override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Dirt, 1);
+        return new[] { new ItemStack(Material.Dirt)};
     }
 
     public override void RandomTick()

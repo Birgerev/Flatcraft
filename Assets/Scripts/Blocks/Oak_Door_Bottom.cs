@@ -1,7 +1,7 @@
 ﻿public class Oak_Door_Bottom : Oak_Door_Block
 {
-    public override bool rotateX { get; } = true;
+    public override bool RotateX { get; } = true;
 
-    public override string open_texture { get; } = "wooden_door_bottom_open";
-    public override string closed_texture { get; } = "wooden_door_bottom";
+    public override string open_texture { get; } = "oak_door_bottom_open";
+    public override string closed_texture { get; } = "oak_door_bottom";
 }

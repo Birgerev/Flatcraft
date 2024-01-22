@@ -1,10 +1,10 @@
 ﻿public class TNT : Block
 {
-    public override float breakTime { get; } = 0.1f;
+    public override float BreakTime { get; } = 0.1f;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.None;
-    public override Tool_Level properToolLevel { get; } = Tool_Level.None;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.None;
+    public override Tool_Level ProperToolLevel { get; } = Tool_Level.None;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
     public void Prime()
     {

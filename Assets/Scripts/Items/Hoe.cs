@@ -11,7 +11,7 @@ public class Hoe : Tool
         if (loc.GetMaterial() == Material.Grass_Block || loc.GetMaterial() == Material.Dirt)
         {
             loc.SetMaterial(Material.Farmland_Dry).Tick();
-            player.playerEntity.GetComponent<Player>().DoToolDurability();
+            player.playerEntity.GetComponent<PlayerInteraction>().DoToolDurability();
         }
 
         base.InteractRight(player, loc, firstFrameDown);

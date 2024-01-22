@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class Sugar_Cane : Vegetation
 {
     private const int MaxHeight = 3;
-    public override float averageRandomTickDuration { get; } = 18 * 60;
-
+    public override float AverageRandomTickDuration { get; } = 18 * 60;
+    
     public override void RandomTick()
     {
         base.RandomTick();
@@ -36,7 +36,6 @@ public class Sugar_Cane : Vegetation
         return height;
     }
 
-    
     protected override List<Material> ValidGround()
     {
         List<Material> mats = base.ValidGround();
@@ -44,6 +43,7 @@ public class Sugar_Cane : Vegetation
         //Add current material as valid ground, to enable stacking
         mats.Add(GetMaterial());
         mats.Add(Material.Sand);
+        mats.Add(Material.Dirt);
         
         //TODO water check
         

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Jukebox : Block
 {
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 6;
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 6;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
 
     public override void Interact(PlayerInstance player)
     {
@@ -37,20 +37,18 @@ public class Jukebox : Block
     
     private void TryInsertDisc(PlayerInstance player)
     {
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
-        PlayerInventory inv = playerEntity.GetInventory();
+        Player playerEntity = player.playerEntity;
+        PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
         
         ItemStack heldDisc = inv.GetSelectedItem();
 
-        if (heldDisc.material != Material.Music_Disc_Stal)
-            return;
+        if (heldDisc.material != Material.Music_Disc_Stal) return;
         
         //Save disc as stored
         location.SetData(GetData().SetTag("stored_disc", heldDisc.material.ToString()));
             
         //Remove one disc from player inventory
-        heldDisc.Amount--;
-        inv.SetItem(inv.selectedSlot, heldDisc);
+        inv.ConsumeSelectedItem();
         ChatManager.instance.AddMessagePlayer("Now playing: C418 - Stal", player);
 
         Sound.Play(location, "music/disc/stal/stal", SoundType.Music, 1, 1, 32);

@@ -11,10 +11,10 @@ public class SignCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player.localEntity != null)
+        if (Player.LocalEntity != null)
         {
             //Fetch block data from hovered block
-            BlockState state = Player.localEntity.GetBlockedMouseLocation().GetState();
+            BlockState state = PlayerInteraction.GetBlockedMouseLocation().GetState();
 
             //Show if block is sign
             if (state.material == Material.Oak_Sign)

@@ -31,13 +31,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3047292750534003045}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.174314, y: 8.029414, z: -61.62591}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3047292750534003044
 MonoBehaviour:
@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a32bebd3afb1a94b8dc814814745476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   caveGeneratedRegions: 
@@ -160,6 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21648cfdf0d6972458ca80ff8dc1020a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
 --- !u!114 &3047292750534003041
@@ -174,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36ae5994a68c4e248a6d66c85367f876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
 --- !u!114 &3047292750534003040
@@ -188,7 +191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6253a6a979017a44cbb8daa48902000a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doLight: 1
   lightSourcePrefab: {fileID: 5354969073293725047, guid: 4eeacdb360394e240982d55895125233,
     type: 3}
   sunlightSourcePrefab: {fileID: 153642762726311654, guid: 8958c9f71c6032743a046624bcda7b26,
@@ -205,13 +207,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca4c94b88cf0d84caf46776746f1cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   ambientMusic:
   - music/ambient/sweden/sweden
+  - music/ambient/mice on venus/mice on venus
+  - music/ambient/subwoofer lullaby/subwoofer lullaby
   - music/ambient/danny/danny
-  checkDuration: 400
-  checkChance: 0.33
+  checkDuration: 300
+  checkChance: 0.5
 --- !u!114 &-5386586424793891005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,6 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0148658773f8b43831f5657dc8fd26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   weather: 0
@@ -239,6 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08f634d9ae97ba45b1cd63fcd615ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
 --- !u!114 &3047292750534002974
@@ -253,8 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clientStarted: 0
   sceneId: 0
+  _assetId: 269405356
   serverOnly: 0
   visible: 0
-  m_AssetId: e41b3e8278be1bb4b89298ef28183900
   hasSpawned: 0

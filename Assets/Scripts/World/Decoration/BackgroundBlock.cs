@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BackgroundBlock : MonoBehaviour
 {
-    public const int MaxLengthFromSolid = 25;
+    public const int MaxLengthFromSolid = 30;
     public static Dictionary<Material, Material> viableMaterials = new Dictionary<Material, Material>
     {
         {Material.Stone, Material.Stone}, {Material.Cobblestone, Material.Cobblestone}, {Material.Dirt, Material.Dirt}

@@ -7,7 +7,7 @@ public class Projectile : Entity
 {
     public bool hasLanded = false;
     //Entity Data Tags
-    [EntityDataTag(false)] public string ownerUuid;
+    [EntitySaveField(false)] public string ownerUuid;
     public virtual float triggerMargin { get; } = 0;
     public virtual float entityDamage { get; } = 0;
     
@@ -55,8 +55,8 @@ public class Projectile : Entity
     
     public virtual void HitEntity(Entity entity)
     {
-        entity.Damage(entityDamage);
         entity.lastDamager = Entity.GetEntity(ownerUuid);
+        entity.Damage(entityDamage);
         this.Remove();
     }
     

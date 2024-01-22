@@ -32,7 +32,8 @@ public class Particle : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        //Manually force light update
+        //Manually force light update, make sure location is cached first
+        lightObject.CacheLocation();
         lightObject.RequestLightUpdate();
         
         GetComponent<Rigidbody2D>().gravityScale = doGravity ? 1 : 0;
@@ -179,8 +180,8 @@ public class Particle : MonoBehaviour
         if (number == 4)
             shape = new List<Vector2>
             {
-                new Vector2(1, 0), new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, 0), new Vector2(1, 2)
-                , new Vector2(-1, 2), new Vector2(1, 3), new Vector2(-1, 3)
+                new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(1, 3), new Vector2(0, 2)
+                , new Vector2(-1, 2), new Vector2(-1, 3),
             };
         if (number == 5)
             shape = new List<Vector2>
@@ -204,8 +205,10 @@ public class Particle : MonoBehaviour
             shape = new List<Vector2>
             {
                 new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 2), new Vector2(1, 3), new Vector2(-1, 3)
-                , new Vector2(0, 3), new Vector2(3, 1), new Vector2(4, 3), new Vector2(4, 4), new Vector2(4, 2)
-                , new Vector2(5, 3)
+                , new Vector2(0, 3), 
+                
+                new Vector2(3, 2), new Vector2(4, 2), new Vector2(5, 2), new Vector2(4, 3)
+                , new Vector2(4, 1)
             };
 
         Vector2 totalVelocity = new Vector2(((float) rand.NextDouble() - 0.5f) * 0.5f, (float) rand.NextDouble() * 1f);

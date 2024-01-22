@@ -12,8 +12,8 @@ public class SkyManager : MonoBehaviour
         if (Time.time % 1f - Time.deltaTime <= 0)
         {
             Dimension dim = Dimension.Overworld;
-            if (Player.localEntity != null)
-                dim = Player.localEntity.Location.dimension;
+            if (Player.LocalEntity != null)
+                dim = Player.LocalEntity.Location.dimension;
 
             foreach (DimensionSky sky in skyForDimension)
                 sky.skyObject.SetActive(sky.dimension == dim);

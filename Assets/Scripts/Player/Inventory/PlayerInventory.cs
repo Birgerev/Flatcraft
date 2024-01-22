@@ -17,6 +17,13 @@ public class PlayerInventory : Inventory
         return GetItem(selectedSlot);
     }
 
+    public void ConsumeSelectedItem()
+    {
+        ItemStack heldItem = GetSelectedItem();
+        heldItem.Amount--;
+        SetItem(selectedSlot, heldItem);
+    }
+
     public ItemStack[] GetHotbarItems()
     {
         ItemStack[] hotbar = new ItemStack[9];
@@ -58,6 +65,23 @@ public class PlayerInventory : Inventory
             SetItem(slot, new ItemStack());
         }
         SetItem(GetCraftingResultSlot(), new ItemStack());
+    }
+    
+    [Server]
+    public override bool AddItem(ItemStack item)
+    {
+        //DOnt add item to armor/crafting slots check
+        for (int slot = 0; slot < GetFirstArmorSlot(); slot++)
+        {
+            ItemStack invItem = GetItem(slot);
+
+            if (invItem.material != Material.Air && invItem.material != item.material) continue;
+            if (invItem.Amount + item.Amount > MaxStackSize) continue;
+            
+            return base.AddItem(item);
+        }
+        
+        return false;
     }
 
     public int GetFirstArmorSlot()

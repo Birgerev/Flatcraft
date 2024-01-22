@@ -1,10 +1,10 @@
 ﻿public class Bed_Block : Block
 {
-    public override bool rotateX { get; } = true;
-    public override bool solid { get; set; } = false;
+    public override bool RotateX { get; } = true;
+    public override bool IsSolid { get; set; } = false;
 
-    public override float breakTime { get; } = 0.65f;
-    public override bool isFlammable { get; } = true;
+    public override float BreakTime { get; } = 0.65f;
+    public override bool IsFlammable { get; } = true;
 
     public Location otherBlockLocation
     {
@@ -24,7 +24,7 @@
 
     public override void Interact(PlayerInstance player)
     {
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
+        Player playerEntity = player.playerEntity;
         playerEntity.Sleep();
         playerEntity.bedLocation = location;
 
@@ -42,8 +42,8 @@
         base.Tick();
     }
 
-    public override ItemStack GetDrop()
+    protected override ItemStack[] GetDrops()
     {
-        return new ItemStack(Material.Bed, 1);
+        return new[] { new ItemStack(Material.Bed)};
     }
 }

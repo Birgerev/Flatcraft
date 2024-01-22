@@ -5,25 +5,19 @@ using UnityEngine;
 
 public class Vegetation : Block
 {
-    public override bool solid { get; set; } = false;
-    public override float breakTime { get; } = 0.01f;
-    public override bool isFlammable { get; } = true;
+    public override bool IsSolid { get; set; } = false;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool IsFlammable { get; } = true;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
-    public override void Tick()
+    public override bool CanExistAt(Location loc)
     {
-        base.Tick();
-        
-        if(!GroundCheck())
-            Break();
-    }
+        Material belowMat = (loc + new Location(0, -1)).GetMaterial();
 
-    private bool GroundCheck()
-    {
-        Material belowMat = (location + new Location(0, -1)).GetMaterial();
+        if (!ValidGround().Contains(belowMat)) return false;
 
-        return ValidGround().Contains(belowMat);
+        return base.CanExistAt(loc);
     }
     
     protected virtual List<Material> ValidGround()

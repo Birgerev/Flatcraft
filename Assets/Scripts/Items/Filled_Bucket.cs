@@ -10,22 +10,18 @@ public class Filled_Bucket : Item
     {
         base.InteractRight(player, loc, firstFrameDown);
 
-        if (!firstFrameDown)
-            return;
+        if (!firstFrameDown) return;
 
         Material clickedMaterial = loc.GetMaterial();
 
-        if (clickedMaterial != Material.Air && loc.GetBlock().solid)
-            return;
+        if (clickedMaterial != Material.Air && !loc.GetBlock().CanBeOverriden) return;
 
         //Get player inventory
-        Player playerEntity = player.playerEntity.GetComponent<Player>();
-        PlayerInventory inv = playerEntity.GetInventory();
+        Player playerEntity = player.playerEntity;
+        PlayerInventory inv = playerEntity.GetInventoryHandler().GetInventory();
         
         //Remove one filled bucket
-        ItemStack currentBucket = inv.GetSelectedItem();
-        currentBucket.Amount--;
-        inv.SetItem(inv.selectedSlot, currentBucket);
+        inv.ConsumeSelectedItem();
         
         //Give one empty bucket
         ItemStack newBucket = new ItemStack(Material.Empty_Bucket, 1);

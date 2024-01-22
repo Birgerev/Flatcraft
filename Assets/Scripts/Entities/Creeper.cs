@@ -56,7 +56,7 @@ public class Creeper : Monster
         Remove();
     }
 
-    [Client]
+    [Server]
     public override void UpdateAnimatorValues()
     {
         base.UpdateAnimatorValues();

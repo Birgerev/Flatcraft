@@ -1,6 +1,6 @@
 ﻿public class Bed_Bottom : Bed_Block
 {
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
 
     public override void BuildTick()
     {

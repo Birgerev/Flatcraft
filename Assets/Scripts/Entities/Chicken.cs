@@ -22,15 +22,9 @@ public class Chicken : PassiveEntity
     {
         base.Tick();
 
-
+        //Fall speed
         if (!isOnGround && GetVelocity().y < -1)
             SetVelocity(new Vector2(GetVelocity().x, -1));
-    }
-
-    [Server]
-    public override void TakeFallDamage(float damage)
-    {
-        //Disable fall damage
     }
 
     [Server]

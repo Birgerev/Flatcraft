@@ -1,21 +1,20 @@
 ﻿public class Oak_Trapdoor : Door
 {
-    public override string open_texture { get; } = "wooden_trapdoor_open";
-    public override string closed_texture { get; } = "wooden_trapdoor";
-    public override float breakTime { get; } = 3f;
-    public override bool isFlammable { get; } = true;
-    public override bool climbable { get; } = true;
+    public override string open_texture { get; } = "oak_trapdoor_open";
+    public override string closed_texture { get; } = "oak_trapdoor";
+    public override float BreakTime { get; } = 3f;
+    public override bool IsFlammable { get; } = true;
+    public override bool IsClimbable { get; } = true;
 
-    public override Tool_Type properToolType { get; } = Tool_Type.Axe;
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wood;
+    public override Tool_Type ProperToolType { get; } = Tool_Type.Axe;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wood;
 
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
-
-        trigger = open; //Custom solution, so that block becomes trigger (and as such climbable), when trapdoor is open
-        UpdateColliders();
-
+        
+        IsSolid = open; //Block becomes solid when trapdoor is closed
+        
         base.Initialize();
     }
 }

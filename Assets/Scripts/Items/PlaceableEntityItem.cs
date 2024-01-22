@@ -12,11 +12,7 @@ public class PlaceableEntityItem : Item
             Entity entity = Entity.Spawn(entityType);
             entity.Teleport(loc);
 
-            //Remove player item
-            PlayerInventory inv = player.playerEntity.GetComponent<Player>().GetInventory();
-            ItemStack selectedItem = inv.GetSelectedItem();
-            selectedItem.Amount--;
-            inv.SetItem(inv.selectedSlot, selectedItem);
+            player.playerEntity.GetInventoryHandler().GetInventory().ConsumeSelectedItem();
         }
     }
 }

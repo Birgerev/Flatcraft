@@ -65,7 +65,7 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
             pointerItem.material != Material.Air)
             return;
         //Cancel if pointer slot is full
-        if (newPointerItem.amount >= Inventory.MaxStackSize)
+        if (newPointerItem.Amount >= Inventory.MaxStackSize)
             return;
         
         //Set pointer material to result material
@@ -73,14 +73,14 @@ public class CraftingInventoryMenu : ContainerInventoryMenu
         newPointerItem.durability = resultItem.durability;
         
         //Keep moving items until result slot is empty or if pointer amount exceeds 64
-        while (resultItem.amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
+        while (resultItem.Amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
         {
             newPointerItem.Amount += 1;
-            resultItem.amount -= 1;
+            resultItem.Amount -= 1;
         }
 
         //Properly clear result slot if necessary
-        if (resultItem.amount <= 0)
+        if (resultItem.Amount <= 0)
             resultItem = new ItemStack();
                 
         //Apply item stack changes

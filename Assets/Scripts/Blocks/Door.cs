@@ -1,6 +1,6 @@
 ﻿public class Door : Block
 {
-    public override bool solid { get; set; } = true;
+    public override bool IsSolid { get; set; } = true;
 
     public virtual string open_texture { get; } = "";
     public virtual string closed_texture { get; } = "";
@@ -15,23 +15,19 @@
     public override void Initialize()
     {
         bool open = GetData().GetTag("open") == "true";
-        solid = !open;
-
-        UpdateColliders();
-
+        IsSolid = !open;
+        
         base.Initialize();
     }
 
     public override void Interact(PlayerInstance player)
     {
-        bool open = !GetOpenState();
-
-        SetOpenState(open);
-
         base.Interact(player);
+
+        SetOpenState(!GetOpenState());
     }
 
-    public override string GetTexture()
+    protected override string GetTextureName()
     {
         bool open = GetData().GetTag("open") == "true";
 

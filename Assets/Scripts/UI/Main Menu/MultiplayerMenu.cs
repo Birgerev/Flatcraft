@@ -48,7 +48,7 @@ public class MultiplayerMenu : MonoBehaviour
         
         //List of all Friends
         EFriendFlags friendFlags = EFriendFlags.k_EFriendFlagImmediate;
-        int friendCount = SteamFriends.GetFriendCount(friendFlags);
+        int friendCount = SteamFriends.GetFriendCount(friendFlags);//TODO fetch lobbies with steamMatchmaking
         
         for (int i = 0; i < friendCount; i++)
         {

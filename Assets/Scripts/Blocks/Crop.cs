@@ -2,13 +2,13 @@
 
 public class Crop : Block
 {
-    public override bool solid { get; set; } = false;
+    public override bool IsSolid { get; set; } = false;
 
-    public override float breakTime { get; } = 0.01f;
-    public override bool isFlammable { get; } = true;
-    public override float averageRandomTickDuration { get; } = 100;
+    public override float BreakTime { get; } = 0.01f;
+    public override bool IsFlammable { get; } = true;
+    public override float AverageRandomTickDuration { get; } = 100;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Grass;
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Grass;
 
     public virtual string[] crop_textures { get; } = { };
     public virtual Material seed { get; } = Material.Air;
@@ -20,34 +20,28 @@ public class Crop : Block
             SetData(GetData().SetTag("crop_stage", "0"));
     }
 
-    public override string GetTexture()
+    protected override string GetTextureName()
     {
         return crop_textures[GetStage()];
-    }
-    
-    public override void Tick()
-    {
-        CheckFarmland();
-
-        base.Tick();
     }
 
     public override void RandomTick()
     {
         Grow();
-        CheckFarmland();
+        Tick();
 
         base.RandomTick();
     }
-
-    public void CheckFarmland()
+    
+    public override bool CanExistAt(Location loc)
     {
-        Material materialBeneath = (location - new Location(0, 1)).GetMaterial();
+        Material belowMat = (loc + new Location(0, -1)).GetMaterial();
 
-        if (materialBeneath != Material.Farmland_Wet && materialBeneath != Material.Farmland_Dry)
-            Break();
+        if (belowMat != Material.Farmland_Wet && belowMat != Material.Farmland_Dry) return false;
+
+        return base.CanExistAt(loc);
     }
-
+    
     public virtual void Grow()
     {
         if (GetStage() >= GetAmountOfStages() - 1)
@@ -63,22 +57,20 @@ public class Crop : Block
 
     public int GetStage()
     {
-        int stage = -1;
         string stageTag = GetData().GetTag("crop_stage");
-        int.TryParse(stageTag, out stage);
+        int.TryParse(stageTag, out var stage);
         return stage;
     }
 
-    public override void Drop()
+    protected override ItemStack[] GetDrops()
     {
         if (GetStage() == GetAmountOfStages() - 1)
         {
-            new ItemStack(seed, new Random().Next(1, 3 + 1)).Drop(location);
-            new ItemStack(result, 1).Drop(location);
+            return new[] { 
+                new ItemStack(seed, new Random().Next(1, 3 + 1)), 
+                new ItemStack(result)};
         }
-        else
-        {
-            new ItemStack(seed, 1).Drop(location);
-        }
+
+        return new[] { new ItemStack(seed)};
     }
 }

@@ -18,7 +18,7 @@ public class Monster : LivingEntity
         if (Time.time % 10f - Time.deltaTime > 0)
             return;
         
-        foreach (Player player in Player.players)
+        foreach (Player player in Player.Players)
         {
             Location playerLoc = player.Location;
 
@@ -56,6 +56,6 @@ public class Monster : LivingEntity
     {
         base.Hit(damage, source);
         
-        DamageNumberEffect((int)damage, Color.red);
+        GetComponent<EntityParticleEffects>()?.RPC_DamageNumberEffect((int)damage, Color.red);
     }
 }

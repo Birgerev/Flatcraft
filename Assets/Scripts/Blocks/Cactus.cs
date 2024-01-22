@@ -1,20 +1,22 @@
-﻿public class Cactus : Block
-{
-    public override bool solid { get; set; } = false;
-    public override bool requiresGround { get; } = true;
-    public override float breakTime { get; } = 0.65f;
-    public override bool isFlammable { get; } = true;
-    public override float averageRandomTickDuration { get; } = 18 * 60;
-    private const int MaxHeight = 3;
+﻿using System.Collections.Generic;
 
-    public override Block_SoundType blockSoundType { get; } = Block_SoundType.Wool;
+public class Cactus : Vegetation
+{
+    private const int MaxGrowHeight = 3;
+    
+    public override float BreakTime { get; } = 0.65f;
+    public override bool IsFlammable { get; } = true;
+    public override float AverageRandomTickDuration { get; } = 18 * 60;
+
+    public override BlockSoundType BlockSoundType { get; } = BlockSoundType.Wool;
 
     public override void Tick()
     {
-        if ((location + new Location(-1, 0)).GetMaterial() != Material.Air)
+        Material matAbove = (location + new Location(0, 1)).GetMaterial();
+        //If block above is not air or this block, break
+        if (matAbove != Material.Air && matAbove != GetMaterial())
             Break();
-        if ((location + new Location(1, 0)).GetMaterial() != Material.Air)
-            Break();
+        
         base.Tick();
     }
 
@@ -29,7 +31,7 @@
     {
         Location aboveLoc = location + new Location(0, 1);
 
-        if (aboveLoc.GetMaterial() == Material.Air && GetHeight() < MaxHeight)
+        if (aboveLoc.GetMaterial() == Material.Air && GetHeight() < MaxGrowHeight)
         {
             aboveLoc.SetMaterial(GetMaterial());
         }
@@ -46,5 +48,10 @@
         }
 
         return height;
+    }
+
+    protected override List<Material> ValidGround()
+    {
+        return new List<Material>() {Material.Sand, GetMaterial()};
     }
 }

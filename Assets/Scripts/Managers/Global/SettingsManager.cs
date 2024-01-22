@@ -16,6 +16,7 @@ public class SettingsManager : MonoBehaviour
         {"soundCategory_entities", "100"},
         {"soundCategory_block", "100"},
         {"soundCategory_music", "100"},
+        {"multiplayer", "friends"},
     };
     
     // Start is called before the first frame update
@@ -51,6 +52,11 @@ public class SettingsManager : MonoBehaviour
             Debug.LogWarning("Failed to parse settings value to int, key: '" + key + "', string: '" + stringValue + "'");
 
         return intValue;
+    }
+
+    public static void OverwriteWithDefaultSettings()
+    {
+        Values = new Dictionary<string, string>(DefaultValues);
     }
 
     private void LoadSettings()
@@ -94,11 +100,6 @@ public class SettingsManager : MonoBehaviour
                 Values[defaultKey] = DefaultValues[defaultKey];
         }
 
-    }
-    
-    private void OverwriteWithDefaultSettings()
-    {
-        Values = new Dictionary<string, string>(DefaultValues);
     }
     
     public string GetPath()

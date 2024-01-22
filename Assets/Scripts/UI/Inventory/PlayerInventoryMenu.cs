@@ -53,11 +53,6 @@ public class PlayerInventoryMenu : InventoryMenu
     }
 
     [Command(requiresAuthority = false)]
-    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
-    {
-    }
-    
-    [Command(requiresAuthority = false)]
     public virtual void OnClickCraftingResultSlot(ClickType clickType)
     {
         if (clickType == ClickType.ShiftClick)
@@ -74,30 +69,25 @@ public class PlayerInventoryMenu : InventoryMenu
         ItemStack newPointerItem = pointerItem;
 
         //Cancel if result slot is empty
-        if (resultItem.material == Material.Air)
-            return;
+        if (resultItem.material == Material.Air) return;
         //Cancel if pointer and result slot materials dont match
-        if (resultItem.material != pointerItem.material &&
-            pointerItem.material != Material.Air)
-            return;
+        if (resultItem.material != pointerItem.material && pointerItem.material != Material.Air) return;
         //Cancel if pointer slot is full
-        if (newPointerItem.amount >= Inventory.MaxStackSize)
-            return;
+        if (newPointerItem.Amount >= Inventory.MaxStackSize) return;
         
         //Set pointer material to result material
         newPointerItem.material = resultItem.material;
         newPointerItem.durability = resultItem.durability;
         
         //Keep moving items until result slot is empty or if pointer amount exceeds 64
-        while (resultItem.amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
+        while (resultItem.Amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
         {
             newPointerItem.Amount += 1;
-            resultItem.amount -= 1;
+            resultItem.Amount -= 1;
         }
 
         //Properly clear result slot if necessary
-        if (resultItem.amount <= 0)
-            resultItem = new ItemStack();
+        if (resultItem.Amount <= 0) resultItem = new ItemStack();
                 
         //Apply item stack changes
         SetPointerItem(newPointerItem);
@@ -120,8 +110,7 @@ public class PlayerInventoryMenu : InventoryMenu
             ItemStack resultItem = playerInventory.GetItem(playerInventory.GetCraftingResultSlot());
             
             //Stop transferring if result slot is empty
-            if (resultItem.material == Material.Air)
-                break;
+            if (resultItem.material == Material.Air) break;
             
             //Subtract items from recipe slots
             DecrementCraftingRecipeSlots();
@@ -148,11 +137,42 @@ public class PlayerInventoryMenu : InventoryMenu
         for (int slot = inv.GetFirstCraftingTableSlot(); slot < inv.GetFirstCraftingTableSlot() + 4; slot++)
         {
             ItemStack newCraftingSlotItem = inv.GetItem(slot);
-            if(newCraftingSlotItem.material == Material.Air)
-                continue;
+            if(newCraftingSlotItem.material == Material.Air) continue;
             
             newCraftingSlotItem.Amount--;
             inv.SetItem(slot, newCraftingSlotItem);
         }
+    }
+    
+    
+    [Command(requiresAuthority = false)]
+    public virtual void OnClickArmorSlot(int slotIndex, ClickType clickType)
+    {
+        PlayerInventory inv = (PlayerInventory) Inventory.Get(inventoryIds[0]);
+        ItemStack resultItem = inv.GetItem(slotIndex);
+        ItemStack newPointerItem = pointerItem;
+
+        //Cancel if pointer and result slot materials dont match
+        if (resultItem.material != pointerItem.material && pointerItem.material != Material.Air) return;
+        //Cancel if pointer slot is full
+        if (newPointerItem.Amount >= Inventory.MaxStackSize) return;
+        
+        //Set pointer material to result material
+        newPointerItem.material = resultItem.material;
+        newPointerItem.durability = resultItem.durability;
+        
+        //Keep moving items until result slot is empty or if pointer amount exceeds 64
+        while (resultItem.Amount > 0 && newPointerItem.Amount < Inventory.MaxStackSize) 
+        {
+            newPointerItem.Amount ++;
+            resultItem.Amount --;
+        }
+                
+        //Apply item stack changes
+        SetPointerItem(newPointerItem);
+        inv.SetItem(slotIndex, resultItem);
+        
+        //Update Inventory
+        UpdateInventory();
     }
 }

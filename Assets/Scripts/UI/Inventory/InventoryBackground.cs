@@ -6,6 +6,6 @@ public class InventoryBackground : MonoBehaviour
 {
     public void Click()
     {
-        GetComponentInParent<InventoryMenu>().OnClickBackground();
+        GetComponentInParent<InventoryMenu>().CMD_OnClickBackground();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 public class SeedGenerator
@@ -9,12 +10,13 @@ public class SeedGenerator
     
     public static int SeedByParameters(params int[] parameters)
     {
-        StringBuilder builder = new StringBuilder();
-        foreach (var parameter in parameters)
+        var hash = new HashCode();
+
+        foreach (var n in parameters)
         {
-            builder.Append((char) (parameter % 65535));
+            hash.Add(n);
         }
 
-        return builder.GetHashCode();
+        return hash.ToHashCode();
     }
 }

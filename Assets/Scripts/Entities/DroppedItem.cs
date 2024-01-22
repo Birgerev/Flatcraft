@@ -13,7 +13,7 @@ public class DroppedItem : Entity
     //Entity Properties
 
     //Entity Data Tags
-    [EntityDataTag(true)] [SyncVar] public ItemStack item = new ItemStack();
+    [EntitySaveField(true)] [SyncVar] public ItemStack item = new ItemStack();
     public Vector2 triggerOffset;
     public Vector2 triggerSize;
 
@@ -87,7 +87,7 @@ public class DroppedItem : Entity
                 }
 
             if (col.GetComponent<Player>() != null && age >= 0.5f)
-                if (col.GetComponent<Player>().GetInventory().AddItem(item))
+                if (col.GetComponent<Player>().GetInventoryHandler().GetInventory().AddItem(item))
                 {
                     Sound.Play(Location, "random/pickup_pop", SoundType.Entities, 0.7f, 1.3f);
                     Remove();
