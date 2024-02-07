@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #if !DISABLESTEAMWORKS
 using Steamworks;
@@ -9,7 +10,7 @@ public class PlayerInstance : NetworkBehaviour
 {
     public static PlayerInstance localPlayerInstance;
 
-    [SyncVar] public ulong steamId = 0;
+    [SyncVar] public ulong uuid = 0;
     [SyncVar] public Player playerEntity;
 
     public void Update()
@@ -38,7 +39,7 @@ public class PlayerInstance : NetworkBehaviour
     [Command]
     public void ChangeSteamId(ulong newSteamId)
     {
-        steamId = newSteamId;
+        uuid = newSteamId;
     }
 
     public override void OnStopServer()
@@ -62,7 +63,6 @@ public class PlayerInstance : NetworkBehaviour
             return;
 
         Debug.Log("Spawning local player");
-        GameObject player = Entity.Spawn("Player", steamId.ToString(), new Vector2(0, 80)).gameObject;
         player.GetComponent<Player>().displayName = GetPlayerName();
         player.GetComponent<Player>().playerInstance = this;
         playerEntity = player.GetComponent<Player>();
