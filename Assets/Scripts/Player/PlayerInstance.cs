@@ -63,6 +63,7 @@ public class PlayerInstance : NetworkBehaviour
             return;
 
         Debug.Log("Spawning local player");
+        GameObject player = Entity.Spawn("Player", uuid.ToString(), new Vector2(0, 80)).gameObject;
         player.GetComponent<Player>().displayName = GetPlayerName();
         player.GetComponent<Player>().playerInstance = this;
         playerEntity = player.GetComponent<Player>();
