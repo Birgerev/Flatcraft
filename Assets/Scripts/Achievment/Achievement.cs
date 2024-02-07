@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+#if !DISABLESTEAMWORKS
 using Steamworks;
+#endif
 using UnityEngine;
 
 public class Achievement : MonoBehaviour
@@ -14,6 +16,7 @@ public class Achievement : MonoBehaviour
     protected bool performTracking = true;
     protected virtual float TrackingLoopInterval => 2;
 
+#if !DISABLESTEAMWORKS
     protected virtual void Start()
     {
         //No need to track achievement if we already have it
@@ -81,4 +84,5 @@ public class Achievement : MonoBehaviour
         SteamUserStats.ResetAllStats(true);
     }
     #endregion
+#endif
 }

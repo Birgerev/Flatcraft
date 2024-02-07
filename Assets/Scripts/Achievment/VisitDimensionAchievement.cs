@@ -6,6 +6,7 @@ public class VisitDimensionAchievement : Achievement
 {
     public Dimension trackedDimension;
 
+#if !DISABLESTEAMWORKS
     protected override void TrackingLoop()
     {
         PlayerInstance localPlayerInstance = PlayerInstance.localPlayerInstance;
@@ -21,4 +22,5 @@ public class VisitDimensionAchievement : Achievement
         if (playerEntity.Location.dimension == trackedDimension)
             GrantAchievement();
     }
+#endif
 }

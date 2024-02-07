@@ -7,6 +7,7 @@ public class ItemHeldAchievment : Achievement
 {
     public Material[] materialCriteria;
 
+#if !DISABLESTEAMWORKS
     protected override void TrackingLoop()
     {
         PlayerInstance localPlayerInstance = PlayerInstance.localPlayerInstance;
@@ -33,4 +34,5 @@ public class ItemHeldAchievment : Achievement
             }
         }
     }
+#endif
 }
