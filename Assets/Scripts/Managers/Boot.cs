@@ -13,6 +13,13 @@ public class Boot : MonoBehaviour
     void Start()
     {
         //Option to immediately load test world in editor
+        if (TryLoadTestWorld()) return;
+        
+        SceneManager.LoadScene("MainMenu");//Load main menu first, so it is active
+        SceneManager.LoadScene("Intro", LoadSceneMode.Additive);
+    }
+    private bool TryLoadTestWorld()
+    {
         if (autoloadTestWorld && Application.isEditor)
         {
             if(World.WorldExists(TestWorldName))
@@ -21,10 +28,9 @@ public class Boot : MonoBehaviour
                 WorldManager.world = new World(TestWorldName, (new System.Random()).Next());
             
             MultiplayerManager.HostGameAsync();
-            return;
+            return true;
         }
-        
-        SceneManager.LoadScene("MainMenu");//Load main menu first, so it is active
-        SceneManager.LoadScene("Intro", LoadSceneMode.Additive);
+
+        return false;
     }
 }
