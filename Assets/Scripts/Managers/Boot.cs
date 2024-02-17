@@ -25,7 +25,7 @@ public class Boot : MonoBehaviour
         string testingNamePath = Application.persistentDataPath + "\\playerProfile.dat";
         if(!File.Exists(testingNamePath))
         {
-            SceneManager.LoadScene("TestingCreateName");
+            SceneManager.LoadScene("SetName");
             return true;
         }
         
