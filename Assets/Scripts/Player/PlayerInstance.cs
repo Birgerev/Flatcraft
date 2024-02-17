@@ -37,11 +37,12 @@ public class PlayerInstance : NetworkBehaviour
     }
 
     [Command]
+    /*[Command]
     public void ChangeSteamId(ulong newSteamId)
     {
         uuid = newSteamId;
-    }
-
+    }*/
+    
     public override void OnStopServer()
     {
         ChatManager.instance.AddMessage(GetPlayerName() + " left the world");
