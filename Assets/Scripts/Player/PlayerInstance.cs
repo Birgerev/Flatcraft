@@ -83,6 +83,6 @@ public class PlayerInstance : NetworkBehaviour
         return SteamFriends.GetFriendPersonaName((CSteamID)steamId);
 #endif
         
-        return "Steve";
+        return uuid;
     }
 }
