@@ -22,7 +22,7 @@ public class Boot : MonoBehaviour
 
     private bool CreateNameCheck()
     {
-        string testingNamePath = Application.persistentDataPath + "\\testingProfile.dat";
+        string testingNamePath = Application.persistentDataPath + "\\playerProfile.dat";
         if(!File.Exists(testingNamePath))
         {
             SceneManager.LoadScene("TestingCreateName");

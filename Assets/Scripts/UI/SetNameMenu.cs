@@ -17,7 +17,7 @@ public class SetNameMenu : MonoBehaviour
 
     private void SetName(string name)
     {
-        string testingNamePath = Application.persistentDataPath + "\\testingProfile.dat";
+        string testingNamePath = Application.persistentDataPath + "\\playerProfile.dat";
         File.WriteAllText(testingNamePath, name);
     }
 }
