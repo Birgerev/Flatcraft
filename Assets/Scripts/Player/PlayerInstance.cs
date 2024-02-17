@@ -10,7 +10,7 @@ public class PlayerInstance : NetworkBehaviour
 {
     public static PlayerInstance localPlayerInstance;
 
-    [SyncVar] public ulong uuid = 0;
+    [SyncVar] public string uuid;
     [SyncVar] public Player playerEntity;
 
     public void Update()
