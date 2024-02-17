@@ -32,11 +32,17 @@ public class PlayerInstance : NetworkBehaviour
 #if !DISABLESTEAMWORKS
         ChangeSteamId(SteamUser.GetSteamID().m_SteamID);
 #endif
-        
+        ChangeUUID(SettingsManager.PlayerName);
+            
         RequestJoinMessage();
     }
 
     [Command]
+    public void ChangeUUID(string newUuid)
+    {
+        uuid = newUuid;
+    }
+    
     /*[Command]
     public void ChangeSteamId(ulong newSteamId)
     {

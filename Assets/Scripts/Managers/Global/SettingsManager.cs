@@ -7,6 +7,7 @@ using UnityEngine;
 public class SettingsManager : MonoBehaviour
 {
     public static SettingsManager instance;
+    public static string PlayerName;
 
     public static Dictionary<string, string> Values = new Dictionary<string, string>();
     
