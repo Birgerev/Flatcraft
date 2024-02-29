@@ -65,8 +65,6 @@ public class MultiplayerManager : NetworkManager
 
     public static async void JoinGameAsync(string address)
     {
-        if (!SteamManager.Initialized)
-            return;
         //Load game scene
         Debug.Log("Loading Game Scene");
         AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Game");
