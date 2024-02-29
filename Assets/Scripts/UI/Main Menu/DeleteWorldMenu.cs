@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DeleteWorldMenu : MonoBehaviour
 {
-    public static int selectedWorld = -1;
+    public static World SelectedWorld;
     
     public GameObject singleplayerMenuPrefab;
     public Text deleteText;
@@ -15,7 +15,7 @@ public class DeleteWorldMenu : MonoBehaviour
     {
         worlds = SingleplayerMenu.GetWorlds();
 
-        deleteText.text = "'" + worlds[selectedWorld].name + "' will be lost forever! (A long time!)";
+        deleteText.text = "'" + SelectedWorld.name + "' will be lost forever! (A long time!)";
     }
 
     public void Cancel()
@@ -26,7 +26,7 @@ public class DeleteWorldMenu : MonoBehaviour
 
     public void Delete()
     {
-        worlds[selectedWorld].Delete();
+        SelectedWorld.Delete();
         
         Instantiate(singleplayerMenuPrefab);
         Destroy(gameObject);

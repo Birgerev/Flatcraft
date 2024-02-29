@@ -64,7 +64,7 @@ public class SingleplayerMenu : MonoBehaviour
 
     public void Delete()
     {
-        DeleteWorldMenu.selectedWorld = selectedWorld;
+        DeleteWorldMenu.SelectedWorld = worlds[selectedWorld];
         Instantiate(deleteWorldMenuPrefab);
         Destroy(gameObject);
     }
