@@ -1038,7 +1038,7 @@ PrefabInstance:
     - target: {fileID: 433324068672230861, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
       propertyPath: m_Text
-      value: Play With Friends
+      value: Multiplayer
       objectReference: {fileID: 0}
     - target: {fileID: 9203636279896232828, guid: b4cd6372c506dd240aa5b3b169938fdd,
         type: 3}
