@@ -23,7 +23,7 @@ MonoBehaviour:
     data: 
     durability: 0
     material: 17
-  - _amount: 1
+  - _amount: 3
     data: 
     durability: 0
     material: 74
