@@ -36,9 +36,9 @@ public class EntityMovement : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isOwned && !isServer) return;
-        
-        WalkSound();
+        if(isServer) WalkSound();
+        if (!isOwned) return;
+
         ApplyFriction();
         
         //Exit liquid jump
