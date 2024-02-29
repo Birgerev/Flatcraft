@@ -10,8 +10,6 @@ using Steamworks;
 
 public class MultiplayerManager : NetworkManager
 {
-    //dont need singleton variable here, use "singleton" from NetworkManager
-    
     public List<string> prefabDirectories = new List<string>();
     public GameObject WorldManagerPrefab;
     private bool _initialized;
@@ -63,6 +61,34 @@ public class MultiplayerManager : NetworkManager
 #if !DISABLESTEAMWORKS
         CreateSteamLobby();
 #endif
+    }
+
+    public static async void JoinGameAsync(string address)
+    {
+        if (!SteamManager.Initialized)
+            return;
+        //Load game scene
+        Debug.Log("Loading Game Scene");
+        AsyncOperation sceneLoad = SceneManager.LoadSceneAsync("Game");
+        while (!sceneLoad.isDone)
+        {
+            await Task.Delay(10);
+        }
+
+        //Await manager initialized
+        Debug.Log("Creating Multiplayer Manager");
+        MultiplayerManager multiplayerManager = CreateMultiplayerManager();
+        while (!multiplayerManager._initialized)
+        {
+            await Task.Delay(10);
+        }
+        
+        //Join steam lobby
+        Debug.Log($"Joining address: {address}");
+        
+        //Start server connection
+        multiplayerManager.networkAddress = address;
+        multiplayerManager.StartClient();
     }
 
     private static MultiplayerManager CreateMultiplayerManager()
