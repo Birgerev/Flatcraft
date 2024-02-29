@@ -15,19 +15,19 @@ MonoBehaviour:
   minimunRolls: 0
   maximumRolls: 0
   confirmedItems:
-  - amount: 2
+  - _amount: 1
     data: 
     durability: 0
     material: 80
-  - amount: 1
+  - _amount: 1
     data: 
     durability: 64
     material: 82
-  - amount: 3
+  - _amount: 1
     data: 
     durability: 0
     material: 106
-  - amount: 1
+  - _amount: 0
     data: 
     durability: 0
     material: 97
