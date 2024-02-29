@@ -11,16 +11,16 @@ public class Water : Liquid
     };
     public override int maxLiquidLevel { get; } = 8;
 
-    public override void Tick()
+    public override void CheckFlow()
     {
-        CheckLavaEncounter();
+        if(LavaEncounter()) return;
 
-        base.Tick();
+        base.CheckFlow();
     }
     
-    private void CheckLavaEncounter()
+    private bool LavaEncounter()
     {
-        Location[] relativeDirections = {new Location(0, 1), new Location(0, -1), new Location(-1, 0), new Location(1, 0)};
+        Location[] relativeDirections = {new (0, 1), new (0, -1), new (-1, 0), new (1, 0)};
 
         foreach (Location relativeDirection in relativeDirections)
         {
@@ -48,6 +48,10 @@ public class Water : Liquid
             //if water flows into a non source lava block, make it cobblestone
             LiquidEncounterEffect(loc);
             loc.SetMaterial(Material.Cobblestone).Tick();
+
+            return true;
         }
+
+        return false;
     }
 }

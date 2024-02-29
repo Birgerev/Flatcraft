@@ -80,7 +80,7 @@ public class Liquid : Block
         return true;
     }
 
-    public void CheckFlow()
+    public virtual void CheckFlow()
     {
         Location down = location + new Location(0, -1);
         Material downMat = down.GetMaterial();
@@ -199,8 +199,8 @@ public class Liquid : Block
             return true;
         }
         
-        //Can flow to blocks that can be overriden
-        if (loc.GetBlock() != null && loc.GetBlock().CanBeOverriden) return true;
+        //Can flow to blocks that can be overriden and aren't liquid
+        if (loc.GetBlock() != null && loc.GetBlock().CanBeOverriden && !(loc.GetBlock() is Liquid)) return true;
         
         //Otherwise, we cant flow to block
         return false;
