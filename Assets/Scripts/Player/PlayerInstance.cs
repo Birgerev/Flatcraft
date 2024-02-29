@@ -1,3 +1,4 @@
+using kcp2k;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -35,6 +36,7 @@ public class PlayerInstance : NetworkBehaviour
         ChangeUUID(SettingsManager.PlayerName);
             
         RequestJoinMessage();
+        if(isServer) ChatManager.instance.AddMessage($"Hosting on port {((KcpTransport)NetworkManager.singleton.transport).port}");
     }
 
     [Command]
