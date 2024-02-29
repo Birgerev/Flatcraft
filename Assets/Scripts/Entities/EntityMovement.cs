@@ -37,7 +37,7 @@ public class EntityMovement : NetworkBehaviour
     void Update()
     {
         if(isServer) WalkSound();
-        if (!isOwned) return;
+        if (!isOwned && !isServer) return;
 
         ApplyFriction();
         
