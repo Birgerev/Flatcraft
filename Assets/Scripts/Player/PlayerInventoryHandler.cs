@@ -49,7 +49,7 @@ public class PlayerInventoryHandler : NetworkBehaviour
                 CMD_UpdateSelectedSlot(Array.IndexOf(numpadCodes, keyCode));
         
         //Hotbar scroll
-        float scrollAmount = Input.mouseScrollDelta.y;
+        float scrollAmount = -Input.mouseScrollDelta.y;
         if (scrollAmount != 0)
         {
             int newSelectedSlot = GetInventory().selectedSlot + (int)scrollAmount;
