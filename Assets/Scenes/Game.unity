@@ -11077,9 +11077,9 @@ MonoBehaviour:
   maxRoll: 5
   zoomDampTime: 0.4
   normalFov: 12
-  sprintZoomAmount: 0
-  sneakZoomAmount: 0
-  roofFov: 0
+  sprintZoomAmount: 1
+  sneakZoomAmount: -1
+  roofFov: 10
   roofCheckMaxDistance: 5
   mousePanningMagnitude: {x: 1.5, y: 1.5}
   currentShake: 0
